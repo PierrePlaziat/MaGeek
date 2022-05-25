@@ -1,0 +1,9 @@
+﻿<Application x:Class="MaGeek.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MaGeek"
+             StartupUri="CardSearcher.xaml">
+    <Application.Resources>
+        <FontFamily x:Key="MtgSymbols">pack://application:,,,/Fonts/Magic_Symbols_2008.ttf#Magic Symbols 2008</FontFamily>
+    </Application.Resources>
+</Application>

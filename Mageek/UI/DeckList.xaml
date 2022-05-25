@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="MaGeek.UI.DeckList"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MaGeek.UI"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="500">
+
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="30"></ColumnDefinition>
+            <ColumnDefinition Width="30"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Column="0" Background="DarkSeaGreen" Click="AddDeck" >+</Button>
+        <TextBox Grid.Column="1" Text="{Binding Filter}"></TextBox>
+        <Button Grid.Column="2" Background="CornflowerBlue" Click="DuplicateDeck">C</Button>
+        <Button Grid.Column="3" Background="IndianRed" Click="DeleteDeck">X</Button>
+
+        <ListView x:Name="decklistbox"
+                  Grid.Row="1" 
+                  Grid.ColumnSpan="4" 
+                  Background="#222"
+                  ItemsSource="{Binding Decks}"
+                  MouseUp="ListView_MouseUp">
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            
+            <ListView.ItemTemplate >
+                <DataTemplate>
+
+                    <Grid Background="#000" HorizontalAlignment="Stretch">
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="50"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel Background="CadetBlue"></DockPanel>
+                        <Label Grid.Column="1" Foreground="White" HorizontalAlignment="Stretch" Content="{Binding Name}"></Label>
+                        <DockPanel Grid.Column="2">
+                            <Label Content="{Binding CardCount}" Foreground="#444"/>
+                            <Label Content="Cards" Foreground="#444"/>
+                        </DockPanel>
+
+                    </Grid>
+                    
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            
+        </ListView>
+        
+    </Grid>
+    
+</UserControl>
