@@ -25,11 +25,15 @@ namespace MaGeek.Data
             modelBuilder.Entity<MagicDeck>()
                 .HasMany<MagicCard>(s => s.Cards)
                 .WithMany(c => c.Decks);
+
+            modelBuilder.Entity<MagicDeck>().Property(e => e.Id).ValueGeneratedOnAdd();
+
         }
 
         public DbSet<MagicCardVariant> cardVariants { get; set; }
         public DbSet<MagicCard> cards { get; set; }
         public DbSet<MagicDeck> decks { get; set; }
+        public DbSet<CardTraduction> traductions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){
             optionsBuilder.UseSqlite("Data Source=D:\\PROJECTS\\VS\\Mageek\\Mtg.db");

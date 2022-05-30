@@ -10,56 +10,72 @@
     <Grid>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="30"></ColumnDefinition>
-            <ColumnDefinition Width="30"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Button Grid.Column="0" Background="DarkSeaGreen" Click="AddDeck" >+</Button>
-        <TextBox Grid.Column="1" Text="{Binding Filter}"></TextBox>
-        <Button Grid.Column="2" Background="CornflowerBlue" Click="DuplicateDeck">C</Button>
-        <Button Grid.Column="3" Background="IndianRed" Click="DeleteDeck">X</Button>
+        <Button Grid.Column="0" Click="AddDeck">Create</Button>
+        <Button Grid.Column="1" Click="RenameDeck">Rename</Button>
+        <Button Grid.Column="2" Click="DuplicateDeck">Duplicate</Button>
+        <Button Grid.Column="3" Click="DeleteDeck">Delete</Button>
 
         <ListView x:Name="decklistbox"
                   Grid.Row="1" 
                   Grid.ColumnSpan="4" 
                   Background="#222"
                   ItemsSource="{Binding Decks}"
-                  MouseUp="ListView_MouseUp">
+                  MouseUp="ListView_MouseUp"
+                  Margin="0" Padding="0">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="0"/>
                 </Style>
             </ListView.ItemContainerStyle>
             
             <ListView.ItemTemplate >
+                
                 <DataTemplate>
 
-                    <Grid Background="#000" HorizontalAlignment="Stretch">
+                    <Grid Background="#000">
                         
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10"></ColumnDefinition>
+                            <ColumnDefinition Width="100"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="50"></ColumnDefinition>
+                            <ColumnDefinition Width="65"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <DockPanel Background="CadetBlue"></DockPanel>
-                        <Label Grid.Column="1" Foreground="White" HorizontalAlignment="Stretch" Content="{Binding Name}"></Label>
+                        <Label Margin="0" Padding="2" 
+                               FontSize="20" 
+                               FontFamily="{StaticResource MtgSymbols}"
+                               Content="{Binding DeckColors}"/>
+
+                        <Label Grid.Column="1" Foreground="White" 
+                               HorizontalAlignment="Stretch" 
+                               Content="{Binding Name}"/>
+
                         <DockPanel Grid.Column="2">
-                            <Label Content="{Binding CardCount}" Foreground="#444"/>
-                            <Label Content="Cards" Foreground="#444"/>
+                            
+                            <Label Content="{Binding CardCount}" 
+                                   Foreground="#444"/>
+                            
+                            <Label Content="Cards" 
+                                   Foreground="#444"/>
+                            
                         </DockPanel>
 
                     </Grid>
                     
                 </DataTemplate>
+                
             </ListView.ItemTemplate>
             
         </ListView>

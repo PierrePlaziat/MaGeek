@@ -17,6 +17,7 @@
             <RowDefinition Height="348"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition Height="100"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Grid Background="#111">
@@ -89,12 +90,13 @@
                     Content="+"/>
 
             <Button Click="AddToCurrentDeck" 
-                    Background="LightSeaGreen" 
                     Content="Add to Deck"/>
 
         </DockPanel>
 
-        <ListView Grid.Row="2" BorderThickness="0" x:Name="VariantListBox"  ItemsSource="{Binding Variants}" Background="#111" MouseUp="SelectVariant">
+        <ListView Grid.Row="2" BorderThickness="0" x:Name="VariantListBox"  
+                  ItemsSource="{Binding Variants}" 
+                  Background="#333" MouseUp="SelectVariant">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <DockPanel>
@@ -123,6 +125,14 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                
+            </Grid.ColumnDefinitions>
+        </Grid>
+        
+        <Label Grid.Row="3">TODO : StockMarket</Label>
 
     </Grid>
     

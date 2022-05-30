@@ -26,9 +26,6 @@ namespace MaGeek.UI
 
         #endregion
 
-
-        MTG_API api = new MTG_API();
-
         public Importer()
         {
             InitializeComponent();
@@ -44,7 +41,7 @@ namespace MaGeek.UI
                 MessageBoxHelper.ShowMsg("Please enter a title to the deck.");
                 return;
             }
-            if (asDeck && App.appContext.decks.Where(x=>x.Name == DeckTitle.Text).Any())
+            if (asDeck && App.database.decks.Where(x=>x.Name == DeckTitle.Text).Any())
             {
                 MessageBoxHelper.ShowMsg("A deck with that name already exists.");
                 return;
@@ -69,17 +66,17 @@ namespace MaGeek.UI
                 if (!string.IsNullOrEmpty(line))
                 {
                     string cardname = line.Substring(line.IndexOf(' ') + 1);
-                    if (!App.appContext.cards.Where(x => x.Name_VO == cardname).Any())
+                    if (!App.database.cards.Where(x => x.Name_VO == cardname).Any())
                     {
-                        await DoSearch(cardname);
+                        await App.cardManager.SearchCardsOnline(cardname, true);
                     }
-                    var card = App.appContext.cards.Where(x => x.Name_VO == cardname).FirstOrDefault();
+                    var card = App.database.cards.Where(x => x.Name_VO == cardname).FirstOrDefault();
                     if (card != null) deck.Cards.Add(card);
                     LoadBar.Value++;
                 }
             }
-            App.appContext.decks.Add(deck);
-            App.appContext.SaveChanges();
+            App.database.decks.Add(deck);
+            App.database.SaveChanges();
         }
 
         private async Task ImportIntoCollection(bool asGot)
@@ -90,38 +87,13 @@ namespace MaGeek.UI
                 if (!string.IsNullOrEmpty(line))
                 {
                     string cardname = line.Substring(line.IndexOf(' ') + 1);
-                    if (!App.appContext.cards.Where(x => x.Name_VO == cardname).Any())
+                    if (!App.database.cards.Where(x => x.Name_VO == cardname).Any())
                     {
-                        await DoSearch(cardname);
+                        await App.cardManager.SearchCardsOnline(cardname, true);
                     }
                 }
             }
-            App.appContext.SaveChanges();
-        }
-
-        private async Task DoSearch(string cardname)
-        {
-            var NewCardList = new List<MagicCard>();
-            var cs = await api.GetAllCardsByName_Async(cardname);
-            foreach (var iCard in cs)
-            {
-                if(iCard != null && iCard.Name == cardname)
-                {
-                    if (!NewCardList.Where(x => x.Name_VO == iCard.Name).Any())
-                    {
-                        var card = new MagicCard(iCard);
-                        NewCardList.Add(card);
-                    }
-                    NewCardList.Where(x => x.Name_VO == iCard.Name).FirstOrDefault().variants.Add(new MagicCardVariant(iCard) { });
-                }
-            }
-            App.Current.Dispatcher.Invoke(delegate
-            {
-                foreach (var card in NewCardList)
-                {
-                    App.SaveCard(card);
-                }
-            });
+            App.database.SaveChanges();
         }
 
     }

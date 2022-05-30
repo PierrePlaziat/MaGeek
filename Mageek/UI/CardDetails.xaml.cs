@@ -103,19 +103,19 @@ namespace MaGeek.UI
 
         private void AddCardToCollection(object sender, RoutedEventArgs e)
         {
-            App.Collection_AddCard(selectedCard);
+            App.cardManager.GotCard_Add(selectedCard);
             OnPropertyChanged("CollectedQuantity");
         }
 
         private void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
-            App.Collection_RemoveCard(SelectedCard);
+            App.cardManager.GotCard_Remove(SelectedCard);
             OnPropertyChanged("CollectedQuantity");
         }
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            OnRaiseCustomEvent(new AddToDeckEventArgs(SelectedCard, App.CurrentDeck));
+            OnRaiseCustomEvent(new AddToDeckEventArgs(SelectedCard, App.state.CurrentDeck));
         }
 
         protected virtual void OnRaiseCustomEvent(AddToDeckEventArgs e)

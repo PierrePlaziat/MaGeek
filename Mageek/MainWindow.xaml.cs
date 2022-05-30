@@ -1,17 +1,12 @@
 ﻿using MaGeek.Events;
-using MtgApiManager.Lib.Model;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace MaGeek.UI
 {
-    public partial class CardSearcher : Window
+    public partial class MainWindow : Window
     {
 
-        public CardSearcher()
+        public MainWindow()
         {
             InitializeComponent();
             LocalColec.RaiseSelectCard += HandleCardSelected;
@@ -31,7 +26,7 @@ namespace MaGeek.UI
 
         void HandleAddToDeck(object sender, AddToDeckEventArgs e)
         {
-            App.AddCardToDeck(e.Card,e.Deck);
+            App.cardManager.AddCardToDeck(e.Card,e.Deck);
             DeckList.Refresh();
             SelectedDeck.CurrentDeck = null;
             SelectedDeck.CurrentDeck = e.Deck;

@@ -1,12 +1,11 @@
-﻿using MaGeek.Data;
-using MaGeek.Data.Entities;
+﻿using MaGeek.Data.Entities;
 using MaGeek.Events;
-using System.Collections.Generic;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace MaGeek.UI
 {
@@ -19,8 +18,6 @@ namespace MaGeek.UI
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        MTG_API mtgApi = new MTG_API();
-
         private bool isSearching = false;
         public bool IsSearching { get { return isSearching; } set { isSearching = value; OnPropertyChanged(); OnPropertyChanged("IsNotSearching"); } }
         public bool IsNotSearching { get { return !isSearching; } }
@@ -28,35 +25,30 @@ namespace MaGeek.UI
         public delegate void CustomEventHandler(object sender, SelectCardEventArgs args);
         public event CustomEventHandler RaiseSelectCard;
 
-        public ObservableCollection<MagicCard> CardsBind { get { return App.appContext.cardsBind; } }
+        public ObservableCollection<MagicCard> CardsBind { get { return App.database.cardsBind; } }
 
         public Collection()
         { 
             DataContext = this;
             InitializeComponent();
         }
+
+        private void LaunchSearch(object sender, System.Windows.RoutedEventArgs e)
+        {
+            DoSearch();
+        }
+        private void CurrentSearch_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                DoSearch();
+            }
+        }
+
         private async void DoSearch()
         {
             IsSearching = true;
-            var NewCardList = new List<MagicCard>();
-            var cs = await mtgApi.GetAllCardsByName_Async(CurrentSearch.Text);
-            foreach (var iCard in cs)
-            {
-                if (!NewCardList.Where(x => x.Name_VO == iCard.Name).Any())
-                {
-                    var card = new MagicCard(iCard);
-                    NewCardList.Add(card);
-                }
-                NewCardList.Where(x => x.Name_VO == iCard.Name).FirstOrDefault().variants.Add(new MagicCardVariant(iCard) { });
-                // TODO check french name
-            }
-            App.Current.Dispatcher.Invoke(delegate
-            {
-                foreach (var card in NewCardList)
-                {
-                    App.SaveCard(card);
-                }
-            });
+            await App.cardManager.SearchCardsOnline(CurrentSearch.Text);
             IsSearching = false;
         }
 
@@ -75,10 +67,6 @@ namespace MaGeek.UI
             if (raiseEvent != null) raiseEvent(this, e);
         }
 
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            DoSearch();
-        }
     }
 
 }

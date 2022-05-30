@@ -11,123 +11,132 @@
     <UserControl.Resources>
         <cwpf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </UserControl.Resources>
-    
+
     <Grid Background="#222">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="25"></RowDefinition>
-            <RowDefinition Height="25"></RowDefinition>
-            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="1"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0"
-               Grid.Column="0"
-               HorizontalAlignment="Right"
-               Foreground="#999">Add from WEB:</Label>
-        <TextBox Grid.Row="0"
-                 Grid.Column="1"
-                 Grid.ColumnSpan="4"
-                 Height="19"
-                 Background="Black"
-                 Foreground="White"
-                 BorderBrush="#111"
-                 Name="CurrentSearch" 
-                 HorizontalAlignment="Stretch" 
-                 IsEnabled="{Binding isNotSearching}"
-                 Text=""/>
-        <Button Grid.Row="0"
-               Grid.Column="5"
-                Background="#999"
-                Foreground="#fff" Click="Button_Click"> >> Search</Button>
+        <!-- WebSearch Not Searching -->
+
+        <Grid Grid.Row="0">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0"
+                   HorizontalAlignment="Right"
+                   Content="Find new cards:"></Label>
+            <TextBox Grid.Row="0"
+                         Grid.Column="1"
+                         Height="19"
+                         Name="CurrentSearch" 
+                         HorizontalAlignment="Stretch" 
+                         IsEnabled="{Binding isNotSearching}"
+                         KeyDown="CurrentSearch_KeyDown">
+            </TextBox>
+            <Button Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="3"
+                    Click="LaunchSearch"
+                    Content="Search"/>
+            
+        </Grid>
         
-        <Label Grid.Row="1"
-               Grid.Column="0"
-               HorizontalAlignment="Right"
-               Foreground="#999">Name:</Label>
-        <TextBox Grid.Row="1"
-                 Grid.Column="1"
-                 Height="19"
-                 Background="Black"
-                 Foreground="White"
-                 BorderBrush="#111"
-                 HorizontalAlignment="Stretch"/>
+        <!-- WebSearch Searching -->
+        
+        <Grid Visibility="{Binding IsSearching,Converter={StaticResource BoolToVisibilityConverter}}">
+            
 
-        <Label Grid.Row="1"
-               Grid.Column="2"
-               Foreground="#999"
-               HorizontalAlignment="Right">type:</Label>
-        <TextBox Grid.Row="1"
-                 Grid.Column="3"
-                 Height="19"
-                 Background="Black"
-                 Foreground="White"
-                 BorderBrush="#111"
-                 HorizontalAlignment="Stretch"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="1"
-               Grid.Column="4"
-               HorizontalAlignment="Right"
-               Foreground="#999">Text:</Label>
-        <TextBox Grid.Row="1"
-                 Grid.Column="5"
-                 Height="19"
-                 Background="Black"
-                 Foreground="White"
-                 BorderBrush="#111"
-                 HorizontalAlignment="Stretch"/>
+            <Label Foreground="#fff" Content="Searching..."></Label>
+            
+                <Grid Grid.Column="1">
+                    <ProgressBar Value="50"/>
+                    <TextBlock Text="{Binding ElementName=pbStatus, Path=Value, StringFormat={}{0:0}%}" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" />
+            </Grid>
 
-        <Label Grid.Row="2"
-               Grid.Column="0"
-               HorizontalAlignment="Right"
-               Foreground="#999">Min Cmc:</Label>
-        <TextBox Grid.Row="2"
-                 Grid.Column="1"
-                 Height="19"
-                 Background="Black"
-                 Foreground="White"
-                 BorderBrush="#111"
-                 HorizontalAlignment="Stretch"/>
+            <Button Grid.Column="2"
+                    Margin="3"
+                    Click="LaunchSearch"
+                    Content="Cancel"/>
+            
+        </Grid>
 
-        <Label Grid.Row="2"
-               Grid.Column="2"
-               HorizontalAlignment="Right"
-               Foreground="#999">Max Cmc:</Label>
-        <TextBox Grid.Row="2"
-                 Grid.Column="3"
-                 Height="19"
-                 Background="Black"
-                 Foreground="White"
-                 BorderBrush="#111"
-                 HorizontalAlignment="Stretch"/>
+        <!-- Separator -->
 
-        <Label Grid.Row="2"
-               Grid.Column="4"
-               HorizontalAlignment="Right"
-               Foreground="#999">ManaColors:</Label>
-        <TextBox Grid.Row="2"
-                 Grid.Column="5"
-                 Height="19"
-                 Background="Black"
-                 Foreground="White"
-                 BorderBrush="#111"
-                 HorizontalAlignment="Stretch"/>
+        <StackPanel Grid.Row="1" Background="#444"></StackPanel>
+        
+        <!-- Filters -->
+        
+        <Grid Grid.Row="2">
 
-        <Grid Grid.Row="3" Grid.ColumnSpan="6"
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"></RowDefinition>
+                <RowDefinition Height="25"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0"
+                   HorizontalAlignment="Right">Name:</Label>
+            <TextBox Grid.Row="0" Grid.Column="1"
+                     HorizontalAlignment="Stretch"/>
+
+            <Label Grid.Row="0" Grid.Column="2"
+                   HorizontalAlignment="Right">type:</Label>
+            <TextBox Grid.Row="0" Grid.Column="3"
+                     HorizontalAlignment="Stretch"/>
+
+            <Label Grid.Row="0" Grid.Column="4"
+                   HorizontalAlignment="Right">Text:</Label>
+            <TextBox Grid.Row="0" Grid.Column="5"
+                     HorizontalAlignment="Stretch"/>
+
+            <Label Grid.Row="1" Grid.Column="0"
+                   HorizontalAlignment="Right">Min Cmc:</Label>
+            <TextBox Grid.Row="1" Grid.Column="1"
+                     HorizontalAlignment="Stretch"/>
+
+            <Label Grid.Row="1" Grid.Column="2"
+                   HorizontalAlignment="Right">Max Cmc:</Label>
+            <TextBox Grid.Row="1" Grid.Column="3"
+                     HorizontalAlignment="Stretch"/>
+
+            <Label Grid.Row="1" Grid.Column="4"
+                   HorizontalAlignment="Right">ManaColors:</Label>
+            <TextBox Grid.Row="1" Grid.Column="5"
+                     HorizontalAlignment="Stretch"/>
+
+        </Grid>
+
+        <!-- Card datagrid -->
+    
+        <Grid Grid.Row="3"
               ScrollViewer.VerticalScrollBarVisibility="Visible"
               ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <DataGrid x:Name="CardList"
                       ItemsSource="{Binding CardsBind}"
-                      BorderThickness="0"
-                      Background="#222"
                       CanUserAddRows="False"
                       CanUserResizeRows="False"
                       CanUserResizeColumns="True"
@@ -135,16 +144,12 @@
                       CanUserSortColumns="True"
                       CanUserDeleteRows="False"
                       RowHeaderWidth="0"
-                      GridLinesVisibility="None"
-                      RowBackground="#333"
-                      AlternatingRowBackground="#444"
-                      Foreground="White"
                       AutoGenerateColumns="False"
                       SelectionChanged="CardList_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Got" Binding="{Binding CollectedQuantity}" />
                     <DataGridTextColumn Header="NameVO" Binding="{Binding Name_VO}" />
-                    <DataGridTextColumn Header="NameVF" Binding="{Binding Name_VF}" />
+                    
                     <DataGridTemplateColumn Header="ManaCost">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -166,15 +171,6 @@
             </DataGrid>
             
         </Grid>
-
-            <StackPanel Visibility="{Binding IsSearching,Converter={StaticResource BoolToVisibilityConverter}}"
-                        Background="#222"
-                        Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="6"
-                    Grid.RowSpan="3">
-                <Label Foreground="White">Searching...</Label>
-            </StackPanel>
 
     </Grid>
 

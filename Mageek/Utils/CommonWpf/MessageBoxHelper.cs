@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using MaGeek.Utils.CommonWpf;
+using System;
+using System.Windows;
 
 namespace Plaziat.CommonWpf
 {
@@ -26,6 +28,16 @@ namespace Plaziat.CommonWpf
             else return false;
         }
 
+        internal static string UserInputString(string message)
+        {
+            InputDialog inputDialog = new InputDialog(message, "New Deck");
+            if (inputDialog.ShowDialog() == true)
+            {
+                if (string.IsNullOrEmpty(inputDialog.Answer)) return null;
+                return inputDialog.Answer;
+            }
+            else return null;
+        }
     }
 
 }

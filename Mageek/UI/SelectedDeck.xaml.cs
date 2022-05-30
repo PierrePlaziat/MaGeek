@@ -1,8 +1,10 @@
 ﻿using MaGeek.Data.Entities;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace MaGeek.UI
 {
@@ -24,10 +26,10 @@ namespace MaGeek.UI
 
         public MagicDeck CurrentDeck { 
             get { 
-                return App.CurrentDeck; 
+                return App.state.CurrentDeck; 
             } 
             set { 
-                App.CurrentDeck = value;
+                App.state.CurrentDeck = value;
                 OnPropertyChanged();
                 OnPropertyChanged("DevotionB");
                 OnPropertyChanged("DevotionB");
@@ -35,69 +37,19 @@ namespace MaGeek.UI
                 OnPropertyChanged("DevotionU");
                 OnPropertyChanged("DevotionG");
                 OnPropertyChanged("DevotionR");
+                UpdateUGrid();
             } 
         }
 
         public ObservableCollection<MagicCard> Cards
         {
             get {
-                if (App.CurrentDeck == null) return null;
-                return App.CurrentDeck.Cards as ObservableCollection<MagicCard>; 
+                if (App.state.CurrentDeck == null) return null;
+                return App.state.CurrentDeck.Cards as ObservableCollection<MagicCard>; 
             }
         }
 
         #region Devotion
-
-        public int DevotionB
-        {
-            get
-            {
-                if (App.CurrentDeck == null || App.CurrentDeck.Cards == null) return 0;
-                int devotion = 0;
-                foreach (var c in App.CurrentDeck.Cards) devotion += c.DevotionB;
-                return devotion; 
-            }
-        }
-        public int DevotionW
-        {
-            get
-            {
-                if (App.CurrentDeck == null || App.CurrentDeck.Cards == null) return 0;
-                int devotion = 0;
-                foreach (var c in App.CurrentDeck.Cards) devotion += c.DevotionW;
-                return devotion;
-            }
-        }
-        public int DevotionU
-        {
-            get
-            {
-                if (App.CurrentDeck == null || App.CurrentDeck.Cards == null) return 0;
-                int devotion = 0;
-                foreach (var c in App.CurrentDeck.Cards) devotion += c.DevotionU;
-                return devotion;
-            }
-        }
-        public int DevotionG
-        {
-            get
-            {
-                if (App.CurrentDeck == null || App.CurrentDeck.Cards == null) return 0;
-                int devotion = 0;
-                foreach (var c in App.CurrentDeck.Cards) devotion += c.DevotionG;
-                return devotion;
-            }
-        }
-        public int DevotionR
-        {
-            get
-            {
-                if (App.CurrentDeck == null || App.CurrentDeck.Cards == null) return 0;
-                int devotion = 0;
-                foreach (var c in App.CurrentDeck.Cards) devotion += c.DevotionR;
-                return devotion;
-            }
-        }
 
         #endregion
 
@@ -113,7 +65,28 @@ namespace MaGeek.UI
 
         #endregion
 
+        private void UpdateUGrid()
+        {
 
+            /*UGrid.Children.Clear();
+            foreach(var card in App.state.CurrentDeck.Cards)
+            {
+                var v = new StackPanel()
+                {
+                    Background = Brushes.Black,
+                    Width= 125,
+                    Height= 174,
+                };
+                var i = new Image()
+                {
+                    //Source = new Uri(card.variants[0].ImageUrl, UriKind.Absolute);
+                };
+                v.Children.Add(i);
+                UGrid.Children.Add(v);
+            
+            }*/
+
+        }
 
     }
 

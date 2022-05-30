@@ -9,35 +9,46 @@
 
 
     <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"></ColumnDefinition>
+            <ColumnDefinition Width="1"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
+        </Grid.RowDefinitions>
     
-    <StackPanel Width="500">
+        <Label>INPUT:</Label>
+
+        <TextBox Grid.Row="1" Name="DeckTitle" />
+        <StackPanel Grid.Row="2"
+                    Grid.RowSpan="2">
+            <TextBox x:Name="ImportTxt"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"></TextBox>
+            <Label>hu</Label>
+            
+        </StackPanel>
+
+        <Button Click="StartImport" Grid.Row="3" Grid.Column="2" Content="IMPORT"></Button>
+
+        <StackPanel Background="#555" Grid.Column="1" Grid.RowSpan="3"></StackPanel>
         
-        <Label Foreground="White">Here you can import cards, each line should have a count and a cardname. </Label>
-        <DockPanel>
-        </DockPanel>
-        <TextBox x:Name="ImportTxt" Height="500"
-                 Background="Black"
-                 Foreground="White"
-                 BorderBrush="#111"
-                 AcceptsReturn="True"
-                 TextWrapping="Wrap"
-                 VerticalScrollBarVisibility="Auto"></TextBox>
-        <DockPanel>
+        <StackPanel Grid.Column="2" Grid.RowSpan="3">
                 <CheckBox Name="AsGot" Margin="3" IsChecked="false">Add as Got</CheckBox>
                 <CheckBox Name="AsDeck" Margin="3" IsChecked="true">MakeDeck</CheckBox>
-            <TextBox  x:Name="DeckTitle"
-                      Height="20"
-                 Background="Black"
-                 Foreground="White"
-                 BorderBrush="#111"></TextBox>
-        </DockPanel>
-        <Button Click="StartImport">Proceed</Button>
+        </StackPanel>
 
 
-    </StackPanel>
 
-    <StackPanel Name="LoadPanel" Background="Black" >
-        <ProgressBar Name="LoadBar" Height="20"></ProgressBar>
+        <StackPanel Name="LoadPanel" Background="Black"  Grid.Row="3" Grid.Column="2">
+        <ProgressBar Name="LoadBar" ></ProgressBar>
         <Label Foreground="White">Loading cards...</Label>
     </StackPanel>
         

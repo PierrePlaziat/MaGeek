@@ -4,6 +4,7 @@ using Plaziat.CommonWpf;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,43 +32,22 @@ namespace MaGeek.UI
 
         #endregion
 
-        private string filter;
-        public string Filter { 
-            get { return filter; } 
-            set { filter = value; OnPropertyChanged(); }
-        }
-
         public ObservableCollection<MagicDeck> Decks { 
             get {
-                return App.appContext.decksBind;
+                return App.database.decksBind;
             }
         }
 
         internal void Refresh()
         {
-            OnPropertyChanged("Decks");
+            decklistbox.ItemsSource = null;
+            decklistbox.ItemsSource = Decks;
         }
 
         public DeckList()
         {
             DataContext = this;
             InitializeComponent();
-        }
-
-        private void AddDeck(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                string deckTitle = String.IsNullOrEmpty(Filter) ? "NewDeck" : Filter;
-                MagicDeck deck = new MagicDeck(deckTitle);
-                App.appContext.decks.Add(deck);
-                App.appContext.SaveChanges();
-                OnPropertyChanged("Decks"); 
-            }
-            catch (Exception ex)
-            {
-                MessageBoxHelper.ShowMsg(ex.Message);
-            }
         }
 
         private void ListView_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -81,11 +61,56 @@ namespace MaGeek.UI
                 }
             }
         }
-
         protected virtual void OnRaiseDeckEvent(SelectDeckEventArgs e)
         {
             CustomEventHandler raiseEvent = RaiseCustomEvent;
             if (raiseEvent != null) raiseEvent(this, e);
+        }
+
+        private void AddDeck(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string deckTitle = MessageBoxHelper.UserInputString("Please enter a title for this new deck");
+                if (deckTitle == null) return;
+                if (App.database.decks.Where(x => x.Name == deckTitle).Any())
+                {
+                    MessageBoxHelper.ShowMsg("There is already a deck with that name.");
+                    return; 
+                }
+                MagicDeck deck = new MagicDeck(deckTitle);
+                App.database.decks.Add(deck);
+                App.database.SaveChanges();
+                OnPropertyChanged("Decks");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowMsg(ex.Message);
+            }
+        }
+        private void RenameDeck(object sender, RoutedEventArgs e)
+        {
+            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.state.CurrentDeck.Name+"\"");
+            if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
+            if (App.database.decks.Where(x => x.Name == newTitle).Any())
+            {
+                MessageBoxHelper.ShowMsg("There is already a deck with that name.");
+                return;
+            }
+            App.state.CurrentDeck.Name = newTitle;
+            App.database.SaveChanges();
+            Refresh();
+        }
+
+        private void DuplicateDeck(object sender, RoutedEventArgs e)
+        {
+            if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
+            {
+                var deckToCopy = Decks[decklistbox.SelectedIndex];
+                var newDeck = new MagicDeck(deckToCopy);
+                Decks.Add(newDeck);
+                App.database.SaveChanges();
+            }
         }
 
         private void DeleteDeck(object sender, RoutedEventArgs e)
@@ -96,19 +121,8 @@ namespace MaGeek.UI
                 {
                     var deck = Decks[decklistbox.SelectedIndex];
                     Decks.Remove(deck);
-                    App.appContext.SaveChanges();
+                    App.database.SaveChanges();
                 }
-            }
-        }
-
-        private void DuplicateDeck(object sender, RoutedEventArgs e)
-        {
-            if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
-            {
-                var deckToCopy = Decks[decklistbox.SelectedIndex];
-                var newDeck = new MagicDeck(deckToCopy);
-                Decks.Add(newDeck);
-                App.appContext.SaveChanges();
             }
         }
 
