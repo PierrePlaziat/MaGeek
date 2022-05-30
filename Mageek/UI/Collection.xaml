@@ -15,7 +15,7 @@
     <Grid Background="#222">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="26"></RowDefinition>
             <RowDefinition Height="1"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
@@ -52,7 +52,8 @@
         
         <!-- WebSearch Searching -->
         
-        <Grid Visibility="{Binding IsSearching,Converter={StaticResource BoolToVisibilityConverter}}">
+        <Grid Visibility="{Binding IsSearching,Converter={StaticResource BoolToVisibilityConverter}}"
+              Background="#222">
             
 
             <Grid.ColumnDefinitions>
@@ -64,7 +65,7 @@
             <Label Foreground="#fff" Content="Searching..."></Label>
             
                 <Grid Grid.Column="1">
-                    <ProgressBar Value="50"/>
+                    <ProgressBar IsIndeterminate="true"/>
                     <TextBlock Text="{Binding ElementName=pbStatus, Path=Value, StringFormat={}{0:0}%}" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center" />

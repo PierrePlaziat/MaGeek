@@ -18,40 +18,39 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="25"></RowDefinition>
-            <RowDefinition Height="25"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="20"></RowDefinition>
         </Grid.RowDefinitions>
     
         <Label>INPUT:</Label>
 
-        <TextBox Grid.Row="1" Name="DeckTitle" />
-        <StackPanel Grid.Row="2"
-                    Grid.RowSpan="2">
-            <TextBox x:Name="ImportTxt"
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"
-                     VerticalScrollBarVisibility="Auto"></TextBox>
-            <Label>hu</Label>
-            
+        <StackPanel Grid.Row="1" Grid.RowSpan="2">
+            <TextBox  Name="DeckTitle" />
         </StackPanel>
+        <TextBox x:Name="ImportTxt"
+                    Grid.Row="1" 
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    VerticalContentAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    VerticalScrollBarVisibility="Auto"></TextBox>
 
-        <Button Click="StartImport" Grid.Row="3" Grid.Column="2" Content="IMPORT"></Button>
-
+        <Button Click="StartImport" Grid.Row="3" Grid.Column="0" Content="IMPORT" Grid.ColumnSpan="3"></Button>
+        
+        
         <StackPanel Background="#555" Grid.Column="1" Grid.RowSpan="3"></StackPanel>
-        
+
         <StackPanel Grid.Column="2" Grid.RowSpan="3">
-                <CheckBox Name="AsGot" Margin="3" IsChecked="false">Add as Got</CheckBox>
-                <CheckBox Name="AsDeck" Margin="3" IsChecked="true">MakeDeck</CheckBox>
+            <CheckBox Name="AsGot" Margin="3" IsChecked="false">Add as Got</CheckBox>
+            <CheckBox Name="AsDeck" Margin="3" IsChecked="true">MakeDeck</CheckBox>
         </StackPanel>
 
+        <StackPanel Name="LoadPanel" Background="Black"
+                    Grid.ColumnSpan="3" Grid.RowSpan="3">
+        <ProgressBar Grid.Row="3" Grid.Column="0" Name="LoadBar"  ></ProgressBar>
+            <TextBox Name="ImportOutput"></TextBox>
+        </StackPanel>
 
-
-        <StackPanel Name="LoadPanel" Background="Black"  Grid.Row="3" Grid.Column="2">
-        <ProgressBar Name="LoadBar" ></ProgressBar>
-        <Label Foreground="White">Loading cards...</Label>
-    </StackPanel>
-        
     </Grid>
     
 </UserControl>

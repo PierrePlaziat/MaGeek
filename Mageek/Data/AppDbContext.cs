@@ -27,6 +27,7 @@ namespace MaGeek.Data
                 .WithMany(c => c.Decks);
 
             modelBuilder.Entity<MagicDeck>().Property(e => e.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CardTraduction>().Property(e => e.Id).ValueGeneratedOnAdd();
 
         }
 
@@ -36,7 +37,7 @@ namespace MaGeek.Data
         public DbSet<CardTraduction> traductions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){
-            optionsBuilder.UseSqlite("Data Source=D:\\PROJECTS\\VS\\Mageek\\Mtg.db");
+            optionsBuilder.UseSqlite("Data Source=D:\\GitPers\\MaGeek\\Mtg.db");
             optionsBuilder.UseLazyLoadingProxies();
         }
 

@@ -61,10 +61,12 @@ namespace MaGeek.UI
             LoadBar.Maximum = importLines.Count;
             LoadBar.Minimum = 0;
             LoadBar.Value=0;
+            ImportOutput.Text = "";
             foreach (string line in importLines)
             {
                 if (!string.IsNullOrEmpty(line))
                 {
+                    ImportOutput.Text = "Importing : "+ line;
                     string cardname = line.Substring(line.IndexOf(' ') + 1);
                     if (!App.database.cards.Where(x => x.Name_VO == cardname).Any())
                     {
@@ -80,8 +82,9 @@ namespace MaGeek.UI
         }
 
         private async Task ImportIntoCollection(bool asGot)
-        {
+        {            
             List<string> importLines = ImportTxt.Text.Split(Environment.NewLine).ToList();
+
             foreach (string line in importLines)
             {
                 if (!string.IsNullOrEmpty(line))

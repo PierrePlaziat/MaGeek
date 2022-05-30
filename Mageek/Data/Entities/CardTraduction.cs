@@ -11,6 +11,7 @@ namespace MaGeek.Data.Entities
     public class CardTraduction
     {
         [Key]
+        public int Id { get; set; }
         public string Name_VO { get; set; }
         public string Language { get; set; }
         public string TraductedName { get; set; }

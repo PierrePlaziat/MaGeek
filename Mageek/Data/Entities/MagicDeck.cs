@@ -6,6 +6,14 @@ namespace MaGeek.Data.Entities
     public class MagicDeck
     {
 
+        [Key]
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Commander { get; set; }
+        public virtual ICollection<MagicCard> Cards { get; set; } = new List<MagicCard>();
+
+        #region CTOR
+
         public MagicDeck() {}
 
         public MagicDeck(string deckTitle)
@@ -19,12 +27,9 @@ namespace MaGeek.Data.Entities
             Cards = new List<MagicCard>(deckToCopy.Cards);
         }
 
-        [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Commander { get; set; }
+        #endregion
 
-        public virtual ICollection<MagicCard> Cards { get; set; } = new List<MagicCard>();
+        #region Accessors
 
         public int CardCount { 
             get {
@@ -95,6 +100,8 @@ namespace MaGeek.Data.Entities
                 return devotion;
             }
         }
+
+        #endregion
 
     }
 }

@@ -22,8 +22,8 @@ namespace MaGeek.Data
                     MagicCard card = SaveLocalCard(foundCard); 
                     card.AddVariant(foundCard);
                 }
+                App.database.UpdateCollection();
             }
-            App.database.UpdateCollection();
         }
 
         private MagicCard SaveLocalCard(ICard iCard)

@@ -34,10 +34,14 @@
             <ComboBox Width="150" 
                       HorizontalAlignment="Left">
                 <ComboBoxItem IsSelected="True">French</ComboBoxItem>
-                <ComboBoxItem>Deutch</ComboBoxItem>
-                <ComboBoxItem>Espanol</ComboBoxItem>
+                <ComboBoxItem>German</ComboBoxItem>
+                <ComboBoxItem>Spanish</ComboBoxItem>
                 <ComboBoxItem>Italian</ComboBoxItem>
+                <ComboBoxItem>Portuguese (Brazil)</ComboBoxItem>
                 <ComboBoxItem>Japanese</ComboBoxItem>
+                <ComboBoxItem>Chinese Simplified</ComboBoxItem>
+                <ComboBoxItem>Korean</ComboBoxItem>
+                <ComboBoxItem>Russian</ComboBoxItem>
             </ComboBox>
         </DockPanel>
 
