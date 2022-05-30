@@ -15,6 +15,8 @@ namespace MaGeek.UI
     public partial class DeckList : UserControl, INotifyPropertyChanged
     {
 
+        #region Attributes
+
         #region PropertyChange
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -25,24 +27,11 @@ namespace MaGeek.UI
 
         #endregion
 
-        #region Select Deck Event
-
-        public delegate void CustomEventHandler(object sender, SelectDeckEventArgs args);
-        public event CustomEventHandler RaiseCustomEvent;
+        public ObservableCollection<MagicDeck> Decks { get { return App.cardManager.BinderDeck; } }
 
         #endregion
 
-        public ObservableCollection<MagicDeck> Decks { 
-            get {
-                return App.database.decksBind;
-            }
-        }
-
-        internal void Refresh()
-        {
-            decklistbox.ItemsSource = null;
-            decklistbox.ItemsSource = Decks;
-        }
+        #region CTOR
 
         public DeckList()
         {
@@ -50,21 +39,18 @@ namespace MaGeek.UI
             InitializeComponent();
         }
 
-        private void ListView_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        #endregion
+
+        private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
-            {
-                var deck = Decks[decklistbox.SelectedIndex];
-                if (deck != null)
-                {
-                    OnRaiseDeckEvent(new SelectDeckEventArgs(deck));
-                }
-            }
+            var deck = decklistbox.SelectedItem as MagicDeck;
+            if (deck != null) App.state.SelectDeck(deck);
         }
-        protected virtual void OnRaiseDeckEvent(SelectDeckEventArgs e)
+        
+        internal void forceRefresh()
         {
-            CustomEventHandler raiseEvent = RaiseCustomEvent;
-            if (raiseEvent != null) raiseEvent(this, e);
+            decklistbox.ItemsSource = null;
+            decklistbox.ItemsSource = Decks;
         }
 
         private void AddDeck(object sender, RoutedEventArgs e)
@@ -88,18 +74,19 @@ namespace MaGeek.UI
                 MessageBoxHelper.ShowMsg(ex.Message);
             }
         }
+        
         private void RenameDeck(object sender, RoutedEventArgs e)
         {
-            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.state.CurrentDeck.Name+"\"");
+            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.state.SelectedDeck.Name+"\"");
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
             if (App.database.decks.Where(x => x.Name == newTitle).Any())
             {
                 MessageBoxHelper.ShowMsg("There is already a deck with that name.");
                 return;
             }
-            App.state.CurrentDeck.Name = newTitle;
+            App.state.SelectedDeck.Name = newTitle;
             App.database.SaveChanges();
-            Refresh();
+            forceRefresh();
         }
 
         private void DuplicateDeck(object sender, RoutedEventArgs e)
@@ -125,7 +112,6 @@ namespace MaGeek.UI
                 }
             }
         }
-
     }
 
 }

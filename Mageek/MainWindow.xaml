@@ -83,12 +83,12 @@
                     BorderThickness="0" 
                     Background="#222">
 
-            <TabItem Header="Card List" Foreground="#999">
-                <local:Collection x:Name="LocalColec" Grid.Column="0" Grid.Row="2"></local:Collection>
+            <TabItem Header="Card Searcher" Foreground="#999">
+                <local:CardSearcher x:Name="LocalColec" Grid.Column="0" Grid.Row="2"></local:CardSearcher>
             </TabItem>
 
             <TabItem Header="Card Import" Foreground="#999">
-                <local:Importer x:Name="Importer" Grid.Column="0" Grid.Row="2"></local:Importer>
+                <local:ImportExport x:Name="Importer" Grid.Column="0" Grid.Row="2"></local:ImportExport>
             </TabItem>
 
             <TabItem Header="Parameters" Foreground="#999">
@@ -97,7 +97,7 @@
 
         </TabControl>
 
-        <local:CardDetails x:Name="CardDetails" Grid.Column="4" Grid.RowSpan="3"></local:CardDetails>
+        <local:CardInspector x:Name="CardDetails" Grid.Column="4" Grid.RowSpan="3"></local:CardInspector>
 
 
         <TabControl Grid.Column="0"
@@ -107,7 +107,7 @@
                     Background="#222">
 
             <TabItem Header="Opened" Foreground="#999">
-                <local:SelectedDeck x:Name="SelectedDeck" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left"></local:SelectedDeck>
+                <local:DeckTable x:Name="SelectedDeck" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left"></local:DeckTable>
             </TabItem>
 
             <TabItem Header="Proxy" Foreground="#999">

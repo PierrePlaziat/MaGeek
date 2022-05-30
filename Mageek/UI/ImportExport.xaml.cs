@@ -13,7 +13,7 @@ using System.Windows.Controls;
 namespace MaGeek.UI
 {
 
-    public partial class Importer : UserControl, INotifyPropertyChanged
+    public partial class ImportExport : UserControl, INotifyPropertyChanged
     {
 
         #region PropertyChange
@@ -26,7 +26,7 @@ namespace MaGeek.UI
 
         #endregion
 
-        public Importer()
+        public ImportExport()
         {
             InitializeComponent();
             LoadPanel.Visibility = Visibility.Collapsed;
@@ -70,7 +70,7 @@ namespace MaGeek.UI
                     string cardname = line.Substring(line.IndexOf(' ') + 1);
                     if (!App.database.cards.Where(x => x.Name_VO == cardname).Any())
                     {
-                        await App.cardManager.SearchCardsOnline(cardname, true);
+                        await App.cardManager.MtgApi.SearchCardsOnline(cardname, true);
                     }
                     var card = App.database.cards.Where(x => x.Name_VO == cardname).FirstOrDefault();
                     if (card != null) deck.Cards.Add(card);
@@ -92,7 +92,7 @@ namespace MaGeek.UI
                     string cardname = line.Substring(line.IndexOf(' ') + 1);
                     if (!App.database.cards.Where(x => x.Name_VO == cardname).Any())
                     {
-                        await App.cardManager.SearchCardsOnline(cardname, true);
+                        await App.cardManager.MtgApi.SearchCardsOnline(cardname, true);
                     }
                 }
             }

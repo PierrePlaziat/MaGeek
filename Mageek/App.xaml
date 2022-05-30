@@ -54,9 +54,7 @@
             <Setter Property="AlternatingRowBackground" Value="#444"/>
             <Setter Property="Foreground" Value="#999"/>
         </Style>
-
-
-
+        
         <!-- SCROLLBAR -->
         
         <SolidColorBrush x:Key="StandardBorderBrush" Color="#888" />

@@ -9,7 +9,7 @@ using System.Windows.Controls;
 namespace MaGeek.UI
 {
 
-    public partial class CardDetails : UserControl, INotifyPropertyChanged
+    public partial class CardInspector : UserControl, INotifyPropertyChanged
     {
 
         #region Binding
@@ -39,6 +39,11 @@ namespace MaGeek.UI
                 OnPropertyChanged("Variants");
                 OnPropertyChanged("CollectedQuantity");
             }
+        }
+
+        void HandleCardSelected(object sender, SelectCardEventArgs e)
+        {
+            SelectedCard = e.Card;
         }
 
         public int CollectedQuantity {
@@ -91,10 +96,11 @@ namespace MaGeek.UI
 
         #region CTOR
 
-        public CardDetails()
+        public CardInspector()
         {
             InitializeComponent();
             DataContext = this;
+            App.state.RaiseSelectCard += HandleCardSelected;
         }
 
         #endregion
@@ -115,7 +121,7 @@ namespace MaGeek.UI
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            OnRaiseCustomEvent(new AddToDeckEventArgs(SelectedCard, App.state.CurrentDeck));
+            OnRaiseCustomEvent(new AddToDeckEventArgs(SelectedCard, App.state.SelectedDeck));
         }
 
         protected virtual void OnRaiseCustomEvent(AddToDeckEventArgs e)
