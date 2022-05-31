@@ -70,6 +70,10 @@
             <TabItem Header="Decks" Foreground="#999">
                 <local:DeckList x:Name="DeckList" Grid.Column="0" Grid.Row="0"></local:DeckList>
             </TabItem>
+
+            <TabItem Header="Parameters" Foreground="#999">
+                <local:Options x:Name="Options" Grid.Column="0" Grid.Row="2"></local:Options>
+            </TabItem>
 <!--
             <TabItem Header="Collec" Foreground="#999">
             </TabItem>
@@ -89,10 +93,6 @@
 
             <TabItem Header="Card Import" Foreground="#999">
                 <local:ImportExport x:Name="Importer" Grid.Column="0" Grid.Row="2"></local:ImportExport>
-            </TabItem>
-
-            <TabItem Header="Parameters" Foreground="#999">
-                <local:Options x:Name="Options" Grid.Column="0" Grid.Row="2"></local:Options>
             </TabItem>
 
         </TabControl>

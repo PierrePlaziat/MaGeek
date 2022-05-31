@@ -12,6 +12,8 @@
         <cwpf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </UserControl.Resources>
 
+    
+    
     <Grid Background="#222">
 
         <Grid.RowDefinitions>
@@ -102,35 +104,41 @@
             <Label Grid.Row="0" Grid.Column="0"
                    HorizontalAlignment="Right" 
                    Content="Name"/>
-            <TextBox Name="Filter_Name"
+            <TextBox Text="{Binding FilterName}"
                      Grid.Row="0" Grid.Column="1"
                      HorizontalAlignment="Stretch"/>
 
             <Label Grid.Row="0" Grid.Column="2"
                    HorizontalAlignment="Right" 
                    Content="Type"/>
-            <TextBox Name="Filter_Type"
+            <TextBox Text="{Binding FilterType}"
                      Grid.Row="0" Grid.Column="3"
                      HorizontalAlignment="Stretch"/>
 
             <Label Grid.Row="0" Grid.Column="4"
                    HorizontalAlignment="Right" 
                    Content="TextContains"/>
-            <TextBox Name="Filter_TextContains"
+            <TextBox Text="{Binding FilterText}"
                      Grid.Row="0" Grid.Column="5"
                      HorizontalAlignment="Stretch"/>
 
-            <Label Grid.Row="1" Grid.Column="0"
-                   HorizontalAlignment="Right"
-                   Content="Min CMC"/>
-            <TextBox Name="Filter_MinCmc" 
-                     Grid.Row="1" Grid.Column="1"
-                     HorizontalAlignment="Stretch"/>
+            <DockPanel Grid.Row="1" Grid.Column="0">
+                <Label Content="CMC >="
+                       HorizontalAlignment="Left"/>
+                <Slider Minimum="0" Maximum="20"
+                        Width="40"
+                        Value="{Binding FilterMinCmc}"
+                        HorizontalAlignment="Left"/>
+            </DockPanel>
 
-            <Label Grid.Row="1" Grid.Column="4"
-                   HorizontalAlignment="Right"
-                   Content="Mana Colors"/>
-            <CheckBox Content=""></CheckBox>
+            <DockPanel Grid.Row="1" Grid.Column="1">
+                <Label Content="CMC &lt;="
+                       HorizontalAlignment="Left"/>
+                <Slider Minimum="0" Maximum="20"
+                        Width="40"
+                        Value="{Binding FilterMaxCmc}"
+                        HorizontalAlignment="Left"/>
+            </DockPanel>
 
         </Grid>
 
