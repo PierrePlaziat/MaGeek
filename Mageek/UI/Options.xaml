@@ -10,7 +10,7 @@
     <Grid>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"></ColumnDefinition>
+            <ColumnDefinition Width="110"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -21,7 +21,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         
-        <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">Cardlist Find Behaviour:</Label>
+        <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">Search Behaviour:</Label>
         <DockPanel Grid.Column="1" Grid.Row="0">
             <ComboBox Width="150" HorizontalAlignment="Left">
                 <ComboBoxItem IsSelected="True">Wide</ComboBoxItem>
@@ -29,7 +29,7 @@
             </ComboBox>
         </DockPanel>
 
-        <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right">Foreign language:</Label>
+        <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right">Foreign Language:</Label>
         <DockPanel Grid.Column="1" Grid.Row="1">
             <ComboBox Width="150" 
                       HorizontalAlignment="Left">

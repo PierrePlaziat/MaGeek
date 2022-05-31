@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:cwpf="clr-namespace:MaGeek.Utils.CommonWpf"
              xmlns:local="clr-namespace:MaGeek.UI"
+             xmlns:plaziat="clr-namespace:Plaziat.CommonWpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -19,7 +20,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="26"></RowDefinition>
             <RowDefinition Height="1"></RowDefinition>
-            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -41,7 +42,7 @@
                          Height="19"
                          Name="CurrentSearch" 
                          HorizontalAlignment="Stretch" 
-                         IsEnabled="{Binding isNotSearching}"
+                         IsEnabled="{Binding isSearching, Converter={x:Static plaziat:NotConverter.Instance}}"
                          KeyDown="SearchTextBox_KeyDown">
             </TextBox>
             <Button Grid.Row="0"
@@ -85,60 +86,70 @@
         <StackPanel Grid.Row="1" Background="#444"></StackPanel>
         
         <!-- Filters -->
-        
-        <Grid Grid.Row="2">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25"></RowDefinition>
-                <RowDefinition Height="25"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-
-            <Label Grid.Row="0" Grid.Column="0"
-                   HorizontalAlignment="Right" 
-                   Content="Name"/>
-            <TextBox Text="{Binding FilterName}"
-                     Grid.Row="0" Grid.Column="1"
-                     HorizontalAlignment="Stretch"/>
-
-            <Label Grid.Row="0" Grid.Column="2"
-                   HorizontalAlignment="Right" 
-                   Content="Type"/>
-            <TextBox Text="{Binding FilterType}"
-                     Grid.Row="0" Grid.Column="3"
-                     HorizontalAlignment="Stretch"/>
-
-            <Label Grid.Row="0" Grid.Column="4"
-                   HorizontalAlignment="Right" 
-                   Content="TextContains"/>
-            <TextBox Text="{Binding FilterText}"
-                     Grid.Row="0" Grid.Column="5"
-                     HorizontalAlignment="Stretch"/>
-
-            <DockPanel Grid.Row="1" Grid.Column="0">
+            <DockPanel Grid.Row="2" Grid.Column="0">
+                <Label HorizontalAlignment="Right" 
+                       Content="Name"/>
+                <TextBox Text="{Binding FilterName}"
+                         Width="120"
+                         Grid.Row="0" Grid.Column="1"
+                         HorizontalAlignment="Stretch"/>
+                <Label HorizontalAlignment="Right" 
+                       Content="Type"/>
+                <TextBox Text="{Binding FilterType}"
+                         Width="120"
+                         Grid.Row="0" Grid.Column="3"
+                         HorizontalAlignment="Stretch"/>
                 <Label Content="CMC >="
                        HorizontalAlignment="Left"/>
                 <Slider Minimum="0" Maximum="20"
                         Width="40"
                         Value="{Binding FilterMinCmc}"
                         HorizontalAlignment="Left"/>
-            </DockPanel>
-
-            <DockPanel Grid.Row="1" Grid.Column="1">
                 <Label Content="CMC &lt;="
                        HorizontalAlignment="Left"/>
                 <Slider Minimum="0" Maximum="20"
                         Width="40"
                         Value="{Binding FilterMaxCmc}"
                         HorizontalAlignment="Left"/>
+
+                <CheckBox IsChecked="{Binding FilterColorB}" Padding="0" Margin="3"></CheckBox>
+                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">b</Label>
+                <Separator Width="10" Background="Transparent"></Separator>
+
+                <CheckBox IsChecked="{Binding FilterColorW}" Padding="0" Margin="3"></CheckBox>
+                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">w</Label>
+                <Separator Width="10" Background="Transparent"></Separator>
+
+                <CheckBox IsChecked="{Binding FilterColorU}" Padding="0" Margin="3"></CheckBox>
+                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">u</Label>
+                <Separator Width="10" Background="Transparent"></Separator>
+
+                <CheckBox IsChecked="{Binding FilterColorG}" Padding="0" Margin="3"></CheckBox>
+                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">g</Label>
+                <Separator Width="10" Background="Transparent"></Separator>
+
+                <CheckBox IsChecked="{Binding FilterColorR}" Padding="0" Margin="3"></CheckBox>
+                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">r</Label>
+                <Separator Width="10" Background="Transparent"></Separator>
+
+                <CheckBox IsChecked="{Binding FilterColorI}" Padding="0" Margin="3"></CheckBox>
+                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">o</Label>
+                <Separator Width="10" Background="Transparent"></Separator>
+
             </DockPanel>
+        
+        <Grid Grid.Row="2">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
         </Grid>
 

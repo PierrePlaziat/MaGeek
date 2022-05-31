@@ -1,5 +1,4 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.Events;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -28,7 +27,6 @@ namespace MaGeek.UI
         #endregion
 
         public bool IsSearching { get { return isSearching; } set { isSearching = value; OnPropertyChanged(); OnPropertyChanged("IsNotSearching"); } }
-        public bool IsNotSearching { get { return !isSearching; } } // TODO xaml converter
         private bool isSearching = false;
 
         public ObservableCollection<MagicCard> CardsBind { 
@@ -39,7 +37,7 @@ namespace MaGeek.UI
                     .Where(x => x.Cmc <= FilterMaxCmc)
                     .Where(x => x.Name_VO.ToLower().Contains(FilterName.ToLower()))
                     .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()));
-                    //.Where(x => x.Text.Contains(FilterText))
+                //TODO color filters
                 return new ObservableCollection<MagicCard>(filtered); 
             }
         }
@@ -61,16 +59,8 @@ namespace MaGeek.UI
         public string FilterType
         {
             get { return filterType; }
-            set { filterType = value; OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
-            }
-        }
-
-        private string filterText = "";
-        public string FilterText
-        {
-            get { return filterText; }
-            set { filterText = value; OnPropertyChanged();
+            set { filterType = value; 
+                OnPropertyChanged();
                 OnPropertyChanged("CardsBind");
             }
         }
@@ -79,7 +69,8 @@ namespace MaGeek.UI
         public int FilterMinCmc
         {
             get { return filterMinCmc; }
-            set { filterMinCmc = value; OnPropertyChanged();
+            set { filterMinCmc = value; 
+                OnPropertyChanged();
                 OnPropertyChanged("CardsBind");
             }
         }
@@ -88,16 +79,80 @@ namespace MaGeek.UI
         public int FilterMaxCmc
         {
             get { return filterMaxCmc; }
-            set { filterMaxCmc = value; OnPropertyChanged();
+            set { filterMaxCmc = value; 
+                OnPropertyChanged();
                 OnPropertyChanged("CardsBind");
             }
         }
 
-        private string filterColors; //TODO
-        public string FilterColors
+        private bool filterColorB = true;
+        public bool FilterColorB
         {
-            get { return filterColors; }
-            set { filterColors = value; OnPropertyChanged();
+            get { return filterColorB; }
+            set
+            {
+                filterColorB = value; 
+                OnPropertyChanged();
+                OnPropertyChanged("CardsBind");
+            }
+        }
+
+        private bool filterColorW = true;
+        public bool FilterColorW
+        {
+            get { return filterColorW; }
+            set
+            {
+                filterColorW = value; 
+                OnPropertyChanged();
+                OnPropertyChanged("CardsBind");
+            }
+        }
+
+        private bool filterColorU = true;
+        public bool FilterColorU
+        {
+            get { return filterColorU; }
+            set
+            {
+                filterColorU = value; 
+                OnPropertyChanged();
+                OnPropertyChanged("CardsBind");
+            }
+        }
+
+        private bool filterColorG = true;
+        public bool FilterColorG
+        {
+            get { return filterColorG; }
+            set
+            {
+                filterColorG = value; 
+                OnPropertyChanged();
+                OnPropertyChanged("CardsBind");
+            }
+        }
+
+        private bool filterColorR = true;
+        public bool FilterColorR
+        {
+            get { return filterColorR; }
+            set
+            {
+                filterColorR = value;
+                OnPropertyChanged();
+                OnPropertyChanged("CardsBind");
+            }
+        }
+
+        private bool filterColorI = true;
+        public bool FilterColorI
+        {
+            get { return filterColorI; }
+            set
+            {
+                filterColorI = value;
+                OnPropertyChanged();
                 OnPropertyChanged("CardsBind");
             }
         }
@@ -138,13 +193,24 @@ namespace MaGeek.UI
         {
             if (string.IsNullOrEmpty(CurrentSearch.Text)) return;
             IsSearching = true;
+            await App.cardManager.MtgApi.SearchCardsOnline(CurrentSearch.Text);
+            ResetFilters();
             FilterName = CurrentSearch.Text;
+            CurrentSearch.Text = "";
+            IsSearching = false;
+        }
+
+        private void ResetFilters()
+        {
+            FilterName = "";
             FilterType = "";
-            FilterText = "";
             FilterMinCmc = 0;
             FilterMaxCmc = 20;
-            await App.cardManager.MtgApi.SearchCardsOnline(CurrentSearch.Text);
-            IsSearching = false;
+            FilterColorB = true;
+            FilterColorW = true;
+            FilterColorU = true;
+            FilterColorG = true;
+            FilterColorR = true;
         }
 
         #endregion

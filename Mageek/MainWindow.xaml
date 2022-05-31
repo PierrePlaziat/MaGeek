@@ -74,13 +74,7 @@
             <TabItem Header="Parameters" Foreground="#999">
                 <local:Options x:Name="Options" Grid.Column="0" Grid.Row="2"></local:Options>
             </TabItem>
-<!--
-            <TabItem Header="Collec" Foreground="#999">
-            </TabItem>
             
-            <TabItem Header="Wanted" Foreground="#999">
-            </TabItem>
--->
         </TabControl>
 
         <TabControl Grid.Column="2"
@@ -91,7 +85,7 @@
                 <local:CardSearcher x:Name="LocalColec" Grid.Column="0" Grid.Row="2"></local:CardSearcher>
             </TabItem>
 
-            <TabItem Header="Card Import" Foreground="#999">
+            <TabItem Header="Import Export" Foreground="#999">
                 <local:ImportExport x:Name="Importer" Grid.Column="0" Grid.Row="2"></local:ImportExport>
             </TabItem>
 
@@ -106,14 +100,14 @@
                     BorderThickness="0" 
                     Background="#222">
 
-            <TabItem Header="Opened" Foreground="#999">
+            <TabItem Header="Deck Table" Foreground="#999">
                 <local:DeckTable x:Name="SelectedDeck" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left"></local:DeckTable>
             </TabItem>
 
-            <TabItem Header="Proxy" Foreground="#999">
+            <TabItem Header="Statistics" Foreground="#999">
             </TabItem>
 
-            <TabItem Header="Market" Foreground="#999">
+            <TabItem Header="Missing Cards" Foreground="#999">
             </TabItem>
 
         </TabControl>
