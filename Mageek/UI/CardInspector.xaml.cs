@@ -89,9 +89,6 @@ namespace MaGeek.UI
             }
         }
 
-        public delegate void CustomEventHandler(object sender, AddToDeckEventArgs args);
-        public event CustomEventHandler RaiseCustomEvent;
-
         #endregion
 
         #region CTOR
@@ -121,13 +118,7 @@ namespace MaGeek.UI
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            OnRaiseCustomEvent(new AddToDeckEventArgs(SelectedCard, App.state.SelectedDeck));
-        }
-
-        protected virtual void OnRaiseCustomEvent(AddToDeckEventArgs e)
-        {
-            CustomEventHandler raiseEvent = RaiseCustomEvent;
-            if (raiseEvent != null) raiseEvent(this, e);
+            App.cardManager.AddCardToDeck(selectedCard, App.state.SelectedDeck);
         }
 
         #endregion
