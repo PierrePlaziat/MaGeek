@@ -1,4 +1,4 @@
-﻿using MaGeek.Data;
+﻿using MaGeek.CommonWpf;
 using MaGeek.Data.Entities;
 using Plaziat.CommonWpf;
 using System;
@@ -26,78 +26,125 @@ namespace MaGeek.UI
 
         #endregion
 
+        #region CTOR
+
         public ImportExport()
         {
             InitializeComponent();
             LoadPanel.Visibility = Visibility.Collapsed;
         }
 
-        private async void StartImport(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region Methods
+
+        #region UI Link
+
+        private async void StartExport(object sender, RoutedEventArgs e)
         {
-            bool asDeck = AsDeck.IsChecked.Value; 
+            //TODO
+        }
+
+        private async void LaunchImportation(object sender, RoutedEventArgs e)
+        {
+            bool asDeck = AsDeck.IsChecked.Value;
             bool asGot = AsGot.IsChecked.Value;
             if (asDeck && string.IsNullOrEmpty(DeckTitle.Text))
             {
                 MessageBoxHelper.ShowMsg("Please enter a title to the deck.");
                 return;
             }
-            if (asDeck && App.database.decks.Where(x=>x.Name == DeckTitle.Text).Any())
-            {
-                MessageBoxHelper.ShowMsg("A deck with that name already exists.");
-                return;
-            }
             LoadPanel.Visibility = Visibility.Visible;
-            if (asDeck) await ImportAsDeck(asGot);
-            else await ImportIntoCollection(asGot);
+            await ImportCards(asGot,asDeck);
             LoadPanel.Visibility = Visibility.Collapsed;
         }
-
-        private async Task ImportAsDeck(bool asGot)
+        
+        private void ResetLoadBar(int max)
         {
-            var deck = new MagicDeck();
-            deck.Name = DeckTitle.Text;
-            deck.Cards = new List<MagicCard>();
-            List<string> importLines = ImportTxt.Text.Split(Environment.NewLine).ToList();
-            LoadBar.Maximum = importLines.Count;
+            LoadBar.Maximum = max;
             LoadBar.Minimum = 0;
-            LoadBar.Value=0;
-            ImportOutput.Text = "";
+            LoadBar.Value = 0;
+        }
+
+        #endregion
+
+        private async Task ImportCards(bool asObtained,bool asDeck)
+        {
+
+            // Prepare
+
+            List<string> importLines = RichTextBoxHelper
+                .GetContent(ImportTxt)
+                .Split(Environment.NewLine)
+                .ToList();
+
+            ResetLoadBar(importLines.Count);
+
+            ImportOutput.Content = "";
+            string errors = "";
+
+            var deck = new MagicDeck()
+            {
+                Name = DeckTitle.Text,
+                Cards = new List<MagicCard>()
+            };
+
+            // Process
+
             foreach (string line in importLines)
             {
                 if (!string.IsNullOrEmpty(line))
                 {
-                    ImportOutput.Text = "Importing : "+ line;
+
+                    // Parse
+
+                    ImportOutput.Content = "Importing : "+ line;
+
                     string cardname = line.Substring(line.IndexOf(' ') + 1);
-                    if (!App.database.cards.Where(x => x.Name_VO == cardname).Any())
-                    {
-                        await App.cardManager.MtgApi.SearchCardsOnline(cardname, true);
-                    }
+                    int cardQuantity = int.Parse(line.Split(" ")[0]);
+
+                    // Search
+
                     var card = App.database.cards.Where(x => x.Name_VO == cardname).FirstOrDefault();
-                    if (card != null) deck.Cards.Add(card);
-                    LoadBar.Value++;
-                }
-            }
-            App.database.decks.Add(deck);
-            App.database.SaveChanges();
-        }
-
-        private async Task ImportIntoCollection(bool asGot)
-        {            
-            List<string> importLines = ImportTxt.Text.Split(Environment.NewLine).ToList();
-
-            foreach (string line in importLines)
-            {
-                if (!string.IsNullOrEmpty(line))
-                {
-                    string cardname = line.Substring(line.IndexOf(' ') + 1);
-                    if (!App.database.cards.Where(x => x.Name_VO == cardname).Any())
+                    if (card == null)
                     {
                         await App.cardManager.MtgApi.SearchCardsOnline(cardname, true);
+                        card = App.database.cards.Where(x => x.Name_VO == cardname).FirstOrDefault();
                     }
+
+                    // Add
+
+                    if (card != null)
+                    {
+                        if (asDeck)
+                        {
+                            for (int i =0;i< cardQuantity; i++)
+                            {
+                                deck.Cards.Add(card);
+                            }
+                        }
+                        if (asObtained) card.CollectedQuantity += cardQuantity;
+                    }
+                    else
+                    {
+                        errors += cardname + " not found\n";
+                    }
+
+                    LoadBar.Value++;
+
                 }
             }
+
+            // Finalize
+
+            if (asDeck) App.database.decks.Add(deck);
             App.database.SaveChanges();
+            ImportTxt.Document.Blocks.Clear();
+            ImportTxt.AppendText(errors);
+
         }
+
+        #endregion
 
     }
 

@@ -1,5 +1,4 @@
 ﻿using MaGeek.Data.Entities;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -37,6 +36,11 @@ namespace MaGeek.UI
                     .Where(x => x.Cmc <= FilterMaxCmc)
                     .Where(x => x.Name_VO.ToLower().Contains(FilterName.ToLower()))
                     .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()));
+                if (!filterColorB) filtered = filtered.Where(x => !x.ManaCost.Contains("B"));
+                if (!filterColorW) filtered = filtered.Where(x => !x.ManaCost.Contains("W"));
+                if (!filterColorU) filtered = filtered.Where(x => !x.ManaCost.Contains("U"));
+                if (!filterColorG) filtered = filtered.Where(x => !x.ManaCost.Contains("G"));
+                if (!filterColorR) filtered = filtered.Where(x => !x.ManaCost.Contains("R"));
                 //TODO color filters
                 return new ObservableCollection<MagicCard>(filtered); 
             }

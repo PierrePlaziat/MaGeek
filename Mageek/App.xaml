@@ -42,7 +42,7 @@
             <Setter Property="Maximum" Value="100"/>
             <Setter Property="Height" Value="20"/>
             <Setter Property="Background" Value="#555"/>
-            <Setter Property="Foreground" Value="#777"/>
+            <Setter Property="Foreground" Value="#AAA"/>
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
