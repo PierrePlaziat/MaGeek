@@ -42,7 +42,7 @@
         </Grid>
 
 
-        <ListView ItemsSource="{Binding CurrentDeck.CardRelations}" 
+        <ListView Name="LVDeck" ItemsSource="{Binding CurrentDeck.CardRelations}" 
                    BorderThickness="0"   Background="#222" Grid.Row="2" >
 
             <ListView.ItemContainerStyle>
@@ -67,9 +67,9 @@
 
                         <local:ManaCost Grid.Column="4" Cost="{Binding Card.ManaCost}" HorizontalAlignment="Right"/>
 
-                        <Button Grid.Column="0" Height="20" Foreground="Black" Content="-"></Button>
+                        <Button Grid.Column="0" Height="20" Foreground="Black" Content="-" Click="LessCard"></Button>
                         <Label  Grid.Column="1" Height="20" Background="#555" Padding="2" Foreground="White" Content="{Binding Quantity}"></Label>
-                        <Button Grid.Column="2" Height="20" Foreground="Black" Content="+"></Button>
+                        <Button Grid.Column="2" Height="20" Foreground="Black" Content="+" Click="MoreCard"></Button>
 
                     </Grid>
                 </DataTemplate>

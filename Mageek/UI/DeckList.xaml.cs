@@ -1,4 +1,5 @@
 ﻿using MaGeek.Data.Entities;
+using MaGeek.Events;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.ObjectModel;
@@ -36,6 +37,12 @@ namespace MaGeek.UI
         {
             DataContext = this;
             InitializeComponent();
+            App.state.RaiseDeckModif += HandleDeckModified;
+        }
+
+        void HandleDeckModified(object sender, DeckModifEventArgs e)
+        {
+            forceRefresh();
         }
 
         #endregion

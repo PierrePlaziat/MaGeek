@@ -44,6 +44,18 @@ namespace MaGeek
 
         #endregion
 
+        public void ModifDeck()
+        {
+            RaiseModifDeck(new DeckModifEventArgs());
+        }
+        public delegate void DeckModifEventHandler(object sender, DeckModifEventArgs args);
+        public event DeckModifEventHandler RaiseDeckModif;
+        protected virtual void RaiseModifDeck(DeckModifEventArgs e)
+        {
+            DeckModifEventHandler raiseEvent = RaiseDeckModif;
+            if (raiseEvent != null) raiseEvent(this, e);
+        }
+
     }
 
 }

@@ -14,14 +14,24 @@ namespace MaGeek.Data
 
         public void AddCardToDeck(MagicCard card, MagicDeck deck)
         {
-            var cardRelation = deck.CardRelations.Where(x=>x.CardId == card.CardId).FirstOrDefault();
+            var cardRelation = deck.CardRelations.Where(x => x.CardId == card.CardId).FirstOrDefault();
             if (cardRelation == null)
             {
-                cardRelation = new CardDeckRelation() { Card = card, Deck = deck, Quantity=0 };
+                cardRelation = new CardDeckRelation() { Card = card, Deck = deck, Quantity = 0 };
                 deck.CardRelations.Add(cardRelation);
             }
             cardRelation.Quantity++;
             App.database.SaveChanges();
+            App.state.ModifDeck();
+        }
+        public void RemoveCardFromDeck(MagicCard card, MagicDeck deck)
+        {
+            var cardRelation = deck.CardRelations.Where(x => x.CardId == card.CardId).FirstOrDefault();
+            if (cardRelation == null) return;
+            cardRelation.Quantity--;
+            if (cardRelation.Quantity == 0) deck.CardRelations.Remove(cardRelation);
+            App.database.SaveChanges();
+            App.state.ModifDeck();
         }
 
         public void GotCard_Add(MagicCard selectedCard)

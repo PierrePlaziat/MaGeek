@@ -1,4 +1,5 @@
 ﻿using MaGeek.Data.Entities;
+using MaGeek.Entities;
 using MaGeek.Events;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -26,7 +27,10 @@ namespace MaGeek.UI
         private MagicDeck currentDeck;
         public MagicDeck CurrentDeck { 
             get { return currentDeck; }
-            set { currentDeck = value; OnPropertyChanged(); }
+            set { 
+                currentDeck = value;
+                OnPropertyChanged();
+            }
         }
 
         void HandleDeckSelected(object sender, SelectDeckEventArgs e)
@@ -43,10 +47,37 @@ namespace MaGeek.UI
             InitializeComponent();
             DataContext = this;
             App.state.RaiseSelectDeck += HandleDeckSelected;
+            App.state.RaiseDeckModif += HandleDeckModified;
+        }
+
+        void HandleDeckModified(object sender, DeckModifEventArgs e)
+        {
+            forceRefresh();
         }
 
         #endregion
 
+        internal void forceRefresh()
+        {
+            CurrentDeck = null;
+            CurrentDeck = App.state.SelectedDeck;
+        }
+
+        private void LessCard(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var b = (Button)sender;
+            var cr = b.DataContext as CardDeckRelation;
+            var c = cr.Card;
+            App.cardManager.RemoveCardFromDeck(c, CurrentDeck);
+        }
+
+        private void MoreCard(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var b = (Button)sender;
+            var cr = b.DataContext as CardDeckRelation;
+            var c = cr.Card;
+            App.cardManager.AddCardToDeck(c, CurrentDeck);
+        }
     }
 
 }
