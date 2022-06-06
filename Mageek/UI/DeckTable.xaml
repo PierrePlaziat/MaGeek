@@ -76,30 +76,9 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <UniformGrid Name="UGrid" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Grid.RowSpan="3">
-            
-            <Border Background="AliceBlue" Grid.ColumnSpan="2">
-                <TextBlock Text="1"/>
-            </Border>
-            <Border Background="Cornsilk">
-                <TextBlock Text="2"/>
-            </Border>
-            <Border Background="DarkSalmon">
-                <TextBlock Text="3"/>
-            </Border>
-            <Border Background="Gainsboro" Grid.RowSpan="2">
-                <TextBlock Text="4"/>
-            </Border>
-            <Border Background="LightBlue">
-                <TextBlock Text="5"/>
-            </Border>
-            <Border Background="MediumAquamarine">
-                <TextBlock Text="6"/>
-            </Border>
-            <Border Background="MistyRose">
-                <TextBlock Text="7"/>
-            </Border>
-        </UniformGrid>
+        <StackPanel Background="#111" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Grid.RowSpan="3"></StackPanel>
+        
+        <UniformGrid Background="#111" Name="UGrid" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Grid.RowSpan="3"/>
 
     </Grid>
     

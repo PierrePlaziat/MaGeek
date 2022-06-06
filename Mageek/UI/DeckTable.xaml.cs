@@ -1,9 +1,11 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Entities;
 using MaGeek.Events;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace MaGeek.UI
 {
@@ -36,6 +38,7 @@ namespace MaGeek.UI
         void HandleDeckSelected(object sender, SelectDeckEventArgs e)
         {
             CurrentDeck = e.Deck;
+            RefreshUGrid();
         }
 
         #endregion
@@ -61,6 +64,7 @@ namespace MaGeek.UI
         {
             CurrentDeck = null;
             CurrentDeck = App.state.SelectedDeck;
+            RefreshUGrid();
         }
 
         private void LessCard(object sender, System.Windows.RoutedEventArgs e)
@@ -78,6 +82,24 @@ namespace MaGeek.UI
             var c = cr.Card;
             App.cardManager.AddCardToDeck(c, CurrentDeck);
         }
+
+        private void RefreshUGrid()
+        {
+            UGrid.Children.Clear();
+            foreach(var cardrel in CurrentDeck.CardRelations)
+            {
+                for(int i=0;i<cardrel.Quantity;i++)
+                {
+                    Uri Url = new Uri(cardrel.Card.variants[0].ImageUrl, UriKind.Absolute);
+                    Image img = new Image()
+                    {
+                        Source = new BitmapImage(Url),
+                    };
+                    UGrid.Children.Add(img);
+                }
+            }
+        }
+
     }
 
 }

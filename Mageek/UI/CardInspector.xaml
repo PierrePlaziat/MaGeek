@@ -17,7 +17,7 @@
             <RowDefinition Height="348"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition></RowDefinition>
-            <RowDefinition Height="100"></RowDefinition>
+            
         </Grid.RowDefinitions>
 
         <Grid Background="#111">
@@ -125,14 +125,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                
-            </Grid.ColumnDefinitions>
-        </Grid>
-        
-        <Label Grid.Row="3">TODO : StockMarket</Label>
 
     </Grid>
     
