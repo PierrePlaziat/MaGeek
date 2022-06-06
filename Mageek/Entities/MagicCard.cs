@@ -1,4 +1,5 @@
-﻿using MtgApiManager.Lib.Model;
+﻿using MaGeek.Entities;
+using MtgApiManager.Lib.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,8 @@ namespace MaGeek.Data.Entities
     {
 
         [Key]
-        public string Name_VO { get; set; }
+        public string CardId { get; set; }
+
         public string Type { get; set; }
         public string ManaCost { get; set; }
         public float? Cmc { get; set; }
@@ -18,10 +20,10 @@ namespace MaGeek.Data.Entities
         public string Power { get; set; }
         public string Toughness { get; set; }
         public int CollectedQuantity { get; set; }
-
         public virtual List<MagicCardVariant> variants { get; set; } = new List<MagicCardVariant>();
-        public virtual List<CardTraduction> Traductions { get; set; }
-        public virtual ICollection<MagicDeck> Decks { get; set; }
+        public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
+
+        public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
 
         #region CTOR
 
@@ -29,7 +31,7 @@ namespace MaGeek.Data.Entities
 
         public MagicCard(ICard selectedCard)
         {
-            Name_VO = selectedCard.Name;
+            CardId = selectedCard.Name;
             Type = selectedCard.Type;
             ManaCost = selectedCard.ManaCost;
             Cmc = selectedCard.Cmc;
@@ -62,7 +64,7 @@ namespace MaGeek.Data.Entities
                 Traductions.Add(
                     new CardTraduction()
                     {
-                        Name_VO = Name_VO,
+                        CardId = CardId,
                         Language = foreignName.Language,
                         TraductedName = foreignName.Name
                     }

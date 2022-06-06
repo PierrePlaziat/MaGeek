@@ -10,7 +10,7 @@ namespace MaGeek
         public static SqliteContext database = new SqliteContext();
         public static CardManager cardManager = new CardManager();
         public static AppState state = new AppState();
-
+        
     }
 
 }

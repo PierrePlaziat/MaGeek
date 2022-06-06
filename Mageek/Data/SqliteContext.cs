@@ -13,22 +13,42 @@ namespace MaGeek.Data
             optionsBuilder.UseLazyLoadingProxies();
         }
 
-        public DbSet<MagicCardVariant> cardVariants { get; set; }
         public DbSet<MagicCard> cards { get; set; }
-        public DbSet<MagicDeck> decks { get; set; }
+        public DbSet<MagicCardVariant> cardVariants { get; set; }
         public DbSet<CardTraduction> traductions { get; set; }
+        public DbSet<MagicDeck> decks { get; set; }
+        public DbSet<CardDeckRelation> cardsInDecks { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CardDeckRelation>().HasKey(q =>
+               new {
+                   q.DeckId,
+                   q.CardId,
+               });
+
             modelBuilder.Entity<MagicCardVariant>()
                         .HasOne(e => e.card)
                         .WithMany(e => e.variants);
-            modelBuilder.Entity<MagicDeck>()
-                        .HasMany(s => s.Cards)
-                        .WithMany(c => c.Decks);
 
-            modelBuilder.Entity<MagicDeck>().Property(e => e.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<CardTraduction>().Property(e => e.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CardTraduction>()
+                        .HasOne(e => e.Card)
+                        .WithMany(e => e.Traductions);
+
+            modelBuilder.Entity<CardDeckRelation>()
+                        .HasOne(s => s.Deck)
+                        .WithMany(e => e.CardRelations)
+                        .HasForeignKey(t => t.DeckId);
+
+            modelBuilder.Entity<CardDeckRelation>()
+                        .HasOne(s => s.Card)
+                        .WithMany(e => e.DeckRelations)
+                        .HasForeignKey(t => t.CardId);
+
+
+            modelBuilder.Entity<MagicDeck>().Property(e => e.DeckId).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CardTraduction>().Property(e => e.TraductionId).ValueGeneratedOnAdd();
         }
 
     }

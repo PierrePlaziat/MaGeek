@@ -2,6 +2,7 @@
 
 namespace MaGeek.UI
 {
+
     public partial class MainWindow : Window
     {
 
@@ -11,4 +12,5 @@ namespace MaGeek.UI
         }
 
     }
+
 }

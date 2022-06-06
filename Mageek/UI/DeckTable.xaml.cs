@@ -1,6 +1,5 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Events;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
@@ -33,13 +32,6 @@ namespace MaGeek.UI
         void HandleDeckSelected(object sender, SelectDeckEventArgs e)
         {
             CurrentDeck = e.Deck;
-        }
-
-        public ObservableCollection<MagicCard> cards;
-        public ObservableCollection<MagicCard> Cards
-        {
-            get { return cards; }
-            set { cards = value; OnPropertyChanged(); }
         }
 
         #endregion

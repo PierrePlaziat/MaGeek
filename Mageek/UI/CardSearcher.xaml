@@ -171,7 +171,7 @@
                       SelectionChanged="CardGrid_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Got" Binding="{Binding CollectedQuantity}" />
-                    <DataGridTextColumn Header="NameVO" Binding="{Binding Name_VO}" />
+                    <DataGridTextColumn Header="NameVO" Binding="{Binding CardId}" />
                     
                     <DataGridTemplateColumn Header="ManaCost">
                         <DataGridTemplateColumn.CellTemplate>

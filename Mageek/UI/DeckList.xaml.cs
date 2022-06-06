@@ -1,5 +1,4 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.Events;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.ObjectModel;
@@ -59,7 +58,7 @@ namespace MaGeek.UI
             {
                 string deckTitle = MessageBoxHelper.UserInputString("Please enter a title for this new deck");
                 if (deckTitle == null) return;
-                if (App.database.decks.Where(x => x.Name == deckTitle).Any())
+                if (App.database.decks.Where(x => x.Title == deckTitle).Any())
                 {
                     MessageBoxHelper.ShowMsg("There is already a deck with that name.");
                     return; 
@@ -77,14 +76,14 @@ namespace MaGeek.UI
         
         private void RenameDeck(object sender, RoutedEventArgs e)
         {
-            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.state.SelectedDeck.Name+"\"");
+            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.state.SelectedDeck.Title+"\"");
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
-            if (App.database.decks.Where(x => x.Name == newTitle).Any())
+            if (App.database.decks.Where(x => x.Title == newTitle).Any())
             {
                 MessageBoxHelper.ShowMsg("There is already a deck with that name.");
                 return;
             }
-            App.state.SelectedDeck.Name = newTitle;
+            App.state.SelectedDeck.Title = newTitle;
             App.database.SaveChanges();
             forceRefresh();
         }

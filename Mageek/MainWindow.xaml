@@ -54,7 +54,7 @@
             <ColumnDefinition Width="5"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="5"></ColumnDefinition>
-            <ColumnDefinition Width="250"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
@@ -103,13 +103,13 @@
             <TabItem Header="Deck Table" Foreground="#999">
                 <local:DeckTable x:Name="SelectedDeck" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left"></local:DeckTable>
             </TabItem>
-
+<!--
             <TabItem Header="Statistics" Foreground="#999">
             </TabItem>
 
             <TabItem Header="Missing Cards" Foreground="#999">
             </TabItem>
-
+-->
         </TabControl>
         
         <GridSplitter Grid.Column="0" Grid.Row="1"

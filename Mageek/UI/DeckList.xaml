@@ -60,7 +60,7 @@
 
                         <Label Grid.Column="1" Foreground="White" 
                                HorizontalAlignment="Stretch" 
-                               Content="{Binding Name}"/>
+                               Content="{Binding Title}"/>
 
                         <DockPanel Grid.Column="2">
                             

@@ -70,7 +70,7 @@ namespace MaGeek.Data
 
         private MagicCard FindLocalCard(ICard iCard)
         {
-            return App.database.cards.Where(x => x.Name_VO == iCard.Name).FirstOrDefault();
+            return App.database.cards.Where(x => x.CardId== iCard.Name).FirstOrDefault();
         }
 
     }

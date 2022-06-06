@@ -1,4 +1,5 @@
 ﻿using MaGeek.Data.Entities;
+using MaGeek.Entities;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -13,19 +14,25 @@ namespace MaGeek.Data
 
         public void AddCardToDeck(MagicCard card, MagicDeck deck)
         {
-            deck.Cards.Add(card);
+            var cardRelation = deck.CardRelations.Where(x=>x.CardId == card.CardId).FirstOrDefault();
+            if (cardRelation == null)
+            {
+                cardRelation = new CardDeckRelation() { Card = card, Deck = deck, Quantity=0 };
+                deck.CardRelations.Add(cardRelation);
+            }
+            cardRelation.Quantity++;
             App.database.SaveChanges();
         }
 
         public void GotCard_Add(MagicCard selectedCard)
         {
-            App.database.cards.Where(x => x.Name_VO == selectedCard.Name_VO).FirstOrDefault().CollectedQuantity++;
+            App.database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity++;
             App.database.SaveChanges();
         }
 
         public void GotCard_Remove(MagicCard selectedCard)
         {
-            App.database.cards.Where(x => x.Name_VO == selectedCard.Name_VO).FirstOrDefault().CollectedQuantity--;
+            App.database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity--;
             App.database.SaveChanges();
         }
 

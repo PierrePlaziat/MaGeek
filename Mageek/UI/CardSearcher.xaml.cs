@@ -34,7 +34,7 @@ namespace MaGeek.UI
                 var filtered = unfiltered
                     .Where(x => x.Cmc >= FilterMinCmc)
                     .Where(x => x.Cmc <= FilterMaxCmc)
-                    .Where(x => x.Name_VO.ToLower().Contains(FilterName.ToLower()))
+                    .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower()))
                     .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()));
                 if (!filterColorB) filtered = filtered.Where(x => !x.ManaCost.Contains("B"));
                 if (!filterColorW) filtered = filtered.Where(x => !x.ManaCost.Contains("W"));

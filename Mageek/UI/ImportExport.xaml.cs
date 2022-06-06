@@ -1,8 +1,10 @@
 ﻿using MaGeek.CommonWpf;
 using MaGeek.Data.Entities;
+using MaGeek.Entities;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -85,8 +87,8 @@ namespace MaGeek.UI
 
             var deck = new MagicDeck()
             {
-                Name = DeckTitle.Text,
-                Cards = new List<MagicCard>()
+                Title = DeckTitle.Text,
+                CardRelations = new ObservableCollection<CardDeckRelation>()
             };
 
             // Process
@@ -105,11 +107,11 @@ namespace MaGeek.UI
 
                     // Search
 
-                    var card = App.database.cards.Where(x => x.Name_VO == cardname).FirstOrDefault();
+                    var card = App.database.cards.Where(x => x.CardId == cardname).FirstOrDefault();
                     if (card == null)
                     {
                         await App.cardManager.MtgApi.SearchCardsOnline(cardname, true);
-                        card = App.database.cards.Where(x => x.Name_VO == cardname).FirstOrDefault();
+                        card = App.database.cards.Where(x => x.CardId == cardname).FirstOrDefault();
                     }
 
                     // Add
@@ -120,7 +122,7 @@ namespace MaGeek.UI
                         {
                             for (int i =0;i< cardQuantity; i++)
                             {
-                                deck.Cards.Add(card);
+                                App.cardManager.AddCardToDeck(card,deck);
                             }
                         }
                         if (asObtained) card.CollectedQuantity += cardQuantity;

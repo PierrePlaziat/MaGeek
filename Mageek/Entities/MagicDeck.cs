@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MaGeek.Entities;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace MaGeek.Data.Entities
@@ -7,10 +9,11 @@ namespace MaGeek.Data.Entities
     {
 
         [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Commander { get; set; }
-        public virtual ICollection<MagicCard> Cards { get; set; } = new List<MagicCard>();
+        public int DeckId { get; set; }
+
+        public string Title { get; set; }
+
+        public virtual ObservableCollection<CardDeckRelation> CardRelations { get; set; } = new ObservableCollection<CardDeckRelation>();
 
         #region CTOR
 
@@ -18,13 +21,13 @@ namespace MaGeek.Data.Entities
 
         public MagicDeck(string deckTitle)
         {
-            Name = deckTitle;
+            Title = deckTitle;
         }
 
         public MagicDeck(MagicDeck deckToCopy)
         {
-            this.Name = deckToCopy.Name + " - Copie";
-            Cards = new List<MagicCard>(deckToCopy.Cards);
+            this.Title = deckToCopy.Title+ " - Copie";
+            CardRelations = new ObservableCollection<CardDeckRelation>(deckToCopy.CardRelations);
         }
 
         #endregion
@@ -33,8 +36,15 @@ namespace MaGeek.Data.Entities
 
         public int CardCount { 
             get {
-                if (Cards != null) return Cards.Count;
-                else return -1;
+                int count = 0;
+                if (CardRelations != null)
+                {
+                    foreach (var card in CardRelations)
+                    {
+                        count += card.Quantity;
+                    }
+                }
+                return count;
             } 
         }
 
@@ -54,9 +64,9 @@ namespace MaGeek.Data.Entities
         {
             get
             {
-                if (Cards == null) return 0;
+                if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in Cards) devotion += c.DevotionB;
+                foreach (var c in CardRelations) devotion += c.Card.DevotionB * c.Quantity;
                 return devotion;
             }
         }
@@ -64,9 +74,9 @@ namespace MaGeek.Data.Entities
         {
             get
             {
-                if (Cards == null) return 0;
+                if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in Cards) devotion += c.DevotionW;
+                foreach (var c in CardRelations) devotion += c.Card.DevotionW * c.Quantity;
                 return devotion;
             }
         }
@@ -74,9 +84,9 @@ namespace MaGeek.Data.Entities
         {
             get
             {
-                if (Cards == null) return 0;
+                if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in Cards) devotion += c.DevotionU;
+                foreach (var c in CardRelations) devotion += c.Card.DevotionU * c.Quantity;
                 return devotion;
             }
         }
@@ -84,9 +94,9 @@ namespace MaGeek.Data.Entities
         {
             get
             {
-                if (Cards == null) return 0;
+                if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in Cards) devotion += c.DevotionG;
+                foreach (var c in CardRelations) devotion += c.Card.DevotionG * c.Quantity;
                 return devotion;
             }
         }
@@ -94,9 +104,9 @@ namespace MaGeek.Data.Entities
         {
             get
             {
-                if (Cards == null) return 0;
+                if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in Cards) devotion += c.DevotionR;
+                foreach (var c in CardRelations) devotion += c.Card.DevotionR * c.Quantity;
                 return devotion;
             }
         }

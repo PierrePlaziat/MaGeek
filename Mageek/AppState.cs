@@ -12,6 +12,7 @@ namespace MaGeek
         public MagicDeck SelectedDeck { get { return selectedDeck; } }
         public void SelectDeck(MagicDeck deck)
         {
+            selectedDeck = deck;
             RaiseDeckSelect(new SelectDeckEventArgs(deck));
         }
         public delegate void DeckEventHandler(object sender, SelectDeckEventArgs args);
@@ -30,6 +31,7 @@ namespace MaGeek
         public MagicCard SelectedCard { get { return selectedCard; } }
         internal void SelectCard(MagicCard card)
         {
+            selectedCard = card;
             RaiseCardSelect(new SelectCardEventArgs(card));
         }
         public delegate void CardEventHandler(object sender, SelectCardEventArgs args);

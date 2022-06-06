@@ -1,17 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MaGeek.Data.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MaGeek.Entities
 {
 
-    internal class CardDeckRelation
+    public class CardDeckRelation
     {
+
+
+        [Key, Column(Order = 0)]
         public int DeckId { get; set; }
-        public string CardName { get; set; }
+        [Key, Column(Order = 1)]
+        public string CardId { get; set; }
+
+        public virtual MagicDeck Deck { get; set; }
+        public virtual MagicCard Card { get; set; }
+
         public int Quantity{ get; set; }
+
     }
 
 }
