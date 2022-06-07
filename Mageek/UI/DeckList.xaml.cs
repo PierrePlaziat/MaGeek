@@ -83,6 +83,7 @@ namespace MaGeek.UI
         
         private void RenameDeck(object sender, RoutedEventArgs e)
         {
+            if (App.state.SelectedDeck == null) return;
             string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.state.SelectedDeck.Title+"\"");
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
             if (App.database.decks.Where(x => x.Title == newTitle).Any())
@@ -97,6 +98,7 @@ namespace MaGeek.UI
 
         private void DuplicateDeck(object sender, RoutedEventArgs e)
         {
+            if (App.state.SelectedDeck == null) return;
             if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
             {
                 var deckToCopy = Decks[decklistbox.SelectedIndex];
@@ -108,6 +110,7 @@ namespace MaGeek.UI
 
         private void DeleteDeck(object sender, RoutedEventArgs e)
         {
+            if (App.state.SelectedDeck == null) return;
             if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
             {
                 if (MessageBoxHelper.AskUser("Are you sure to delete this deck?"))

@@ -20,30 +20,32 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         
-        <DockPanel Grid.ColumnSpan="5">
-            <Label FontWeight="Bold" Foreground="White" Content="{Binding CurrentDeck.Title}"></Label>
+        <DockPanel>
         </DockPanel>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="25"></ColumnDefinition>
+                <ColumnDefinition Width="25"></ColumnDefinition>
+                <ColumnDefinition Width="25"></ColumnDefinition>
+                <ColumnDefinition Width="25"></ColumnDefinition>
+                <ColumnDefinition Width="25"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Column="0" Background="Black" Content="{Binding CurrentDeck.DevotionB}"></Label>
-            <Label Grid.Column="1" Background="White" Content="{Binding CurrentDeck.DevotionW}"></Label>
-            <Label Grid.Column="2" Background="DodgerBlue" Content="{Binding CurrentDeck.DevotionU}"></Label>
-            <Label Grid.Column="3" Background="DarkSeaGreen" Content="{Binding CurrentDeck.DevotionG}"></Label>
-            <Label Grid.Column="4" Background="IndianRed" Content="{Binding CurrentDeck.DevotionR}"></Label>
+            <Label FontWeight="Bold" Foreground="White" Content="{Binding CurrentDeck.Title}"></Label>
+            <Label Grid.Column="1" FontWeight="Bold" Foreground="Black" Content="{Binding CurrentDeck.DevotionB}"></Label>
+            <Label Grid.Column="2" FontWeight="Bold" Foreground="White" Content="{Binding CurrentDeck.DevotionW}"></Label>
+            <Label Grid.Column="3" FontWeight="Bold" Foreground="DodgerBlue" Content="{Binding CurrentDeck.DevotionU}"></Label>
+            <Label Grid.Column="4" FontWeight="Bold" Foreground="DarkSeaGreen" Content="{Binding CurrentDeck.DevotionG}"></Label>
+            <Label Grid.Column="5" FontWeight="Bold" Foreground="IndianRed" Content="{Binding CurrentDeck.DevotionR}"></Label>
             
         </Grid>
 
 
         <ListView Name="LVDeck" ItemsSource="{Binding CurrentDeck.CardRelations}" 
-                   BorderThickness="0"   Background="#222" Grid.Row="2" >
+                   BorderThickness="0"   Background="#222" Grid.Row="2" 
+                  SelectionChanged="LVDeck_SelectionChanged">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -63,7 +65,7 @@
                             <ColumnDefinition Width="auto"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <Label Foreground="White" Padding="4,1,1,1" Grid.Column="3" Content="{Binding Card.CardId}"></Label>
+                        <Label Foreground="White" Padding="4,1,1,1" Grid.Column="3" Content="{Binding Card.CardForeignName}"></Label>
 
                         <local:ManaCost Grid.Column="4" Cost="{Binding Card.ManaCost}" HorizontalAlignment="Right"/>
 
@@ -76,9 +78,17 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <StackPanel Background="#111" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Grid.RowSpan="3"></StackPanel>
-        
-        <UniformGrid Background="#111" Name="UGrid" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Grid.RowSpan="3"/>
+        <StackPanel Grid.Row="0" 
+                    Grid.Column="1" 
+                    Grid.RowSpan="3" 
+                    Background="Red" 
+                    HorizontalAlignment="Stretch"/>
+
+        <UniformGrid Name="UGrid" 
+                     Grid.Row="0" 
+                     Grid.Column="1"  
+                     Grid.RowSpan="3"
+                     Background="#111" />
 
     </Grid>
     

@@ -85,21 +85,34 @@ namespace MaGeek.UI
 
         private void RefreshUGrid()
         {
-            UGrid.Children.Clear();
-            foreach(var cardrel in CurrentDeck.CardRelations)
+            if (CurrentDeck == null) return;
+            try
             {
-                for(int i=0;i<cardrel.Quantity;i++)
+                UGrid.Children.Clear();
+                foreach (var cardrel in CurrentDeck.CardRelations)
                 {
-                    Uri Url = new Uri(cardrel.Card.variants[0].ImageUrl, UriKind.Absolute);
-                    Image img = new Image()
+                    for (int i = 0; i < cardrel.Quantity; i++)
                     {
-                        Source = new BitmapImage(Url),
-                    };
-                    UGrid.Children.Add(img);
+                        Uri Url = new Uri(cardrel.Card.variants[0].ImageUrl, UriKind.Absolute);
+                        Image img = new Image()
+                        {
+                            Source = new BitmapImage(Url),
+                        };
+                        UGrid.Children.Add(img);
+                    }
                 }
+            }
+            catch (Exception ex)
+            { 
+                Console.WriteLine(ex.Message); 
             }
         }
 
+        private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var cardRel = LVDeck.SelectedItem as CardDeckRelation;
+            if (cardRel != null) App.state.SelectCard(cardRel.Card);
+        }
     }
 
 }

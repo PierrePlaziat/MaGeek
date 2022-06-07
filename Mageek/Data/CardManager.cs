@@ -12,15 +12,20 @@ namespace MaGeek.Data
 
         public ApiMtg MtgApi = new ApiMtg();
 
-        public void AddCardToDeck(MagicCard card, MagicDeck deck)
+        public void AddCardToDeck(MagicCard card, MagicDeck deck, int qty = 1)
         {
+            if (card == null || deck == null) return;
             var cardRelation = deck.CardRelations.Where(x => x.CardId == card.CardId).FirstOrDefault();
             if (cardRelation == null)
             {
-                cardRelation = new CardDeckRelation() { Card = card, Deck = deck, Quantity = 0 };
+                cardRelation = new CardDeckRelation() { 
+                    Card = card, 
+                    Deck = deck, 
+                    Quantity = 0 
+                };
                 deck.CardRelations.Add(cardRelation);
             }
-            cardRelation.Quantity++;
+            cardRelation.Quantity += qty;
             App.database.SaveChanges();
             App.state.ModifDeck();
         }

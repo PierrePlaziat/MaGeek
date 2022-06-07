@@ -11,6 +11,7 @@ namespace MaGeek.Data
         {
             optionsBuilder.UseSqlite("Data Source=D:\\PROJECTS\\VS\\MaGeek\\Mtg.db");
             optionsBuilder.UseLazyLoadingProxies();
+            optionsBuilder.EnableSensitiveDataLogging();
         }
 
         public DbSet<MagicCard> cards { get; set; }
@@ -18,10 +19,12 @@ namespace MaGeek.Data
         public DbSet<CardTraduction> traductions { get; set; }
         public DbSet<MagicDeck> decks { get; set; }
         public DbSet<CardDeckRelation> cardsInDecks { get; set; }
+        public DbSet<Param> Params { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<CardDeckRelation>().HasKey(q =>
                new {
                    q.DeckId,

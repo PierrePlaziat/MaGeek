@@ -25,6 +25,20 @@ namespace MaGeek.Data.Entities
 
         public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
 
+        public string CardForeignName {
+            get
+            {
+                try
+                {
+                    return Traductions.Where( x=> x.Language.ToLower() == App.state.ForeignLanguage.ToLower() ).FirstOrDefault().TraductedName;
+                }
+                catch 
+                {
+                    return "(?)"+CardId;
+                }
+            }
+        }
+
         #region CTOR
 
         public MagicCard() { }
@@ -33,14 +47,13 @@ namespace MaGeek.Data.Entities
         {
             CardId = selectedCard.Name;
             Type = selectedCard.Type;
-            ManaCost = selectedCard.ManaCost;
+            ManaCost = selectedCard.ManaCost != null ? selectedCard.ManaCost:"";
             Cmc = selectedCard.Cmc;
             Text = selectedCard.Text;
             Power = selectedCard.Power;
             Toughness = selectedCard.Toughness;
             AddNames(selectedCard.ForeignNames);
             //AddLegalities(selectedCard.Legalities);
-            //selectedCard.Names; // TODO : manage doublesided cards
             CollectedQuantity = 0;
         }
 

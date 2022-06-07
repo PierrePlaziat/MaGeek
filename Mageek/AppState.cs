@@ -1,10 +1,38 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Events;
+using System.Linq;
 
 namespace MaGeek
 {
     public class AppState
     {
+
+        public string ForeignLanguage
+        {
+            get {
+                var p = App.database.Params.Where(x => x.ParamName == "ForeignLanguage");
+                if (p.Any())
+                {
+                    return p.FirstOrDefault().ParamValue;
+                }
+                else
+                {
+                    App.database.Params.Add(new Entities.Param() { ParamValue = "French", ParamName = "ForeignLanguage" });
+                    App.database.SaveChanges();
+                    return "French";
+                }
+            }
+            set {
+                if (value == null) value = "French";
+                var p = App.database.Params.Where(x => x.ParamName == "ForeignLanguage");
+                if (p.Any())
+                {
+                    App.database.Params.Remove(p.FirstOrDefault());
+                }
+                App.database.Params.Add(new Entities.Param() { ParamValue = value, ParamName = "ForeignLanguage" });
+                App.database.SaveChanges();
+            }
+        }
 
         #region DECK FOCUS GESTION
 
@@ -44,6 +72,8 @@ namespace MaGeek
 
         #endregion
 
+        #region DECK VIEW FLASH
+
         public void ModifDeck()
         {
             RaiseModifDeck(new DeckModifEventArgs());
@@ -55,6 +85,8 @@ namespace MaGeek
             DeckModifEventHandler raiseEvent = RaiseDeckModif;
             if (raiseEvent != null) raiseEvent(this, e);
         }
+
+        #endregion
 
     }
 

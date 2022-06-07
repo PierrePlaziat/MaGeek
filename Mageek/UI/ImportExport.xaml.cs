@@ -107,11 +107,11 @@ namespace MaGeek.UI
 
                     // Search
 
-                    var card = App.database.cards.Where(x => x.CardId == cardname).FirstOrDefault();
+                    var card = App.database.cards.Where(x => x.CardId == cardname || (x.CardId.Contains(cardname) && x.CardId.Contains(" // "))).FirstOrDefault();
                     if (card == null)
                     {
                         await App.cardManager.MtgApi.SearchCardsOnline(cardname, true);
-                        card = App.database.cards.Where(x => x.CardId == cardname).FirstOrDefault();
+                        card = App.database.cards.Where(x => x.CardId == cardname || (x.CardId.Contains(cardname) && x.CardId.Contains(" // "))).FirstOrDefault();
                     }
 
                     // Add
@@ -120,10 +120,7 @@ namespace MaGeek.UI
                     {
                         if (asDeck)
                         {
-                            for (int i =0;i< cardQuantity; i++)
-                            {
-                                App.cardManager.AddCardToDeck(card,deck);
-                            }
+                            App.cardManager.AddCardToDeck(card,deck, cardQuantity);
                         }
                         if (asObtained) card.CollectedQuantity += cardQuantity;
                     }

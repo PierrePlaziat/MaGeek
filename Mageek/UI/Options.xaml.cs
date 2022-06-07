@@ -15,14 +15,18 @@ using System.Windows.Shapes;
 
 namespace MaGeek.UI
 {
-    /// <summary>
-    /// Logique d'interaction pour Options.xaml
-    /// </summary>
+
     public partial class Options : UserControl
     {
         public Options()
         {
             InitializeComponent();
         }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            App.state.ForeignLanguage = ((ComboBoxItem)((ComboBox)sender).SelectedItem).Content as string;
+        }
     }
+
 }

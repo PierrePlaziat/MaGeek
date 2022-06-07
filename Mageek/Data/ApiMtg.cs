@@ -48,13 +48,23 @@ namespace MaGeek.Data
             foreach (var foundCard in foundCards)
             {
                 
-                if (!onlyOne || (foundCard != null && foundCard.Name == cardname))
+                if (!onlyOne || (foundCard != null && NameCorresponds(foundCard.Name,cardname)))
                 {
                     MagicCard card = SaveLocalCard(foundCard);
                     card.AddVariant(foundCard);
                 }
                 App.database.SaveChanges();
             }
+        }
+
+        private bool NameCorresponds(string name, string cardname)
+        {
+            string[] ss = name.Split(" // ");
+            foreach (string ss2 in ss)
+            {
+                if (ss2 == cardname ) return true;
+            }
+            return false;
         }
 
         private MagicCard SaveLocalCard(ICard iCard)
