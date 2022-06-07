@@ -7,32 +7,35 @@ namespace MaGeek
     public class AppState
     {
 
-        public string ForeignLanguage
+        #region Langue
+
+        public string GetForeignLanguage()
         {
-            get {
-                var p = App.database.Params.Where(x => x.ParamName == "ForeignLanguage");
-                if (p.Any())
-                {
-                    return p.FirstOrDefault().ParamValue;
-                }
-                else
-                {
-                    App.database.Params.Add(new Entities.Param() { ParamValue = "French", ParamName = "ForeignLanguage" });
-                    App.database.SaveChanges();
-                    return "French";
-                }
+            var p = App.database.Params.Where(x => x.ParamName == "ForeignLanguage");
+            if (p.Any())
+            {
+                return p.FirstOrDefault().ParamValue;
             }
-            set {
-                if (value == null) value = "French";
-                var p = App.database.Params.Where(x => x.ParamName == "ForeignLanguage");
-                if (p.Any())
-                {
-                    App.database.Params.Remove(p.FirstOrDefault());
-                }
-                App.database.Params.Add(new Entities.Param() { ParamValue = value, ParamName = "ForeignLanguage" });
+            else
+            {
+                App.database.Params.Add(new Entities.Param() { ParamValue = "French", ParamName = "ForeignLanguage" });
                 App.database.SaveChanges();
+                return "French";
             }
         }
+        public void SetForeignLanguage(string value)
+        {
+//                if (value == null) value = "French";
+            var p = App.database.Params.Where(x => x.ParamName == "ForeignLanguage");
+            if (p.Any())
+            {
+                App.database.Params.Remove(p.FirstOrDefault());
+            }
+            App.database.Params.Add(new Entities.Param() { ParamValue = value, ParamName = "ForeignLanguage" });
+            App.database.SaveChanges();
+        }
+
+        #endregion
 
         #region DECK FOCUS GESTION
 

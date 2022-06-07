@@ -32,9 +32,9 @@
 
         <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right">Foreign Language:</Label>
         <DockPanel Grid.Column="1" Grid.Row="1">
-            <ComboBox Width="150"  SelectionChanged="ComboBox_SelectionChanged"
+            <ComboBox Name="LanguageBox" Width="150"  SelectionChanged="ComboBox_SelectionChanged"
                       HorizontalAlignment="Left">
-                <ComboBoxItem IsSelected="True">French</ComboBoxItem>
+                <ComboBoxItem>French</ComboBoxItem>
                 <ComboBoxItem>German</ComboBoxItem>
                 <ComboBoxItem>Spanish</ComboBoxItem>
                 <ComboBoxItem>Italian</ComboBoxItem>

@@ -18,14 +18,27 @@ namespace MaGeek.UI
 
     public partial class Options : UserControl
     {
+
+
         public Options()
         {
+            DataContext = this;
             InitializeComponent();
+            Init();
+        }
+
+        private void Init()
+        {
+            foreach (var i in LanguageBox.Items)
+            {
+                string itemName = ((ComboBoxItem)i).Content as string;
+                if (itemName == App.state.GetForeignLanguage()) LanguageBox.SelectedItem = i;
+            }
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            App.state.ForeignLanguage = ((ComboBoxItem)((ComboBox)sender).SelectedItem).Content as string;
+            App.state.SetForeignLanguage ( ((ComboBoxItem)((ComboBox)sender).SelectedItem).Content as string );
         }
     }
 

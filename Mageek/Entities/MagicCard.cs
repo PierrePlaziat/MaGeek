@@ -30,7 +30,7 @@ namespace MaGeek.Data.Entities
             {
                 try
                 {
-                    return Traductions.Where( x=> x.Language.ToLower() == App.state.ForeignLanguage.ToLower() ).FirstOrDefault().TraductedName;
+                    return Traductions.Where( x=> x.Language.ToLower() == App.state.GetForeignLanguage().ToLower() ).FirstOrDefault().TraductedName;
                 }
                 catch 
                 {
