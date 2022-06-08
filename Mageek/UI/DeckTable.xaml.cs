@@ -101,7 +101,7 @@ namespace MaGeek.UI
                         Image img = new Image()
                         {
                             Source = new BitmapImage(Url),
-                            Height = 267
+                            Height = 250
                         };
                         UGrid.Children.Add(img);
                     }
