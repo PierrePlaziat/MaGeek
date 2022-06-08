@@ -38,6 +38,7 @@ namespace MaGeek.UI
                 OnPropertyChanged("ImgUrl");
                 OnPropertyChanged("Variants");
                 OnPropertyChanged("CollectedQuantity");
+                OnPropertyChanged("Visible");
             }
         }
 
@@ -88,6 +89,8 @@ namespace MaGeek.UI
                     return "";
             }
         }
+
+        public Visibility Visible { get { return selectedCard == null ? Visibility.Visible : Visibility.Collapsed; } }
 
         #endregion
 

@@ -41,13 +41,17 @@ namespace MaGeek.Data
 
         public void GotCard_Add(MagicCard selectedCard)
         {
+            if (selectedCard == null) return;
             App.database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity++;
             App.database.SaveChanges();
         }
 
         public void GotCard_Remove(MagicCard selectedCard)
         {
-            App.database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity--;
+            if (selectedCard == null) return;
+            var c = App.database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault();
+            c.CollectedQuantity--;
+            if(c.CollectedQuantity < 0) c.CollectedQuantity = 0;
             App.database.SaveChanges();
         }
 

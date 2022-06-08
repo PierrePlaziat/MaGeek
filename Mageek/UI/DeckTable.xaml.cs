@@ -4,6 +4,7 @@ using MaGeek.Events;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
@@ -32,6 +33,7 @@ namespace MaGeek.UI
             set { 
                 currentDeck = value;
                 OnPropertyChanged();
+                OnPropertyChanged("Visible");
             }
         }
 
@@ -40,6 +42,8 @@ namespace MaGeek.UI
             CurrentDeck = e.Deck;
             RefreshUGrid();
         }
+
+        public Visibility Visible { get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; } }
 
         #endregion
 
@@ -97,6 +101,7 @@ namespace MaGeek.UI
                         Image img = new Image()
                         {
                             Source = new BitmapImage(Url),
+                            Height = 267
                         };
                         UGrid.Children.Add(img);
                     }
@@ -112,6 +117,11 @@ namespace MaGeek.UI
         {
             var cardRel = LVDeck.SelectedItem as CardDeckRelation;
             if (cardRel != null) App.state.SelectCard(cardRel.Card);
+        }
+
+        private void UGrid_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            //TODO ZOOM
         }
     }
 

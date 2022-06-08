@@ -34,6 +34,8 @@
                 <RowDefinition Height="25"></RowDefinition>
             </Grid.RowDefinitions>
 
+                
+            
             <Label Grid.Column="0" Grid.Row="0" 
                    Content="{Binding SelectedCard.Name_VO}" 
                    Foreground="White" 
@@ -69,7 +71,6 @@
         <StackPanel >
             <Image cwpf:ImageAsyncHelper.SourceUri="{Binding ImgUrl, IsAsync=True}"  x:Name="img" />
         </StackPanel>
-
 
         <DockPanel Grid.Row="1" Background="Black" Height="21">
 
@@ -126,6 +127,11 @@
             </ListView.ItemTemplate>
         </ListView>
 
+
+        <StackPanel Visibility="{Binding Visible}" Grid.RowSpan="3" Background="#444">
+            <Label>No card selected</Label>
+        </StackPanel>
+        
     </Grid>
     
 </UserControl>
