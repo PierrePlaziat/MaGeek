@@ -50,7 +50,7 @@
     <Grid Background="Black">
         
         <Grid.ColumnDefinitions >
-            <ColumnDefinition Width="300"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="5"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="5"></ColumnDefinition>

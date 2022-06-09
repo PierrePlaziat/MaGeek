@@ -52,13 +52,9 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Content="All"></Button>
-            <Button Grid.Column="1" Content="Creatures"></Button>
-            <Button Grid.Column="2" Content="Instants"></Button>
-            <Button Grid.Column="3" Content="Sorceries"></Button>
-            <Button Grid.Column="4" Content="Artifacts"></Button>
-            <Button Grid.Column="5" Content="Lands"></Button>
-            <Button Grid.Column="6" Content="Other"></Button>
+            <Button Grid.Column="0" Content="Alphabetic"></Button>
+            <Button Grid.Column="1" Content="Cmc"></Button>
+            <Button Grid.Column="2" Content="Type"></Button>
 
         </Grid>-->
 

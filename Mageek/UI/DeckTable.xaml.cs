@@ -103,6 +103,7 @@ namespace MaGeek.UI
                             Source = new BitmapImage(Url),
                             Height = 250
                         };
+                        //img.MouseLeftButtonUp +=  () => { } ;
                         UGrid.Children.Add(img);
                     }
                 }
