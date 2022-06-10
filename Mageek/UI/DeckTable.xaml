@@ -100,12 +100,21 @@
               Background="#111"
                     HorizontalAlignment="Stretch"/>
 
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="0"  HorizontalAlignment="Stretch"
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch"
               Grid.Column="1" 
+              Grid.Row="0"  
               Grid.RowSpan="3"
               Background="#111">
             <WrapPanel Name="UGrid" HorizontalAlignment="Stretch" MouseWheel="UGrid_MouseWheel"/>
         </ScrollViewer>
+
+        <StackPanel Grid.Column="1" 
+                    Grid.Row="0"  
+                    Grid.RowSpan="3" 
+                    Background="#111"
+                    Visibility="{Binding Loading}">
+            <Label>Loading...</Label>
+        </StackPanel>
 
         <StackPanel Visibility="{Binding Visible}" Grid.RowSpan="3" Grid.ColumnSpan="2" Background="#444">
             <Label>No deck selected</Label>

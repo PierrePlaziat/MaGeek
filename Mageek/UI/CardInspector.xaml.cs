@@ -34,6 +34,7 @@ namespace MaGeek.UI
             }
             set
             {
+                selectedIllus = 0;
                 selectedCard = value;
                 OnPropertyChanged();
                 OnPropertyChanged("ImgUrl");
@@ -81,24 +82,13 @@ namespace MaGeek.UI
             }
         }
 
-        public string ImgUrl
-        {
-            get
-            {
-                if (selectedCard != null && selectedCard.variants != null && selectedCard.variants.Count > 0 && selectedCard.variants[0] != null && selectedCard.variants[0].ImageUrl != null)
-                    return selectedCard.variants[selectedIllus].ImageUrl;
-                else 
-                    return "";
-            }
-        }
-
         public BitmapImage GetImage
         {
             get
             {
                 if (selectedCard != null && selectedCard.variants != null && selectedCard.variants.Count > 0 && selectedCard.variants[selectedIllus] != null)
                 {
-                    return selectedCard.RetrieveImage();
+                    return selectedCard.RetrieveImage(selectedIllus);
                 }
                 return null;
             }
@@ -148,7 +138,7 @@ namespace MaGeek.UI
                 if (variant != null)
                 {
                     selectedIllus = VariantListBox.SelectedIndex;
-                    OnPropertyChanged("ImgUrl");
+                    OnPropertyChanged("GetImage");
                 }
             }
         }

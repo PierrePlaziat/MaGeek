@@ -87,9 +87,16 @@ namespace MaGeek.Data.Entities
             }
         }
 
-        internal BitmapImage RetrieveImage()
+        internal BitmapImage RetrieveImage(int selectedVariant = -1)
         {
             BitmapImage image = null;
+            if (selectedVariant != -1)
+            {
+                if (!string.IsNullOrEmpty(variants[selectedVariant].ImageUrl))
+                {
+                    return variants[selectedVariant].RetrieveImage();
+                }
+            }
             foreach(var variant in variants)
             {
                 if(!string.IsNullOrEmpty(variant.ImageUrl))

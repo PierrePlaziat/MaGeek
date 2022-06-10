@@ -4,9 +4,11 @@ using MaGeek.Events;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace MaGeek.UI
 {
@@ -28,9 +30,9 @@ namespace MaGeek.UI
         #endregion
 
         private MagicDeck currentDeck;
-        public MagicDeck CurrentDeck { 
+        public MagicDeck CurrentDeck {
             get { return currentDeck; }
-            set { 
+            set {
                 currentDeck = value;
                 OnPropertyChanged();
                 OnPropertyChanged("Visible");
@@ -47,6 +49,10 @@ namespace MaGeek.UI
 
         #endregion
 
+        BackgroundWorker LoadImgWorker = new BackgroundWorker();
+        bool isLoading = false;
+        public Visibility Loading { get { return isLoading ? Visibility.Visible : Visibility.Collapsed; } }
+
         #region CTOR
 
         public DeckTable()
@@ -55,6 +61,7 @@ namespace MaGeek.UI
             DataContext = this;
             App.state.RaiseSelectDeck += HandleDeckSelected;
             App.state.RaiseDeckModif += HandleDeckModified;
+            LoadImgWorker.DoWork += LoadImg;
         }
 
         void HandleDeckModified(object sender, DeckModifEventArgs e)
@@ -90,26 +97,54 @@ namespace MaGeek.UI
         private void RefreshUGrid()
         {
             if (CurrentDeck == null) return;
+            isLoading = true;
+            OnPropertyChanged("Loading");
+            LoadImgWorker.RunWorkerAsync();
+        }
+
+        private void LoadImg(object sender, DoWorkEventArgs e)
+        {
             try
             {
-                UGrid.Children.Clear();
+                this.Dispatcher.Invoke(
+                    DispatcherPriority.Send, new Action
+                    (
+                        delegate {
+                            UGrid.Children.Clear();
+                        }
+                    )
+                );
                 foreach (var cardrel in CurrentDeck.CardRelations)
                 {
                     for (int i = 0; i < cardrel.Quantity; i++)
                     {
-                        Image img = new Image()
-                        {
-                            Source = cardrel.Card.RetrieveImage(),
-                            Height = 250
-                        };
-                        UGrid.Children.Add(img);
+
+                        Thread.Sleep(100);
+
+                        this.Dispatcher.Invoke(
+                            DispatcherPriority.Send, new Action
+                            (
+                                delegate {
+                                    BitmapImage bitmap = cardrel.Card.RetrieveImage();
+                                    Image img = new Image()
+                                    {
+                                        Source = bitmap,
+                                        Height = 250
+                                    };
+                                    UGrid.Children.Add(img);
+                                }
+                            )
+                        );
+
                     }
                 }
             }
             catch (Exception ex)
-            { 
-                Console.WriteLine(ex.Message); 
+            {
+                Console.WriteLine(ex.Message);
             }
+            isLoading = false;
+            OnPropertyChanged("Loading");
         }
 
         private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -122,6 +157,7 @@ namespace MaGeek.UI
         {
             //TODO ZOOM
         }
+
     }
 
 }
