@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace MaGeek.Data.Entities
 {
@@ -83,6 +85,19 @@ namespace MaGeek.Data.Entities
                     }
                 );
             }
+        }
+
+        internal BitmapImage RetrieveImage()
+        {
+            BitmapImage image = null;
+            foreach(var variant in variants)
+            {
+                if(!string.IsNullOrEmpty(variant.ImageUrl))
+                {
+                    return variant.RetrieveImage();
+                }
+            }
+            return null;
         }
 
         /*private void AddLegalities(List<ILegality> legalities)

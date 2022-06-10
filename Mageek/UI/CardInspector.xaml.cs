@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace MaGeek.UI
 {
@@ -39,6 +40,7 @@ namespace MaGeek.UI
                 OnPropertyChanged("Variants");
                 OnPropertyChanged("CollectedQuantity");
                 OnPropertyChanged("Visible");
+                OnPropertyChanged("GetImage");
             }
         }
 
@@ -87,6 +89,18 @@ namespace MaGeek.UI
                     return selectedCard.variants[selectedIllus].ImageUrl;
                 else 
                     return "";
+            }
+        }
+
+        public BitmapImage GetImage
+        {
+            get
+            {
+                if (selectedCard != null && selectedCard.variants != null && selectedCard.variants.Count > 0 && selectedCard.variants[selectedIllus] != null)
+                {
+                    return selectedCard.RetrieveImage();
+                }
+                return null;
             }
         }
 

@@ -69,7 +69,8 @@
         </Grid>
 
         <StackPanel >
-            <Image cwpf:ImageAsyncHelper.SourceUri="{Binding ImgUrl, IsAsync=True}"  x:Name="img" />
+            <!--<Image cwpf:ImageAsyncHelper.SourceUri="{Binding ImgUrl, IsAsync=True}"  x:Name="img" />-->
+            <Image Source="{Binding GetImage}"></Image>
         </StackPanel>
 
         <DockPanel Grid.Row="1" Background="Black" Height="21">

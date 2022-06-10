@@ -97,13 +97,11 @@ namespace MaGeek.UI
                 {
                     for (int i = 0; i < cardrel.Quantity; i++)
                     {
-                        Uri Url = new Uri(cardrel.Card.variants[0].ImageUrl, UriKind.Absolute);
                         Image img = new Image()
                         {
-                            Source = new BitmapImage(Url),
+                            Source = cardrel.Card.RetrieveImage(),
                             Height = 250
                         };
-                        //img.MouseLeftButtonUp +=  () => { } ;
                         UGrid.Children.Add(img);
                     }
                 }

@@ -1,8 +1,12 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Entities;
+using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace MaGeek.Data
 {
