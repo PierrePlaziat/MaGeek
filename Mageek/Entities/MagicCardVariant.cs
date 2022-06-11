@@ -15,7 +15,7 @@ namespace MaGeek.Data.Entities
         public string Rarity { get; set; }
         public string SetName { get; set; }
 
-        public virtual MagicCard card { get; set; }
+        public virtual MagicCard Card { get; set; }
 
         public MagicCardVariant(){}
 
@@ -29,17 +29,17 @@ namespace MaGeek.Data.Entities
 
         public BitmapImage RetrieveImage()
         {
-            BitmapImage img = null;
-            Uri Url = null;
+            Directory.CreateDirectory(@"./CardsIllus");
             string localFileName = @"./CardsIllus/" + Id+".png";
             if (!File.Exists(localFileName))
             {
-                WebClient webClient = new WebClient();
+                WebClient webClient = new();
                 webClient.DownloadFile(ImageUrl, localFileName);
             }
+            Uri Url;
             try   { Url = new Uri("file:///" + localFileName, UriKind.Relative); }
             catch { Url = new Uri(ImageUrl,      UriKind.Absolute); }
-            img = new BitmapImage(Url);
+            BitmapImage img = new(Url);
             return img;
         }
 

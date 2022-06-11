@@ -42,7 +42,7 @@ namespace MaGeek.UI
 
         #region UI Link
 
-        private async void StartExport(object sender, RoutedEventArgs e)
+        private void StartExport(object sender, RoutedEventArgs e)
         {
             //TODO
         }
@@ -102,7 +102,7 @@ namespace MaGeek.UI
 
                     ImportOutput.Content = "Importing : "+ line;
 
-                    string cardname = line.Substring(line.IndexOf(' ') + 1);
+                    string cardname = line[(line.IndexOf(' ') + 1)..];
                     int cardQuantity = int.Parse(line.Split(" ")[0]);
 
                     // Search

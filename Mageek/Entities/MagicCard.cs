@@ -22,7 +22,7 @@ namespace MaGeek.Data.Entities
         public string Power { get; set; }
         public string Toughness { get; set; }
         public int CollectedQuantity { get; set; }
-        public virtual List<MagicCardVariant> variants { get; set; } = new List<MagicCardVariant>();
+        public virtual List<MagicCardVariant> Variants { get; set; } = new List<MagicCardVariant>();
         public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
 
         public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
@@ -49,7 +49,7 @@ namespace MaGeek.Data.Entities
         {
             CardId = selectedCard.Name;
             Type = selectedCard.Type;
-            ManaCost = selectedCard.ManaCost != null ? selectedCard.ManaCost:"";
+            ManaCost = selectedCard.ManaCost ?? "";
             Cmc = selectedCard.Cmc;
             Text = selectedCard.Text;
             Power = selectedCard.Power;
@@ -61,10 +61,10 @@ namespace MaGeek.Data.Entities
 
         public void AddVariant(ICard iCard)
         {
-            MagicCardVariant variant = variants.Where(x=>x.Id == iCard.Id).FirstOrDefault();
+            MagicCardVariant variant = Variants.Where(x=>x.Id == iCard.Id).FirstOrDefault();
             if (variant != null) return;
             variant = new MagicCardVariant(iCard);
-            variants.Add(variant);
+            Variants.Add(variant);
             AddNames(iCard.ForeignNames);
         }
 
@@ -89,15 +89,14 @@ namespace MaGeek.Data.Entities
 
         internal BitmapImage RetrieveImage(int selectedVariant = -1)
         {
-            BitmapImage image = null;
             if (selectedVariant != -1)
             {
-                if (!string.IsNullOrEmpty(variants[selectedVariant].ImageUrl))
+                if (!string.IsNullOrEmpty(Variants[selectedVariant].ImageUrl))
                 {
-                    return variants[selectedVariant].RetrieveImage();
+                    return Variants[selectedVariant].RetrieveImage();
                 }
             }
-            foreach(var variant in variants)
+            foreach(var variant in Variants)
             {
                 if(!string.IsNullOrEmpty(variant.ImageUrl))
                 {

@@ -9,7 +9,7 @@ namespace MaGeek.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=D:\\PROJECTS\\VS\\MaGeek\\Mtg.db");
+            optionsBuilder.UseSqlite("Data Source=Mtg.db");
             optionsBuilder.UseLazyLoadingProxies();
             optionsBuilder.EnableSensitiveDataLogging();
         }
@@ -32,8 +32,8 @@ namespace MaGeek.Data
                });
 
             modelBuilder.Entity<MagicCardVariant>()
-                        .HasOne(e => e.card)
-                        .WithMany(e => e.variants);
+                        .HasOne(e => e.Card)
+                        .WithMany(e => e.Variants);
 
             modelBuilder.Entity<CardTraduction>()
                         .HasOne(e => e.Card)

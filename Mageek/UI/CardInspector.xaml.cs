@@ -64,8 +64,8 @@ namespace MaGeek.UI
         {
             get
             {
-                if (selectedCard != null && selectedCard.variants != null && selectedCard.variants.Count > 0)
-                    return selectedCard.variants;
+                if (selectedCard != null && selectedCard.Variants != null && selectedCard.Variants.Count > 0)
+                    return selectedCard.Variants;
                 else 
                     return new List<MagicCardVariant>();
             }
@@ -75,8 +75,8 @@ namespace MaGeek.UI
         {
             get
             {
-                if (selectedCard != null && selectedCard.variants != null)
-                    return selectedCard.variants.Count;
+                if (selectedCard != null && selectedCard.Variants != null)
+                    return selectedCard.Variants.Count;
                 else 
                     return 0;
             }
@@ -86,7 +86,7 @@ namespace MaGeek.UI
         {
             get
             {
-                if (selectedCard != null && selectedCard.variants != null && selectedCard.variants.Count > 0 && selectedCard.variants[selectedIllus] != null)
+                if (selectedCard != null && selectedCard.Variants != null && selectedCard.Variants.Count > 0 && selectedCard.Variants[selectedIllus] != null)
                 {
                     return selectedCard.RetrieveImage(selectedIllus);
                 }

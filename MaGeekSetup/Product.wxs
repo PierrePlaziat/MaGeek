@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define MaGeek_TargetDir=$(var.MaGeek.TargetDir)?>
+	
+<!-- Product -->  
+  
+  <Product Id="*" Name="MaGeek" Language="1033" Version="1.0.0.0" Manufacturer="PlaziatPierre" UpgradeCode="45f6c869-1e87-4431-93b2-f4b31ada4b2c">
+	
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+  
+    <MediaTemplate EmbedCab="yes" />
+    
+    <UIRef Id="WixUI_InstallDir" />
+    
+		<Feature Id="ProductFeature" Title="MaGeek" Level="1">
+      
+			<ComponentGroupRef Id="ProgramFilesFolder_files" />
+      
+      <ComponentGroupRef Id="sql_win" />
+      <ComponentGroupRef Id="sql_win_arm" />
+      <ComponentGroupRef Id="sql_win_arm64" />
+      <ComponentGroupRef Id="sql_win64" />
+      <ComponentGroupRef Id="sql_win86" />
+      
+			<ComponentGroupRef Id="ru_files" />
+			<ComponentGroupRef Id="zh_Hant_files" />
+			<ComponentGroupRef Id="zh_Hans_files" />
+			<ComponentGroupRef Id="sv_files" />
+			<ComponentGroupRef Id="ro_files" />
+			<ComponentGroupRef Id="pt_files" />
+			<ComponentGroupRef Id="pl_files" />
+			<ComponentGroupRef Id="nl_BE_files" />
+			<ComponentGroupRef Id="ko_files" />
+			<ComponentGroupRef Id="ja_files" />
+			<ComponentGroupRef Id="hu_files" />
+			<ComponentGroupRef Id="fr_files" />
+			<ComponentGroupRef Id="it_files" />
+			<ComponentGroupRef Id="de_files" />
+			<ComponentGroupRef Id="cs_CZ_files" />
+			<ComponentGroupRef Id="ca_ES_files" />
+      <ComponentGroupRef Id="es_files" />
+      
+		</Feature>
+  
+	  <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+  
+	</Product>
+
+<!-- Directory structure -->
+  
+  <Fragment>
+    
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="MaGeek">
+          <Directory Id="CardsIllusFolder" Name="CardsIllus"></Directory>
+          <Directory Id="ca_ES" Name="ca-ES" />
+          <Directory Id="cs_CZ" Name="cs-CZ" />
+          <Directory Id="es" Name="es" />
+          <Directory Id="fr" Name="fr" />
+          <Directory Id="de" Name="de" />
+          <Directory Id="hu" Name="hu" />
+          <Directory Id="it" Name="it" />
+          <Directory Id="ja" Name="ja" />
+          <Directory Id="ko" Name="ko" />
+          <Directory Id="nl_BE" Name="nl-BE" />
+          <Directory Id="pl" Name="pl" />
+          <Directory Id="pt" Name="pt" />
+          <Directory Id="ro" Name="ro" />
+          <Directory Id="ru" Name="ru" />
+          <Directory Id="sv" Name="sv" />
+          <Directory Id="zh_Hans" Name="zh-Hans" />
+          <Directory Id="zh_Hant" Name="zh-Hant" />
+          <Directory Id="runtimes" Name="runtimes" >
+            <Directory Id="win" Name="win" >
+              <Directory Id="lib" Name="lib">
+                <Directory Id="netcoreapp21" Name="netcoreapp2.1" />
+              </Directory>
+            </Directory>
+            <Directory Id="win_arm" Name="win-arm" >
+              <Directory Id="win_arm_native" Name="native" />
+            </Directory>
+            <Directory Id="win_arm64" Name="win-arm64" >
+              <Directory Id="win_arm64_native" Name="native"/>
+            </Directory>
+            <Directory Id="win_x64" Name="win-x64" >
+              <Directory Id="win_x64_native" Name="native"/>
+            </Directory>
+            <Directory Id="win_x86" Name="win-x86" >
+              <Directory Id="win_x86_native" Name="native" />
+            </Directory>
+          </Directory>
+        </Directory>
+			</Directory>
+		</Directory>
+    
+	</Fragment>
+
+<!-- Main Files -->
+  
+  <Fragment>
+	  <ComponentGroup Id="ProgramFilesFolder_files" Directory="INSTALLFOLDER">
+      
+      <Component Id="ProductComponent" Guid="4e53269e-7cf7-48b6-ba55-0906ee45863e">
+        <File Id="MaGeek.exe" Source="$(var.MaGeek_TargetDir)MaGeek.exe" KeyPath="yes" />
+      </Component>
+      
+      <Component Id="MtgDbComponent" Guid="f3cdca2a-3630-49bc-b9ab-75de6a83e955">
+        <File Id="Mtg.db" Source="$(var.MaGeek_TargetDir)Mtg.db" KeyPath="yes" />
+      </Component>
+      <Component Id="ProductsDb" Guid="8a66a0c3-d68e-40f5-9b61-7558d8fc379f">
+        <File Id="products.db" Source="$(var.MaGeek_TargetDir)products.db" KeyPath="yes" />
+      </Component>
+      <Component Id="SqliteRaw" Guid="f975a985-7454-4830-a30e-ee12ecf151e7">
+        <File Id="SQLitePCLRaw.batteries_v2.dll" Source="$(var.MaGeek_TargetDir)SQLitePCLRaw.batteries_v2.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="esqlite" Guid="c9362960-8703-4ffb-8687-60a5f9b02a8e">
+        <File Id="SQLitePCLRaw.provider.e_sqlite3.dll" Source="$(var.MaGeek_TargetDir)SQLitePCLRaw.provider.e_sqlite3.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="EntityFramework.SqlServer" Guid="7b5bdc2a-7a0a-4dee-928f-0ff104d5c5bf">
+        <File Id="EntityFramework.SqlServer.dll" Source="$(var.MaGeek_TargetDir)EntityFramework.SqlServer.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="MaGeek.deps" Guid="481c5109-5713-4478-880a-8d1adb858b17">
+        <File Id="MaGeek.deps.json" Source="$(var.MaGeek_TargetDir)MaGeek.deps.json" KeyPath="yes" />
+      </Component>
+      
+	    <Component Id="MaGeek.runtimeconfig.json" Guid="7dfffe6b-03ac-4e43-8962-d2815986fd2e">
+	      <File Id="MaGeek.runtimeconfig.json" Name="MaGeek.runtimeconfig.json" Source="$(var.MaGeek_TargetDir)MaGeek.runtimeconfig.json" />
+	    </Component>
+	    <Component Id="SQLitePCLRaw.core.dll" Guid="77456f66-b19c-474e-9e86-ebdc6de514d5">
+	      <File Id="SQLitePCLRaw.core.dll" Name="SQLitePCLRaw.core.dll" Source="$(var.MaGeek_TargetDir)SQLitePCLRaw.core.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Data.Sqlite.dll" Guid="bc6d3d8c-49df-40e5-8932-f82bbdd7a1b5">
+	      <File Id="Microsoft.Data.Sqlite.dll" Name="Microsoft.Data.Sqlite.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Data.Sqlite.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.Configuration.Abstractions.dll" Guid="43d9b361-3847-4627-9e59-d14bcb953c24">
+	      <File Id="Microsoft.Extensions.Configuration.Abstractions.dll" Name="Microsoft.Extensions.Configuration.Abstractions.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.Configuration.Abstractions.dll" />
+	    </Component>
+	    <Component Id="Microsoft.EntityFrameworkCore.Relational.dll" Guid="701e9c16-a3b5-4673-9dbb-afd864f116c9">
+	      <File Id="Microsoft.EntityFrameworkCore.Relational.dll" Name="Microsoft.EntityFrameworkCore.Relational.dll" Source="$(var.MaGeek_TargetDir)Microsoft.EntityFrameworkCore.Relational.dll" />
+	    </Component>
+	    <Component Id="System.Data.SqlClient.dll" Guid="e2d294b8-9767-4792-8a15-f4d9929fa668">
+	      <File Id="System.Data.SqlClient.dll" Name="System.Data.SqlClient.dll" Source="$(var.MaGeek_TargetDir)System.Data.SqlClient.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.Caching.Memory.dll" Guid="ff510427-d766-4d8b-b0e4-8dd48bfc2623">
+	      <File Id="Microsoft.Extensions.Caching.Memory.dll" Name="Microsoft.Extensions.Caching.Memory.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.Caching.Memory.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.Options.dll" Guid="c6c28fe3-c185-445e-9c84-bda33abc0f25">
+	      <File Id="Microsoft.Extensions.Options.dll" Name="Microsoft.Extensions.Options.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.Options.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.Logging.dll" Guid="12a52dba-e9be-4f98-b822-84334c1972d2">
+	      <File Id="Microsoft.Extensions.Logging.dll" Name="Microsoft.Extensions.Logging.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.Logging.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.DependencyInjection.dll" Guid="8dd0a079-763e-4ff0-b1a7-084cfacf6820">
+	      <File Id="Microsoft.Extensions.DependencyInjection.dll" Name="Microsoft.Extensions.DependencyInjection.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.DependencyInjection.dll" />
+	    </Component>
+	    <Component Id="Microsoft.EntityFrameworkCore.Abstractions.dll" Guid="21cc6514-1ed5-48ec-b326-c5ad10fbdc43">
+	      <File Id="Microsoft.EntityFrameworkCore.Abstractions.dll" Name="Microsoft.EntityFrameworkCore.Abstractions.dll" Source="$(var.MaGeek_TargetDir)Microsoft.EntityFrameworkCore.Abstractions.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.Primitives.dll" Guid="889d8f88-e829-450c-826c-0f191055c1c7">
+	      <File Id="Microsoft.Extensions.Primitives.dll" Name="Microsoft.Extensions.Primitives.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.Primitives.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.Caching.Abstractions.dll" Guid="008a1a19-d1cb-4a03-ae84-2652abace7a9">
+	      <File Id="Microsoft.Extensions.Caching.Abstractions.dll" Name="Microsoft.Extensions.Caching.Abstractions.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.Caching.Abstractions.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.Logging.Abstractions.dll" Guid="d0dc0a0f-e6a5-408a-be70-378205fb9844">
+	      <File Id="Microsoft.Extensions.Logging.Abstractions.dll" Name="Microsoft.Extensions.Logging.Abstractions.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.Logging.Abstractions.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.DependencyInjection.Abstractions.dll" Guid="b11c7416-a03f-41e6-a40a-edc78a79b335">
+	      <File Id="Microsoft.Extensions.DependencyInjection.Abstractions.dll" Name="Microsoft.Extensions.DependencyInjection.Abstractions.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+	    </Component>
+	    <Component Id="Newtonsoft.Json.dll" Guid="6f6ddf56-99a9-49fb-ad5c-49aa12301370">
+	      <File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" Source="$(var.MaGeek_TargetDir)Newtonsoft.Json.dll" />
+	    </Component>
+	    <Component Id="Flurl.Http.dll" Guid="b884c723-a879-4188-98b4-ceca9568188f">
+	      <File Id="Flurl.Http.dll" Name="Flurl.Http.dll" Source="$(var.MaGeek_TargetDir)Flurl.Http.dll" />
+	    </Component>
+	    <Component Id="Flurl.dll" Guid="73793cbf-1811-4504-b5e3-1084669e32df">
+	      <File Id="Flurl.dll" Name="Flurl.dll" Source="$(var.MaGeek_TargetDir)Flurl.dll" />
+	    </Component>
+	    <Component Id="System.Text.Json.dll" Guid="7d8fd0e5-134d-4e0c-8c6c-89f1c082c396">
+	      <File Id="System.Text.Json.dll" Name="System.Text.Json.dll" Source="$(var.MaGeek_TargetDir)System.Text.Json.dll" />
+	    </Component>
+	    <Component Id="Microsoft.EntityFrameworkCore.Proxies.dll" Guid="a18921d4-099d-47f5-84e0-e24a1b533abc">
+	      <File Id="Microsoft.EntityFrameworkCore.Proxies.dll" Name="Microsoft.EntityFrameworkCore.Proxies.dll" Source="$(var.MaGeek_TargetDir)Microsoft.EntityFrameworkCore.Proxies.dll" />
+	    </Component>
+	    <Component Id="Microsoft.EntityFrameworkCore.Sqlite.dll" Guid="c5cc8cee-131b-403f-9dbe-0614ed46cb94">
+	      <File Id="Microsoft.EntityFrameworkCore.Sqlite.dll" Name="Microsoft.EntityFrameworkCore.Sqlite.dll" Source="$(var.MaGeek_TargetDir)Microsoft.EntityFrameworkCore.Sqlite.dll" />
+	    </Component>
+	    <Component Id="EntityFramework.dll" Guid="35f99535-a3a3-4088-9e19-03462af1af90">
+	      <File Id="EntityFramework.dll" Name="EntityFramework.dll" Source="$(var.MaGeek_TargetDir)EntityFramework.dll" />
+	    </Component>
+	    <Component Id="Microsoft.EntityFrameworkCore.dll" Guid="aece676c-16fb-4905-9ab5-04af73f81c22">
+	      <File Id="Microsoft.EntityFrameworkCore.dll" Name="Microsoft.EntityFrameworkCore.dll" Source="$(var.MaGeek_TargetDir)Microsoft.EntityFrameworkCore.dll" />
+	    </Component>
+	    <Component Id="MtgApiManager.Lib.dll" Guid="2ccca81b-93a6-4dd0-9256-67c8cb1b3221">
+	      <File Id="MtgApiManager.Lib.dll" Name="MtgApiManager.Lib.dll" Source="$(var.MaGeek_TargetDir)MtgApiManager.Lib.dll" />
+	    </Component>
+	    <Component Id="AvalonDock.dll" Guid="2e3b80d7-5659-4f7a-882f-a628c857d665">
+	      <File Id="AvalonDock.dll" Name="AvalonDock.dll" Source="$(var.MaGeek_TargetDir)AvalonDock.dll" />
+	    </Component>
+	    <Component Id="MaGeek.dll" Guid="08dc91e1-76e3-4071-9d42-de3d38d0bde0">
+	      <File Id="MaGeek.dll" Name="MaGeek.dll" Source="$(var.MaGeek_TargetDir)MaGeek.dll" />
+	    </Component>
+	    <Component Id="Microsoft.Extensions.DependencyModel.dll" Guid="001332e4-6e4b-4008-b290-d99263867bdc">
+	      <File Id="Microsoft.Extensions.DependencyModel.dll" Name="Microsoft.Extensions.DependencyModel.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.DependencyModel.dll" />
+	    </Component>
+	    <Component Id="Castle.Core.dll" Guid="83feed09-0866-4ea3-8cc9-326c76382807">
+	      <File Id="Castle.Core.dll" Name="Castle.Core.dll" Source="$(var.MaGeek_TargetDir)Castle.Core.dll" />
+	    </Component>
+      <Component Id="MaGeek.pdb" Guid="a98aaa1d-f4e1-4dd8-bd4c-534021f07142">
+        <File Id="MaGeek.pdb" Name="MaGeek.pdb" Source="$(var.MaGeek_TargetDir)MaGeek.pdb" />
+      </Component>
+	  </ComponentGroup>
+	</Fragment>
+
+<!-- Sqlite -->
+  
+  <Fragment>
+    
+    <ComponentGroup Id="sql_win" Directory="netcoreapp21">
+      <Component Id="sql_win_System.Data.SqlClient" Guid="c38fcb51-a350-4741-99bd-7a56d9ac853f">
+        <File Id="sql_win_System.Data.SqlClient.dll" Name="System.Data.SqlClient.dll" Source="$(var.MaGeek_TargetDir)runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll" />
+      </Component>
+    </ComponentGroup>
+    
+    <ComponentGroup Id="sql_win_arm" Directory="win_arm_native">
+      <Component Id="sql_win_arm_e_sqlite3" Guid="284e3d13-890e-41f5-bf23-a7fb35633cbb">
+        <File Id="sql_win_arm_e_sqlite3.dll" Name="e_sqlite3.dll" Source="$(var.MaGeek_TargetDir)runtimes\win-arm\native\e_sqlite3.dll" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="sql_win_arm64" Directory="win_arm64_native">
+      <Component Id="sql_win_arm64_e_sqlite3" Guid="7033289f-1629-4deb-92f5-567410f9ef74">
+        <File Id="sql_win_e_sqlite3.dll" Name="e_sqlite3.dll" Source="$(var.MaGeek_TargetDir)runtimes\win-arm64\native\e_sqlite3.dll" />
+      </Component>
+      <Component Id="sql_win_arm64_sni" Guid="969e605d-0768-48a8-9db8-8e399423c018">
+        <File Id="sql_win_sni.dll" Name="sni.dll" Source="$(var.MaGeek_TargetDir)runtimes\win-arm64\native\sni.dll" />
+      </Component>
+    </ComponentGroup>
+    
+    <ComponentGroup Id="sql_win64" Directory="win_x64_native">
+      <Component Id="sql_win64_sql_win64_e_sqlite3" Guid="5137dbb5-1cef-48aa-828e-9f0b10bc522f">
+        <File Id="e_sqlite3.dll" Name="e_sqlite3.dll" Source="$(var.MaGeek_TargetDir)runtimes\win-x64\native\e_sqlite3.dll" />
+      </Component>
+      <Component Id="sql_win64_sni" Guid="7f26caa1-a039-4a53-bdcd-7fe040fe99e4">
+        <File Id="sql_win64_sni.dll" Name="sni.dll" Source="$(var.MaGeek_TargetDir)runtimes\win-x64\native\sni.dll" />
+      </Component>
+    </ComponentGroup>
+    
+    <ComponentGroup Id="sql_win86" Directory="win_x86_native">
+      <Component Id="sql_win86_e_sqlite3" Guid="71b4e68a-3129-4c8c-84e0-4fea5fc48611">
+        <File Id="sql_win86_e_sqlite3.dll" Name="e_sqlite3.dll" Source="$(var.MaGeek_TargetDir)runtimes\win-x86\native\e_sqlite3.dll" />
+      </Component>
+      <Component Id="sql_win86_sni" Guid="376fc1de-cc3d-4570-a26d-79f1dadb161f">
+        <File Id="sql_win86_sni.dll" Name="sni.dll" Source="$(var.MaGeek_TargetDir)runtimes\win-x86\native\sni.dll" />
+      </Component>
+    </ComponentGroup>
+
+  </Fragment>
+
+<!-- Lang -->
+
+  <Fragment>
+    <ComponentGroup Id="ru_files" Directory="ru">
+      <Component Id="ru_AvalonDock.resources.dll" Guid="96efb861-7b11-4812-831a-178732550bcc">
+        <File Id="ru_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ru\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="zh_Hant_files" Directory="zh_Hant">
+      <Component Id="zh_Hant_AvalonDock.resources.dll" Guid="6547008e-6b08-4304-a9a9-33a426e83b91">
+        <File Id="zh_Hant_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)zh-Hant\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="zh_Hans_files" Directory="zh_Hans">
+      <Component Id="zh_Hans_AvalonDock.resources.dll" Guid="98d61080-abec-4ad3-bed8-84af9c1629a2">
+        <File Id="zh_Hans_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)zh-Hans\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="sv_files" Directory="sv">
+      <Component Id="sv_AvalonDock.resources.dll" Guid="97500b3a-5bb7-42f0-8341-fbbae7f5a63f">
+        <File Id="sv_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)sv\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ro_files" Directory="ro">
+      <Component Id="ro_AvalonDock.resources.dll" Guid="7640a5ee-c7d9-4a91-8f59-a7a03cf82431">
+        <File Id="ro_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ro\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="pt_files" Directory="pt">
+      <Component Id="pt_AvalonDock.resources.dll" Guid="7f770b22-1a85-4fe4-8656-40c83f2d5d3b">
+        <File Id="pt_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)pt\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="pl_files" Directory="pl">
+      <Component Id="pl_AvalonDock.resources.dll" Guid="045601af-df4c-47cc-aea7-6bc697aa0522">
+        <File Id="pl_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)pl\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="nl_BE_files" Directory="nl_BE">
+      <Component Id="nl_BE_AvalonDock.resources.dll" Guid="b93131f3-801f-4343-8a50-136c2e63b25b">
+        <File Id="nl_BE_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)nl-BE\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ko_files" Directory="ko">
+      <Component Id="ko_AvalonDock.resources.dll" Guid="a206be05-5f3a-4453-aec4-f75ae4e8d6fa">
+        <File Id="ko_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ko\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ja_files" Directory="ja">
+      <Component Id="ja_AvalonDock.resources.dll" Guid="ca0bb1de-385e-4c68-8201-b8512170fd36">
+        <File Id="ja_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ja\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="hu_files" Directory="hu">
+      <Component Id="hu_AvalonDock.resources.dll" Guid="c6acf90f-ca59-467d-98cf-067dfdf07479">
+        <File Id="hu_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)hu\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="fr_files" Directory="fr">
+      <Component Id="fr_AvalonDock.resources.dll" Guid="62531e59-7dcb-4416-8991-f664a071f56a">
+        <File Id="fr_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)fr\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="it_files" Directory="it">
+      <Component Id="it_AvalonDock.resources.dll" Guid="359754e6-442d-4227-9a01-1f47f127d866">
+        <File Id="it_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)it\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="de_files" Directory="de">
+      <Component Id="de_AvalonDock.resources.dll" Guid="ffc18884-685d-4a57-921b-76a9cb664fa4">
+        <File Id="de_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)de\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="cs_CZ_files" Directory="cs_CZ">
+      <Component Id="cs_CZ_AvalonDock.resources.dll" Guid="92deb404-3e87-4277-9dfc-6249cc98c369">
+        <File Id="cs_CZ_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)cs-CZ\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ca_ES_files" Directory="ca_ES">
+      <Component Id="ca_ES_AvalonDock.resources.dll" Guid="53de61a8-4b9c-499a-8f7a-b8427bd46440">
+        <File Id="ca_ES_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ca-ES\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="es_files" Directory="es">
+      <Component Id="es_AvalonDock.resources.dll" Guid="3db978c9-d541-4b50-ba9f-90efbeb40f8d">
+        <File Id="es_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)es\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  
+</Wix>
