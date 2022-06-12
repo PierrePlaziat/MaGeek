@@ -6,7 +6,7 @@
   <Product Id="*" Name="MaGeek" Language="1033" Version="1.0.0.0" Manufacturer="PlaziatPierre" UpgradeCode="45f6c869-1e87-4431-93b2-f4b31ada4b2c">
 	
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
-
+    
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
   
     <MediaTemplate EmbedCab="yes" />
@@ -44,6 +44,17 @@
 		</Feature>
   
 	  <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <!-- Custom UI -->
+    
+    <WixVariable Id="WixUILicenseRtf"     Value="LICENSE.rtf" />
+    
+    <!-- <WixVariable Id="WixUIBannerBmp"      Value="" /> Top banner 	493 × 58 -->
+    <!-- <WixVariable Id="WixUIDialogBmp"      Value="" /> Background bitmap used on the welcome and completion dialogs 	493 × 312 -->
+    <!-- <WixVariable Id="WixUIExclamationIco" Value="" /> Exclamation icon on the WaitForCostingDlg 	32 × 32 -->
+    <!-- <WixVariable Id="WixUIInfoIco"        Value="" /> Information icon on the cancel and error dialogs 	32 × 32 -->
+    <!-- <WixVariable Id="WixUINewIco"         Value="" /> Button glyph on the BrowseDlg 	16 × 16 -->
+    <!-- <WixVariable Id="WixUIUpIco"          Value="" /> Button glyph on the BrowseDlg 	16 × 16 -->
   
 	</Product>
 
@@ -95,7 +106,10 @@
 			</Directory>
 		</Directory>
     
-	</Fragment>
+    <!-- Shortcut -->
+
+
+  </Fragment>
 
 <!-- Main Files -->
   
