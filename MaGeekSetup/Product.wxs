@@ -40,8 +40,10 @@
 			<ComponentGroupRef Id="cs_CZ_files" />
 			<ComponentGroupRef Id="ca_ES_files" />
       <ComponentGroupRef Id="es_files" />
-      
-		</Feature>
+
+      <ComponentRef Id="ApplicationShortcut" />
+
+    </Feature>
   
 	  <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
@@ -49,12 +51,8 @@
     
     <WixVariable Id="WixUILicenseRtf"     Value="LICENSE.rtf" />
     
-    <!-- <WixVariable Id="WixUIBannerBmp"      Value="" /> Top banner 	493 × 58 -->
-    <!-- <WixVariable Id="WixUIDialogBmp"      Value="" /> Background bitmap used on the welcome and completion dialogs 	493 × 312 -->
-    <!-- <WixVariable Id="WixUIExclamationIco" Value="" /> Exclamation icon on the WaitForCostingDlg 	32 × 32 -->
-    <!-- <WixVariable Id="WixUIInfoIco"        Value="" /> Information icon on the cancel and error dialogs 	32 × 32 -->
-    <!-- <WixVariable Id="WixUINewIco"         Value="" /> Button glyph on the BrowseDlg 	16 × 16 -->
-    <!-- <WixVariable Id="WixUIUpIco"          Value="" /> Button glyph on the BrowseDlg 	16 × 16 -->
+    <WixVariable Id="WixUIBannerBmp"      Value="Banner.bmp" /> <!-- Top banner 	493 × 58 -->
+    <WixVariable Id="WixUIDialogBmp"      Value="BG.bmp" /> <!-- Background bitmap used on the welcome and completion dialogs 	493 × 312 -->
   
 	</Product>
 
@@ -63,6 +61,7 @@
   <Fragment>
     
 		<Directory Id="TARGETDIR" Name="SourceDir">
+      
 			<Directory Id="ProgramFilesFolder">
         <Directory Id="INSTALLFOLDER" Name="MaGeek">
           <Directory Id="CardsIllusFolder" Name="CardsIllus"></Directory>
@@ -104,10 +103,26 @@
           </Directory>
         </Directory>
 			</Directory>
+      
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="MaGeek"/>
+      </Directory>
+      
 		</Directory>
     
     <!-- Shortcut -->
-
+    
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="167d33f2-da3d-4801-ad8d-472e814d2eae">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="Mageek"
+                  Description="Mtg Desktop App"
+                  Target="[#MaGeek.exe]" 
+                  WorkingDirectory="INSTALLFOLDER"/>
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\MyCompany\MyApplicationName" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
 
   </Fragment>
 
@@ -115,7 +130,7 @@
   
   <Fragment>
 	  <ComponentGroup Id="ProgramFilesFolder_files" Directory="INSTALLFOLDER">
-      
+
       <Component Id="ProductComponent" Guid="4e53269e-7cf7-48b6-ba55-0906ee45863e">
         <File Id="MaGeek.exe" Source="$(var.MaGeek_TargetDir)MaGeek.exe" KeyPath="yes" />
       </Component>
