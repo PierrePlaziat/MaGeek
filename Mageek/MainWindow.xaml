@@ -72,12 +72,12 @@
                 <local:DeckInspector x:Name="DeckList" Grid.Column="0" Grid.Row="0"></local:DeckInspector>
             </TabItem>
 
-            <TabItem Header="Parameters" Foreground="#999">
-                <local:Options x:Name="Options" Grid.Column="0" Grid.Row="2"></local:Options>
-            </TabItem>
-
             <TabItem Header="Import Export" Foreground="#999">
                 <local:ImportExport x:Name="Importer" Grid.Column="0" Grid.Row="2"></local:ImportExport>
+            </TabItem>
+
+            <TabItem Header="Parameters" Foreground="#999">
+                <local:Options x:Name="Options" Grid.Column="0" Grid.Row="2"></local:Options>
             </TabItem>
 
         </TabControl>
