@@ -14,13 +14,13 @@
             <ColumnDefinition Width="255"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="353"></RowDefinition>
+            <RowDefinition Height="358"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition></RowDefinition>
             
         </Grid.RowDefinitions>
 
-        <local:CardIllustration x:Name="yo" Width="250" Height="348" 
+        <local:CardIllustration x:Name="yo" Width="250" Height="348" Margin="0,5,5,5"
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
                                 SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"/>
 
@@ -80,6 +80,11 @@
         </ListView>
 
 
+
+        <StackPanel Background="#222" Grid.ColumnSpan="2" Grid.RowSpan="5"
+                    Visibility="{Binding Visible}">
+            <Label>No card selected</Label>
+        </StackPanel>
         
     </Grid>
     

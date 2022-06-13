@@ -154,7 +154,7 @@
         </Grid>
 
         <!-- Card datagrid -->
-    
+
         <Grid Grid.Row="3"
               ScrollViewer.VerticalScrollBarVisibility="Visible"
               ScrollViewer.HorizontalScrollBarVisibility="Hidden">
@@ -194,7 +194,7 @@
                     </Style>
                 </DataGrid.Resources>
             </DataGrid>
-            
+
         </Grid>
 
     </Grid>

@@ -29,16 +29,9 @@ namespace MaGeek.Data.Entities
         public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
 
         public string CardForeignName {
-            get
-            {
-                try
-                {
-                    return Traductions.Where( x=> x.Language.ToLower() == App.state.GetForeignLanguage().ToLower() ).FirstOrDefault().TraductedName;
-                }
-                catch 
-                {
-                    return "(?)"+CardId;
-                }
+            get {
+                var a = Traductions.Where(x => x.Language.ToLower() == App.state.GetForeignLanguage().ToLower()).FirstOrDefault();
+                return a!= null ?  a.TraductedName : "(VO) "+CardId;
             }
         }
 

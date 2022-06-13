@@ -30,21 +30,20 @@ namespace MaGeek.Data.Entities
 
         public async Task<BitmapImage> RetrieveImage()
         {
-            return await Task.Run( () => {
-
-                Directory.CreateDirectory(@"./CardsIllus");
-                string localFileName = @"./CardsIllus/" + Id + ".png";
-                if (!File.Exists(localFileName))
-                {
-                    WebClient webClient = new();
-                    webClient.DownloadFile(ImageUrl, localFileName);
-                }
-                Uri Url;
-                try { Url = new Uri("file:///" + localFileName, UriKind.Relative); }
-                catch { Url = new Uri(ImageUrl, UriKind.Absolute); }
-                BitmapImage img = new(Url);
-                return img;
-            } );
+            var tcs = new TaskCompletionSource<BitmapImage>();
+            Directory.CreateDirectory(@"./CardsIllus");
+            string localFileName = @"./CardsIllus/" + Id + ".png";
+            if (!File.Exists(localFileName))
+            {
+                WebClient webClient = new();
+                webClient.DownloadFile(ImageUrl, localFileName);
+            }
+            Uri Url;
+            try { Url = new Uri("file:///" + localFileName, UriKind.Relative); }
+            catch { Url = new Uri(ImageUrl, UriKind.Absolute); }
+            BitmapImage img = new(Url);
+            tcs.SetResult(img);
+            return img;
         }
 
     }

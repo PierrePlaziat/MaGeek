@@ -8,6 +8,13 @@
 
   <ItemGroup>
     <None Remove="Fonts\Magic_Symbols_2008.ttf" />
+    <None Remove="Resources\Corner.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Corner.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

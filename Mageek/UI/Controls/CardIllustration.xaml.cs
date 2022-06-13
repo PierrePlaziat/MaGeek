@@ -62,7 +62,7 @@ namespace MaGeek.UI
             OnPropertyChanged("CardImage.Result");
         }
 
-        public MagicCard SelectedCard { get { return SelectedVariant == null? null:SelectedVariant.Card; } }
+        public MagicCard SelectedCard { get { return SelectedVariant == null ? null:SelectedVariant.Card; } }
 
         private NotifyTaskCompletion<BitmapImage> cardImage;
         public NotifyTaskCompletion<BitmapImage> CardImage { 
@@ -99,6 +99,13 @@ namespace MaGeek.UI
         #endregion
 
         #region CTOR
+
+        public CardIllustration(MagicCard card)
+        {
+            InitializeComponent();
+            DataContext = this;
+            SelectedVariant = card.Variants[0];
+        }
 
         public CardIllustration()
         {

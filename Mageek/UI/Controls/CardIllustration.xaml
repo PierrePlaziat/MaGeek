@@ -22,23 +22,19 @@
                                      RadiusX="0.5" 
                                      RadiusY="0.5">
                     <RadialGradientBrush.GradientStops>
-                        <GradientStop Color="#222" Offset="0.2" />
-                        <GradientStop Color="#444" Offset="1" />
+                        <GradientStop Color="#111" Offset="0.2" />
+                        <GradientStop Color="#333" Offset="1" />
                     </RadialGradientBrush.GradientStops>
                 </RadialGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
 
-        <Grid>
-            <!-- Busy indicator -->
-            <Label Content="Loading..." 
-                   Visibility="{Binding CardImage.IsNotCompleted,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
             <!-- Results -->
-            <Label Content="{Binding CardImage.Result}" 
+            <Label Content="Loading"
                    Visibility="{Binding CardImage.IsSuccessfullyCompleted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <!-- Error details -->
-            <Label Content="{Binding CardImage.ErrorMessage}" 
-                   Foreground="Red"
+            <Label Content="Couldnt find illustration" 
                    Visibility="{Binding CardImage.IsFaulted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Grid>
 
@@ -113,18 +109,18 @@
                 <RowDefinition Height="10"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Image Grid.Column="0" Grid.Row="0" Source="D:\PROJECTS\VS\Mageek\Mageek\Resources\Corner.png" />
-            <Image Grid.Column="2" Grid.Row="0" Source="D:\PROJECTS\VS\Mageek\Mageek\Resources\Corner.png">
+            <Image Grid.Column="0" Grid.Row="0" Source="\Resources\Corner.png" />
+            <Image Grid.Column="2" Grid.Row="0" Source="\Resources\Corner.png">
                 <Image.RenderTransform>
                     <RotateTransform  CenterX="5" CenterY="5" Angle="90" />
                 </Image.RenderTransform>
             </Image >
-            <Image Grid.Column="2" Grid.Row="2" Source="D:\PROJECTS\VS\Mageek\Mageek\Resources\Corner.png" >
+            <Image Grid.Column="2" Grid.Row="2" Source="\Resources\Corner.png" >
                 <Image.RenderTransform>
                     <RotateTransform CenterX="5" CenterY="5" Angle="180" />
                 </Image.RenderTransform>
             </Image >
-            <Image Grid.Column="0" Grid.Row="2" Source="D:\PROJECTS\VS\Mageek\Mageek\Resources\Corner.png" >
+            <Image Grid.Column="0" Grid.Row="2" Source="\Resources\Corner.png" >
             <Image.RenderTransform>
                 <RotateTransform  CenterX="5" CenterY="5" Angle="270" />
             </Image.RenderTransform>

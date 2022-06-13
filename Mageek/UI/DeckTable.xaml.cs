@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace MaGeek.UI
@@ -98,11 +97,11 @@ namespace MaGeek.UI
 
         private void LoadImg(object sender, DoWorkEventArgs e)
         {
+           
             try
             {
                 this.Dispatcher.Invoke(
-                    DispatcherPriority.Send, new Action
-                    (
+                    DispatcherPriority.Send, new Action(
                         delegate {
                             UGrid.Children.Clear();
                         }
@@ -115,17 +114,10 @@ namespace MaGeek.UI
 
                         Thread.Sleep(100);
 
-                        this.Dispatcher.Invoke(
-                            DispatcherPriority.Send, new Action
-                            (
+                        this.Dispatcher.Invoke (
+                            DispatcherPriority.Send, new Action (
                                 delegate {
-                                    BitmapImage bitmap = cardrel.Card.RetrieveImage().Result;
-                                    Image img = new()
-                                    {
-                                        Source = bitmap,
-                                        Height = 250
-                                    };
-                                    UGrid.Children.Add(img);
+                                    UGrid.Children.Add(new CardIllustration(cardrel.Card) { Width=250});
                                 }
                             )
                         );
