@@ -36,11 +36,11 @@ namespace MaGeek.UI
                     .Where(x => x.Cmc <= FilterMaxCmc)
                     .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower()) || x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
                     .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()));
-                if (!filterColorB) filtered = filtered.Where(x => !x.ManaCost.Contains("B"));
-                if (!filterColorW) filtered = filtered.Where(x => !x.ManaCost.Contains("W"));
-                if (!filterColorU) filtered = filtered.Where(x => !x.ManaCost.Contains("U"));
-                if (!filterColorG) filtered = filtered.Where(x => !x.ManaCost.Contains("G"));
-                if (!filterColorR) filtered = filtered.Where(x => !x.ManaCost.Contains("R"));
+                if (!filterColorB) filtered = filtered.Where(x => !x.ManaCost.Contains('B'));
+                if (!filterColorW) filtered = filtered.Where(x => !x.ManaCost.Contains('W'));
+                if (!filterColorU) filtered = filtered.Where(x => !x.ManaCost.Contains('U'));
+                if (!filterColorG) filtered = filtered.Where(x => !x.ManaCost.Contains('G'));
+                if (!filterColorR) filtered = filtered.Where(x => !x.ManaCost.Contains('R'));
                 return new ObservableCollection<MagicCard>(filtered); 
             }
         }
@@ -178,8 +178,7 @@ namespace MaGeek.UI
 
         private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var card = CardGrid.SelectedItem as MagicCard;
-            if (card != null) App.state.SelectCard(card);
+            if (CardGrid.SelectedItem is MagicCard card) App.state.SelectCard(card);
         }
 
         private void SearchButton_Pressed(object sender, System.Windows.RoutedEventArgs e)

@@ -166,25 +166,26 @@
                       CanUserReorderColumns="True"
                       CanUserSortColumns="True"
                       CanUserDeleteRows="False"
+                      IsReadOnly="True"
                       RowHeaderWidth="0"
                       AutoGenerateColumns="False"
                       SelectionChanged="CardGrid_SelectionChanged">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Got" Binding="{Binding CollectedQuantity}" />
-                    <DataGridTextColumn Header="Name" Binding="{Binding CardId}" />
-                    <DataGridTextColumn Header="Foreign Name" Binding="{Binding CardForeignName}" />
-                    
-                    <DataGridTemplateColumn Header="ManaCost">
+                    <DataGridTextColumn Header="| Got   " Binding="{Binding CollectedQuantity}" />
+                    <DataGridTextColumn Header="| Name   " Binding="{Binding CardId}" />
+                    <DataGridTextColumn Header="| Foreign Name   " Binding="{Binding CardForeignName}" />
+
+                    <DataGridTemplateColumn Header="| ManaCost   ">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <local:ManaCost Cost="{Binding ManaCost}" HorizontalAlignment="Right"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" />
-                    <DataGridTextColumn Header="Power" Binding="{Binding Power}" />
-                    <DataGridTextColumn Header="Toughness" Binding="{Binding Toughness}" />
-                    <DataGridTextColumn Header="Cmc" Binding="{Binding Cmc}" />
+                    <DataGridTextColumn Header="| Type   " Binding="{Binding Type}" />
+                    <DataGridTextColumn Header="| Power   " Binding="{Binding Power}" />
+                    <DataGridTextColumn Header="| Toughness   " Binding="{Binding Toughness}" />
+                    <DataGridTextColumn Header="| Cmc   " Binding="{Binding Cmc}" />
                 </DataGrid.Columns>
 
                 <DataGrid.Resources>

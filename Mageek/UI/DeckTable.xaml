@@ -105,7 +105,7 @@
               Grid.Row="0"  
               Grid.RowSpan="3"
               Background="#111">
-            <WrapPanel Name="UGrid" HorizontalAlignment="Stretch" MouseWheel="UGrid_MouseWheel"/>
+            <WrapPanel Name="UGrid" HorizontalAlignment="Stretch"/>
         </ScrollViewer>
 
         <StackPanel Grid.Column="1" 

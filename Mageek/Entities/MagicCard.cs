@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -87,20 +88,20 @@ namespace MaGeek.Data.Entities
             }
         }
 
-        internal BitmapImage RetrieveImage(int selectedVariant = -1)
+        public async Task<BitmapImage> RetrieveImage(int selectedVariant = -1)
         {
             if (selectedVariant != -1)
             {
                 if (!string.IsNullOrEmpty(Variants[selectedVariant].ImageUrl))
                 {
-                    return Variants[selectedVariant].RetrieveImage();
+                    return await Variants[selectedVariant].RetrieveImage();
                 }
             }
             foreach(var variant in Variants)
             {
                 if(!string.IsNullOrEmpty(variant.ImageUrl))
                 {
-                    return variant.RetrieveImage();
+                    return await variant.RetrieveImage();
                 }
             }
             return null;

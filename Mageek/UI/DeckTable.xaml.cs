@@ -16,7 +16,6 @@ namespace MaGeek.UI
     public partial class DeckTable : UserControl, INotifyPropertyChanged
     {
 
-
         #region Attributes
 
         #region PropertyChange
@@ -49,7 +48,7 @@ namespace MaGeek.UI
 
         #endregion
 
-        BackgroundWorker LoadImgWorker = new BackgroundWorker();
+        readonly BackgroundWorker LoadImgWorker = new();
         bool isLoading = false;
         public Visibility Loading { get { return isLoading ? Visibility.Visible : Visibility.Collapsed; } }
 
@@ -66,17 +65,10 @@ namespace MaGeek.UI
 
         void HandleDeckModified(object sender, DeckModifEventArgs e)
         {
-            forceRefresh();
+            RefreshUGrid();
         }
 
         #endregion
-
-        internal void forceRefresh()
-        {
-            CurrentDeck = null;
-            CurrentDeck = App.state.SelectedDeck;
-            RefreshUGrid();
-        }
 
         private void LessCard(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -96,6 +88,8 @@ namespace MaGeek.UI
 
         private void RefreshUGrid()
         {
+            CurrentDeck = null;
+            CurrentDeck = App.state.SelectedDeck;
             if (CurrentDeck == null) return;
             isLoading = true;
             OnPropertyChanged("Loading");
@@ -125,8 +119,8 @@ namespace MaGeek.UI
                             DispatcherPriority.Send, new Action
                             (
                                 delegate {
-                                    BitmapImage bitmap = cardrel.Card.RetrieveImage();
-                                    Image img = new Image()
+                                    BitmapImage bitmap = cardrel.Card.RetrieveImage().Result;
+                                    Image img = new()
                                     {
                                         Source = bitmap,
                                         Height = 250
@@ -149,13 +143,7 @@ namespace MaGeek.UI
 
         private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var cardRel = LVDeck.SelectedItem as CardDeckRelation;
-            if (cardRel != null) App.state.SelectCard(cardRel.Card);
-        }
-
-        private void UGrid_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
-        {
-            //TODO ZOOM
+            if (LVDeck.SelectedItem is CardDeckRelation cardRel) App.state.SelectCard(cardRel.Card);
         }
 
     }

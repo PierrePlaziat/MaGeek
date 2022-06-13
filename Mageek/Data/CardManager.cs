@@ -1,12 +1,8 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Entities;
-using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 
 namespace MaGeek.Data
 {
@@ -14,7 +10,7 @@ namespace MaGeek.Data
     public class CardManager
     {
 
-        public ApiMtg MtgApi = new ApiMtg();
+        public ApiMtg MtgApi = new();
 
         public void AddCardToDeck(MagicCard card, MagicDeck deck, int qty = 1)
         {

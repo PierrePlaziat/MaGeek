@@ -103,6 +103,7 @@ namespace MaGeek.UI
                     ImportOutput.Content = "Importing : "+ line;
 
                     string cardname = line[(line.IndexOf(' ') + 1)..];
+                    cardname = cardname.Split(" // ")[0];
                     int cardQuantity = int.Parse(line.Split(" ")[0]);
 
                     // Search

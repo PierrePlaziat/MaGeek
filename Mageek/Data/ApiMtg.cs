@@ -13,12 +13,13 @@ namespace MaGeek.Data
     public class ApiMtg
     {
 
-        IMtgServiceProvider serviceProvider = new MtgServiceProvider();
+        readonly IMtgServiceProvider serviceProvider = new MtgServiceProvider();
+
         public async Task<List<ICard>> SearchCards(string searchText)
         {
             ICardService service = serviceProvider.GetCardService();
             IOperationResult<List<ICard>> tmpResult = null;
-            List<ICard> cards = new List<ICard>();
+            List<ICard> cards = new();
             int i = 1;
             do
             {
@@ -57,7 +58,7 @@ namespace MaGeek.Data
             }
         }
 
-        private bool NameCorresponds(string name, string cardname)
+        private static bool NameCorresponds(string name, string cardname)
         {
             string[] ss = name.Split(" // ");
             foreach (string ss2 in ss)
@@ -67,7 +68,7 @@ namespace MaGeek.Data
             return false;
         }
 
-        private MagicCard SaveLocalCard(ICard iCard)
+        private static MagicCard SaveLocalCard(ICard iCard)
         {
             // Guard
             var card = FindLocalCard(iCard);
@@ -78,7 +79,7 @@ namespace MaGeek.Data
             return card;
         }
 
-        private MagicCard FindLocalCard(ICard iCard)
+        private static MagicCard FindLocalCard(ICard iCard)
         {
             return App.database.cards.Where(x => x.CardId== iCard.Name).FirstOrDefault();
         }

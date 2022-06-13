@@ -6,72 +6,23 @@
       xmlns:local="clr-namespace:MaGeek.UI"
       xmlns:cwpf="clr-namespace:Plaziat.CommonWpf"
       mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="250">
+      d:DesignHeight="1000" d:DesignWidth="255">
 
     <Grid>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"></ColumnDefinition>
+            <ColumnDefinition Width="255"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="348"></RowDefinition>
+            <RowDefinition Height="353"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition></RowDefinition>
             
         </Grid.RowDefinitions>
 
-        <Grid Background="#111">
-            
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="25"></RowDefinition>
-                <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition Height="25"></RowDefinition>
-            </Grid.RowDefinitions>
-
-                
-            
-            <Label Grid.Column="0" Grid.Row="0" 
-                   Content="{Binding SelectedCard.Name_VO}" 
-                   Foreground="White" 
-                   FontSize="15" FontWeight="Black"/>
-
-            <local:ManaCost Grid.Column="1" Grid.Row="0"
-                            Cost="{Binding SelectedCard.ManaCost}"/>
-            
-            <Label Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" 
-                   Content="{Binding SelectedCard.Type}" 
-                   Foreground="White" FontSize="10" FontWeight="Black"/>
-
-            <TextBlock Grid.Column="0" Grid.Row="3"
-                       Grid.ColumnSpan="2" Margin="5" 
-                       Text="{Binding SelectedCard.Text}" 
-                       FontSize="10"
-                       Foreground="White"
-                       TextWrapping="WrapWithOverflow"/>
-            
-            <DockPanel Grid.Column="1" Grid.Row="4"
-                       HorizontalAlignment="Right" 
-                       VerticalAlignment="Bottom">
-                <Label Content="{Binding SelectedCard.Power}" 
-                       Foreground="White"/>
-                <Label Content="/" 
-                       Foreground="White"/>
-                <Label Content="{Binding SelectedCard.Toughness}" 
-                       Foreground="White"/>
-            </DockPanel>
-            
-        </Grid>
-
-        <StackPanel >
-            <!--<Image cwpf:ImageAsyncHelper.SourceUri="{Binding ImgUrl, IsAsync=True}"  x:Name="img" />-->
-            <Image Source="{Binding GetImage}"></Image>
-        </StackPanel>
+        <local:CardIllustration x:Name="yo" Width="250" Height="348" 
+                                HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"/>
 
         <DockPanel Grid.Row="1" Background="Black" Height="21">
 
@@ -129,9 +80,6 @@
         </ListView>
 
 
-        <StackPanel Visibility="{Binding Visible}" Grid.RowSpan="3" Background="#444">
-            <Label>No card selected</Label>
-        </StackPanel>
         
     </Grid>
     

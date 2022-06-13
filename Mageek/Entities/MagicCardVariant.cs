@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
 namespace MaGeek.Data.Entities
@@ -27,20 +28,23 @@ namespace MaGeek.Data.Entities
             SetName = selectedCard.SetName;
         }
 
-        public BitmapImage RetrieveImage()
+        public async Task<BitmapImage> RetrieveImage()
         {
-            Directory.CreateDirectory(@"./CardsIllus");
-            string localFileName = @"./CardsIllus/" + Id+".png";
-            if (!File.Exists(localFileName))
-            {
-                WebClient webClient = new();
-                webClient.DownloadFile(ImageUrl, localFileName);
-            }
-            Uri Url;
-            try   { Url = new Uri("file:///" + localFileName, UriKind.Relative); }
-            catch { Url = new Uri(ImageUrl,      UriKind.Absolute); }
-            BitmapImage img = new(Url);
-            return img;
+            return await Task.Run( () => {
+
+                Directory.CreateDirectory(@"./CardsIllus");
+                string localFileName = @"./CardsIllus/" + Id + ".png";
+                if (!File.Exists(localFileName))
+                {
+                    WebClient webClient = new();
+                    webClient.DownloadFile(ImageUrl, localFileName);
+                }
+                Uri Url;
+                try { Url = new Uri("file:///" + localFileName, UriKind.Relative); }
+                catch { Url = new Uri(ImageUrl, UriKind.Absolute); }
+                BitmapImage img = new(Url);
+                return img;
+            } );
         }
 
     }

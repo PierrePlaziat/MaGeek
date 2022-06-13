@@ -28,22 +28,31 @@ namespace MaGeek.UI
         private MagicCard selectedCard;
         public MagicCard SelectedCard
         {
-            get
-            {
-                return selectedCard;
-            }
+            get { return selectedCard; }
             set
             {
-                selectedIllus = 0;
+                selectedVariantNb = 0;
                 selectedCard = value;
                 OnPropertyChanged();
-                OnPropertyChanged("ImgUrl");
                 OnPropertyChanged("Variants");
                 OnPropertyChanged("CollectedQuantity");
                 OnPropertyChanged("Visible");
-                OnPropertyChanged("GetImage");
+                OnPropertyChanged("SelectedVariant");
             }
         }
+        private int selectedVariantNb = 0;
+        private MagicCardVariant selectedVariant = new();
+        public MagicCardVariant SelectedVariant
+        {
+            get
+            {
+                if (Variants == null || Variants.Count<=0) return null;
+                return Variants[selectedVariantNb];
+            }
+            set { }
+        }
+
+
 
         void HandleCardSelected(object sender, SelectCardEventArgs e)
         {
@@ -58,7 +67,6 @@ namespace MaGeek.UI
             }
         }
 
-        private int selectedIllus = 0;
 
         public List<MagicCardVariant> Variants
         {
@@ -79,18 +87,6 @@ namespace MaGeek.UI
                     return selectedCard.Variants.Count;
                 else 
                     return 0;
-            }
-        }
-
-        public BitmapImage GetImage
-        {
-            get
-            {
-                if (selectedCard != null && selectedCard.Variants != null && selectedCard.Variants.Count > 0 && selectedCard.Variants[selectedIllus] != null)
-                {
-                    return selectedCard.RetrieveImage(selectedIllus);
-                }
-                return null;
             }
         }
 
@@ -137,12 +133,12 @@ namespace MaGeek.UI
                 var variant = Variants[VariantListBox.SelectedIndex];
                 if (variant != null)
                 {
-                    selectedIllus = VariantListBox.SelectedIndex;
-                    OnPropertyChanged("GetImage");
+                    selectedVariantNb = VariantListBox.SelectedIndex;
+                    OnPropertyChanged("SelectedVariant");
                 }
             }
         }
-    
+
     }
 
 }
