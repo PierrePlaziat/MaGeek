@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace MaGeek.UI
@@ -117,7 +118,7 @@ namespace MaGeek.UI
                         this.Dispatcher.Invoke (
                             DispatcherPriority.Send, new Action (
                                 delegate {
-                                    UGrid.Children.Add(new CardIllustration(cardrel.Card) { Width=250});
+                                    UGrid.Children.Add(new CardIllustration(cardrel.Card) { Width=150, Height=207,BorderBrush=Brushes.Black,BorderThickness=new Thickness(1) });
                                 }
                             )
                         );
@@ -131,11 +132,6 @@ namespace MaGeek.UI
             }
             isLoading = false;
             OnPropertyChanged("Loading");
-        }
-
-        private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (LVDeck.SelectedItem is CardDeckRelation cardRel) App.state.SelectCard(cardRel.Card);
         }
 
     }

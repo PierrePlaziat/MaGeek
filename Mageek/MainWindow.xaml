@@ -64,25 +64,16 @@
 
 
         <TabControl Grid.Column="0"
+                    Grid.RowSpan="3"
                     BorderThickness="0" 
                     Background="#222">
 
             <TabItem Header="Decks" Foreground="#999">
-                <local:DeckList x:Name="DeckList" Grid.Column="0" Grid.Row="0"></local:DeckList>
+                <local:DeckInspector x:Name="DeckList" Grid.Column="0" Grid.Row="0"></local:DeckInspector>
             </TabItem>
 
             <TabItem Header="Parameters" Foreground="#999">
                 <local:Options x:Name="Options" Grid.Column="0" Grid.Row="2"></local:Options>
-            </TabItem>
-            
-        </TabControl>
-
-        <TabControl Grid.Column="2"
-                    BorderThickness="0" 
-                    Background="#222">
-
-            <TabItem Header="Card Searcher" Foreground="#999">
-                <local:CardSearcher x:Name="LocalColec" Grid.Column="0" Grid.Row="2"></local:CardSearcher>
             </TabItem>
 
             <TabItem Header="Import Export" Foreground="#999">
@@ -91,33 +82,39 @@
 
         </TabControl>
 
-        <local:CardInspector x:Name="CardDetails" Grid.Column="4" Grid.RowSpan="3"></local:CardInspector>
-
-
-        <TabControl Grid.Column="0"
-                    Grid.Row="2"
-                    Grid.ColumnSpan="3"
-                    BorderThickness="0" 
-                    Background="#222">
-
-            <TabItem Header="Deck Table" Foreground="#999">
-                <local:DeckTable x:Name="SelectedDeck" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left"></local:DeckTable>
-            </TabItem>
-<!--
-            <TabItem Header="Statistics" Foreground="#999">
-            </TabItem>
-
-            <TabItem Header="Missing Cards" Foreground="#999">
-            </TabItem>
--->
-        </TabControl>
-        
-        <GridSplitter Grid.Column="0" Grid.Row="1"
-                    Grid.ColumnSpan="3"
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="3"
                     HorizontalAlignment="Stretch" 
                     VerticalAlignment="Stretch"
-                    Background="#555"></GridSplitter>
+                    Background="Black"></GridSplitter>
 
+        <local:CardSearcher x:Name="LocalColec" Grid.Row="0" Grid.Column="2"
+                    BorderThickness="0" 
+                    Background="#222"></local:CardSearcher>
+
+        <GridSplitter Grid.Column="2" Grid.Row="1"
+                    Grid.ColumnSpan="1"
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch"
+                    Background="Black"></GridSplitter>
+        
+        <local:CardInspector MaxWidth="255" x:Name="CardDetails" Grid.Column="4" Grid.RowSpan="3"></local:CardInspector>
+
+        <GridSplitter Grid.Column="3" Grid.Row="0" Grid.RowSpan="3"
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch"
+                    Background="Black" DragCompleted="GridSplitter_DragCompleted"></GridSplitter>
+        <StackPanel
+                         Grid.Column="2"
+                    Grid.Row="2"
+                    Grid.ColumnSpan="1"
+                    Background="#000"></StackPanel>
+
+        <local:DeckTable x:Name="SelectedDeck"  HorizontalAlignment="Left"  
+                         Grid.Column="2"
+                    Grid.Row="2"
+                    Grid.ColumnSpan="1"
+                    BorderThickness="0"
+                    Background="#000"></local:DeckTable>
     </Grid>
     
 </Window>

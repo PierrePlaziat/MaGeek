@@ -8,10 +8,11 @@
 
   <ItemGroup>
     <None Remove="Fonts\Magic_Symbols_2008.ttf" />
-    <None Remove="Resources\Corner.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\document.png" />
+    <Resource Include="Resources\property-blue.png" />
     <Resource Include="Resources\Corner.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -28,6 +29,10 @@
 
   <ItemGroup>
     <Resource Include="Fonts\Magic_Symbols_2008.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SplashScreen Include="Resources\splash.png" />
   </ItemGroup>
 
 </Project>

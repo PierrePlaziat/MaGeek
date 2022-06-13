@@ -47,7 +47,7 @@
         <!-- HUD -->
 
         <Grid Visibility="{Binding IsHudVisible}"
-              Background="#000" Opacity="0.5"  >
+              Background="#000" Opacity="0.8"  >
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>

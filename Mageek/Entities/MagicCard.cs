@@ -1,11 +1,9 @@
 ﻿using MaGeek.Entities;
 using MtgApiManager.Lib.Model;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace MaGeek.Data.Entities
