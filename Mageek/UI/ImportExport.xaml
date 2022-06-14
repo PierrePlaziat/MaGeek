@@ -10,56 +10,56 @@
 
     <Grid>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.RowSpan="2" Background="#333"> 
-            <Button Click="LaunchImportation" Grid.Row="3" Grid.Column="0" Content="Import" Grid.ColumnSpan="3"></Button>
-           <!-- <Button Click="StartExport" Grid.Row="3" Grid.Column="0" Content="Export" Grid.ColumnSpan="3"></Button>-->
-            <CheckBox Name="AsGot" Margin="3" IsChecked="false">Add as Got</CheckBox>
-            <CheckBox Name="AsDeck" Margin="3" IsChecked="true">MakeDeck</CheckBox>
+        <StackPanel Grid.Row="0">
+            <!--<Button>Load file</Button>-->
+            <CheckBox Name="AsGot" Margin="3" IsChecked="false" Foreground="#999">As owned</CheckBox>
+
+            <DockPanel>
+                <CheckBox Name="AsDeck" Margin="3" IsChecked="true" Foreground="#999">To deck</CheckBox>
+                <TextBox  Name="DeckTitle" />
+            </DockPanel>
         </StackPanel>
-        
-        <DockPanel Grid.Column="1" >
-            <Label>Title:</Label>
-            <TextBox  Name="DeckTitle" />
-        </DockPanel>
+        <RichTextBox Grid.Row="1" x:Name="ImportTxt" 
+                    Margin="0,0,0,0"
+                     Width="300"
+                     BorderThickness="0"
+                    AcceptsReturn="True"
+                    Background="Black"
+                    VerticalContentAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    VerticalScrollBarVisibility="Auto"
+                    Foreground="White">
 
-        <Grid Grid.Row="1" Grid.Column="1">
+            <RichTextBox.Resources>
+                <Style TargetType="{x:Type Paragraph}">
+                    <Setter Property="Margin" Value="0,0,0,0"/>
+                </Style>
+            </RichTextBox.Resources>
+        </RichTextBox>
 
-            <RichTextBox x:Name="ImportTxt"
-                     Margin="0,0,0,0"
-                     AcceptsReturn="True"
-                     Background="Black"
-                     VerticalContentAlignment="Stretch"
-                     VerticalAlignment="Stretch"
-                     VerticalScrollBarVisibility="Auto"
-                     Foreground="White">
 
-                <RichTextBox.Resources>
-                    <Style TargetType="{x:Type Paragraph}">
-                        <Setter Property="Margin" Value="0,0,0,0"/>
-                    </Style>
-                </RichTextBox.Resources>
-            </RichTextBox>
+        <Button Click="LaunchImportation" Grid.Row="2" Grid.Column="0" Content="Import" Grid.ColumnSpan="3"></Button>
 
+        <Grid Name="LoadPanel" 
+              Background="Black"
+              Grid.RowSpan="3">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <ProgressBar Grid.Row="0" Name="LoadBar"/>
+            <TextBox Grid.Row="1"  Name="ImportOutput" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" Height="500" Background="Black"></TextBox>
         </Grid>
-
-        <StackPanel Name="LoadPanel" Background="Black"
-                    Grid.ColumnSpan="2" Grid.RowSpan="2">
-            <Grid>
-                <ProgressBar Grid.Row="3" Grid.Column="0" Name="LoadBar"></ProgressBar>
-                <Label Name="ImportOutput" Height="30" Foreground="Black"></Label>
-            </Grid>
-        </StackPanel>
-
+    
     </Grid>
+
     
 </UserControl>

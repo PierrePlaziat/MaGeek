@@ -217,6 +217,10 @@ namespace MaGeek.UI
 
         #endregion
 
+        private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            App.cardManager.AddCardToDeck(CardsBind[CardGrid.SelectedIndex], App.state.SelectedDeck);
+        }
     }
 
 }

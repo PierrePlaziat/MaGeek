@@ -164,6 +164,7 @@
                       CanUserResizeRows="False"
                       CanUserResizeColumns="True"
                       CanUserReorderColumns="True"
+                      SelectionMode="Single"
                       CanUserSortColumns="True"
                       CanUserDeleteRows="False"
                       IsReadOnly="True"
@@ -193,6 +194,13 @@
                         <Setter Property="Background" Value="#555" />
                     </Style>
                 </DataGrid.Resources>
+
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="To deck" Click="MenuItem_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+
             </DataGrid>
 
         </Grid>

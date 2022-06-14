@@ -47,13 +47,13 @@
         
     </Window.Resources>
 
-    <Grid Background="Black">
+    <Grid Background="Black" Name="BaseGrid">
         
         <Grid.ColumnDefinitions >
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="5"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="5"></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -68,11 +68,11 @@
                     BorderThickness="0" 
                     Background="#222">
 
-            <TabItem Header="Decks" Foreground="#999">
+            <TabItem Header="Collection" Foreground="#999">
                 <local:DeckInspector x:Name="DeckList" Grid.Column="0" Grid.Row="0"></local:DeckInspector>
             </TabItem>
 
-            <TabItem Header="Import Export" Foreground="#999">
+            <TabItem Header="Importer" Foreground="#999">
                 <local:ImportExport x:Name="Importer" Grid.Column="0" Grid.Row="2"></local:ImportExport>
             </TabItem>
 
@@ -99,12 +99,15 @@
         
         <local:CardInspector MaxWidth="255" x:Name="CardDetails" Grid.Column="4" Grid.RowSpan="3"></local:CardInspector>
 
-        <GridSplitter Grid.Column="3" Grid.Row="0" Grid.RowSpan="3"
-                    HorizontalAlignment="Stretch" 
-                    VerticalAlignment="Stretch"
-                    Background="Black" DragCompleted="GridSplitter_DragCompleted"></GridSplitter>
-        <StackPanel
-                         Grid.Column="2"
+        <Button Grid.Column="3" 
+                Grid.RowSpan="3" 
+                HorizontalAlignment="Stretch" 
+                VerticalAlignment="Stretch" 
+                Height="5000" 
+                Content=">"
+                Click="Button_Click"/>
+
+        <StackPanel Grid.Column="2"
                     Grid.Row="2"
                     Grid.ColumnSpan="1"
                     Background="#000"></StackPanel>

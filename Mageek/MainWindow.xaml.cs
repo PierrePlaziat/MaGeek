@@ -6,15 +6,19 @@ namespace MaGeek.UI
     public partial class MainWindow : Window
     {
 
+        private bool cardInspectorOpened = true;
+
         public MainWindow()
         {
+            DataContext = this;
             InitializeComponent();
-        }
+        }   
 
-        private void GridSplitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //C0.MaxWidth = Math.Min(ResizeGrid.ActualWidth, ActualWidth) - (C2.MinWidth + 5);
-
+            if (cardInspectorOpened)    BaseGrid.ColumnDefinitions[BaseGrid.ColumnDefinitions.Count - 1].Width = new GridLength(0);
+            else                        BaseGrid.ColumnDefinitions[BaseGrid.ColumnDefinitions.Count - 1].Width = new GridLength(255);
+            cardInspectorOpened = !cardInspectorOpened;
         }
     }
 

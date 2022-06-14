@@ -82,7 +82,7 @@ namespace MaGeek.UI
 
             ResetLoadBar(importLines.Count);
 
-            ImportOutput.Content = "";
+            ImportOutput.Text = "";
             string errors = "";
 
             var deck = new MagicDeck()
@@ -100,7 +100,7 @@ namespace MaGeek.UI
 
                     // Parse
 
-                    ImportOutput.Content = "Importing : "+ line;
+                    ImportOutput.Text += "Importing : "+ line+"\n";
 
                     string cardname = line[(line.IndexOf(' ') + 1)..];
                     cardname = cardname.Split(" // ")[0];

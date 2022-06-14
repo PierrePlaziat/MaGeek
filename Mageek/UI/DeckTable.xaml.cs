@@ -41,7 +41,7 @@ namespace MaGeek.UI
         void HandleDeckSelected(object sender, SelectDeckEventArgs e)
         {
             CurrentDeck = e.Deck;
-            RefreshUGrid();
+            FullRefresh();
         }
 
         public Visibility Visible { get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; } }
@@ -60,12 +60,13 @@ namespace MaGeek.UI
             DataContext = this;
             App.state.RaiseSelectDeck += HandleDeckSelected;
             App.state.RaiseDeckModif += HandleDeckModified;
+            LoadImgWorker.WorkerSupportsCancellation = true;
             LoadImgWorker.DoWork += LoadImg;
         }
 
         void HandleDeckModified(object sender, DeckModifEventArgs e)
         {
-            RefreshUGrid();
+            FullRefresh();
         }
 
         #endregion
@@ -86,12 +87,21 @@ namespace MaGeek.UI
             App.cardManager.AddCardToDeck(c, CurrentDeck);
         }
 
-        private void RefreshUGrid()
+        private void FullRefresh()
         {
             CurrentDeck = null;
             CurrentDeck = App.state.SelectedDeck;
             if (CurrentDeck == null) return;
             isLoading = true;
+            if (LoadImgWorker.IsBusy)
+            {
+                LoadImgWorker.CancelAsync();
+                do
+                {
+                    Thread.Sleep(7);
+                }while(LoadImgWorker.IsBusy);
+            }
+
             OnPropertyChanged("Loading");
             LoadImgWorker.RunWorkerAsync();
         }
@@ -113,7 +123,7 @@ namespace MaGeek.UI
                     for (int i = 0; i < cardrel.Quantity; i++)
                     {
 
-                        Thread.Sleep(100);
+                        Thread.Sleep(10);
 
                         this.Dispatcher.Invoke (
                             DispatcherPriority.Send, new Action (

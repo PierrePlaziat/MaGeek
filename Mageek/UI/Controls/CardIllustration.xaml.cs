@@ -1,5 +1,6 @@
 ﻿using MaGeek.Data.Entities;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -104,7 +105,8 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            SelectedVariant = card.Variants[0];
+
+            SelectedVariant = card.Variants.Where(x=>!string.IsNullOrEmpty(x.ImageUrl)).FirstOrDefault();
         }
 
         public CardIllustration()
