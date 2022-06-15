@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MaGeek.UI"
         mc:Ignorable="d" 
-        Title="CardSearcher" Height="800" Width="1600" >
+        Title="MaGeek" Height="800" Width="1600" >  
     
     <Window.Resources>
 

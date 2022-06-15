@@ -4,10 +4,15 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resources\Icone.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Fonts\Magic_Symbols_2008.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Icone.ico" />
   </ItemGroup>
 
   <ItemGroup>
