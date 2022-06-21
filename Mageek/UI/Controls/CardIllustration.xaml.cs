@@ -105,7 +105,6 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-
             SelectedVariant = card.Variants.Where(x=>!string.IsNullOrEmpty(x.ImageUrl)).FirstOrDefault();
         }
 
