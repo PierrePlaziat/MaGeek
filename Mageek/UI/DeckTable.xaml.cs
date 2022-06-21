@@ -48,9 +48,64 @@ namespace MaGeek.UI
 
         #endregion
 
-        readonly BackgroundWorker LoadImgWorker = new();
-        bool isLoading = false;
-        public Visibility Loading { get { return isLoading ? Visibility.Visible : Visibility.Collapsed; } }
+        #region Async Image Load
+
+        private BackgroundWorker Worker;
+        private void ConstructWorker()
+        {
+            Worker = new BackgroundWorker();
+            Worker.DoWork += Working;
+            Worker.WorkerSupportsCancellation = true;
+
+
+            void Working(object sender, DoWorkEventArgs e)
+            {
+                try
+                {
+                    int cardIndex = 0;
+                    this.Dispatcher.Invoke(
+                        DispatcherPriority.Send, new Action(
+                            delegate
+                            {
+                                UGrid.Children.Clear();
+                            }
+                        )
+                    );
+                    Thread.Sleep(30);
+
+                    while (!Worker.CancellationPending && cardIndex < CurrentDeck.CardRelations.Count)
+                    {
+                        var cardrel = CurrentDeck.CardRelations[cardIndex];
+                        this.Dispatcher.Invoke(
+                            DispatcherPriority.Send, new Action(
+                                delegate
+                                {
+                                    for (int i = 0; i < cardrel.Quantity; i++)
+                                    {
+                                        CardIllustration cardIllu = new CardIllustration(cardrel.Card) { Width = 150, Height = 207, BorderBrush = Brushes.Transparent, BorderThickness = new Thickness(1) };
+                                        UGrid.Children.Add(cardIllu);
+                                    }
+                                }
+                            )
+                        );
+                        cardIndex++;
+                        Thread.Sleep(30);
+                    }
+                    e.Cancel = true;
+                    return;
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
+
+        #endregion
 
         #region CTOR
 
@@ -60,8 +115,7 @@ namespace MaGeek.UI
             DataContext = this;
             App.state.RaiseSelectDeck += HandleDeckSelected;
             App.state.RaiseDeckModif += HandleDeckModified;
-            LoadImgWorker.WorkerSupportsCancellation = true;
-            LoadImgWorker.DoWork += LoadImg;
+            ConstructWorker();
         }
 
         void HandleDeckModified(object sender, DeckModifEventArgs e)
@@ -89,59 +143,13 @@ namespace MaGeek.UI
 
         private void FullRefresh()
         {
+            Worker.CancelAsync();
             CurrentDeck = null;
             CurrentDeck = App.state.SelectedDeck;
             if (CurrentDeck == null) return;
-            isLoading = true;
-            if (LoadImgWorker.IsBusy)
-            {
-                LoadImgWorker.CancelAsync();
-                do
-                {
-                    Thread.Sleep(7);
-                }while(LoadImgWorker.IsBusy);
-            }
-
-            OnPropertyChanged("Loading");
-            LoadImgWorker.RunWorkerAsync();
-        }
-
-        private void LoadImg(object sender, DoWorkEventArgs e)
-        {
-           
-            try
-            {
-                this.Dispatcher.Invoke(
-                    DispatcherPriority.Send, new Action(
-                        delegate {
-                            UGrid.Children.Clear();
-                        }
-                    )
-                );
-                foreach (var cardrel in CurrentDeck.CardRelations)
-                {
-                    for (int i = 0; i < cardrel.Quantity; i++)
-                    {
-
-                        Thread.Sleep(10);
-
-                        this.Dispatcher.Invoke (
-                            DispatcherPriority.Send, new Action (
-                                delegate {
-                                    UGrid.Children.Add(new CardIllustration(cardrel.Card) { Width=150, Height=207,BorderBrush=Brushes.Black,BorderThickness=new Thickness(1) });
-                                }
-                            )
-                        );
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            isLoading = false;
-            OnPropertyChanged("Loading");
+            ConstructWorker();
+            Worker.RunWorkerAsync();
+            
         }
 
     }
