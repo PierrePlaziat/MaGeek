@@ -1,5 +1,4 @@
-﻿using AvalonDock.Layout;
-using MaGeek.Data.Entities;
+﻿using MaGeek.Data.Entities;
 using MaGeek.Events;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +10,7 @@ using System.Windows.Media.Imaging;
 namespace MaGeek.UI
 {
 
-    public partial class CardInspector : UserControl, INotifyPropertyChanged, ILayoutControl
+    public partial class CardInspector : UserControl, INotifyPropertyChanged
     {
 
         #region Binding
@@ -93,7 +92,6 @@ namespace MaGeek.UI
 
         public Visibility Visible { get { return selectedCard == null ? Visibility.Visible : Visibility.Collapsed; } }
 
-        public ILayoutElement Model => throw new System.NotImplementedException();
 
         #endregion
 

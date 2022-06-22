@@ -10,16 +10,27 @@
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="0"></RowDefinition>
+            <RowDefinition Height="26"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
+        <DockPanel>
+            <Label>CardSize:</Label>
+            <Button Width="100" Click="Resize_Complete">Complete</Button>
+            <Button Width="100" Click="Resize_Picture">Picture</Button>
+            <Button Width="100" Click="Resize_Header">Header</Button>
+            <!--<Label>Organisation:</Label>
+            <Button Width="100">CMC</Button>
+            <Button Width="100">Type</Button>
+            <Button Width="100">Tag</Button>-->
+            <Label></Label>
+        </DockPanel>
+        
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" 
                       HorizontalAlignment="Center"
                        Grid.Row="1">
             <WrapPanel Name="UGrid"/>
         </ScrollViewer>
-
 
         <Grid Visibility="{Binding Visible}" 
               HorizontalAlignment="Stretch"

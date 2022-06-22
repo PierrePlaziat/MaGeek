@@ -2,7 +2,9 @@
 using MaGeek.Entities;
 using MaGeek.Events;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
@@ -15,6 +17,12 @@ namespace MaGeek.UI
 
     public partial class DeckTable : UserControl, INotifyPropertyChanged
     {
+
+        const int CardSize_Complete = 207;
+        const int CardSize_Picture = 130;
+        const int CardSize_Header = 25;
+
+        int currentCardSize = 130;
 
         #region Attributes
 
@@ -62,7 +70,6 @@ namespace MaGeek.UI
             {
                 try
                 {
-                    int cardIndex = 0;
                     this.Dispatcher.Invoke(
                         DispatcherPriority.Send, new Action(
                             delegate
@@ -73,16 +80,34 @@ namespace MaGeek.UI
                     );
                     Thread.Sleep(30);
 
-                    while (!Worker.CancellationPending && cardIndex < CurrentDeck.CardRelations.Count)
+                    List<CardDeckRelation> NonLands = CurrentDeck.CardRelations
+                        .Where(x => !x.Card.Type.ToLower().Contains("land"))
+                        .OrderBy(x => x.Card.Type)
+                        .ThenBy(x => x.Card.Cmc)
+                        .ToList();
+                    List<CardDeckRelation> Lands = CurrentDeck.CardRelations
+                        .Where(x => x.Card.Type.ToLower().Contains("land"))
+                        .OrderBy(x => x.Card.Type)
+                        .ThenBy(x => x.Card.CardId)
+                        .ToList();
+
+                    int cardIndex = 0;
+                    List<CardDeckRelation> lands = Lands;
+                    var ThisDeck = NonLands;
+                    ThisDeck.AddRange(lands);
+                    while (!Worker.CancellationPending && cardIndex < ThisDeck.Count())
                     {
-                        var cardrel = CurrentDeck.CardRelations[cardIndex];
+                        var cardrel = ThisDeck[cardIndex];
                         this.Dispatcher.Invoke(
                             DispatcherPriority.Send, new Action(
                                 delegate
                                 {
                                     for (int i = 0; i < cardrel.Quantity; i++)
                                     {
-                                        CardIllustration cardIllu = new CardIllustration(cardrel.Card) { Width = 150, Height = 207, BorderBrush = Brushes.Transparent, BorderThickness = new Thickness(1) };
+                                        CardIllustration cardIllu = new CardIllustration(cardrel.Card) { 
+                                            Width = 150, 
+                                            Height = currentCardSize,
+                                            BorderBrush = Brushes.Black, BorderThickness = new Thickness(1) };
                                         UGrid.Children.Add(cardIllu);
                                     }
                                 }
@@ -149,7 +174,25 @@ namespace MaGeek.UI
             if (CurrentDeck == null) return;
             ConstructWorker();
             Worker.RunWorkerAsync();
-            
+
+        }
+
+        private void Resize_Complete(object sender, RoutedEventArgs e)
+        {
+            currentCardSize = CardSize_Complete;
+            FullRefresh();
+        }
+
+        private void Resize_Picture(object sender, RoutedEventArgs e)
+        {
+            currentCardSize = CardSize_Picture;
+            FullRefresh();
+        }
+
+        private void Resize_Header(object sender, RoutedEventArgs e)
+        {
+            currentCardSize = CardSize_Header;
+            FullRefresh();
         }
 
     }
