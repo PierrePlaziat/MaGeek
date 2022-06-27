@@ -23,8 +23,9 @@ namespace MaGeek.Data.Entities
         public int CollectedQuantity { get; set; }
         public virtual List<MagicCardVariant> Variants { get; set; } = new List<MagicCardVariant>();
         public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
+        public string FavouriteVariant { get; set; } = "";
 
-        public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
+
 
         public string CardForeignName {
             get {
@@ -97,16 +98,6 @@ namespace MaGeek.Data.Entities
             }
             return null;
         }
-
-        /*private void AddLegalities(List<ILegality> legalities)
-        {
-            if (Legalities==null) 
-                Legalities = new Dictionary<string, string>();
-            foreach (ILegality legality in legalities)
-            {
-                Legalities.Add(legality.Format, legality.LegalityName);
-            }
-        }*/
 
         #endregion
 

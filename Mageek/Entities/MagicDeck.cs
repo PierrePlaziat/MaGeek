@@ -66,7 +66,7 @@ namespace MaGeek.Data.Entities
             {
                 if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in CardRelations) devotion += c.Card.DevotionB * c.Quantity;
+                foreach (var c in CardRelations) devotion += c.Card.Card.DevotionB * c.Quantity;
                 return devotion;
             }
         }
@@ -76,7 +76,7 @@ namespace MaGeek.Data.Entities
             {
                 if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in CardRelations) devotion += c.Card.DevotionW * c.Quantity;
+                foreach (var c in CardRelations) devotion += c.Card.Card.DevotionW * c.Quantity;
                 return devotion;
             }
         }
@@ -86,7 +86,7 @@ namespace MaGeek.Data.Entities
             {
                 if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in CardRelations) devotion += c.Card.DevotionU * c.Quantity;
+                foreach (var c in CardRelations) devotion += c.Card.Card.DevotionU * c.Quantity;
                 return devotion;
             }
         }
@@ -96,7 +96,7 @@ namespace MaGeek.Data.Entities
             {
                 if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in CardRelations) devotion += c.Card.DevotionG * c.Quantity;
+                foreach (var c in CardRelations) devotion += c.Card.Card.DevotionG * c.Quantity;
                 return devotion;
             }
         }
@@ -106,7 +106,7 @@ namespace MaGeek.Data.Entities
             {
                 if (CardRelations == null) return 0;
                 int devotion = 0;
-                foreach (var c in CardRelations) devotion += c.Card.DevotionR * c.Quantity;
+                foreach (var c in CardRelations) devotion += c.Card.Card.DevotionR * c.Quantity;
                 return devotion;
             }
         }

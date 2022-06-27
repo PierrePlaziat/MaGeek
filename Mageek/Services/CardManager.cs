@@ -12,10 +12,12 @@ namespace MaGeek.Data
 
         public ApiMtg MtgApi = new();
 
-        public void AddCardToDeck(MagicCard card, MagicDeck deck, int qty = 1)
+        public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty = 1)
         {
+
+            //var card = card1.Variants.Where(x => !string.IsNullOrEmpty(x.ImageUrl)).FirstOrDefault();
             if (card == null || deck == null) return;
-            var cardRelation = deck.CardRelations.Where(x => x.CardId == card.CardId).FirstOrDefault();
+            var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
             if (cardRelation == null)
             {
                 cardRelation = new CardDeckRelation() { 
@@ -55,6 +57,14 @@ namespace MaGeek.Data
             App.database.SaveChanges();
         }
 
+        public void SetFav(MagicCard card, string variantId)
+        {
+            card.FavouriteVariant = variantId;
+            App.database.SaveChanges();
+        }
+
+
+
         public ObservableCollection<MagicCard> BinderCards
         {
             get
@@ -72,6 +82,8 @@ namespace MaGeek.Data
                 return App.database.decks.Local.ToObservableCollection();
             }
         }
+
+
 
     }
 

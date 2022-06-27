@@ -15,7 +15,7 @@ namespace MaGeek.Entities
         public string CardId { get; set; }
 
         public virtual MagicDeck Deck { get; set; }
-        public virtual MagicCard Card { get; set; }
+        public virtual MagicCardVariant Card { get; set; }
 
         public int Quantity{ get; set; }
 

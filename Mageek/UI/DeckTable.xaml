@@ -6,30 +6,289 @@
       xmlns:local="clr-namespace:MaGeek.UI"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800">
-
+    
+    <UserControl.Resources>
+        <CollectionViewSource Source="{Binding ElementName=UI, Path=Windows}" x:Key="YourMenuItems"/>
+    </UserControl.Resources>
+    
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="26"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-
-        <DockPanel>
-            <Label>CardSize:</Label>
-            <Button Width="100" Click="Resize_Complete">Complete</Button>
-            <Button Width="100" Click="Resize_Picture">Picture</Button>
-            <Button Width="100" Click="Resize_Header">Header</Button>
-            <!--<Label>Organisation:</Label>
-            <Button Width="100">CMC</Button>
-            <Button Width="100">Type</Button>
-            <Button Width="100">Tag</Button>-->
-            <Label></Label>
-        </DockPanel>
-        
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" 
                       HorizontalAlignment="Center"
                        Grid.Row="1">
-            <WrapPanel Name="UGrid"/>
+
+            <StackPanel>
+
+                <DockPanel Margin="10">
+                    <Label>CardSize:</Label>
+                    <Button Width="80" Click="Resize_Complete">Complete</Button>
+                    <Button Width="80" Click="Resize_Picture">Picture</Button>
+                    <Button Width="80" Click="Resize_Header">Header</Button>
+                    <Label></Label>
+                </DockPanel>
+
+                <Label FontWeight="Bold" FontSize="20">Non lands:</Label>
+                
+                <DockPanel>
+
+
+                    <ItemsControl
+                          ItemsSource="{Binding CardRelations_Cmc0}"
+                          Background="Transparent" 
+                          Margin="0" Padding="0">
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+
+                                <WrapPanel/>
+
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl>
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            Width="150" 
+                                                            Margin="0" Padding="0"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                            />
+                                </ContentControl>
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl 
+                          ItemsSource="{Binding CardRelations_Cmc1}"
+                          Background="Transparent" 
+                          Margin="0" Padding="0">
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+
+                                <WrapPanel  Width="150"  Visibility="{Binding HasCmc1}"/>
+
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl>
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            Width="150" 
+                                                            Margin="0" Padding="0"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                            />
+                                </ContentControl>
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl 
+                          ItemsSource="{Binding CardRelations_Cmc2}"
+                          Background="Transparent" 
+                          Margin="0" Padding="0">
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+
+                                <WrapPanel  Width="150"  Visibility="{Binding HasCmc2}"/>
+
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl>
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            Width="150" 
+                                                            Margin="0" Padding="0"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                            />
+                                </ContentControl>
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl
+                          ItemsSource="{Binding CardRelations_Cmc3}"
+                          Background="Transparent" 
+                          Margin="0" Padding="0">
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+
+                                <WrapPanel  Width="150"  Visibility="{Binding HasCmc3}"/>
+
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl>
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            Width="150" 
+                                                            Margin="0" Padding="0"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                            />
+                                </ContentControl>
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl
+                          ItemsSource="{Binding CardRelations_Cmc4}"
+                          Background="Transparent" 
+                          Margin="0" Padding="0">
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+
+                                <WrapPanel  Width="150"  Visibility="{Binding HasCmc4}"/>
+
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl>
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            Width="150" 
+                                                            Margin="0" Padding="0"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                            />
+                                </ContentControl>
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl 
+                          ItemsSource="{Binding CardRelations_Cmc5}"
+                          Background="Transparent" 
+                          Margin="0" Padding="0">
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+
+                                <WrapPanel  Width="150"  Visibility="{Binding HasCmc5}"/>
+
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl>
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            Width="150" 
+                                                            Margin="0" Padding="0"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                            />
+                                </ContentControl>
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl
+                          ItemsSource="{Binding CardRelations_Cmc6}"
+                          Background="Transparent" 
+                          Margin="0" Padding="0">
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+
+                                <WrapPanel  Width="150"  Visibility="{Binding HasCmc6}"/>
+
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl>
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            Width="150" 
+                                                            Margin="0" Padding="0"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                            />
+                                </ContentControl>
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl 
+                          ItemsSource="{Binding CardRelations_Cmc7}"
+                          Background="Transparent" 
+                          Margin="0" Padding="0">
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+
+                                <WrapPanel  Width="150"  Visibility="{Binding HasCmc7}"/>
+
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl>
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            Width="150" 
+                                                            Margin="0" Padding="0"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top" 
+                                            />
+                                </ContentControl>
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Label></Label>
+
+                </DockPanel>
+
+                <Label FontWeight="Bold" FontSize="20">Lands:</Label>
+
+                <ItemsControl Grid.Row="1" 
+                              ItemsSource="{Binding CardRelations_Lands}"
+                              Background="Transparent" 
+                              Margin="0" Padding="0">
+                    
+                    <ItemsControl.ItemsPanel >
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    
+                    <ItemsControl.ItemTemplate>
+                        
+                        <DataTemplate>
+                            
+                            <ContentControl>
+
+                                <ContentControl.ContextMenu>
+                                    <ContextMenu ItemsSource="{Binding Card.Variants}">
+                                        <ContextMenu.ItemContainerStyle>
+                                            <Style TargetType="MenuItem">
+                                                <Setter Property="Header" Value="{Binding SetName}"/>
+                                            </Style>
+                                        </ContextMenu.ItemContainerStyle>
+                                    </ContextMenu>
+                                </ContentControl.ContextMenu>
+
+                                <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                        SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                        Width="150" 
+                                                        Margin="0" Padding="0"
+                                                        HorizontalAlignment="Left" VerticalAlignment="Top" />
+
+                            </ContentControl>
+                            
+                        </DataTemplate>
+
+                    </ItemsControl.ItemTemplate>
+                    
+                </ItemsControl>
+
+            </StackPanel>
+            
         </ScrollViewer>
 
         <Grid Visibility="{Binding Visible}" 

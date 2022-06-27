@@ -82,7 +82,6 @@ namespace MaGeek.UI
 
             ResetLoadBar(importLines.Count);
 
-            ImportOutput.Text = "";
             string errors = "";
 
             var deck = new MagicDeck()
@@ -100,7 +99,9 @@ namespace MaGeek.UI
 
                     // Parse
 
-                    ImportOutput.Text += "Importing : "+ line+"\n";
+                    ImportOutput.AppendText("Importing : "+ line+"\n");
+                    ImportOutput.AppendText("\u2028"); // Linebreak, not paragraph break
+                    ImportOutput.ScrollToEnd();
 
                     string cardname = line[(line.IndexOf(' ') + 1)..];
                     cardname = cardname.Split(" // ")[0];
@@ -121,7 +122,7 @@ namespace MaGeek.UI
                     {
                         if (asDeck)
                         {
-                            App.cardManager.AddCardToDeck(card,deck, cardQuantity);
+                            App.cardManager.AddCardToDeck(card.Variants[0],deck, cardQuantity);
                         }
                         if (asObtained) card.CollectedQuantity += cardQuantity;
                     }
@@ -145,6 +146,11 @@ namespace MaGeek.UI
         }
 
         #endregion
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 
     }
 

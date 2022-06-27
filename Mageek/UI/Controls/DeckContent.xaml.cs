@@ -76,7 +76,7 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.cardManager.RemoveCardFromDeck(c, CurrentDeck);
+            App.cardManager.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
         private void MoreCard(object sender, System.Windows.RoutedEventArgs e)
@@ -89,7 +89,7 @@ namespace MaGeek.UI
 
         private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (LVDeck.SelectedItem is CardDeckRelation cardRel) App.state.SelectCard(cardRel.Card);
+            if (LVDeck.SelectedItem is CardDeckRelation cardRel) App.state.SelectCard(cardRel.Card.Card);
         }
 
     }

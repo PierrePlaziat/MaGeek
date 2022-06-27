@@ -43,7 +43,6 @@
             </RichTextBox.Resources>
         </RichTextBox>
 
-
         <Button Click="LaunchImportation" Grid.Row="2" Grid.Column="0" Content="Import" Grid.ColumnSpan="3"></Button>
 
         <Grid Name="LoadPanel" 
@@ -53,13 +52,35 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
 
             <ProgressBar Grid.Row="0" Name="LoadBar"/>
-            <TextBox Grid.Row="1"  Name="ImportOutput" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" Height="500" Background="Black"></TextBox>
+
+            <RichTextBox x:Name="ImportOutput"
+                         IsReadOnly="True"
+                         MinWidth="200"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         BorderThickness="0"
+                         AcceptsReturn="True"
+                         Background="#222"
+                         VerticalContentAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         VerticalScrollBarVisibility="Auto"
+                         Foreground="#777">
+                <RichTextBox.Resources>
+                    <Style TargetType="{x:Type Paragraph}">
+                        <Setter Property="Margin" Value="0,0,0,0"/>
+                    </Style>
+                </RichTextBox.Resources>
+            </RichTextBox>
+            
+            <Button Grid.Row="2" Click="Button_Click">Cancel</Button>
+
         </Grid>
-    
+
     </Grid>
 
-    
+
 </UserControl>

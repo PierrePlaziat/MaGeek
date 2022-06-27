@@ -1,7 +1,9 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Events;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,25 +33,34 @@ namespace MaGeek.UI
             get { return selectedCard; }
             set
             {
-                selectedVariantNb = 0;
                 selectedCard = value;
-                OnPropertyChanged();
                 OnPropertyChanged("Variants");
+                OnPropertyChanged();
+                AutoSelectVariant();
                 OnPropertyChanged("CollectedQuantity");
                 OnPropertyChanged("Visible");
-                OnPropertyChanged("SelectedVariant");
             }
         }
-        private int selectedVariantNb = 0;
-        private MagicCardVariant selectedVariant = new();
+
+        private void AutoSelectVariant()
+        {
+            VariantListBox.UnselectAll();
+            if (selectedCard == null) return;
+            if (!string.IsNullOrEmpty(selectedCard.FavouriteVariant))
+            {
+                SelectedVariant = selectedCard.Variants.Where(x => x.Id == selectedCard.FavouriteVariant).FirstOrDefault();
+            }
+            else
+            {
+                SelectedVariant = selectedCard.Variants.Where(x => !string.IsNullOrEmpty(x.ImageUrl)).FirstOrDefault();
+            }
+        }
+
+        private MagicCardVariant selectedVariant;
         public MagicCardVariant SelectedVariant
         {
-            get
-            {
-                if (Variants == null || Variants.Count<=0) return null;
-                return Variants[selectedVariantNb];
-            }
-            set { }
+            get { return selectedVariant; }
+            set { selectedVariant = value; OnPropertyChanged(); }
         }
 
 
@@ -122,22 +133,22 @@ namespace MaGeek.UI
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            App.cardManager.AddCardToDeck(selectedCard, App.state.SelectedDeck);
+            App.cardManager.AddCardToDeck(SelectedVariant, App.state.SelectedDeck);
         }
 
         #endregion
-
         private void SelectVariant(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (VariantListBox.SelectedIndex >= 0 && VariantListBox.SelectedIndex < Variants.Count)
-            {
-                var variant = Variants[VariantListBox.SelectedIndex];
-                if (variant != null)
-                {
-                    selectedVariantNb = VariantListBox.SelectedIndex;
-                    OnPropertyChanged("SelectedVariant");
-                }
-            }
+            SelectedVariant = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;
+        }
+
+
+        private void SetFav(object sender, RoutedEventArgs e)
+        {
+            var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;  
+            App.cardManager.SetFav(cardvar.Card, cardvar.Id);
+
+
         }
 
     }

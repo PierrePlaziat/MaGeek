@@ -22,7 +22,8 @@
 
         <local:CardIllustration x:Name="yo" Width="250" Height="348" Margin="0,5,5,5"
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
-                                SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"/>
+                                SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                />
 
         <DockPanel Grid.Row="1" Background="Black" Height="21">
 
@@ -47,9 +48,14 @@
 
         </DockPanel>
 
-        <ListView Grid.Row="2" BorderThickness="0" x:Name="VariantListBox"  
+        <ListView  Grid.Row="2" BorderThickness="0" x:Name="VariantListBox"  
                   ItemsSource="{Binding Variants}" 
-                  Background="#333" MouseUp="SelectVariant">
+                  Background="#333" MouseUp="SelectVariant" SelectedIndex="0">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Set FAV" Click="SetFav"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <DockPanel>

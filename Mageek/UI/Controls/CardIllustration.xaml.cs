@@ -101,11 +101,11 @@ namespace MaGeek.UI
 
         #region CTOR
 
-        public CardIllustration(MagicCard card)
+        public CardIllustration(MagicCardVariant card)
         {
             InitializeComponent();
             DataContext = this;
-            SelectedVariant = card.Variants.Where(x=>!string.IsNullOrEmpty(x.ImageUrl)).FirstOrDefault();
+            SelectedVariant = card;
         }
 
         public CardIllustration()

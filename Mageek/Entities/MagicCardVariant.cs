@@ -1,5 +1,7 @@
-﻿using MtgApiManager.Lib.Model;
+﻿using MaGeek.Entities;
+using MtgApiManager.Lib.Model;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
@@ -15,6 +17,8 @@ namespace MaGeek.Data.Entities
         public string ImageUrl { get; set; }
         public string Rarity { get; set; }
         public string SetName { get; set; }
+
+        public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
 
         public virtual MagicCard Card { get; set; }
 
