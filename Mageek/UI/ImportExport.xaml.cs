@@ -42,11 +42,6 @@ namespace MaGeek.UI
 
         #region UI Link
 
-        private void StartExport(object sender, RoutedEventArgs e)
-        {
-            //TODO
-        }
-
         private async void LaunchImportation(object sender, RoutedEventArgs e)
         {
             bool asDeck = AsDeck.IsChecked.Value;
@@ -147,7 +142,7 @@ namespace MaGeek.UI
 
         #endregion
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void CancelClciked(object sender, RoutedEventArgs e)
         {
 
         }

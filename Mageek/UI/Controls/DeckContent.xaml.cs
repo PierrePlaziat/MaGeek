@@ -55,6 +55,13 @@ namespace MaGeek.UI
             CurrentDeck = e.Deck;
         }
 
+        void HandleDeckModif(object sender, DeckModifEventArgs e)
+        {
+            var v = CurrentDeck;
+            CurrentDeck = null;
+            CurrentDeck = v;
+        }
+
         public Visibility Visible { get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; } }
 
         #endregion
@@ -66,6 +73,7 @@ namespace MaGeek.UI
             InitializeComponent();
             DataContext = this;
             App.state.RaiseSelectDeck += HandleDeckSelected;
+            App.state.RaiseDeckModif += HandleDeckModif;
         }
 
 

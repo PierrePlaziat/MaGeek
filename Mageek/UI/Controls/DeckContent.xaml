@@ -33,24 +33,6 @@
 
         </Grid>
 
-        <!--<Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-
-            <Button Grid.Column="0" Content="Alphabetic"></Button>
-            <Button Grid.Column="1" Content="Cmc"></Button>
-            <Button Grid.Column="2" Content="Type"></Button>
-
-        </Grid>-->
-
-
         <ListView Name="LVDeck" ItemsSource="{Binding CurrentDeck.CardRelations}" 
                    BorderThickness="0"   Background="#222" Grid.Row="2" 
                   SelectionChanged="LVDeck_SelectionChanged">

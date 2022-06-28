@@ -33,12 +33,13 @@ namespace MaGeek.Data
         }
         public void RemoveCardFromDeck(MagicCard card, MagicDeck deck)
         {
-            var cardRelation = deck.CardRelations.Where(x => x.CardId == card.CardId).FirstOrDefault();
+            var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
             if (cardRelation == null) return;
             cardRelation.Quantity--;
             if (cardRelation.Quantity == 0) deck.CardRelations.Remove(cardRelation);
             App.database.SaveChanges();
             App.state.ModifDeck();
+            
         }
 
         public void GotCard_Add(MagicCard selectedCard)

@@ -76,7 +76,7 @@
                 </RichTextBox.Resources>
             </RichTextBox>
             
-            <Button Grid.Row="2" Click="Button_Click">Cancel</Button>
+            <!--<Button Grid.Row="2" Click="CancelClciked">Cancel</Button>-->
 
         </Grid>
 
