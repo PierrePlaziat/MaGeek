@@ -46,6 +46,15 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ContentControl>
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
@@ -72,6 +81,15 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ContentControl>
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
@@ -98,6 +116,15 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ContentControl>
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
@@ -124,6 +151,15 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ContentControl>
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
@@ -150,6 +186,15 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ContentControl>
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
@@ -176,6 +221,15 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ContentControl>
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
@@ -202,6 +256,15 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ContentControl>
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
@@ -228,6 +291,15 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <ContentControl>
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
@@ -262,9 +334,8 @@
                         <DataTemplate>
                             
                             <ContentControl>
-
                                 <ContentControl.ContextMenu>
-                                    <ContextMenu ItemsSource="{Binding Card.Variants}">
+                                    <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                         <ContextMenu.ItemContainerStyle>
                                             <Style TargetType="MenuItem">
                                                 <Setter Property="Header" Value="{Binding SetName}"/>
@@ -272,7 +343,6 @@
                                         </ContextMenu.ItemContainerStyle>
                                     </ContextMenu>
                                 </ContentControl.ContextMenu>
-
                                 <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                         SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                         Width="150" 
