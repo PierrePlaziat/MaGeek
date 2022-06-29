@@ -8,12 +8,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace MaGeek.UI
 {
 
     public partial class DeckTable : UserControl, INotifyPropertyChanged
     {
+
 
         #region Attributes
 

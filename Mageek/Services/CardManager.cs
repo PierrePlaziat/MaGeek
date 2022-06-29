@@ -1,5 +1,7 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Entities;
+using MaGeek.UI;
+using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -31,6 +33,13 @@ namespace MaGeek.Data
             App.database.SaveChanges();
             App.state.ModifDeck();
         }
+
+        internal void ChangeRelation(CardDeckRelation cardDeckRelation,  MagicCardVariant magicCardVariant)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
         public void RemoveCardFromDeck(MagicCard card, MagicDeck deck)
         {
             var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();

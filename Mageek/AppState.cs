@@ -25,7 +25,6 @@ namespace MaGeek
         }
         public void SetForeignLanguage(string value)
         {
-//                if (value == null) value = "French";
             var p = App.database.Params.Where(x => x.ParamName == "ForeignLanguage");
             if (p.Any())
             {
