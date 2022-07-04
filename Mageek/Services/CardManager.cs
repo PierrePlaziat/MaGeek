@@ -36,16 +36,18 @@ namespace MaGeek.Data
 
         internal void ChangeRelation(CardDeckRelation cardDeckRelation,  MagicCardVariant magicCardVariant)
         {
-            //TODO
-            throw new NotImplementedException();
+            int qty = cardDeckRelation.Quantity;
+            var deck = cardDeckRelation.Deck;
+            RemoveCardFromDeck(cardDeckRelation.Card.Card, cardDeckRelation.Deck, cardDeckRelation.Quantity);
+            AddCardToDeck(magicCardVariant, deck, qty);
         }
 
-        public void RemoveCardFromDeck(MagicCard card, MagicDeck deck)
+        public void RemoveCardFromDeck(MagicCard card, MagicDeck deck,int qty=1)
         {
             var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
             if (cardRelation == null) return;
-            cardRelation.Quantity--;
-            if (cardRelation.Quantity == 0) deck.CardRelations.Remove(cardRelation);
+            cardRelation.Quantity-=qty;
+            if (cardRelation.Quantity <= 0) deck.CardRelations.Remove(cardRelation);
             App.database.SaveChanges();
             App.state.ModifDeck();
             
