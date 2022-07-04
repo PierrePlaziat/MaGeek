@@ -10,20 +10,18 @@ namespace MaGeek.Entities
     public class CardDeckRelation
     {
 
-
         [Key, Column(Order = 0)]
         public int DeckId { get; set; }
         [Key, Column(Order = 1)]
         public string CardId { get; set; }
         public virtual MagicDeck Deck { get; set; }
         public virtual MagicCardVariant Card { get; set; }
-
         public int Quantity { get; set; }
 
-        public ICommand ChangeIlluCommand;
-    
-        public CardDeckRelation()
-        {
+        [NotMapped]
+        public ICommand ChangeIlluCommand { get; set; }
+
+        public CardDeckRelation() {
             ChangeIlluCommand = new ChangeCardRelationVariantCommand(this);
         }
 

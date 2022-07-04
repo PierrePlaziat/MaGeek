@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:MaGeek.UI"
       xmlns:bp="clr-namespace:MaGeek.Wpf.Misc"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800">
+      d:DesignHeight="450" d:DesignWidth="800"
+             x:Name="myWindow">
     
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
@@ -28,15 +29,11 @@
                 
                 <DockPanel>
 
-                    <ItemsControl
+                    <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc0}"
                           Background="Transparent" 
                           Margin="0" Padding="0">
-                        
-                        <ItemsControl.Resources>
-                            <bp:BindingProxy x:Key="CardRelProxy" Data="{Binding}" />
-                        </ItemsControl.Resources>
-                        
+
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
                                 <WrapPanel>
@@ -53,9 +50,10 @@
                                             <ContextMenu.ItemContainerStyle>
                                                 <Style TargetType="MenuItem">
                                                     <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding ChangeIlluCommand}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    
+                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
                                                     <Setter Property="CommandParameter" Value="{Binding}"/>
                                                 </Style>
                                             </ContextMenu.ItemContainerStyle>
