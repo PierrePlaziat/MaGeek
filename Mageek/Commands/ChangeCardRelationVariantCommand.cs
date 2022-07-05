@@ -1,5 +1,4 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.Entities;
 using System;
 using System.Windows.Input;
 

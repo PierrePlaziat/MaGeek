@@ -1,24 +1,11 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.Entities;
 using MaGeek.Events;
-using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace MaGeek.UI
 {
@@ -46,9 +33,42 @@ namespace MaGeek.UI
             {
                 currentDeck = value;
                 OnPropertyChanged();
+                OnPropertyChanged("CurrentCommanders");
+                OnPropertyChanged("CurrentNonCommanders");
+                OnPropertyChanged("CurrentSide");
                 OnPropertyChanged("Visible");
             }
         }
+
+        public ObservableCollection<CardDeckRelation> CurrentCommanders
+        {
+            get {
+                if (currentDeck == null || currentDeck.CardRelations == null) return null;
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(x=>x.RelationType==1));
+            }
+        }
+
+        public ObservableCollection<CardDeckRelation> CurrentNonCommanders
+        {
+            get
+            {
+                if (currentDeck == null || currentDeck.CardRelations == null) return null;
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(x => x.RelationType == 0));
+            }
+        }
+
+        public ObservableCollection<CardDeckRelation> CurrentSide
+        {
+            get
+            {
+                if (currentDeck == null || currentDeck.CardRelations == null) return null;
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(x => x.RelationType == 2));
+            }
+        }
+
+        public Visibility Visible { get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; } }
+
+        #endregion
 
         void HandleDeckSelected(object sender, SelectDeckEventArgs e)
         {
@@ -61,10 +81,6 @@ namespace MaGeek.UI
             CurrentDeck = null;
             CurrentDeck = v;
         }
-
-        public Visibility Visible { get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; } }
-
-        #endregion
 
         #region CTOR
 

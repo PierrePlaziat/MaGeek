@@ -1,6 +1,4 @@
-﻿using MaGeek.Entities;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace MaGeek.Data.Entities
@@ -8,16 +6,17 @@ namespace MaGeek.Data.Entities
     public class MagicDeck
     {
 
-        [Key]
-        public int DeckId { get; set; }
+        #region Entity
 
+        [Key] public int DeckId { get; set; }
         public string Title { get; set; }
+        public virtual ObservableCollection<CardDeckRelation> CardRelations { get; set; }
 
-        public virtual ObservableCollection<CardDeckRelation> CardRelations { get; set; } = new ObservableCollection<CardDeckRelation>();
+        #endregion
 
         #region CTOR
 
-        public MagicDeck() {}
+        public MagicDeck() {} // EF needs
 
         public MagicDeck(string deckTitle)
         {
@@ -32,6 +31,8 @@ namespace MaGeek.Data.Entities
         }
 
         #endregion
+
+        // TODO Optimize, probably Move
 
         #region Accessors
 
@@ -48,6 +49,8 @@ namespace MaGeek.Data.Entities
                 return count;
             } 
         }
+
+        #region Colors access
 
         public string DeckColors { 
             get {
@@ -111,6 +114,8 @@ namespace MaGeek.Data.Entities
                 return devotion;
             }
         }
+
+        #endregion
 
         #endregion
 

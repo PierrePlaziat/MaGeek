@@ -1,5 +1,4 @@
 ﻿using MaGeek.Commands;
-using MaGeek.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Input;
@@ -17,6 +16,7 @@ namespace MaGeek.Data.Entities
         public virtual MagicDeck Deck { get; set; }
         public virtual MagicCardVariant Card { get; set; }
         public int Quantity { get; set; }
+        public int RelationType{ get; set; } // ==0 normal, >0 deckIdentity, <0 sideDeck
 
         [NotMapped]
         public ICommand ChangeIlluCommand { get; set; }

@@ -1,5 +1,4 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.Entities;
 using MaGeek.Events;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace MaGeek.UI
 {

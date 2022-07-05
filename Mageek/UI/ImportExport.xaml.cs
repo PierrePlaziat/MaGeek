@@ -89,7 +89,7 @@ namespace MaGeek.UI
                     CurrentImportState = "Parsing";
 
 
-                    ImportOutput.AppendText("Importing : "+ line+"\n");
+                    ImportOutput.AppendText("Importing : "+ line);
                     ImportOutput.AppendText("\u2028"); // Linebreak, not paragraph break
                     ImportOutput.ScrollToEnd();
 
