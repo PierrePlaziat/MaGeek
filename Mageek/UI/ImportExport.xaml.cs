@@ -1,10 +1,8 @@
 ﻿using MaGeek.CommonWpf;
 using MaGeek.Data.Entities;
-using MaGeek.Entities;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -17,6 +15,12 @@ namespace MaGeek.UI
 
     public partial class ImportExport : UserControl, INotifyPropertyChanged
     {
+
+        public string currentImportState = "test";
+        public string CurrentImportState {
+            get { return currentImportState; }
+            set { currentImportState = value; OnPropertyChanged(); }
+        }
 
         #region PropertyChange
 
@@ -44,15 +48,15 @@ namespace MaGeek.UI
 
         private async void LaunchImportation(object sender, RoutedEventArgs e)
         {
-            bool asDeck = AsDeck.IsChecked.Value;
-            bool asGot = AsGot.IsChecked.Value;
+            bool asDeck = MakeNewDeckCheckBox.IsChecked.Value;
+            bool asOwned = AsOwnedCheckBox.IsChecked.Value;
             if (asDeck && string.IsNullOrEmpty(DeckTitle.Text))
             {
                 MessageBoxHelper.ShowMsg("Please enter a title to the deck.");
                 return;
             }
             LoadPanel.Visibility = Visibility.Visible;
-            await ImportCards(asGot,asDeck);
+            await ImportCards(asOwned, asDeck);
             LoadPanel.Visibility = Visibility.Collapsed;
         }
         
@@ -67,32 +71,23 @@ namespace MaGeek.UI
 
         private async Task ImportCards(bool asObtained,bool asDeck)
         {
-
-            // Prepare
-
-            List<string> importLines = RichTextBoxHelper
-                .GetContent(ImportTxt)
-                .Split(Environment.NewLine)
-                .ToList();
-
-            ResetLoadBar(importLines.Count);
+            CurrentImportState = "Init";
 
             string errors = "";
-
-            var deck = new MagicDeck()
-            {
-                Title = DeckTitle.Text,
-                CardRelations = new ObservableCollection<CardDeckRelation>()
-            };
-
-            // Process
-
+            ImportOutput.Document.Blocks.Clear();
+            var importDeck = new MagicDeck(DeckTitle.Text);
+            List<string> importLines = RichTextBoxHelper.GetContent(ImportTxt).Split(Environment.NewLine).ToList();
+            ResetLoadBar(importLines.Count);
+            
+            // Importation
+            
             foreach (string line in importLines)
             {
-                if (!string.IsNullOrEmpty(line))
+                if (IsLineValid(line))
                 {
 
-                    // Parse
+                    CurrentImportState = "Parsing";
+
 
                     ImportOutput.AppendText("Importing : "+ line+"\n");
                     ImportOutput.AppendText("\u2028"); // Linebreak, not paragraph break
@@ -102,7 +97,7 @@ namespace MaGeek.UI
                     cardname = cardname.Split(" // ")[0];
                     int cardQuantity = int.Parse(line.Split(" ")[0]);
 
-                    // Search
+                    CurrentImportState = "Searching "+ cardname;
 
                     var card = App.database.cards.Where(x => x.CardId == cardname || (x.CardId.Contains(cardname) && x.CardId.Contains(" // "))).FirstOrDefault();
                     if (card == null)
@@ -111,13 +106,13 @@ namespace MaGeek.UI
                         card = App.database.cards.Where(x => x.CardId == cardname || (x.CardId.Contains(cardname) && x.CardId.Contains(" // "))).FirstOrDefault();
                     }
 
-                    // Add
+                    CurrentImportState = "Adding"+ cardname;
 
                     if (card != null)
                     {
                         if (asDeck)
                         {
-                            App.cardManager.AddCardToDeck(card.Variants[0],deck, cardQuantity);
+                            App.cardManager.AddCardToDeck(card.Variants[0],importDeck, cardQuantity);
                         }
                         if (asObtained) card.CollectedQuantity += cardQuantity;
                     }
@@ -133,19 +128,21 @@ namespace MaGeek.UI
 
             // Finalize
 
-            if (asDeck) App.database.decks.Add(deck);
+            if (asDeck) App.database.decks.Add(importDeck);
             App.database.SaveChanges();
             ImportTxt.Document.Blocks.Clear();
             ImportTxt.AppendText(errors);
 
         }
 
-        #endregion
-
-        private void CancelClciked(object sender, RoutedEventArgs e)
+        private bool IsLineValid(string line)
         {
-
+            bool isValid = true;
+            isValid = isValid && !string.IsNullOrEmpty(line);
+            return isValid; 
         }
+
+        #endregion
 
     }
 

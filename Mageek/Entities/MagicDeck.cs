@@ -22,6 +22,7 @@ namespace MaGeek.Data.Entities
         public MagicDeck(string deckTitle)
         {
             Title = deckTitle;
+            CardRelations = new ObservableCollection<CardDeckRelation>();
         }
 
         public MagicDeck(MagicDeck deckToCopy)

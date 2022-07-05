@@ -1,5 +1,6 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Events;
+using System;
 using System.Linq;
 
 namespace MaGeek
@@ -34,11 +35,37 @@ namespace MaGeek
             App.database.SaveChanges();
         }
 
+        internal string GetSearchBehaviour()
+        {
+            var p = App.database.Params.Where(x => x.ParamName == "SearchBehaviour");
+            if (p.Any())
+            {
+                return p.FirstOrDefault().ParamValue;
+            }
+            else
+            {
+                App.database.Params.Add(new Entities.Param() { ParamValue = "Wide", ParamName = "SearchBehaviour" });
+                App.database.SaveChanges();
+                return "Wide";
+            }
+        }
+        internal void SetSearchBehaviour(string value)
+        {
+            var p = App.database.Params.Where(x => x.ParamName == "SearchBehaviour");
+            if (p.Any())
+            {
+                App.database.Params.Remove(p.FirstOrDefault());
+            }
+            App.database.Params.Add(new Entities.Param() { ParamValue = value, ParamName = "SearchBehaviour" });
+            App.database.SaveChanges();
+        }
+
         #endregion
 
         #region DECK FOCUS GESTION
 
         private MagicDeck selectedDeck = null;
+
         public MagicDeck SelectedDeck { get { return selectedDeck; } }
         public void SelectDeck(MagicDeck deck)
         {

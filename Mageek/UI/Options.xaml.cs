@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MaGeek.UI
 {
@@ -19,15 +7,15 @@ namespace MaGeek.UI
     public partial class Options : UserControl
     {
 
-
         public Options()
         {
             DataContext = this;
             InitializeComponent();
-            Init();
+            SelectCurrentLanguage();
+            SelectCurrentSearchBehaviour();
         }
 
-        private void Init()
+        private void SelectCurrentLanguage()
         {
             foreach (var i in LanguageBox.Items)
             {
@@ -36,9 +24,38 @@ namespace MaGeek.UI
             }
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SelectCurrentSearchBehaviour()
+        {
+            foreach (var i in SearchBehaviourBox.Items)
+            {
+                string itemName = ((ComboBoxItem)i).Content as string;
+                if (itemName == App.state.GetSearchBehaviour()) SearchBehaviourBox.SelectedItem = i;
+            }
+        }
+
+        private void Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             App.state.SetForeignLanguage ( ((ComboBoxItem)((ComboBox)sender).SelectedItem).Content as string );
+        }
+
+        private void SearchBehaviour_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            App.state.SetSearchBehaviour(((ComboBoxItem)((ComboBox)sender).SelectedItem).Content as string);
+        }
+
+        private void SaveDb_Click(object sender, RoutedEventArgs e)
+        {
+            App.cardManager.SaveDb();
+        }
+
+        private void LoadDb_Click(object sender, RoutedEventArgs e)
+        {
+            App.cardManager.LoadDb();
+        }
+
+        private void EraseDb_Click(object sender, RoutedEventArgs e)
+        {
+            App.cardManager.EraseDb();
         }
     }
 

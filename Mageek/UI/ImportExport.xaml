@@ -17,16 +17,17 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0">
-            <!--<Button>Load file</Button>-->
-            <CheckBox Name="AsGot" Margin="3" IsChecked="false" Foreground="#999">As owned</CheckBox>
-
+            
+            <CheckBox Name="AsOwnedCheckBox" Margin="3" IsChecked="false" Foreground="#999">As owned</CheckBox>
+            
             <DockPanel>
-                <CheckBox Name="AsDeck" Margin="3" IsChecked="true" Foreground="#999">To deck</CheckBox>
+                <CheckBox Name="MakeNewDeckCheckBox" Margin="3" IsChecked="true" Foreground="#999">To deck</CheckBox>
                 <TextBox  Name="DeckTitle" />
             </DockPanel>
+            
         </StackPanel>
         <RichTextBox Grid.Row="1" x:Name="ImportTxt" 
-                    Margin="0,0,0,0"
+                    Margin="0,0,0,0" 
                      Width="300"
                      BorderThickness="0"
                     AcceptsReturn="True"
@@ -34,11 +35,14 @@
                     VerticalContentAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     VerticalScrollBarVisibility="Auto"
-                    Foreground="White">
+                    Foreground="White" >
 
             <RichTextBox.Resources>
                 <Style TargetType="{x:Type Paragraph}">
                     <Setter Property="Margin" Value="0,0,0,0"/>
+                    <Setter Property="LineHeight" Value="20"/>
+                    <Setter Property="Padding" Value="5"/>
+                    <Setter Property="Margin" Value="0"/>
                 </Style>
             </RichTextBox.Resources>
         </RichTextBox>
@@ -55,7 +59,10 @@
                 <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <ProgressBar Grid.Row="0" Name="LoadBar"/>
+            <Grid Grid.Row="0">
+                <ProgressBar Name="LoadBar"/>
+                <Label Foreground="White" Content="{Binding CurrentImportState}"></Label>
+            </Grid>
 
             <RichTextBox x:Name="ImportOutput"
                          IsReadOnly="True"

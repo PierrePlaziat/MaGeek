@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Input;
 
-namespace MaGeek.Entities
+namespace MaGeek.Data.Entities
 {
 
     public class CardDeckRelation

@@ -20,19 +20,10 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        
-        <!--
-        <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">Search Behaviour:</Label>
-        <DockPanel Grid.Column="1" Grid.Row="0">
-            <ComboBox Width="150" HorizontalAlignment="Left">
-                <ComboBoxItem IsSelected="True">Wide</ComboBoxItem>
-                <ComboBoxItem>Discrete</ComboBoxItem>
-            </ComboBox>
-        </DockPanel>-->
 
         <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right">Foreign Language:</Label>
         <DockPanel Grid.Column="1" Grid.Row="1">
-            <ComboBox Name="LanguageBox" Width="150"  SelectionChanged="ComboBox_SelectionChanged"
+            <ComboBox Name="LanguageBox" Width="150"  SelectionChanged="Language_SelectionChanged"
                       HorizontalAlignment="Left">
                 <ComboBoxItem>French</ComboBoxItem>
                 <ComboBoxItem>German</ComboBoxItem>
@@ -45,17 +36,22 @@
                 <ComboBoxItem>Russian</ComboBoxItem>
             </ComboBox>
         </DockPanel>
+        
+        <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">Search Behaviour:</Label>
+        <DockPanel Grid.Column="1" Grid.Row="0">
+            <ComboBox Name="SearchBehaviourBox" Width="150" HorizontalAlignment="Left" SelectionChanged="SearchBehaviour_SelectionChanged">
+                <ComboBoxItem IsSelected="True">Wide</ComboBoxItem>
+                <ComboBoxItem>Discrete</ComboBoxItem>
+            </ComboBox>
+        </DockPanel>
 
-        <!--
         <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Local DB:</Label>
         <DockPanel Grid.Column="1" Grid.Row="2">
-            <Button>Erase</Button>
-            <Button>Save</Button>
-            <Button>Load</Button>
-            <Label>Be carefull</Label>
-        </DockPanel>-->
-
-
+            <Button Click="SaveDb_Click">Save</Button>
+            <Button Click="LoadDb_Click">Load</Button>
+            <Button Click="EraseDb_Click">/!\ Erase/!\</Button>
+            <Label></Label>
+        </DockPanel> 
 
     </Grid>
     
