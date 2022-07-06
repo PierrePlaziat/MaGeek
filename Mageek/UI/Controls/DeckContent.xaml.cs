@@ -116,6 +116,33 @@ namespace MaGeek.UI
             if ((sender as ListView).SelectedItem is CardDeckRelation cardRel) App.state.SelectCard(cardRel.Card.Card);
         }
 
+        private void SetCommandant(object sender, RoutedEventArgs e)
+        {
+            CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
+            cardRel.RelationType = 1;
+            App.state.ModifDeck();
+        }
+
+        private void UnsetCommandant(object sender, RoutedEventArgs e)
+        {
+            CardDeckRelation cardRel = LVCommandants.SelectedItem as CardDeckRelation;
+            cardRel.RelationType = 0;
+            App.state.ModifDeck();
+        }
+
+        private void ToSide(object sender, RoutedEventArgs e)
+        {
+            CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
+            cardRel.RelationType = 2;
+            App.state.ModifDeck();
+        }
+
+        private void ToDeck(object sender, RoutedEventArgs e)
+        {
+            CardDeckRelation cardRel = LVDeckSide.SelectedItem as CardDeckRelation;
+            cardRel.RelationType = 0;
+            App.state.ModifDeck();
+        }
     }
 
 }

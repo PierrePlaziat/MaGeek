@@ -55,9 +55,18 @@
                 </Style>
             </ListView.ItemContainerStyle>
 
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Unset Commandant" Click="UnsetCommandant" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+
             <ListView.ItemTemplate>
+                
                 <DataTemplate>
+                    
                     <Grid  Height="20">
+                        
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="20"></ColumnDefinition>
                             <ColumnDefinition Width="11"></ColumnDefinition>
@@ -75,6 +84,7 @@
                         <Button Grid.Column="2" Height="20" Foreground="Black" Content="+" Click="MoreCard"></Button>
 
                     </Grid>
+                    
                 </DataTemplate>
             </ListView.ItemTemplate>
 
@@ -96,6 +106,13 @@
                     <Setter Property="Background" Value="#444"/>
                 </Style>
             </ListView.ItemContainerStyle>
+
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Set Commandant" Click="SetCommandant" />
+                    <MenuItem Header="To Side" Click="ToSide" />
+                </ContextMenu>
+            </ListView.ContextMenu>
 
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -138,6 +155,12 @@
                     <Setter Property="Background" Value="#000"/>
                 </Style>
             </ListView.ItemContainerStyle>
+
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="To Deck" Click="ToDeck" />
+                </ContextMenu>
+            </ListView.ContextMenu>
 
             <ListView.ItemTemplate>
                 <DataTemplate>
