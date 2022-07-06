@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:MaGeek.UI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
     <Grid Background="#222">
 
         <Grid.RowDefinitions>
@@ -15,6 +16,8 @@
             <RowDefinition Height="auto" MaxHeight="100"></RowDefinition>
         </Grid.RowDefinitions>
 
+        <!-- TITLE -->
+                
         <Grid Grid.Row="0">
 
             <Grid.ColumnDefinitions>
@@ -35,92 +38,110 @@
 
         </Grid>
 
-        
-            <ListView Name="LVCommandants" ItemsSource="{Binding CurrentCommanders}" 
-                       BorderThickness="0"   Background="#222" 
-                      SelectionChanged="LVDeck_SelectionChanged" Grid.Row="1">
+        <!-- Commandement --> 
 
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="Background" Value="#888"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid  Height="20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20"></ColumnDefinition>
-                                <ColumnDefinition Width="11"></ColumnDefinition>
-                                <ColumnDefinition Width="20"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="auto"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Foreground="White" Padding="4,1,1,1" Grid.Column="2" Content="{Binding Card.Card.CardForeignName}"></Label>
-
-                            <local:ManaCost Grid.Column="4" Cost="{Binding Card.Card.ManaCost}" HorizontalAlignment="Right" Foreground="Black"/>
-
-                            <Button Grid.Column="0" Height="20" Foreground="Black" Content="-" Click="LessCard"></Button>
-                            <Label  Grid.Column="1" Height="20" Background="#555" Padding="2" Foreground="White" Content="{Binding Quantity}"></Label>
-                            <Button Grid.Column="2" Height="20" Foreground="Black" Content="+" Click="MoreCard"></Button>
-
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <ListView Name="LVDeck" ItemsSource="{Binding CurrentNonCommanders}" 
-                       BorderThickness="0"   Background="#222" Grid.Row="2" 
-                      SelectionChanged="LVDeck_SelectionChanged">
-
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Padding" Value="0"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Background="Black" Height="20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20"></ColumnDefinition>
-                                <ColumnDefinition Width="11"></ColumnDefinition>
-                                <ColumnDefinition Width="20"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="auto"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Foreground="White" Padding="4,1,1,1" Grid.Column="3" Content="{Binding Card.Card.CardForeignName}"></Label>
-
-                            <local:ManaCost Grid.Column="4" Cost="{Binding Card.Card.ManaCost}" HorizontalAlignment="Right"/>
-
-                            <Button Grid.Column="0" Height="20" Foreground="Black" Content="-" Click="LessCard"></Button>
-                            <Label  Grid.Column="1" Height="20" Background="#555" Padding="2" Foreground="White" Content="{Binding Quantity}"></Label>
-                            <Button Grid.Column="2" Height="20" Foreground="Black" Content="+" Click="MoreCard"></Button>
-
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <ListView Name="LVDeckSide" ItemsSource="{Binding CurrentSide}" 
-                   BorderThickness="1" BorderBrush="DarkGreen"   Background="#222" Grid.Row="3" 
-                  SelectionChanged="LVDeck_SelectionChanged">
+        <ListView Name="LVCommandants"
+                    ItemsSource="{Binding CurrentCommanders}" 
+                    BorderThickness="0"   
+                    Background="DarkOrange" 
+                    SelectionChanged="LVDeck_SelectionChanged" 
+                    Grid.Row="1">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Background" Value="#444"/>
                 </Style>
             </ListView.ItemContainerStyle>
 
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="Black" Height="20">
+                    <Grid  Height="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"></ColumnDefinition>
+                            <ColumnDefinition Width="11"></ColumnDefinition>
+                            <ColumnDefinition Width="20"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Foreground="White" Padding="4,1,1,1" Grid.Column="3" Content="{Binding Card.Card.CardForeignName}"></Label>
+
+                        <local:ManaCost Grid.Column="4" Cost="{Binding Card.Card.ManaCost}" HorizontalAlignment="Right" Foreground="Black"/>
+
+                        <Button Grid.Column="0" Height="20" Foreground="Black" Content="-" Click="LessCard"></Button>
+                        <Label  Grid.Column="1" Height="20" Background="#555" Padding="2" Foreground="White" Content="{Binding Quantity}"></Label>
+                        <Button Grid.Column="2" Height="20" Foreground="Black" Content="+" Click="MoreCard"></Button>
+
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </ListView>
+
+        <!-- Deck -->
+        
+        <ListView Name="LVDeck" 
+                    ItemsSource="{Binding CurrentNonCommanders}" 
+                    BorderThickness="0"  
+                    Background="#000" 
+                    SelectionChanged="LVDeck_SelectionChanged"
+                    Grid.Row="2" >
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Background" Value="#444"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Height="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"></ColumnDefinition>
+                            <ColumnDefinition Width="11"></ColumnDefinition>
+                            <ColumnDefinition Width="20"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Foreground="White" Padding="4,1,1,1" Grid.Column="3" Content="{Binding Card.Card.CardForeignName}"></Label>
+
+                        <local:ManaCost Grid.Column="4" Cost="{Binding Card.Card.ManaCost}" HorizontalAlignment="Right"/>
+
+                        <Button Grid.Column="0" Height="20" Foreground="Black" Content="-" Click="LessCard"></Button>
+                        <Label  Grid.Column="1" Height="20" Background="#555" Padding="2" Foreground="White" Content="{Binding Quantity}"></Label>
+                        <Button Grid.Column="2" Height="20" Foreground="Black" Content="+" Click="MoreCard"></Button>
+
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </ListView>
+
+        <!-- Side -->
+
+        <ListView Name="LVDeckSide" 
+                    ItemsSource="{Binding CurrentSide}" 
+                    BorderThickness="0" 
+                    Background="Black" 
+                    SelectionChanged="LVDeck_SelectionChanged"
+                    Grid.Row="3" >
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Background" Value="#000"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Height="20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="20"></ColumnDefinition>
                             <ColumnDefinition Width="11"></ColumnDefinition>
@@ -147,6 +168,6 @@
             <Label>No deck selected</Label>
         </StackPanel>
 
-    </Grid> 
+    </Grid>
 
 </UserControl>

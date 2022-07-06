@@ -113,7 +113,7 @@ namespace MaGeek.UI
 
         private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (LVDeck.SelectedItem is CardDeckRelation cardRel) App.state.SelectCard(cardRel.Card.Card);
+            if ((sender as ListView).SelectedItem is CardDeckRelation cardRel) App.state.SelectCard(cardRel.Card.Card);
         }
 
     }
