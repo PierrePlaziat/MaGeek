@@ -65,6 +65,7 @@ namespace MaGeek.UI
                 OnPropertyChanged();
                 OnPropertyChanged("Visible");
                 OnPropertyChanged("CardRelations");
+                OnPropertyChanged("CardRelations_Commandant");
                 OnPropertyChanged("CardRelations_Lands");
                 OnPropertyChanged("CardRelations_Cmc0");
                 OnPropertyChanged("CardRelations_Cmc1");
@@ -98,6 +99,12 @@ namespace MaGeek.UI
         {
             get { return CurrentDeck == null ? null : CurrentDeck.CardRelations; }
         }
+
+        public List<CardDeckRelation> CardRelations_Commandant
+        {
+            get { return CurrentDeck == null ? null : CurrentDeck.CardRelations.Where(x=>x.RelationType==1).ToList(); }
+        }
+
 
         public List<CardDeckRelation> CardRelations_Lands
         {

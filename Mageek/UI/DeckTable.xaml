@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MaGeek.UI"
-      xmlns:bp="clr-namespace:MaGeek.Wpf.Misc"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
              x:Name="myWindow">
@@ -25,7 +24,52 @@
                     <Label></Label>
                 </DockPanel>
 
-                <Label FontWeight="Bold" FontSize="20">Non lands:</Label>
+                <Label FontWeight="Bold" FontSize="20">Commandement</Label>
+
+                <ItemsControl 
+                          ItemsSource="{Binding CardRelations_Commandant}"
+                          Background="Transparent" 
+                          Margin="0" Padding="0">
+
+                    <ItemsControl.ItemsPanel >
+                        <ItemsPanelTemplate>
+                            <WrapPanel>
+                            </WrapPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl>
+
+                                <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            Width="150" 
+                                                            Margin="0" Padding="0"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                                <ContentControl.ContextMenu>
+                                    <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                        <ContextMenu.ItemContainerStyle>
+                                            <Style TargetType="MenuItem">
+                                                <Setter Property="Header" Value="{Binding SetName}"/>
+                                                <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                <Setter Property="CommandParameter" Value="{Binding}"/>
+                                            </Style>
+                                        </ContextMenu.ItemContainerStyle>
+                                    </ContextMenu>
+                                </ContentControl.ContextMenu>
+
+                            </ContentControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+
+                <Label FontWeight="Bold" FontSize="20">Non lands</Label>
                 
                 <DockPanel>
 
@@ -370,7 +414,7 @@
 
                 </DockPanel>
 
-                <Label FontWeight="Bold" FontSize="20">Lands:</Label>
+                <Label FontWeight="Bold" FontSize="20">Lands</Label>
 
                 <ItemsControl Grid.Row="1" 
                               ItemsSource="{Binding CardRelations_Lands}"
