@@ -75,7 +75,7 @@
 
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc0}"
-                          Background="Transparent" 
+                          Background="Transparent" MaxWidth="150"
                           Margin="0" Padding="0">
 
                         <ItemsControl.ItemsPanel >
@@ -118,7 +118,7 @@
 
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc1}"
-                          Background="Transparent" 
+                          Background="Transparent"  MaxWidth="150"
                           Margin="0" Padding="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
@@ -160,7 +160,7 @@
 
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc2}"
-                          Background="Transparent" 
+                          Background="Transparent"  MaxWidth="150"
                           Margin="0" Padding="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
@@ -202,7 +202,7 @@
 
                     <ItemsControl
                           ItemsSource="{Binding CardRelations_Cmc3}"
-                          Background="Transparent" 
+                          Background="Transparent"  MaxWidth="150"
                           Margin="0" Padding="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
@@ -244,7 +244,7 @@
 
                     <ItemsControl
                           ItemsSource="{Binding CardRelations_Cmc4}"
-                          Background="Transparent" 
+                          Background="Transparent"  MaxWidth="150"
                           Margin="0" Padding="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
@@ -286,7 +286,7 @@
 
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc5}"
-                          Background="Transparent" 
+                          Background="Transparent"  MaxWidth="150"
                           Margin="0" Padding="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
@@ -328,7 +328,7 @@
 
                     <ItemsControl
                           ItemsSource="{Binding CardRelations_Cmc6}"
-                          Background="Transparent" 
+                          Background="Transparent"  MaxWidth="150"
                           Margin="0" Padding="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
@@ -370,7 +370,7 @@
 
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc7}"
-                          Background="Transparent" 
+                          Background="Transparent"  MaxWidth="150"
                           Margin="0" Padding="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
@@ -416,51 +416,287 @@
 
                 <Label FontWeight="Bold" FontSize="20">Lands</Label>
 
-                <ItemsControl Grid.Row="1" 
-                              ItemsSource="{Binding CardRelations_Lands}"
+                <DockPanel>
+
+                    <ItemsControl ItemsSource="{Binding CardRelations_Lands_B}"
                               Background="Transparent" 
-                              Margin="0" Padding="0">
-                    
-                    <ItemsControl.ItemsPanel >
-                        <ItemsPanelTemplate>
-                            <WrapPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    
-                    <ItemsControl.ItemTemplate>
-                        
-                        <DataTemplate>
-                            
-                            <ContentControl>
-                                
-                                <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                  HorizontalAlignment="Left"
+                              Margin="0" Padding="0" MaxWidth="150">
+
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <ContentControl>
+
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                         SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                         Width="150" 
                                                         Margin="0" Padding="0"
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
 
-                                <ContentControl.ContextMenu>
-                                    <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                        <ContextMenu.ItemContainerStyle>
-                                            <Style TargetType="MenuItem">
-                                                <Setter Property="Header" Value="{Binding SetName}"/>
-                                                <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
                                                         RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
                                                         RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                <Setter Property="CommandParameter" Value="{Binding}"/>
-                                            </Style>
-                                        </ContextMenu.ItemContainerStyle>
-                                    </ContextMenu>
-                                </ContentControl.ContextMenu>
+                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
 
-                            </ContentControl>
-                            
-                        </DataTemplate>
+                                </ContentControl>
 
-                    </ItemsControl.ItemTemplate>
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding CardRelations_Lands_W}"
+                              Background="Transparent" MaxWidth="150"
+                                  HorizontalAlignment="Left"
+                              Margin="0" Padding="0">
+
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <ContentControl>
+
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                        SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                        Width="150" 
+                                                        Margin="0" Padding="0"
+                                                        HorizontalAlignment="Left" VerticalAlignment="Top" />
+
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
+
+                                </ContentControl>
+
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding CardRelations_Lands_U}"
+                              Background="Transparent" MaxWidth="150"
+                                  HorizontalAlignment="Left"
+                              Margin="0" Padding="0">
+
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <ContentControl>
+
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                        SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                        Width="150" 
+                                                        Margin="0" Padding="0"
+                                                        HorizontalAlignment="Left" VerticalAlignment="Top" />
+
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
+
+                                </ContentControl>
+
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding CardRelations_Lands_G}"
+                              Background="Transparent" MaxWidth="150"
+                                  HorizontalAlignment="Left"
+                              Margin="0" Padding="0">
+
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <ContentControl>
+
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                        SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                        Width="150" 
+                                                        Margin="0" Padding="0"
+                                                        HorizontalAlignment="Left" VerticalAlignment="Top" />
+
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
+
+                                </ContentControl>
+
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding CardRelations_Lands_R}"
+                              Background="Transparent"  MaxWidth="150"
+                                  HorizontalAlignment="Left"
+                              Margin="0" Padding="0">
+
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <ContentControl>
+
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                        SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                        Width="150" 
+                                                        Margin="0" Padding="0"
+                                                        HorizontalAlignment="Left" VerticalAlignment="Top" />
+
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
+
+                                </ContentControl>
+
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding CardRelations_Lands_S}"
+                              Background="Transparent" MaxWidth="150"
+                                  HorizontalAlignment="Left"
+                              Margin="0" Padding="0">
+
+                        <ItemsControl.ItemsPanel >
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <ContentControl>
+
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
+                                                        SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                        Width="150" 
+                                                        Margin="0" Padding="0"
+                                                        HorizontalAlignment="Left" VerticalAlignment="Top" />
+
+                                    <ContentControl.ContextMenu>
+                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <ContextMenu.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                </Style>
+                                            </ContextMenu.ItemContainerStyle>
+                                        </ContextMenu>
+                                    </ContentControl.ContextMenu>
+
+                                </ContentControl>
+
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+                    <Label></Label>
                     
-                </ItemsControl>
+                </DockPanel>
 
             </StackPanel>
             

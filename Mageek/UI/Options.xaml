@@ -37,13 +37,13 @@
             </ComboBox>
         </DockPanel>
         
-        <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">Search Behaviour:</Label>
+        <!--<Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">Search Behaviour:</Label>
         <DockPanel Grid.Column="1" Grid.Row="0">
             <ComboBox Name="SearchBehaviourBox" Width="150" HorizontalAlignment="Left" SelectionChanged="SearchBehaviour_SelectionChanged">
                 <ComboBoxItem IsSelected="True">Wide</ComboBoxItem>
                 <ComboBoxItem>Discrete</ComboBoxItem>
             </ComboBox>
-        </DockPanel>
+        </DockPanel>-->
 
         <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Local DB:</Label>
         <DockPanel Grid.Column="1" Grid.Row="2">
