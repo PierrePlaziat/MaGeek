@@ -17,13 +17,13 @@
             <RowDefinition Height="358"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition Height="100"></RowDefinition>
             
         </Grid.RowDefinitions>
 
         <local:CardIllustration x:Name="yo" Width="250" Height="348" Margin="0,5,5,5"
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
-                                SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
-                                />
+                                SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
         <DockPanel Grid.Row="1" Background="Black" Height="21">
 
@@ -84,6 +84,29 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <StackPanel Grid.Row="3" Background="#222">
+        
+            <DockPanel>
+                <TextBox Name="NewTag" Width="180"></TextBox>
+                <Button Click="AddTag">Add Tag</Button>
+            </DockPanel>
+
+            <ItemsControl ItemsSource="{Binding Tags}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Tag}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            
+        </StackPanel>
+        
 
 
 

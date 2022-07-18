@@ -20,6 +20,7 @@ namespace MaGeek.Data
         public DbSet<MagicDeck> decks { get; set; }
         public DbSet<CardDeckRelation> cardsInDecks { get; set; }
         public DbSet<Param> Params { get; set; }
+        public DbSet<CardTag> Tags { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,6 +53,7 @@ namespace MaGeek.Data
 
             modelBuilder.Entity<MagicDeck>().Property(e => e.DeckId).ValueGeneratedOnAdd();
             modelBuilder.Entity<CardTraduction>().Property(e => e.TraductionId).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CardTag>().Property(e => e.Id).ValueGeneratedOnAdd();
         }
 
     }

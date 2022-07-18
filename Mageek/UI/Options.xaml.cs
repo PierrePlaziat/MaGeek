@@ -15,6 +15,10 @@ namespace MaGeek.UI
             SelectCurrentSearchBehaviour();
         }
 
+        private void SaveDb_Click(object sender, RoutedEventArgs e) { App.cardManager.SaveDb(); }
+        private void LoadDb_Click(object sender, RoutedEventArgs e) { App.cardManager.LoadDb(); }
+        private void EraseDb_Click(object sender, RoutedEventArgs e) { App.cardManager.EraseDb(); }
+
         private void SelectCurrentLanguage()
         {
             foreach (var i in LanguageBox.Items)
@@ -27,10 +31,6 @@ namespace MaGeek.UI
         {
             App.state.SetForeignLanguage ( ((ComboBoxItem)((ComboBox)sender).SelectedItem).Content as string );
         }
-
-        private void SaveDb_Click(object sender, RoutedEventArgs e) { App.cardManager.SaveDb(); }
-        private void LoadDb_Click(object sender, RoutedEventArgs e) { App.cardManager.LoadDb(); }
-        private void EraseDb_Click(object sender, RoutedEventArgs e) { App.cardManager.EraseDb(); }
 
         private void SelectCurrentSearchBehaviour()
         {

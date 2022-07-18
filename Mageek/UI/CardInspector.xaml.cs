@@ -1,4 +1,5 @@
 ﻿using MaGeek.Data.Entities;
+using MaGeek.Entities;
 using MaGeek.Events;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,15 @@ namespace MaGeek.UI
         #endregion
 
         #region Attributes
+
+        public List<CardTag> Tags
+        {
+            get
+            {
+                if(selectedCard==null) return null;
+                return App.database.Tags.Where(x=>x.CardId==selectedCard.CardId).ToList();
+            }
+        }
 
         private MagicCard selectedCard;
         public MagicCard SelectedCard
@@ -62,8 +72,6 @@ namespace MaGeek.UI
             get { return selectedVariant; }
             set { selectedVariant = value; OnPropertyChanged(); }
         }
-
-
 
         void HandleCardSelected(object sender, SelectCardEventArgs e)
         {
@@ -149,6 +157,15 @@ namespace MaGeek.UI
             App.cardManager.SetFav(cardvar.Card, cardvar.Id);
 
 
+        }
+
+        private void AddTag(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(NewTag.Text))
+            {
+                App.database.Tags.Add(new CardTag(NewTag.Text, selectedCard));
+                App.database.SaveChanges();
+            }
         }
 
     }

@@ -330,11 +330,9 @@
                           ItemsSource="{Binding CardRelations_Cmc6}"
                           Background="Transparent"  MaxWidth="150"
                           Margin="0" Padding="0">
-                        <ItemsControl.ItemsPanel >
+                        <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-
                                 <WrapPanel  Width="150"  Visibility="{Binding HasCmc6}"/>
-
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
