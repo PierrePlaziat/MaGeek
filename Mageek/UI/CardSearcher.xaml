@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:MaGeek.UI"
              xmlns:plaziat="clr-namespace:Plaziat.CommonWpf"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="750">
 
     <UserControl.Resources>
         <cwpf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -20,7 +20,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="26"></RowDefinition>
             <RowDefinition Height="1"></RowDefinition>
-            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -87,31 +87,33 @@
         
         <!-- Filters -->
 
-            <DockPanel Grid.Row="2" Grid.Column="0">
-                <Label HorizontalAlignment="Right" 
-                       Content="Name"/>
-                <TextBox Text="{Binding FilterName}"
-                         Width="120"
-                         Grid.Row="0" Grid.Column="1"
-                         HorizontalAlignment="Stretch"/>
-                <Label HorizontalAlignment="Right" 
-                       Content="Type"/>
-                <TextBox Text="{Binding FilterType}"
-                         Width="120"
-                         Grid.Row="0" Grid.Column="3"
-                         HorizontalAlignment="Stretch"/>
-                <Label Content="CMC >="
-                       HorizontalAlignment="Left"/>
-                <Slider Minimum="0" Maximum="20"
-                        Width="40"
-                        Value="{Binding FilterMinCmc}"
-                        HorizontalAlignment="Left"/>
-                <Label Content="CMC &lt;="
-                       HorizontalAlignment="Left"/>
-                <Slider Minimum="0" Maximum="20"
-                        Width="40"
-                        Value="{Binding FilterMaxCmc}"
-                        HorizontalAlignment="Left"/>
+        <WrapPanel Grid.Row="2" Grid.Column="0">
+            <Label HorizontalAlignment="Right" 
+                    Content="Name"/>
+            <TextBox Text="{Binding FilterName}"
+                        Width="120"
+                        Grid.Row="0" Grid.Column="1"
+                        HorizontalAlignment="Stretch"/>
+            <Label HorizontalAlignment="Right" 
+                    Content="Type"/>
+            <TextBox Text="{Binding FilterType}"
+                        Width="120"
+                        Grid.Row="0" Grid.Column="3"
+                        HorizontalAlignment="Stretch"/>
+            <Label Content="CMC >="
+                    HorizontalAlignment="Left"/>
+            <Slider Minimum="0" Maximum="20"
+                    Width="40"
+                    Value="{Binding FilterMinCmc}"
+                    HorizontalAlignment="Left"/>
+            <Label Content="CMC &lt;="
+                    HorizontalAlignment="Left"/>
+            <Slider Minimum="0" Maximum="20"
+                    Width="40"
+                    Value="{Binding FilterMaxCmc}"
+                    HorizontalAlignment="Left"/>
+
+            <DockPanel Margin="0,0,20,0">
 
                 <CheckBox IsChecked="{Binding FilterColorB}" Padding="0" Margin="3"></CheckBox>
                 <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">b</Label>
@@ -136,9 +138,15 @@
                 <CheckBox IsChecked="{Binding FilterColorI}" Padding="0" Margin="3"></CheckBox>
                 <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">o</Label>
                 <Separator Width="10" Background="Transparent"></Separator>
-
             </DockPanel>
-        
+
+            <DockPanel>
+                <Label>Tags</Label>
+                <ComboBox Name="FilterTag" ItemsSource="{Binding AvailableTags}" SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"></ComboBox>
+            </DockPanel>
+
+        </WrapPanel>
+
         <Grid Grid.Row="2">
 
             <Grid.RowDefinitions>

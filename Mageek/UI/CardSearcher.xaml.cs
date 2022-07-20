@@ -1,4 +1,5 @@
 ﻿using MaGeek.Data.Entities;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -41,17 +42,59 @@ namespace MaGeek.UI
                 if (!filterColorU) filtered = filtered.Where(x => !x.ManaCost.Contains('U'));
                 if (!filterColorG) filtered = filtered.Where(x => !x.ManaCost.Contains('G'));
                 if (!filterColorR) filtered = filtered.Where(x => !x.ManaCost.Contains('R'));
+
+                if (!string.IsNullOrEmpty(TagFilterSelected))
+                {
+                    var tagged = new List<MagicCard>();
+                    foreach (var card in filtered)
+                    {
+                        if(App.database.Tags.Where(x=>x.CardId==card.CardId && x.Tag== TagFilterSelected).Any())
+                        {
+                            tagged.Add(card);
+                        }
+                    }
+                    return new ObservableCollection<MagicCard>(tagged);
+                }
                 return new ObservableCollection<MagicCard>(filtered); 
+            }
+        }
+
+        public List<string> AvailableTags
+        {
+            get
+            {
+                List<string> tags = new List<string>();
+                tags.Add("");
+                var x = App.database.Tags.GroupBy(test => test.Tag)
+                    .Select(grp => grp.First()).ToList();
+                foreach (var v in x)
+                {
+                    tags.Add(v.Tag);
+                }
+                return tags;
             }
         }
 
         #region Filter
 
+        private string tagFilterSelected = "";
+        public string TagFilterSelected
+        {
+            get { return tagFilterSelected; }
+            set
+            {
+                tagFilterSelected = value;
+                OnPropertyChanged();
+                OnPropertyChanged("CardsBind");
+            }
+        }
+
         private string filterName = "";
         public string FilterName
         {
             get { return filterName; }
-            set { 
+            set
+            {
                 filterName = value;
                 OnPropertyChanged();
                 OnPropertyChanged("CardsBind");
@@ -220,6 +263,11 @@ namespace MaGeek.UI
         private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             App.cardManager.AddCardToDeck(CardsBind[CardGrid.SelectedIndex].Variants[0], App.state.SelectedDeck);
+        }
+
+        private void FilterTag_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OnPropertyChanged("CardsBind");
         }
     }
 
