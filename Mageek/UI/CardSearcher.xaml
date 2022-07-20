@@ -172,7 +172,7 @@
                       CanUserResizeRows="False"
                       CanUserResizeColumns="True"
                       CanUserReorderColumns="True"
-                      SelectionMode="Single"
+                      SelectionMode="Extended"
                       CanUserSortColumns="True"
                       CanUserDeleteRows="False"
                       IsReadOnly="True"
