@@ -8,6 +8,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace MaGeek.UI
@@ -49,6 +51,7 @@ namespace MaGeek.UI
                 AutoSelectVariant();
                 OnPropertyChanged("CollectedQuantity");
                 OnPropertyChanged("Visible");
+                OnPropertyChanged("Tags");
             }
         }
 
@@ -147,6 +150,7 @@ namespace MaGeek.UI
         #endregion
         private void SelectVariant(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (VariantListBox.SelectedIndex < 0) return;
             SelectedVariant = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;
         }
 
@@ -165,9 +169,109 @@ namespace MaGeek.UI
             {
                 App.database.Tags.Add(new CardTag(NewTag.Text, selectedCard));
                 App.database.SaveChanges();
+                OnPropertyChanged("Tags");
+                NewTag.Text = "";
+                sugestions.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
 
+        private void DeleteTag(object sender, RoutedEventArgs e)
+        {
+            CardTag cardTag = (CardTag)((Button)sender).DataContext;
+            App.database.Tags.Remove(cardTag);
+            App.database.SaveChanges();
+            OnPropertyChanged("Tags");
+            sugestions.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+        private void NewTag_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            bool found = false;
+            var border = (resultStack.Parent as ScrollViewer).Parent as Border;
+            var data = GetExistingTags();
+
+            string query = (sender as TextBox).Text;
+
+            if (query.Length == 0)
+            {
+                // Clear 
+                resultStack.Children.Clear();
+                border.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else
+            {
+                border.Visibility = System.Windows.Visibility.Visible;
+            }
+
+            // Clear the list
+            resultStack.Children.Clear();
+
+            // Add the result
+            foreach (var obj in data)
+            {
+                if (obj.ToLower().StartsWith(query.ToLower()))
+                {
+                    // The word starts with this... Autocomplete must work
+                    addItem(obj);
+                    found = true;
+                }
+            }
+
+            if (!found)
+            {
+                resultStack.Children.Add(new TextBlock() { Text = "No results found." });
+            }
+        }
+
+        private List<string> GetExistingTags()
+        {
+            List<string> tags = new List<string>();
+            var x = App.database.Tags.GroupBy(test => test.Tag)
+                .Select(grp => grp.First()).ToList();
+            foreach(var v in x)
+            {
+                tags.Add(v.Tag);
+            }
+            return tags;
+        }
+
+        private void addItem(string text)
+        {
+            TextBlock block = new TextBlock();
+
+            // Add the text
+            block.Text = text;
+
+            // A little style...
+            block.Margin = new Thickness(2, 3, 2, 3);
+            block.Cursor = Cursors.Hand;
+
+            // Mouse events
+            block.MouseLeftButtonUp += (sender, e) =>
+            {
+                NewTag.Text = (sender as TextBlock).Text;
+            };
+
+            block.MouseEnter += (sender, e) =>
+            {
+                TextBlock b = sender as TextBlock;
+                b.Background = Brushes.PeachPuff;
+            };
+
+            block.MouseLeave += (sender, e) =>
+            {
+                TextBlock b = sender as TextBlock;
+                b.Background = Brushes.Transparent;
+            };
+
+            // Add to the panel
+            resultStack.Children.Add(block);
+        }
+
+        private void NewTag_LostFocus(object sender, RoutedEventArgs e)
+        {
+            sugestions.Visibility = System.Windows.Visibility.Collapsed;
+        }
     }
 
 }

@@ -88,9 +88,15 @@
         <StackPanel Grid.Row="3" Background="#222">
         
             <DockPanel>
-                <TextBox Name="NewTag" Width="180"></TextBox>
+                <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>
                 <Button Click="AddTag">Add Tag</Button>
             </DockPanel>
+
+            <Border Width="298" BorderBrush="Black" BorderThickness="1" Name="sugestions">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Name="resultStack"></StackPanel>
+                </ScrollViewer>
+            </Border>
 
             <ItemsControl ItemsSource="{Binding Tags}">
                 <ItemsControl.ItemsPanel>
@@ -100,7 +106,16 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Label Content="{Binding Tag}"/>
+                        <Border BorderBrush="#FF000000" BorderThickness="1" CornerRadius="8" Background="#555" Margin="3">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="{Binding Tag}" Foreground="White"/>
+                                <Button Click="DeleteTag" Grid.Column="1" Content="X" Foreground="Black" BorderThickness="0" Background="Transparent"/>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
