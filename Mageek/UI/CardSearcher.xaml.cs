@@ -63,15 +63,7 @@ namespace MaGeek.UI
         {
             get
             {
-                List<string> tags = new List<string>();
-                tags.Add("");
-                var x = App.database.Tags.GroupBy(test => test.Tag)
-                    .Select(grp => grp.First()).ToList();
-                foreach (var v in x)
-                {
-                    tags.Add(v.Tag);
-                }
-                return tags;
+                return App.database.AvailableTags();
             }
         }
 
@@ -268,6 +260,11 @@ namespace MaGeek.UI
         private void FilterTag_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             OnPropertyChanged("CardsBind");
+        }
+
+        private void FilterTag_DropDownOpened(object sender, System.EventArgs e)
+        {
+            OnPropertyChanged("AvailableTags");
         }
     }
 

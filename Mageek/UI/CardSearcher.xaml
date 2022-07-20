@@ -142,7 +142,7 @@
 
             <DockPanel>
                 <Label>Tags</Label>
-                <ComboBox Name="FilterTag" ItemsSource="{Binding AvailableTags}" SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"></ComboBox>
+                <ComboBox Name="FilterTag" DropDownOpened="FilterTag_DropDownOpened" ItemsSource="{Binding AvailableTags}" SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"></ComboBox>
             </DockPanel>
 
         </WrapPanel>

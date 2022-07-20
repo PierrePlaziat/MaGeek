@@ -225,14 +225,7 @@ namespace MaGeek.UI
 
         private List<string> GetExistingTags()
         {
-            List<string> tags = new List<string>();
-            var x = App.database.Tags.GroupBy(test => test.Tag)
-                .Select(grp => grp.First()).ToList();
-            foreach(var v in x)
-            {
-                tags.Add(v.Tag);
-            }
-            return tags;
+            return App.database.AvailableTags();
         }
 
         private void addItem(string text)
@@ -255,7 +248,7 @@ namespace MaGeek.UI
             block.MouseEnter += (sender, e) =>
             {
                 TextBlock b = sender as TextBlock;
-                b.Background = Brushes.PeachPuff;
+                b.Background = Brushes.Gray;
             };
 
             block.MouseLeave += (sender, e) =>

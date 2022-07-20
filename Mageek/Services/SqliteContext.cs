@@ -1,6 +1,9 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MaGeek.Data
 {
@@ -56,5 +59,17 @@ namespace MaGeek.Data
             modelBuilder.Entity<CardTag>().Property(e => e.Id).ValueGeneratedOnAdd();
         }
 
+        internal List<string> AvailableTags()
+        {
+            List<string> tags = new List<string>();
+            tags.Add("");
+            var x = App.database.Tags.GroupBy(test => test.Tag)
+                .Select(grp => grp.First()).ToList();
+            foreach (var v in x)
+            {
+                tags.Add(v.Tag);
+            }
+            return tags;
+        }
     }
 }
