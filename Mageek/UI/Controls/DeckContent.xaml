@@ -41,11 +41,12 @@
         <!-- Commandement --> 
 
         <ListView Name="LVCommandants"
-                    ItemsSource="{Binding CurrentCommanders}" 
-                    BorderThickness="0"   
-                    Background="DarkOrange" 
-                    SelectionChanged="LVDeck_SelectionChanged" 
-                    Grid.Row="1">
+                  ItemsSource="{Binding CurrentCommanders}" 
+                  BorderThickness="0"   
+                  Background="DarkOrange" 
+                  SelectionChanged="LVDeck_SelectionChanged" 
+                  Grid.Row="1"
+                  Visibility="{Binding HasCommander}">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

@@ -112,12 +112,14 @@
                     Grid.ColumnSpan="1"
                     Background="#000"></StackPanel>
 
-        <local:DeckTable x:Name="SelectedDeck"  HorizontalAlignment="Left"  
+        <local:DeckTable x:Name="SelectedDeck"  HorizontalAlignment="Stretch"  
                          Grid.Column="2"
                     Grid.Row="2"
                     Grid.ColumnSpan="1"
                     BorderThickness="0"
-                    Background="#000"></local:DeckTable>
+                    Background="#000">
+            
+        </local:DeckTable>
     </Grid>
     
 </Window>

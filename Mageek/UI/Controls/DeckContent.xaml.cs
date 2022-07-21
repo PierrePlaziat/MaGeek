@@ -35,6 +35,7 @@ namespace MaGeek.UI
                 OnPropertyChanged();
                 OnPropertyChanged("CurrentCommanders");
                 OnPropertyChanged("CurrentNonCommanders");
+                OnPropertyChanged("HasCommander");
                 OnPropertyChanged("CurrentSide");
                 OnPropertyChanged("Visible");
             }
@@ -42,9 +43,20 @@ namespace MaGeek.UI
 
         public ObservableCollection<CardDeckRelation> CurrentCommanders
         {
-            get {
+            get
+            {
                 if (currentDeck == null || currentDeck.CardRelations == null) return null;
-                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(x=>x.RelationType==1));
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(x => x.RelationType == 1));
+            }
+        }
+
+        public Visibility HasCommander
+        {
+            get
+            {
+                if (CurrentCommanders==null) return Visibility.Collapsed;
+                if (CurrentCommanders.Count<=0) return Visibility.Collapsed;
+                else return Visibility.Visible;
             }
         }
 
