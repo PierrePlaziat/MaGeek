@@ -256,7 +256,7 @@ namespace MaGeek.UI
         {
             foreach (MagicCard c in CardGrid.SelectedItems)
             {
-                App.cardManager.AddCardToDeck(c.Variants[0], App.state.SelectedDeck);
+                App.cardManager.AddCardToDeck(c.Variants[0], App.state.SelectedDeck,1);
             }
         }
 

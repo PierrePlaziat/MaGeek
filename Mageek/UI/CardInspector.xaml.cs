@@ -144,7 +144,7 @@ namespace MaGeek.UI
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            App.cardManager.AddCardToDeck(SelectedVariant, App.state.SelectedDeck);
+            App.cardManager.AddCardToDeck(SelectedVariant, App.state.SelectedDeck,1);
         }
 
         #endregion

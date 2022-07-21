@@ -108,7 +108,7 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.cardManager.AddCardToDeck(c, CurrentDeck);
+            App.cardManager.AddCardToDeck(c, CurrentDeck,1);
         }
 
         private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)

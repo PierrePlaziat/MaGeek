@@ -131,7 +131,7 @@ namespace MaGeek.Data
             }
         }
 
-        public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty = 1)
+        public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
         {
             if (card == null || deck == null) return;
             var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
@@ -141,7 +141,8 @@ namespace MaGeek.Data
                 {
                     Card = card,
                     Deck = deck,
-                    Quantity = 0
+                    Quantity = 0,
+                    RelationType = relation
                 };
                 deck.CardRelations.Add(cardRelation);
             }
@@ -154,8 +155,9 @@ namespace MaGeek.Data
         {
             int qty = cardDeckRelation.Quantity;
             var deck = cardDeckRelation.Deck;
+            int rel = cardDeckRelation.RelationType;
             RemoveCardFromDeck(cardDeckRelation.Card.Card, cardDeckRelation.Deck, cardDeckRelation.Quantity);
-            AddCardToDeck(magicCardVariant, deck, qty);
+            AddCardToDeck(magicCardVariant, deck, qty,rel);
         }
 
         public void RemoveCardFromDeck(MagicCard card, MagicDeck deck, int qty = 1)

@@ -546,7 +546,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.cardManager.AddCardToDeck(c, CurrentDeck);
+            App.cardManager.AddCardToDeck(c, CurrentDeck,1);
         }
 
         private void RemoveOne_Click(object sender, RoutedEventArgs e)
