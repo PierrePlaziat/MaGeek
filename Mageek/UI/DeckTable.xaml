@@ -49,18 +49,28 @@
                                                             HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
                                 <ContentControl.ContextMenu>
-                                    <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                        <ContextMenu.ItemContainerStyle>
-                                            <Style TargetType="MenuItem">
-                                                <Setter Property="Header" Value="{Binding SetName}"/>
-                                                <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                <Setter Property="CommandParameter" Value="{Binding}"/>
-                                            </Style>
-                                        </ContextMenu.ItemContainerStyle>
+
+                                    <ContextMenu>
+                                        <MenuItem Header="Unset Commandant" Click="UnsetCommandant_Click"/>
+                                        <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                        <Separator />
+                                        <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                        <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                        <Separator />
+                                        <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <MenuItem.ItemContainerStyle>
+                                                <Style TargetType="MenuItem">
+                                                    <Setter Property="Header" Value="{Binding SetName}"/>
+                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                </Style>
+                                            </MenuItem.ItemContainerStyle>
+                                        </MenuItem>
                                     </ContextMenu>
+                                    
                                 </ContentControl.ContextMenu>
 
                             </ContentControl>
@@ -96,17 +106,26 @@
                                                             HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
 
@@ -138,17 +157,25 @@
                                                             HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
                                     
@@ -180,17 +207,25 @@
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
                                     
@@ -222,17 +257,25 @@
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
                                     
@@ -264,17 +307,25 @@
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
                                     
@@ -306,17 +357,25 @@
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
                                     
@@ -346,17 +405,25 @@
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
                                     
@@ -388,17 +455,25 @@
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
                                     
@@ -440,17 +515,25 @@
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
 
@@ -486,17 +569,25 @@
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
 
@@ -532,17 +623,25 @@
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
 
@@ -578,17 +677,25 @@
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
 
@@ -624,17 +731,25 @@
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
 
@@ -670,17 +785,25 @@
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
 
                                     <ContentControl.ContextMenu>
-                                        <ContextMenu ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
-                                            <ContextMenu.ItemContainerStyle>
-                                                <Style TargetType="MenuItem">
-                                                    <Setter Property="Header" Value="{Binding SetName}"/>
-                                                    <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
-                                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                                    <Setter Property="CommandParameter" Value="{Binding}"/>
-                                                </Style>
-                                            </ContextMenu.ItemContainerStyle>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
+                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
+                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <Separator />
+                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                                <MenuItem.ItemContainerStyle>
+                                                    <Style TargetType="MenuItem">
+                                                        <Setter Property="Header" Value="{Binding SetName}"/>
+                                                        <Setter Property="Command" Value="{Binding Path=DataContext.ChangeIlluCommand, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, 
+                                                            RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                                    </Style>
+                                                </MenuItem.ItemContainerStyle>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ContentControl.ContextMenu>
 

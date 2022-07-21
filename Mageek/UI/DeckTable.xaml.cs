@@ -517,6 +517,46 @@ namespace MaGeek.UI
 
         #endregion
 
+        private void SetCommandant_Click(object sender, RoutedEventArgs e)
+        {
+            var b = (MenuItem)sender;
+            var cr = b.DataContext as CardDeckRelation;
+            cr.RelationType = 1;
+            App.state.ModifDeck();
+        }
+
+        private void UnsetCommandant_Click(object sender, RoutedEventArgs e)
+        {
+            var b = (MenuItem)sender;
+            var cr = b.DataContext as CardDeckRelation;
+            cr.RelationType = 0;
+            App.state.ModifDeck();
+        }
+
+        private void ToSide_Click(object sender, RoutedEventArgs e)
+        {
+            var b = (MenuItem)sender;
+            var cr = b.DataContext as CardDeckRelation;
+            cr.RelationType = 2;
+            App.state.ModifDeck();
+        }
+
+        private void AddOne_Click(object sender, RoutedEventArgs e)
+        {
+            var b = (MenuItem)sender;
+            var cr = b.DataContext as CardDeckRelation;
+            var c = cr.Card;
+            App.cardManager.AddCardToDeck(c, CurrentDeck);
+        }
+
+        private void RemoveOne_Click(object sender, RoutedEventArgs e)
+        {
+            var b = (MenuItem)sender;
+            var cr = b.DataContext as CardDeckRelation;
+            var c = cr.Card;
+            App.cardManager.RemoveCardFromDeck(c.Card, CurrentDeck);
+        }
+
     }
 
 }
