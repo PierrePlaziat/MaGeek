@@ -112,14 +112,28 @@
                     Grid.ColumnSpan="1"
                     Background="#000"></StackPanel>
 
-        <local:DeckTable x:Name="SelectedDeck"  HorizontalAlignment="Stretch"  
-                         Grid.Column="2"
-                    Grid.Row="2"
-                    Grid.ColumnSpan="1"
-                    BorderThickness="0"
-                    Background="#000">
-            
-        </local:DeckTable>
+        <TabControl 
+                             Grid.Column="2"
+                        Grid.Row="2"
+                        Grid.ColumnSpan="1"
+                    BorderThickness="0" 
+                    Background="#222">
+
+            <TabItem Header="Deck Table" Foreground="#999">
+                <local:DeckTable x:Name="SelectedDeck"  HorizontalAlignment="Stretch"  
+                                 Grid.Column="2"
+                                 Grid.Row="2"
+                                 Grid.ColumnSpan="1"
+                                 BorderThickness="0"
+                                 Background="#000">
+                </local:DeckTable>  
+            </TabItem>
+
+            <TabItem Header="Deck Stats" Foreground="#999">
+                <local:DeckStats  Grid.Column="0" Grid.Row="0"></local:DeckStats>
+            </TabItem>
+
+        </TabControl>
     </Grid>
     
 </Window>
