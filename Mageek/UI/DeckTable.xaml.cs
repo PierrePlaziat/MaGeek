@@ -81,6 +81,8 @@ namespace MaGeek.UI
                 OnPropertyChanged("CardRelations_Cmc5");
                 OnPropertyChanged("CardRelations_Cmc6");
                 OnPropertyChanged("CardRelations_Cmc7");
+                OnPropertyChanged("HasCommandant");
+                OnPropertyChanged("HasNonLands");
                 OnPropertyChanged("HasLands");
                 OnPropertyChanged("HasCmc0");
                 OnPropertyChanged("HasCmc1");
@@ -102,9 +104,23 @@ namespace MaGeek.UI
         public Visibility Visible { 
             get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; }
         }
+        public Visibility HasCommandant
+        {
+            get { 
+                if (CardRelations!= null && CardRelations.Count > 0)
+                {
+                    if(CardRelations.Where(x=>x.RelationType==1).Any()) return Visibility.Visible;
+                }
+                return Visibility.Collapsed;
+            }
+        }
+        public Visibility HasNonLands
+        {
+            get { return CardRelations != null && CardRelations.Where(x=> !x.Card.Card.Type.ToLower().Contains("land")).Any() ? Visibility.Visible : Visibility.Collapsed; }
+        }
         public Visibility HasLands
         {
-            get { return CardRelations_Lands!= null && CardRelations_Lands.Count > 0 ? Visibility.Visible : Visibility.Collapsed; }
+            get { return CardRelations_Lands != null && CardRelations_Lands.Count > 0 ? Visibility.Visible : Visibility.Collapsed; }
         }
         public Visibility HasCmc0
         {

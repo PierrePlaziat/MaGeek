@@ -22,12 +22,12 @@
                     <Label></Label>
                 </DockPanel>
 
-                <Label FontWeight="Bold" FontSize="20">Commandement</Label>
+                <Label FontWeight="Bold" FontSize="20" Visibility="{Binding HasCommandant}">Commandement</Label>
 
                 <ItemsControl 
                           ItemsSource="{Binding CardRelations_Commandant}"
                           Background="Transparent" 
-                          Margin="0" Padding="0">
+                          Margin="0" Padding="0" BorderThickness="0">
 
                     <ItemsControl.ItemsPanel >
                         <ItemsPanelTemplate>
@@ -38,12 +38,13 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <ContentControl>
+                            <ContentControl Background="Transparent"
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                 <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
-                                                            Margin="0" Padding="0"
+                          Margin="0" Padding="0" BorderThickness="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
                                 <ContentControl.ContextMenu>
@@ -77,17 +78,17 @@
 
                 </ItemsControl>
 
-                <Label FontWeight="Bold" FontSize="20">Non lands</Label>
+                <Label FontWeight="Bold" FontSize="20" Visibility="{Binding HasNonLands}">Non lands</Label>
 
-                <DockPanel>
+                <DockPanel Margin="0">
 
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc0}"
                           Background="Transparent" MaxWidth="150"
-                          Margin="0" Padding="0">
+                          Margin="0" Padding="0" BorderThickness="0">
 
                         <ItemsControl.ItemsPanel >
-                            <ItemsPanelTemplate>
+                            <ItemsPanelTemplate >
                                 <WrapPanel>
                                 </WrapPanel>
                             </ItemsPanelTemplate>
@@ -136,7 +137,7 @@
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc1}"
                           Background="Transparent"  MaxWidth="150"
-                          Margin="0" Padding="0">
+                          Margin="0" Padding="0" BorderThickness="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
 
@@ -146,7 +147,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -186,7 +188,7 @@
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc2}"
                           Background="Transparent"  MaxWidth="150"
-                          Margin="0" Padding="0">
+                          Margin="0" Padding="0" BorderThickness="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
 
@@ -196,7 +198,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -236,7 +239,7 @@
                     <ItemsControl
                           ItemsSource="{Binding CardRelations_Cmc3}"
                           Background="Transparent"  MaxWidth="150"
-                          Margin="0" Padding="0">
+                          Margin="0" Padding="0" BorderThickness="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
 
@@ -246,7 +249,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -286,7 +290,7 @@
                     <ItemsControl
                           ItemsSource="{Binding CardRelations_Cmc4}"
                           Background="Transparent"  MaxWidth="150"
-                          Margin="0" Padding="0">
+                          Margin="0" Padding="0" BorderThickness="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
 
@@ -296,7 +300,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -336,7 +341,7 @@
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc5}"
                           Background="Transparent"  MaxWidth="150"
-                          Margin="0" Padding="0">
+                          Margin="0" Padding="0" BorderThickness="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
 
@@ -346,7 +351,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -386,7 +392,7 @@
                     <ItemsControl
                           ItemsSource="{Binding CardRelations_Cmc6}"
                           Background="Transparent"  MaxWidth="150"
-                          Margin="0" Padding="0">
+                          Margin="0" Padding="0" BorderThickness="0">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel  Width="150"  Visibility="{Binding HasCmc6}"/>
@@ -394,7 +400,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -434,7 +441,7 @@
                     <ItemsControl 
                           ItemsSource="{Binding CardRelations_Cmc7}"
                           Background="Transparent"  MaxWidth="150"
-                          Margin="0" Padding="0">
+                          Margin="0" Padding="0" BorderThickness="0">
                         <ItemsControl.ItemsPanel >
                             <ItemsPanelTemplate>
 
@@ -444,7 +451,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                             SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -485,7 +493,7 @@
 
                 </DockPanel>
 
-                <Label FontWeight="Bold" FontSize="20">Lands</Label>
+                <Label FontWeight="Bold" FontSize="20" Visibility="{Binding HasLands}">Lands</Label>
 
                 <DockPanel>
 
@@ -504,7 +512,8 @@
 
                             <DataTemplate>
 
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                         SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -558,7 +567,8 @@
 
                             <DataTemplate>
 
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                         SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -612,7 +622,8 @@
 
                             <DataTemplate>
 
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                         SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -666,7 +677,8 @@
 
                             <DataTemplate>
 
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                         SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -720,7 +732,8 @@
 
                             <DataTemplate>
 
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                         SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -774,7 +787,8 @@
 
                             <DataTemplate>
 
-                                <ContentControl>
+                                <ContentControl
+                          Margin="0" Padding="0" BorderThickness="0">
 
                                     <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
                                                         SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
@@ -822,6 +836,7 @@
         </ScrollViewer>
 
         <Grid Visibility="{Binding Visible}" 
+              Background="Black"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
               Grid.RowSpan="2">
