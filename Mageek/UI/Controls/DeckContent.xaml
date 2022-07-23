@@ -30,11 +30,6 @@
             </Grid.ColumnDefinitions>
 
             <Label FontWeight="Bold" Foreground="White" Content="{Binding CurrentDeck.Title}"></Label>
-            <Label Grid.Column="1" FontWeight="Bold" Foreground="Black" Content="{Binding CurrentDeck.DevotionB}"></Label>
-            <Label Grid.Column="2" FontWeight="Bold" Foreground="White" Content="{Binding CurrentDeck.DevotionW}"></Label>
-            <Label Grid.Column="3" FontWeight="Bold" Foreground="DodgerBlue" Content="{Binding CurrentDeck.DevotionU}"></Label>
-            <Label Grid.Column="4" FontWeight="Bold" Foreground="DarkSeaGreen" Content="{Binding CurrentDeck.DevotionG}"></Label>
-            <Label Grid.Column="5" FontWeight="Bold" Foreground="IndianRed" Content="{Binding CurrentDeck.DevotionR}"></Label>
 
         </Grid>
 
