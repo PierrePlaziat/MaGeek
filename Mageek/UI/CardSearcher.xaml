@@ -62,7 +62,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="100"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <Label Foreground="#fff" Content="Searching..."></Label>
@@ -74,10 +73,10 @@
                                VerticalAlignment="Center" />
             </Grid>
 
-            <Button Grid.Column="2"
+            <!--<Button Grid.Column="2"
                     Margin="3"
                     Click="SearchButton_Pressed"
-                    Content="Cancel"/>
+                    Content="Cancel"/>-->
             
         </Grid>
 

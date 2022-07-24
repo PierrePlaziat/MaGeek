@@ -34,11 +34,11 @@ namespace MaGeek.UI
 
         private void SelectCurrentSearchBehaviour()
         {
-            foreach (var i in SearchBehaviourBox.Items)
+            /*foreach (var i in SearchBehaviourBox.Items)
             {
                 string itemName = ((ComboBoxItem)i).Content as string;
                 if (itemName == App.state.GetSearchBehaviour()) SearchBehaviourBox.SelectedItem = i;
-            }
+            }*/
         }
         private void SearchBehaviour_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
