@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace MaGeek.Data.Entities
@@ -113,6 +114,11 @@ namespace MaGeek.Data.Entities
                 foreach (var c in CardRelations) devotion += c.Card.Card.DevotionR * c.Quantity;
                 return devotion;
             }
+        }
+
+        internal int Where()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

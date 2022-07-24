@@ -15,27 +15,7 @@
 
                 <Label>Manacurve</Label>
 
-                <Canvas Height="100" Width="200" HorizontalAlignment="Left">
-                    <Path Stroke="White" StrokeThickness="2">
-                        <Path.Data>
-                            <PathGeometry>
-                                <PathGeometry.Figures>
-                                    <PathFigureCollection>
-                                        <PathFigure StartPoint="0,100">
-                                            <PathFigure.Segments>
-                                                <PathSegmentCollection>
-                                                    <PolyBezierSegment Points="0,100 50,100 100,100 150,100 200,100 250,100 300,100 350,100 400,100 450,100, 500,100" />
-                                                </PathSegmentCollection>
-                                            </PathFigure.Segments>
-                                        </PathFigure>
-                                    </PathFigureCollection>
-                                </PathGeometry.Figures>
-                            </PathGeometry>
-                        </Path.Data>
-                    </Path>
-                </Canvas>
-
-                <Grid Width="500">
+                <Grid Width="446" HorizontalAlignment="Left">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
@@ -62,6 +42,27 @@
                     <Label Grid.Column="9" Content="9"/>
 
                 </Grid>
+
+                <Canvas Height="100" Width="200" 
+                        HorizontalAlignment="Left" Margin="10" >
+                    <Path Stroke="White" StrokeThickness="2">
+                        <Path.Data>
+                            <PathGeometry>
+                                <PathGeometry.Figures>
+                                    <PathFigureCollection x:Name="ManacurvePathFigureCollection">
+                                        <PathFigure StartPoint="{Binding ManaCurveStart}">
+                                            <PathFigure.Segments>
+                                                <PathSegmentCollection>
+                                                    <PolyLineSegment Points="{Binding Manacurve}" />
+                                                </PathSegmentCollection>
+                                            </PathFigure.Segments>
+                                        </PathFigure>
+                                    </PathFigureCollection>
+                                </PathGeometry.Figures>
+                            </PathGeometry>
+                        </Path.Data>
+                    </Path>
+                </Canvas>
 
                 <Label>Color devotions</Label>
 
@@ -104,6 +105,8 @@
 
                 </DockPanel>
 
+                <!--
+                
                 <Label>Color sources</Label>
 
                 <DockPanel>
@@ -112,39 +115,41 @@
 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="B"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionB}" 
+                    <Label Content="{Binding CurrentDeck.SourcesB}" 
                            FontWeight="Bold" Foreground="White" Padding="3"/>
 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="W"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionW}" 
+                    <Label Content="{Binding CurrentDeck.SourcesW}" 
                            FontWeight="Bold" Foreground="White" Padding="3"/>
 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="U"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionU}"
+                    <Label Content="{Binding CurrentDeck.SourcesU}"
                            FontWeight="Bold" Foreground="White" Padding="3"/>
 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="G"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionG}"
+                    <Label Content="{Binding CurrentDeck.SourcesG}"
                            FontWeight="Bold" Foreground="White" Padding="3"/>
 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="R"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionR}"
+                    <Label Content="{Binding CurrentDeck.SourcesR}"
                            FontWeight="Bold" Foreground="White" Padding="3"/>
 
                 </DockPanel>
 
+                -->
+                
                 <Label>card types</Label>
 
                 <DockPanel>
@@ -152,17 +157,37 @@
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label Content="Creatures" Foreground="#DDD" />
-                    <Label Content="{Binding CurrentDeck.DevotionB}" FontWeight="Bold" Foreground="White" />
+                    <Label Content="{Binding CreaturesNb}" FontWeight="Bold" Foreground="White" />
 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label Content="Spells" Foreground="#DDD" />
-                    <Label Content="{Binding CurrentDeck.DevotionW}" FontWeight="Bold" Foreground="White" />
+                    <Label Content="{Binding SpellsNb}" FontWeight="Bold" Foreground="White" />
 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label Content="Lands" Foreground="#DDD" />
-                    <Label Content="{Binding CurrentDeck.DevotionU}" FontWeight="Bold" Foreground="White" />
+                    <Label Content="{Binding LandsNb}" FontWeight="Bold" Foreground="White" />
+
+                </DockPanel>
+
+                <Label>hand</Label>
+                
+                <DockPanel>
+
+                    <Separator Width="20" Background="Transparent"/>
+
+                    <Button Width="50" Height="50" Click="Button_Click">New</Button>
+                    
+                    <Separator Width="20" Background="Transparent"/>
+
+                    <DockPanel Name="HandPanel" HorizontalAlignment="Left"></DockPanel>
+
+                    <Separator Width="20" Background="Transparent"/>
+
+                    <Button Width="50" Height="50" Click="Button_Click_1">Draw</Button>
+
+                    <Separator Width="20" Background="Transparent"/>
 
                 </DockPanel>
 
@@ -173,39 +198,13 @@
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label Content="Standard" Foreground="#DDD" />
-                    <Label Content="TODO" FontWeight="Bold" Foreground="White" />
+                    <Label Content="{Binding StandardOk}" FontWeight="Bold" Foreground="White" />
 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label Content="Commander" Foreground="#DDD" />
-                    <Label Content="TODO" FontWeight="Bold" Foreground="White" />
+                    <Label Content="{Binding CommanderOk}" FontWeight="Bold" Foreground="White" />
 
-                </DockPanel>
-
-                <Label>hand</Label>
-
-                <DockPanel>
-
-                    <local:CardIllustration Width="100" Height="100" Margin="1"
-                                    HorizontalAlignment="Left" VerticalAlignment="Top"  />
-                    <local:CardIllustration Width="100" Height="100" Margin="1"
-                                    HorizontalAlignment="Left" VerticalAlignment="Top"  />
-                    <local:CardIllustration Width="100" Height="100" Margin="1"
-                                    HorizontalAlignment="Left" VerticalAlignment="Top"  />
-                    <local:CardIllustration Width="100" Height="100" Margin="1"
-                                    HorizontalAlignment="Left" VerticalAlignment="Top"  />
-                    <local:CardIllustration Width="100" Height="100" Margin="1"
-                                    HorizontalAlignment="Left" VerticalAlignment="Top"  />
-                </DockPanel>
-
-                <DockPanel>
-
-                    <Separator Width="20" Background="Transparent"/>
-                    <Button>Reset</Button>
-                    <Button>Muligan</Button>
-                    <Button> Draw </Button>
-                    <Separator Width="20" Background="Transparent"/>
-                
                 </DockPanel>
 
             </StackPanel>
