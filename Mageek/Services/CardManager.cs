@@ -35,6 +35,9 @@ namespace MaGeek.Data
             var cardsInDecksrows = from o in App.database.cardsInDecks select o;
             foreach (var row in cardsInDecksrows) App.database.cardsInDecks.Remove(row);
 
+            var Tagsrows = from o in App.database.Tags select o;
+            foreach (var row in Tagsrows) App.database.Tags.Remove(row);
+
             App.database.SaveChanges();
 
             MessageBoxHelper.ShowMsg("DB successfully erased");

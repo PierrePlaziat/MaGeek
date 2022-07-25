@@ -2,21 +2,12 @@
 using MaGeek.Events;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MaGeek.UI
 {
@@ -78,7 +69,7 @@ namespace MaGeek.UI
         {
             bool ok = true;
             ok = ok && CurrentDeck.CardCount >= 60;
-            //TODO
+            ok = ok && CheckRelationQuantityLimit(4);
             StandardOk = ok ? "YES" : "NO";
         }
 
@@ -96,7 +87,8 @@ namespace MaGeek.UI
         {
             bool ok = true;
             ok = ok && CurrentDeck.CardCount == 100;
-            //TODO
+            ok = ok && CheckRelationQuantityLimit(1);
+            ok = ok && CurrentDeck.CardRelations.Where(x => x.RelationType > 0).Any();
             CommanderOk = ok ? "YES" : "NO";
         }
 
@@ -117,8 +109,12 @@ namespace MaGeek.UI
         }
         private void SetCreaturesNb()
         {
-            CreaturesNb = CurrentDeck.CardRelations.Where(x => x.Card.Card.Type.ToLower()
-                            .Contains("creature")).Count();
+            int count = 0;
+            foreach (var v in CurrentDeck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("creature")))
+            {
+                count += v.Quantity;
+            }
+            CreaturesNb = count;
         }
 
         private int spellsNb;
@@ -134,10 +130,12 @@ namespace MaGeek.UI
 
         private void SetSpellsNb()
         {
-            SpellsNb = CurrentDeck.CardRelations.Where(x =>
-                                !x.Card.Card.Type.ToLower().Contains("creature")
-                            && !x.Card.Card.Type.ToLower().Contains("land")
-                          ).Count();
+            int count = 0;
+            foreach (var v in CurrentDeck.CardRelations.Where(x => !x.Card.Card.Type.ToLower().Contains("creature")&& !x.Card.Card.Type.ToLower().Contains("land")))
+            {
+                count += v.Quantity;
+            }
+            SpellsNb = count;
         }
 
 
@@ -153,8 +151,12 @@ namespace MaGeek.UI
         }
         private void SetLandsNb()
         {
-            LandsNb = CurrentDeck.CardRelations.Where(x => x.Card.Card.Type.ToLower()
-                            .Contains("land")).Count();
+            int count = 0;
+            foreach (var v in CurrentDeck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("land")))
+            {
+                count += v.Quantity;
+            }
+            LandsNb = count;
         }
 
         #endregion
@@ -257,6 +259,16 @@ namespace MaGeek.UI
             Manacurve = Points  ;
         }
 
+        private bool CheckRelationQuantityLimit(int limit)
+        {
+            bool ok = true;
+            foreach (var v in CurrentDeck.CardRelations.Where(x => !x.Card.Card.Type.ToString().ToLower().Contains("land")))
+            {
+                if (v.Quantity > limit) ok = false;
+            }
+            return ok;
+        }
+
         #region Hand
 
         private void NewHand()
@@ -300,6 +312,7 @@ namespace MaGeek.UI
         #endregion
 
         #endregion
+
     }
 
 }

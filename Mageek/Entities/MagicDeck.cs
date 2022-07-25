@@ -44,7 +44,7 @@ namespace MaGeek.Data.Entities
                 {
                     foreach (var card in CardRelations)
                     {
-                        count += card.Quantity;
+                        if (card.RelationType>=0) count += card.Quantity;
                     }
                 }
                 return count;
