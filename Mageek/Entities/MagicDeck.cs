@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace MaGeek.Data.Entities
 {
@@ -42,9 +43,9 @@ namespace MaGeek.Data.Entities
                 int count = 0;
                 if (CardRelations != null)
                 {
-                    foreach (var card in CardRelations)
+                    foreach (var card in CardRelations.Where(x => x.RelationType<2))
                     {
-                        if (card.RelationType>=0) count += card.Quantity;
+                        count += card.Quantity;
                     }
                 }
                 return count;

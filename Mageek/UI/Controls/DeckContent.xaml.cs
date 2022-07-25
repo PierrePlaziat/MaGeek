@@ -133,6 +133,7 @@ namespace MaGeek.UI
             CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 1;
             App.state.ModifDeck();
+            App.database.SaveChanges();
         }
 
         private void UnsetCommandant(object sender, RoutedEventArgs e)
@@ -140,12 +141,14 @@ namespace MaGeek.UI
             CardDeckRelation cardRel = LVCommandants.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
             App.state.ModifDeck();
+            App.database.SaveChanges();
         }
 
         private void ToSide(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 2;
+            App.database.SaveChanges();
             App.state.ModifDeck();
         }
 
@@ -153,6 +156,7 @@ namespace MaGeek.UI
         {
             CardDeckRelation cardRel = LVDeckSide.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
+            App.database.SaveChanges();
             App.state.ModifDeck();
         }
     }

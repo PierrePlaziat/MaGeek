@@ -88,7 +88,7 @@ namespace MaGeek.UI
             bool ok = true;
             ok = ok && CurrentDeck.CardCount == 100;
             ok = ok && CheckRelationQuantityLimit(1);
-            ok = ok && CurrentDeck.CardRelations.Where(x => x.RelationType > 0).Any();
+            ok = ok && CurrentDeck.CardRelations.Where(x => x.RelationType == 1).Any();
             CommanderOk = ok ? "YES" : "NO";
         }
 
