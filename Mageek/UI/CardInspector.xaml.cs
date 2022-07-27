@@ -148,20 +148,30 @@ namespace MaGeek.UI
         }
 
         #endregion
+
+        #region Variants
+
         private void SelectVariant(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (VariantListBox.SelectedIndex < 0) return;
             SelectedVariant = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;
         }
 
-
         private void SetFav(object sender, RoutedEventArgs e)
         {
             var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;  
             App.cardManager.SetFav(cardvar.Card, cardvar.Id);
-
-
         }
+
+        private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)
+        {
+            var window = new CreateCustomCard();
+            window.Show();
+        }
+
+        #endregion
+
+        #region Tags
 
         private void AddTag(object sender, RoutedEventArgs e)
         {
@@ -189,12 +199,9 @@ namespace MaGeek.UI
             bool found = false;
             var border = (resultStack.Parent as ScrollViewer).Parent as Border;
             var data = GetExistingTags();
-
             string query = (sender as TextBox).Text;
-
             if (query.Length == 0)
             {
-                // Clear 
                 resultStack.Children.Clear();
                 border.Visibility = System.Windows.Visibility.Collapsed;
             }
@@ -202,21 +209,15 @@ namespace MaGeek.UI
             {
                 border.Visibility = System.Windows.Visibility.Visible;
             }
-
-            // Clear the list
             resultStack.Children.Clear();
-
-            // Add the result
             foreach (var obj in data)
             {
                 if (obj.ToLower().StartsWith(query.ToLower()))
                 {
-                    // The word starts with this... Autocomplete must work
                     addItem(obj);
                     found = true;
                 }
             }
-
             if (!found)
             {
                 resultStack.Children.Add(new TextBlock() { Text = "No results found." });
@@ -231,33 +232,23 @@ namespace MaGeek.UI
         private void addItem(string text)
         {
             TextBlock block = new TextBlock();
-
-            // Add the text
             block.Text = text;
-
-            // A little style...
             block.Margin = new Thickness(2, 3, 2, 3);
             block.Cursor = Cursors.Hand;
-
-            // Mouse events
             block.MouseLeftButtonUp += (sender, e) =>
             {
                 NewTag.Text = (sender as TextBlock).Text;
             };
-
             block.MouseEnter += (sender, e) =>
             {
                 TextBlock b = sender as TextBlock;
                 b.Background = Brushes.Gray;
             };
-
             block.MouseLeave += (sender, e) =>
             {
                 TextBlock b = sender as TextBlock;
                 b.Background = Brushes.Transparent;
             };
-
-            // Add to the panel
             resultStack.Children.Add(block);
         }
 
@@ -265,6 +256,8 @@ namespace MaGeek.UI
         {
             sugestions.Visibility = System.Windows.Visibility.Collapsed;
         }
+
+        #endregion
     }
 
 }

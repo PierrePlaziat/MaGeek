@@ -1,5 +1,4 @@
-﻿using MaGeek.Entities;
-using MtgApiManager.Lib.Model;
+﻿using MtgApiManager.Lib.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,39 +16,57 @@ namespace MaGeek.Data.Entities
         public string ImageUrl { get; set; }
         public string Rarity { get; set; }
         public string SetName { get; set; }
+        public int IsCustom { get; set; }
 
         public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
-
         public virtual MagicCard Card { get; set; }
 
-        public MagicCardVariant(){}
+        #region CTOR
+
+        public MagicCardVariant(){ }
 
         public MagicCardVariant(ICard selectedCard)
         {
             Id = selectedCard.Id;
-            ImageUrl = selectedCard.ImageUrl!=null? selectedCard.ImageUrl.ToString():"";
+            ImageUrl = selectedCard.ImageUrl != null ? selectedCard.ImageUrl.ToString() : "";
             Rarity = selectedCard.Rarity;
             SetName = selectedCard.SetName;
+            IsCustom = 0;
         }
+
+        public MagicCardVariant(string id,string imagePath, string rarity,string setName)
+        {
+            Id = id;
+            ImageUrl = imagePath;
+            Rarity = rarity;
+            SetName = setName;
+            IsCustom = 1;
+        }
+
+        #endregion
 
         public async Task<BitmapImage> RetrieveImage()
         {
+            var taskCompletion = new TaskCompletionSource<BitmapImage>();
             BitmapImage img = null;
-            var taskCompletion = new TaskCompletionSource<BitmapImage>();
-            string localFileName = @"./CardsIllus/" + Id + ".png";
-            if (!File.Exists(localFileName)) new WebClient().DownloadFile(ImageUrl, localFileName);
+            string localFileName = "";
+            if(IsCustom==0)
+            {
+                localFileName = @"./CardsIllus/" + Id + ".png";
+                if (!File.Exists(localFileName))
+                {
+                    await Task.Run(async () => { 
+                        await new WebClient().DownloadFileTaskAsync(ImageUrl, localFileName); 
+                    });
+                }
+            }
+            else
+            {
+                localFileName = @"./CardsIllus/Custom/" + ImageUrl;
+            }
             var path = Path.GetFullPath(localFileName);
-            Uri imgUri = new Uri("file://" + path, UriKind.Absolute); 
+            Uri imgUri = new Uri("file://" + path, UriKind.Absolute);
             img = new BitmapImage(imgUri);
-            taskCompletion.SetResult(img);
-            return img;
-        }
-
-        public async Task<BitmapImage> RetrieveImageOld()
-        {
-            var taskCompletion = new TaskCompletionSource<BitmapImage>();
-            Uri imgUri = new Uri(ImageUrl, UriKind.Absolute);
-            BitmapImage img = new BitmapImage(imgUri);
             taskCompletion.SetResult(img);
             return img;
         }

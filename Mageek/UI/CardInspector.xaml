@@ -16,6 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="358"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition Height="100"></RowDefinition>
             
@@ -48,7 +49,9 @@
 
         </DockPanel>
 
-        <ListView  Grid.Row="2" BorderThickness="0" x:Name="VariantListBox"  
+        <Button Grid.Row="2" Click="LaunchCustomCardCreation">Create custom</Button>
+
+        <ListView  Grid.Row="3" BorderThickness="0" x:Name="VariantListBox"  
                   ItemsSource="{Binding Variants}" 
                   Background="#333" MouseUp="SelectVariant" SelectedIndex="0">
             <ListView.ContextMenu>
@@ -85,7 +88,7 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <StackPanel Grid.Row="3" Background="#222">
+        <StackPanel Grid.Row="4" Background="#222">
         
             <DockPanel>
                 <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>

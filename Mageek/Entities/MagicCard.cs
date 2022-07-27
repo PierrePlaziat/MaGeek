@@ -1,5 +1,4 @@
-﻿using MaGeek.Entities;
-using MtgApiManager.Lib.Model;
+﻿using MtgApiManager.Lib.Model;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,7 +12,6 @@ namespace MaGeek.Data.Entities
 
         [Key]
         public string CardId { get; set; }
-
         public string Type { get; set; }
         public string ManaCost { get; set; }
         public float? Cmc { get; set; }
@@ -24,15 +22,6 @@ namespace MaGeek.Data.Entities
         public virtual List<MagicCardVariant> Variants { get; set; } = new List<MagicCardVariant>();
         public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
         public string FavouriteVariant { get; set; } = "";
-
-
-
-        public string CardForeignName {
-            get {
-                var a = Traductions.Where(x => x.Language.ToLower() == App.state.GetForeignLanguage().ToLower()).FirstOrDefault();
-                return a!= null ?  a.TraductedName : "(VO) "+CardId;
-            }
-        }
 
         #region CTOR
 
@@ -102,6 +91,13 @@ namespace MaGeek.Data.Entities
         #endregion
 
         #region Accessors
+
+        public string CardForeignName {
+            get {
+                var a = Traductions.Where(x => x.Language.ToLower() == App.state.GetForeignLanguage().ToLower()).FirstOrDefault();
+                return a!= null ?  a.TraductedName : "(VO) "+CardId;
+            }
+        }
 
         public int DevotionB { get { return ManaCost != null ? ManaCost.Length - ManaCost.Replace("B", "").Length : 0;  } }
         public int DevotionW { get { return ManaCost != null ? ManaCost.Length - ManaCost.Replace("W", "").Length : 0; } }
