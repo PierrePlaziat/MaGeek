@@ -5,22 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MaGeek.UI"
         mc:Ignorable="d"
-        Title="CreateCustomCard" Height="450" Width="800">
+        Title="CreateCustomCard" 
+        Height="473" Width="265"
+        MinHeight="473" MinWidth="265"
+        MaxHeight="473" MaxWidth="265">
     <Grid Background="#222">
 
-        <DockPanel HorizontalAlignment="Stretch">
+        <StackPanel>
+            <Button Click="LoadImg">Load Image</Button>
 
-            <StackPanel Background="Black">
-                <Button Click="Button_Click">Load Image</Button>
-                <DockPanel Width="200" Height="300">
-                    <Image ></Image>
-                </DockPanel>
-            </StackPanel>
-            <StackPanel>
-                <Label>Custom Title</Label>
-                <Label>Custom Title</Label>
-            </StackPanel>
-        </DockPanel>
+            <Grid>
+                <Image Width="250" Height="348"  Source="{Binding CustomImage}"></Image>
+                
+            </Grid>
+            
+            <Label>Customize Title:</Label>
+            <TextBox Height="22"></TextBox>
+            <Button Click="SaveCustomCard">Validate</Button>
+        </StackPanel>
 
     </Grid>
 </Window>

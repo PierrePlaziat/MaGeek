@@ -17,6 +17,7 @@ namespace MaGeek.Data.Entities
         public string Rarity { get; set; }
         public string SetName { get; set; }
         public int IsCustom { get; set; }
+        public string CustomName { get; set; }
 
         public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
         public virtual MagicCard Card { get; set; }
@@ -32,15 +33,6 @@ namespace MaGeek.Data.Entities
             Rarity = selectedCard.Rarity;
             SetName = selectedCard.SetName;
             IsCustom = 0;
-        }
-
-        public MagicCardVariant(string id,string imagePath, string rarity,string setName)
-        {
-            Id = id;
-            ImageUrl = imagePath;
-            Rarity = rarity;
-            SetName = setName;
-            IsCustom = 1;
         }
 
         #endregion

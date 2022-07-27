@@ -165,7 +165,7 @@ namespace MaGeek.UI
 
         private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)
         {
-            var window = new CreateCustomCard();
+            var window = new CreateCustomCard(selectedCard);
             window.Show();
         }
 
