@@ -34,20 +34,22 @@ namespace MaGeek.Data.Entities
 
         public async Task<BitmapImage> RetrieveImage()
         {
+            BitmapImage img = null;
             var taskCompletion = new TaskCompletionSource<BitmapImage>();
-            //string localFileName = @"./CardsIllus/" + Id + ".png";
+            string localFileName = @"./CardsIllus/" + Id + ".png";
+            if (!File.Exists(localFileName)) new WebClient().DownloadFile(ImageUrl, localFileName);
+            var path = Path.GetFullPath(localFileName);
+            Uri imgUri = new Uri("file://" + path, UriKind.Absolute); 
+            img = new BitmapImage(imgUri);
+            taskCompletion.SetResult(img);
+            return img;
+        }
 
-            //LAZY DOWNLOAD
-            //if (!File.Exists(localFileName)) 
-            //    new WebClient().DownloadFile(ImageUrl, localFileName);
-
-            Uri imgUri;
-            //if (File.Exists(localFileName)) 
-            //    imgUri = new Uri(localFileName, UriKind.Relative); 
-            //else 
-                imgUri = new Uri(ImageUrl, UriKind.Absolute);
+        public async Task<BitmapImage> RetrieveImageOld()
+        {
+            var taskCompletion = new TaskCompletionSource<BitmapImage>();
+            Uri imgUri = new Uri(ImageUrl, UriKind.Absolute);
             BitmapImage img = new BitmapImage(imgUri);
-
             taskCompletion.SetResult(img);
             return img;
         }
