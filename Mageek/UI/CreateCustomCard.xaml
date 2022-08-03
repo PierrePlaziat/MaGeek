@@ -9,20 +9,178 @@
         Height="473" Width="265"
         MinHeight="473" MinWidth="265"
         MaxHeight="473" MaxWidth="265">
+    
     <Grid Background="#222">
 
         <StackPanel>
-            <Button Click="LoadImg">Load Image</Button>
-
-            <Grid>
-                <Image Width="250" Height="348"  Source="{Binding CustomImage}"></Image>
-                
-            </Grid>
             
-            <Label>Customize Title:</Label>
-            <TextBox Height="22"></TextBox>
+            <Button Click="LoadImg">Load Image</Button>
+            
+            <!-- CARD -->
+            
+            <Grid Width="250" Height="348">
+
+                <Grid Background="White">
+
+                    <!-- Empty BackGround -->
+                    <Rectangle >
+                        <Rectangle.Fill>
+                            <RadialGradientBrush GradientOrigin="0.5,0.5" 
+                                     Center="0.5,0.5" 
+                                     RadiusX="0.5" 
+                                     RadiusY="0.5">
+                                <RadialGradientBrush.GradientStops>
+                                    <GradientStop Color="#111" Offset="0.2" />
+                                    <GradientStop Color="#333" Offset="1" />
+                                </RadialGradientBrush.GradientStops>
+                            </RadialGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+                    <!-- Illustration -->
+                    <StackPanel>
+                        <Image Width="250" Height="348" Source="{Binding CustomImage}" Stretch="UniformToFill"></Image>
+                    </StackPanel>
+
+                    <!-- Card Panel -->
+
+                    <Grid>
+                        
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <!-- Title Zone -->
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                        
+                            <Border Grid.ColumnSpan="3"
+                                    Opacity=".5"
+                                    Margin="0" Padding="0"
+                                    Background="Black"/>
+                            
+                            <Label Margin="10,7,0,0" Content="{Binding CustomNameOutput}" 
+                                   Foreground="White" Padding="0"
+                                   FontSize="15" FontWeight="Bold">
+                                
+                                <Label.Effect>
+                                    <DropShadowEffect
+                                        ShadowDepth="0"
+                                        Direction="0"
+                                        Color="Black"
+                                        Opacity="1"
+                                        BlurRadius="10"/>
+                                </Label.Effect>
+                            </Label>
+
+                            <local:ManaCost Grid.Column="2" Grid.Row="0" Margin="0,6,10,0"
+                                Cost="{Binding SelectedCard.ManaCost}"/>
+                            
+                        </Grid>
+
+                        <!-- Bottom Zone -->
+
+                        <Border Grid.ColumnSpan="2" Grid.Row="2" Grid.RowSpan="3"
+                            Opacity=".7"
+                            Margin="0" Padding="0"
+                            Background="Black"/>
+
+                        <StackPanel Grid.Row="2" Margin="5,0,0,5">
+
+                            <DockPanel>
+
+                                <Label Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" 
+                                   Content="{Binding SelectedCard.Type}" 
+                                   Foreground="White" FontSize="10" FontWeight="Bold">
+                                    <Label.Effect>
+                                        <DropShadowEffect
+                                        ShadowDepth="0"
+                                        Direction="0"
+                                        Color="Black"
+                                        Opacity="1"
+                                        BlurRadius="10"/>
+                                    </Label.Effect>
+                                </Label>
+                                
+                            </DockPanel>
+
+                            <Grid>
+                            
+                                <TextBlock Grid.Column="0" Grid.Row="3"
+                                       Grid.ColumnSpan="2" Margin="5" 
+                                       Text="{Binding SelectedCard.Text}" 
+                                       FontSize="10"
+                                       Foreground="White"
+                                       TextWrapping="WrapWithOverflow">
+                                    <TextBlock.Effect>
+                                        <DropShadowEffect
+                                        ShadowDepth="0"
+                                        Direction="0"
+                                        Color="Black"
+                                        Opacity="1"
+                                        BlurRadius="10"/>
+                                    </TextBlock.Effect>
+                                </TextBlock>
+
+                                <DockPanel Grid.Column="1" Grid.Row="4"
+                                            Margin="0,0,5,5"
+                                            HorizontalAlignment="Right" 
+                                            VerticalAlignment="Bottom">
+                                
+                                    <Label Content="{Binding SelectedCard.Power}" 
+                                            Foreground="White" FontWeight="Black"/>
+                                    <Label Content="/" 
+                                            Visibility="{Binding HasPower}"
+                                            Foreground="White" FontWeight="Black"/>
+                                    <Label Content="{Binding SelectedCard.Toughness}" 
+                                            Foreground="White" FontWeight="Black"/>
+                                
+                                </DockPanel>
+                                  
+                            </Grid>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                </Grid>
+                
+                <!-- Borders -->
+                <Border BorderThickness="15"
+                        CornerRadius="20,20,20,20" 
+                        BorderBrush="Black"
+                        Opacity=".5"
+                        Margin="-10"
+                        Background="Transparent"/>
+
+                <!-- Corners -->
+                <Border BorderThickness="15" 
+                        CornerRadius="20,20,20,20" 
+                        BorderBrush="Black" 
+                        Margin="-15"
+                        Background="Transparent"/>
+
+
+
+            </Grid>
+            <!-- /CARD -->
+            
+            <DockPanel>
+                <Label>Customize Title:</Label>
+                <TextBox Text="{Binding CustomNameInput}" Height="22"></TextBox>
+            </DockPanel>
+            
             <Button Click="SaveCustomCard">Validate</Button>
+            
         </StackPanel>
 
     </Grid>
+    
 </Window>

@@ -24,11 +24,11 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        MagicCard card;
-        public MagicCard Card
+        MagicCard selectedCard;
+        public MagicCard SelectedCard
         {
-            get { return card; }
-            set { card = value; OnPropertyChanged(); }
+            get { return selectedCard; }
+            set { selectedCard = value; OnPropertyChanged(); }
         }
 
         public BitmapImage customImage;
@@ -38,14 +38,37 @@ namespace MaGeek.UI
             set { customImage = value; OnPropertyChanged(); }
         }
 
-        public string customName { get; set; }
-        public string CustomName
+        public string customNameInput { get; set; }
+        public string CustomNameInput
         {
-            get { return customName; }
-            set { customName = value; OnPropertyChanged(); }
+            get { return customNameInput; }
+            set { 
+                customNameInput = value; 
+                OnPropertyChanged();
+                OnPropertyChanged("CustomNameOutput");
+            }
+        }
+
+        public string customNameOutput{ get; set; }
+        public string CustomNameOutput
+        {
+            get {
+                if (string.IsNullOrEmpty(CustomNameInput)) return SelectedCard.CardId;
+                else return CustomNameInput;
+            }
         }
 
         public MagicCardVariant CustomCard;
+
+        public Visibility HasPower
+        {
+            get
+            {
+                if (SelectedCard == null) return Visibility.Collapsed;
+                return SelectedCard.Type.ToLower().Contains("creature") ?
+                       Visibility.Visible : Visibility.Collapsed;
+            }
+        }
 
         #endregion
 
@@ -54,7 +77,7 @@ namespace MaGeek.UI
         public CreateCustomCard(MagicCard card)
         {
             InitializeComponent();
-            this.card = card;
+            SelectedCard = card;
             CustomCard = new MagicCardVariant();
             DataContext = this;
         }
