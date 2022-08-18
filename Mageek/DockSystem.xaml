@@ -4,30 +4,107 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
-        xmlns:local="clr-namespace:MaGeek"
+        xmlns:local="clr-namespace:MaGeek.UI"
         mc:Ignorable="d"
-        Title="DockSystem" Height="450" Width="800">
+        Title="DockSystem" Height="450" Width="800" 
+        Background="#222" Foreground="#eee"
+        BorderThickness="0">
+    
     <Grid>
-        <avalonDock:DockingManager x:Name="dockingManager">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" />
+                <MenuItem Header="_Open" />
+                <MenuItem Header="_Save" />
+                <Separator />
+                <MenuItem Header="_Exit" />
+            </MenuItem>
+        </Menu>
+
+        <avalonDock:DockingManager Grid.Row="1" x:Name="dockingManager">
+            
             <avalonDock:LayoutRoot>
+                
+                <!-- _______________________________________________________ -->
+
                 <avalonDock:LayoutPanel Orientation="Horizontal">
-                    <avalonDock:LayoutDocumentPane/>
-                    <avalonDock:LayoutAnchorablePane DockWidth="150">
-                        <avalonDock:LayoutAnchorable Title="Sample Tool Pane">
-                            <TextBox/>
-                        </avalonDock:LayoutAnchorable>
-                    </avalonDock:LayoutAnchorablePane>
-                </avalonDock:LayoutPanel>
-                <avalonDock:LayoutRoot.LeftSide>
-                    <avalonDock:LayoutAnchorSide>
-                        <avalonDock:LayoutAnchorGroup>
-                            <avalonDock:LayoutAnchorable Title="Autohidden Content">
-                                <TextBox/>
+
+                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="150" Orientation="Vertical">
+
+                        <avalonDock:LayoutAnchorablePane>
+                            
+                            <avalonDock:LayoutAnchorable Title="Deck List">
+                                <local:DeckInspector Grid.Column="0" Grid.Row="0"></local:DeckInspector>
                             </avalonDock:LayoutAnchorable>
-                        </avalonDock:LayoutAnchorGroup>
-                    </avalonDock:LayoutAnchorSide>
-                </avalonDock:LayoutRoot.LeftSide>
+
+                            <avalonDock:LayoutAnchorable Title="Importer">
+                                <local:ImportExport Grid.Column="0" Grid.Row="2"></local:ImportExport>
+                            </avalonDock:LayoutAnchorable>
+
+                            <avalonDock:LayoutAnchorable Title="Options">
+                                <local:Options Grid.Column="0" Grid.Row="2"></local:Options>
+                            </avalonDock:LayoutAnchorable>
+
+                        </avalonDock:LayoutAnchorablePane>
+
+                    </avalonDock:LayoutAnchorablePaneGroup>
+
+                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="150" Orientation="Vertical">
+
+                        <avalonDock:LayoutAnchorablePane>
+
+                            <avalonDock:LayoutAnchorable Title="Card Search">
+                                <local:CardSearcher Grid.Row="0" Grid.Column="2"
+                    BorderThickness="0" 
+                    Background="#222"></local:CardSearcher>
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+
+                        <avalonDock:LayoutAnchorablePane>
+
+                            <avalonDock:LayoutAnchorable Title="Deck Stats">
+                                <local:DeckStats  Grid.Column="0" Grid.Row="0"/>
+                            </avalonDock:LayoutAnchorable>
+
+                            <avalonDock:LayoutAnchorable Title="Deck Table">
+                                <local:DeckTable x:Name="SelectedDeck"  HorizontalAlignment="Stretch"  
+                                 Grid.Column="2"
+                                 Grid.Row="2"
+                                 Grid.ColumnSpan="1"
+                                 BorderThickness="0"
+                                 Background="#000">
+                                </local:DeckTable>
+                            </avalonDock:LayoutAnchorable>
+
+                        </avalonDock:LayoutAnchorablePane>
+
+                    </avalonDock:LayoutAnchorablePaneGroup>
+
+                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="150" Orientation="Vertical">
+
+                        <avalonDock:LayoutAnchorablePane>
+
+                            <avalonDock:LayoutAnchorable Title="Card Details">
+                                <local:CardInspector MaxWidth="255" x:Name="CardDetails" Grid.Column="4" Grid.RowSpan="3"></local:CardInspector>
+
+                            </avalonDock:LayoutAnchorable>
+
+                        </avalonDock:LayoutAnchorablePane>
+                    </avalonDock:LayoutAnchorablePaneGroup>
+
+                </avalonDock:LayoutPanel>
+
+                <!-- _______________________________________________________ -->
+
             </avalonDock:LayoutRoot>
         </avalonDock:DockingManager>
+    
     </Grid>
+    
 </Window>
