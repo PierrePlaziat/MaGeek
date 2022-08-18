@@ -1,26 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    
     <OutputType>WinExe</OutputType>
+    <ApplicationIcon>Resources\Images\Icone.ico</ApplicationIcon>
+    
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Resources\Icone.ico</ApplicationIcon>
+    
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Fonts\Magic_Symbols_2008.ttf" />
+    <Content Include="Resources\Images\Icone.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\Icone.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Resources\document.png" />
-    <Resource Include="Resources\property-blue.png" />
-    <Resource Include="Resources\Corner.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Resources\Images\document.png" />
+    <Resource Include="Resources\Images\property-blue.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,11 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Fonts\Magic_Symbols_2008.ttf" />
+    <Resource Include="Resources\Fonts\Magic_Symbols_2008.ttf" />
   </ItemGroup>
 
   <ItemGroup>
-    <SplashScreen Include="Resources\splash.png" />
+    <SplashScreen Include="Resources\Images\splash.png" />
   </ItemGroup>
 
 </Project>

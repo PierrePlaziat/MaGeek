@@ -100,8 +100,8 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.state.RaiseSelectDeck += HandleDeckSelected;
-            App.state.RaiseDeckModif += HandleDeckModif;
+            App.State.RaiseSelectDeck += HandleDeckSelected;
+            App.State.RaiseDeckModif += HandleDeckModif;
         }
 
 
@@ -112,7 +112,7 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.cardManager.RemoveCardFromDeck(c.Card, CurrentDeck);
+            App.CardManager.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
         private void MoreCard(object sender, System.Windows.RoutedEventArgs e)
@@ -120,44 +120,44 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.cardManager.AddCardToDeck(c, CurrentDeck,1);
+            App.CardManager.AddCardToDeck(c, CurrentDeck,1);
         }
 
         private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((sender as ListView).SelectedItem is CardDeckRelation cardRel) App.state.SelectCard(cardRel.Card.Card);
+            if ((sender as ListView).SelectedItem is CardDeckRelation cardRel) App.State.SelectCard(cardRel.Card.Card);
         }
 
         private void SetCommandant(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 1;
-            App.state.ModifDeck();
-            App.database.SaveChanges();
+            App.State.ModifDeck();
+            App.Database.SaveChanges();
         }
 
         private void UnsetCommandant(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = LVCommandants.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
-            App.state.ModifDeck();
-            App.database.SaveChanges();
+            App.State.ModifDeck();
+            App.Database.SaveChanges();
         }
 
         private void ToSide(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 2;
-            App.database.SaveChanges();
-            App.state.ModifDeck();
+            App.Database.SaveChanges();
+            App.State.ModifDeck();
         }
 
         private void ToDeck(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = LVDeckSide.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
-            App.database.SaveChanges();
-            App.state.ModifDeck();
+            App.Database.SaveChanges();
+            App.State.ModifDeck();
         }
     }
 

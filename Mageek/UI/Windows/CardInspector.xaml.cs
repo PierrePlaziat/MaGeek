@@ -35,7 +35,7 @@ namespace MaGeek.UI
             get
             {
                 if(selectedCard==null) return null;
-                return App.database.Tags.Where(x=>x.CardId==selectedCard.CardId).ToList();
+                return App.Database.Tags.Where(x=>x.CardId==selectedCard.CardId).ToList();
             }
         }
 
@@ -123,7 +123,7 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.state.RaiseSelectCard += HandleCardSelected;
+            App.State.RaiseSelectCard += HandleCardSelected;
         }
 
         #endregion
@@ -132,19 +132,19 @@ namespace MaGeek.UI
 
         private void AddCardToCollection(object sender, RoutedEventArgs e)
         {
-            App.cardManager.GotCard_Add(selectedCard);
+            App.CardManager.GotCard_Add(selectedCard);
             OnPropertyChanged("CollectedQuantity");
         }
 
         private void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
-            App.cardManager.GotCard_Remove(SelectedCard);
+            App.CardManager.GotCard_Remove(SelectedCard);
             OnPropertyChanged("CollectedQuantity");
         }
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            App.cardManager.AddCardToDeck(SelectedVariant, App.state.SelectedDeck,1);
+            App.CardManager.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1);
         }
 
         #endregion
@@ -160,7 +160,7 @@ namespace MaGeek.UI
         private void SetFav(object sender, RoutedEventArgs e)
         {
             var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;  
-            App.cardManager.SetFav(cardvar.Card, cardvar.Id);
+            App.CardManager.SetFav(cardvar.Card, cardvar.Id);
         }
 
         private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)
@@ -177,8 +177,8 @@ namespace MaGeek.UI
         {
             if (!string.IsNullOrEmpty(NewTag.Text))
             {
-                App.database.Tags.Add(new CardTag(NewTag.Text, selectedCard));
-                App.database.SaveChanges();
+                App.Database.Tags.Add(new CardTag(NewTag.Text, selectedCard));
+                App.Database.SaveChanges();
                 OnPropertyChanged("Tags");
                 NewTag.Text = "";
                 sugestions.Visibility = System.Windows.Visibility.Collapsed;
@@ -188,8 +188,8 @@ namespace MaGeek.UI
         private void DeleteTag(object sender, RoutedEventArgs e)
         {
             CardTag cardTag = (CardTag)((Button)sender).DataContext;
-            App.database.Tags.Remove(cardTag);
-            App.database.SaveChanges();
+            App.Database.Tags.Remove(cardTag);
+            App.Database.SaveChanges();
             OnPropertyChanged("Tags");
             sugestions.Visibility = System.Windows.Visibility.Collapsed;
         }
@@ -226,7 +226,7 @@ namespace MaGeek.UI
 
         private List<string> GetExistingTags()
         {
-            return App.database.AvailableTags();
+            return App.Database.AvailableTags();
         }
 
         private void addItem(string text)

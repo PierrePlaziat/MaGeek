@@ -39,60 +39,49 @@ namespace MaGeek.UI
             }
         }
 
-        private PointCollection manacurve;
-        public PointCollection Manacurve
+        public Visibility Visible
         {
-            get { return manacurve; }
-            set { manacurve = value; OnPropertyChanged(); }
-        }
-
-        private Point manaCurveStart;
-        public Point ManaCurveStart
-        {
-            get { return manaCurveStart; }
-            set { manaCurveStart = value; OnPropertyChanged(); }
-        }
-
-        #region Validities
-
-        private string standardOk;
-        public string StandardOk
-        {
-            get { return standardOk; }
-            set
-            {
-                standardOk = value;
-                OnPropertyChanged();
-            }
-        }
-        private void SetStandardOk()
-        {
-            bool ok = true;
-            ok = ok && CurrentDeck.CardCount >= 60;
-            ok = ok && CheckRelationQuantityLimit(4);
-            StandardOk = ok ? "YES" : "NO";
-        }
-
-        private string commanderOk;
-        public string CommanderOk
-        {
-            get { return commanderOk; }
-            set
-            {
-                commanderOk = value;
-                OnPropertyChanged();
-            }
-        }
-        private void SetCommanderOk()
-        {
-            bool ok = true;
-            ok = ok && CurrentDeck.CardCount == 100;
-            ok = ok && CheckRelationQuantityLimit(1);
-            ok = ok && CurrentDeck.CardRelations.Where(x => x.RelationType == 1).Any();
-            CommanderOk = ok ? "YES" : "NO";
+            get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; }
         }
 
         #endregion
+
+        #region CTOR
+
+        public DeckStats()
+        {
+            InitializeComponent();
+            DataContext = this;
+            App.State.RaiseSelectDeck += HandleDeckSelected;
+            App.State.RaiseDeckModif += HandleDeckModified;
+        }
+
+        void HandleDeckModified(object sender, DeckModifEventArgs e)
+        {
+            FullRefresh();
+        }
+
+        void HandleDeckSelected(object sender, SelectDeckEventArgs e)
+        {
+            CurrentDeck = e.Deck;
+            FullRefresh();
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void FullRefresh()
+        {
+            CurrentDeck = App.State.SelectedDeck;
+            DrawManacurve();
+            SetCreaturesNb();
+            SetSpellsNb();
+            SetLandsNb();
+            SetStandardOk();
+            SetCommanderOk();
+            DrawNewHand();
+        }
 
         #region Types
 
@@ -131,7 +120,7 @@ namespace MaGeek.UI
         private void SetSpellsNb()
         {
             int count = 0;
-            foreach (var v in CurrentDeck.CardRelations.Where(x => !x.Card.Card.Type.ToLower().Contains("creature")&& !x.Card.Card.Type.ToLower().Contains("land")))
+            foreach (var v in CurrentDeck.CardRelations.Where(x => !x.Card.Card.Type.ToLower().Contains("creature") && !x.Card.Card.Type.ToLower().Contains("land")))
             {
                 count += v.Quantity;
             }
@@ -161,63 +150,20 @@ namespace MaGeek.UI
 
         #endregion
 
-        #region Hand
+        #region ManaCurve
 
-        private List<MagicCardVariant> hand;
-        public List<MagicCardVariant> Hand
+        private PointCollection manacurve;
+        public PointCollection Manacurve
         {
-            get { return hand; }
-            set { hand = value; OnPropertyChanged(); }
+            get { return manacurve; }
+            set { manacurve = value; OnPropertyChanged(); }
         }
 
-        List<int> alreadyDrawed;
-
-        Random random = new Random();
-
-        #endregion
-
-        public Visibility Visible
+        private Point manaCurveStart;
+        public Point ManaCurveStart
         {
-            get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; }
-        }
-
-        #endregion
-
-        #region CTOR
-
-        public DeckStats()
-        {
-            InitializeComponent();
-            DataContext = this;
-            App.state.RaiseSelectDeck += HandleDeckSelected;
-            App.state.RaiseDeckModif += HandleDeckModified;
-        }
-
-        void HandleDeckModified(object sender, DeckModifEventArgs e)
-        {
-            FullRefresh();
-        }
-
-        void HandleDeckSelected(object sender, SelectDeckEventArgs e)
-        {
-            CurrentDeck = e.Deck;
-            FullRefresh();
-        }
-
-        #endregion
-
-        #region Methods
-
-        private void FullRefresh()
-        {
-            CurrentDeck = App.state.SelectedDeck;
-            DrawManacurve();
-            SetCreaturesNb();
-            SetSpellsNb();
-            SetLandsNb();
-            SetStandardOk();
-            SetCommanderOk();
-            NewHand();
+            get { return manaCurveStart; }
+            set { manaCurveStart = value; OnPropertyChanged(); }
         }
 
         private void DrawManacurve()
@@ -242,12 +188,12 @@ namespace MaGeek.UI
             manaMax = Math.Max(manaMax, mana8);
             manaMax = Math.Max(manaMax, mana9);
             float factor;
-            if (manaMax == 0) factor = 0; 
-            else factor = 100/manaMax;
+            if (manaMax == 0) factor = 0;
+            else factor = 100 / manaMax;
             ManaCurveStart = new Point(0, 100 - factor * mana0);
             PointCollection Points = new PointCollection();
             Points.Add(ManaCurveStart);
-            Points.Add(new Point(50,  100 - factor * mana1));
+            Points.Add(new Point(50, 100 - factor * mana1));
             Points.Add(new Point(100, 100 - factor * mana2));
             Points.Add(new Point(150, 100 - factor * mana3));
             Points.Add(new Point(200, 100 - factor * mana4));
@@ -256,10 +202,115 @@ namespace MaGeek.UI
             Points.Add(new Point(350, 100 - factor * mana7));
             Points.Add(new Point(400, 100 - factor * mana8));
             Points.Add(new Point(450, 100 - factor * mana9));
-            Manacurve = Points  ;
+            Manacurve = Points;
         }
 
-        private bool CheckRelationQuantityLimit(int limit)
+        #endregion
+
+        #region Hand
+
+        private List<MagicCardVariant> hand;
+        public List<MagicCardVariant> Hand
+        {
+            get { return hand; }
+            set { hand = value; OnPropertyChanged(); }
+        }
+
+        List<int> alreadyDrawed;
+
+        Random random = new Random();
+
+        private void DrawNewHand()
+        {
+            Hand = new List<MagicCardVariant>();
+            alreadyDrawed = new List<int>();
+            HandPanel.Children.Clear();
+            for (int i = 0; i < 7; i++)
+            {
+                DrawNewCard();
+            }
+        }
+
+        private void DrawNewCard()
+        {
+            MagicCardVariant newCard = DoDraw();
+            if (newCard != null)
+            {
+                HandPanel.Children.Add(
+                    new CardIllustration(newCard)
+                    {
+                        Width = 50,
+                        Height = 50,
+                    }
+                );
+            }
+        }
+
+        private MagicCardVariant DoDraw()
+        {
+            if (currentDeck.CardRelations.Count <= alreadyDrawed.Count) return null;
+            int rgn;
+            do { rgn = random.Next(CurrentDeck.CardRelations.Count); }
+            while (alreadyDrawed.Contains(rgn));
+            return currentDeck.CardRelations[rgn].Card;
+        }
+
+        #region UI Link
+
+        private void DrawNewHandButtonClick(object sender, RoutedEventArgs e)
+        {
+            DrawNewHand();
+        }
+
+        private void DrawCardButtonClick(object sender, RoutedEventArgs e)
+        {
+            DrawNewCard();
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Validities
+
+        private string standardOk;
+        public string StandardOk
+        {
+            get { return standardOk; }
+            set
+            {
+                standardOk = value;
+                OnPropertyChanged();
+            }
+        }
+        private void SetStandardOk()
+        {
+            bool ok = true;
+            ok = ok && CurrentDeck.CardCount >= 60;
+            ok = ok && HasMaxCardOccurence(4);
+            StandardOk = ok ? "YES" : "NO";
+        }
+
+        private string commanderOk;
+        public string CommanderOk
+        {
+            get { return commanderOk; }
+            set
+            {
+                commanderOk = value;
+                OnPropertyChanged();
+            }
+        }
+        private void SetCommanderOk()
+        {
+            bool ok = true;
+            ok = ok && CurrentDeck.CardCount == 100;
+            ok = ok && HasMaxCardOccurence(1);
+            ok = ok && CurrentDeck.CardRelations.Where(x => x.RelationType == 1).Any();
+            CommanderOk = ok ? "YES" : "NO";
+        }
+
+        private bool HasMaxCardOccurence(int limit)
         {
             bool ok = true;
             foreach (var v in CurrentDeck.CardRelations.Where(x => !x.Card.Card.Type.ToString().ToLower().Contains("land")))
@@ -267,46 +318,6 @@ namespace MaGeek.UI
                 if (v.Quantity > limit) ok = false;
             }
             return ok;
-        }
-
-        #region Hand
-
-        private void NewHand()
-        {
-            Hand = new List<MagicCardVariant>();
-            alreadyDrawed = new List<int>();
-            HandPanel.Children.Clear();
-            for (int i = 0; i < 7; i++) HandPanel.Children.Add(
-                new CardIllustration(Draw())
-                {
-                    Width = 50,
-                    Height = 50,
-                }
-            );
-        }
-
-        private MagicCardVariant Draw()
-        {
-            int rgn;
-            do { rgn = random.Next(CurrentDeck.CardRelations.Count); }
-            while (alreadyDrawed.Contains(rgn));
-            return currentDeck.CardRelations[rgn].Card;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            NewHand();
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            HandPanel.Children.Add(
-                   new CardIllustration(Draw())
-                   {
-                       Width = 50,
-                       Height = 50,
-                   }
-            );
         }
 
         #endregion

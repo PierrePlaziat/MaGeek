@@ -177,7 +177,7 @@
 
                     <Separator Width="20" Background="Transparent"/>
 
-                    <Button Width="50" Height="50" Click="Button_Click">New</Button>
+                    <Button Width="50" Height="50" Click="DrawNewHandButtonClick">New</Button>
                     
                     <Separator Width="20" Background="Transparent"/>
 
@@ -185,7 +185,7 @@
 
                     <Separator Width="20" Background="Transparent"/>
 
-                    <Button Width="50" Height="50" Click="Button_Click_1">Draw</Button>
+                    <Button Width="50" Height="50" Click="DrawCardButtonClick">Draw</Button>
 
                     <Separator Width="20" Background="Transparent"/>
 

@@ -1,6 +1,5 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Events;
-using System;
 using System.Linq;
 
 namespace MaGeek
@@ -12,52 +11,27 @@ namespace MaGeek
 
         public string GetForeignLanguage()
         {
-            var p = App.database.Params.Where(x => x.ParamName == "ForeignLanguage");
+            var p = App.Database.Params.Where(x => x.ParamName == "ForeignLanguage");
             if (p.Any())
             {
                 return p.FirstOrDefault().ParamValue;
             }
             else
             {
-                App.database.Params.Add(new Entities.Param() { ParamValue = "French", ParamName = "ForeignLanguage" });
-                App.database.SaveChanges();
+                App.Database.Params.Add(new Entities.Param() { ParamValue = "French", ParamName = "ForeignLanguage" });
+                App.Database.SaveChanges();
                 return "French";
             }
         }
         public void SetForeignLanguage(string value)
         {
-            var p = App.database.Params.Where(x => x.ParamName == "ForeignLanguage");
+            var p = App.Database.Params.Where(x => x.ParamName == "ForeignLanguage");
             if (p.Any())
             {
-                App.database.Params.Remove(p.FirstOrDefault());
+                App.Database.Params.Remove(p.FirstOrDefault());
             }
-            App.database.Params.Add(new Entities.Param() { ParamValue = value, ParamName = "ForeignLanguage" });
-            App.database.SaveChanges();
-        }
-
-        internal string GetSearchBehaviour()
-        {
-            var p = App.database.Params.Where(x => x.ParamName == "SearchBehaviour");
-            if (p.Any())
-            {
-                return p.FirstOrDefault().ParamValue;
-            }
-            else
-            {
-                App.database.Params.Add(new Entities.Param() { ParamValue = "Wide", ParamName = "SearchBehaviour" });
-                App.database.SaveChanges();
-                return "Wide";
-            }
-        }
-        internal void SetSearchBehaviour(string value)
-        {
-            var p = App.database.Params.Where(x => x.ParamName == "SearchBehaviour");
-            if (p.Any())
-            {
-                App.database.Params.Remove(p.FirstOrDefault());
-            }
-            App.database.Params.Add(new Entities.Param() { ParamValue = value, ParamName = "SearchBehaviour" });
-            App.database.SaveChanges();
+            App.Database.Params.Add(new Entities.Param() { ParamValue = value, ParamName = "ForeignLanguage" });
+            App.Database.SaveChanges();
         }
 
         #endregion
@@ -80,6 +54,22 @@ namespace MaGeek
             if (raiseEvent != null) raiseEvent(this, e);
         }
 
+        #region DECK VIEW FLASH
+
+        public void ModifDeck()
+        {
+            RaiseModifDeck(new DeckModifEventArgs());
+        }
+        public delegate void DeckModifEventHandler(object sender, DeckModifEventArgs args);
+        public event DeckModifEventHandler RaiseDeckModif;
+        protected virtual void RaiseModifDeck(DeckModifEventArgs e)
+        {
+            DeckModifEventHandler raiseEvent = RaiseDeckModif;
+            if (raiseEvent != null) raiseEvent(this, e);
+        }
+
+        #endregion
+
         #endregion
 
         #region CARD FOCUS GESTION
@@ -96,22 +86,6 @@ namespace MaGeek
         protected virtual void RaiseCardSelect(SelectCardEventArgs e)
         {
             CardEventHandler raiseEvent = RaiseSelectCard;
-            if (raiseEvent != null) raiseEvent(this, e);
-        }
-
-        #endregion
-
-        #region DECK VIEW FLASH
-
-        public void ModifDeck()
-        {
-            RaiseModifDeck(new DeckModifEventArgs());
-        }
-        public delegate void DeckModifEventHandler(object sender, DeckModifEventArgs args);
-        public event DeckModifEventHandler RaiseDeckModif;
-        protected virtual void RaiseModifDeck(DeckModifEventArgs e)
-        {
-            DeckModifEventHandler raiseEvent = RaiseDeckModif;
             if (raiseEvent != null) raiseEvent(this, e);
         }
 

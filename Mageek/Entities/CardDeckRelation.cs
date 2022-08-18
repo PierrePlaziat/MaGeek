@@ -1,4 +1,4 @@
-﻿using MaGeek.Commands;
+﻿using MaGeek.Events;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Input;

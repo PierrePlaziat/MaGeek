@@ -16,7 +16,7 @@ namespace MaGeek.UI
     public partial class ImportExport : UserControl, INotifyPropertyChanged
     {
 
-        public string currentImportState = "test";
+        public string currentImportState = "";
         public string CurrentImportState {
             get { return currentImportState; }
             set { currentImportState = value; OnPropertyChanged(); }
@@ -99,11 +99,11 @@ namespace MaGeek.UI
 
                     CurrentImportState = "Searching "+ cardname;
 
-                    var card = App.database.cards.Where(x => x.CardId == cardname || (x.CardId.Contains(cardname) && x.CardId.Contains(" // "))).FirstOrDefault();
+                    var card = App.Database.cards.Where(x => x.CardId == cardname || (x.CardId.Contains(cardname) && x.CardId.Contains(" // "))).FirstOrDefault();
                     if (card == null)
                     {
-                        await App.cardManager.MtgApi.SearchCardsOnline(cardname, true);
-                        card = App.database.cards.Where(x => x.CardId == cardname || (x.CardId.Contains(cardname) && x.CardId.Contains(" // "))).FirstOrDefault();
+                        await App.CardManager.Api.SearchCards(cardname, true);
+                        card = App.Database.cards.Where(x => x.CardId == cardname || (x.CardId.Contains(cardname) && x.CardId.Contains(" // "))).FirstOrDefault();
                     }
 
                     CurrentImportState = "Adding"+ cardname;
@@ -112,7 +112,7 @@ namespace MaGeek.UI
                     {
                         if (asDeck)
                         {
-                            App.cardManager.AddCardToDeck(card.Variants[0],importDeck, cardQuantity);
+                            App.CardManager.AddCardToDeck(card.Variants[0],importDeck, cardQuantity);
                         }
                         if (asObtained) card.CollectedQuantity += cardQuantity;
                     }
@@ -128,8 +128,8 @@ namespace MaGeek.UI
 
             // Finalize
 
-            if (asDeck) App.database.decks.Add(importDeck);
-            App.database.SaveChanges();
+            if (asDeck) App.Database.decks.Add(importDeck);
+            App.Database.SaveChanges();
             ImportTxt.Document.Blocks.Clear();
             ImportTxt.AppendText(errors);
 

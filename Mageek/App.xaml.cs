@@ -8,9 +8,9 @@ namespace MaGeek
     public partial class App : Application
     {
 
-        public static AppState state = new AppState();
-        public static SqliteContext database = new SqliteContext();
-        public static CardManager cardManager = new CardManager();
+        public static AppState State = new AppState();
+        public static LocalDb Database = new LocalDb();
+        public static CardManager CardManager = new CardManager();
 
         public App()
         {

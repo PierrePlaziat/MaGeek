@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MaGeek.UI"
         mc:Ignorable="d" 
-        Title="MaGeek" Height="800" Width="1600" >  
+        Title="MaGeek" 
+        Height="800" Width="1600"
+        MinHeight="400" MinWidth="800">  
     
     <Window.Resources>
 
@@ -119,6 +121,10 @@
                     BorderThickness="0" 
                     Background="#222">
 
+            <TabItem Header="Deck Stats" Foreground="#999">
+                <local:DeckStats  Grid.Column="0" Grid.Row="0"></local:DeckStats>
+            </TabItem>
+
             <TabItem Header="Deck Table" Foreground="#999">
                 <local:DeckTable x:Name="SelectedDeck"  HorizontalAlignment="Stretch"  
                                  Grid.Column="2"
@@ -127,10 +133,6 @@
                                  BorderThickness="0"
                                  Background="#000">
                 </local:DeckTable>  
-            </TabItem>
-
-            <TabItem Header="Deck Stats" Foreground="#999">
-                <local:DeckStats  Grid.Column="0" Grid.Row="0"></local:DeckStats>
             </TabItem>
 
         </TabControl>

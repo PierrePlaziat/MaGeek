@@ -1,9 +1,6 @@
 ﻿using MaGeek.Data.Entities;
-using Plaziat.CommonWpf;
-using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
-using System.IO;
 using System.Linq;
 
 namespace MaGeek.Data
@@ -12,127 +9,51 @@ namespace MaGeek.Data
     public class CardManager
     {
 
-        public ApiMtg MtgApi { get; } = new();
-
-        #region DB Management
-
-        public void EraseDb()
-        {
-            if (!MessageBoxHelper.AskUser("Are you sure?")) return;
-
-            var cardRows = from o in App.database.cards select o;
-            foreach (var row in cardRows) App.database.cards.Remove(row);
-
-            var cardVariantsrows = from o in App.database.cardVariants select o;
-            foreach (var row in cardVariantsrows) App.database.cardVariants.Remove(row);
-
-            var traductionsrows = from o in App.database.traductions select o;
-            foreach (var row in traductionsrows) App.database.traductions.Remove(row);
-
-            var decksrows = from o in App.database.decks select o;
-            foreach (var row in decksrows) App.database.decks.Remove(row);
-
-            var cardsInDecksrows = from o in App.database.cardsInDecks select o;
-            foreach (var row in cardsInDecksrows) App.database.cardsInDecks.Remove(row);
-
-            var Tagsrows = from o in App.database.Tags select o;
-            foreach (var row in Tagsrows) App.database.Tags.Remove(row);
-
-            App.database.SaveChanges();
-
-            MessageBoxHelper.ShowMsg("DB successfully erased");
-
-            System.Diagnostics.Process.Start(App.ResourceAssembly.Location);
-            App.Current.Shutdown();
-
-        }
-
-        public void SaveDb()
-        {
-            string sourceFile = System.AppDomain.CurrentDomain.BaseDirectory+"Mtg.db";
-            Console.WriteLine(sourceFile);
-            try
-            {
-                File.Copy(sourceFile, Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Mtg.db", true);
-                MessageBoxHelper.ShowMsg("DB successfully saved");
-            }
-            catch (IOException iox)
-            {
-                MessageBoxHelper.ShowMsg(iox.Message);
-            }
-        }
-
-        public void LoadDb()
-        {
-            string sourceFile = System.AppDomain.CurrentDomain.BaseDirectory + "Mtg.db";
-            Console.WriteLine(sourceFile);
-            try
-            {
-                File.Copy(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\Mtg.db", sourceFile,true);
-                MessageBoxHelper.ShowMsg("DB successfully loaded");
-            }
-            catch (IOException iox)
-            {
-                MessageBoxHelper.ShowMsg(iox.Message);
-            }
-
-            System.Diagnostics.Process.Start(App.ResourceAssembly.Location);
-            App.Current.Shutdown();
-        }
-
-        public void CleanDb()
-        {
-            //TODO
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region Card Manips
-
-        public ObservableCollection<MagicCard> BinderCards
+        public IMtgApi Api { get; } = new MtgApi();
+        public ObservableCollection<MagicCard> CardListBinder
         {
             get
             {
-                App.database.cards.Load();
-                return App.database.cards.Local.ToObservableCollection();
+                App.Database.cards.Load();
+                return App.Database.cards.Local.ToObservableCollection();
             }
         }
+        public ObservableCollection<MagicDeck> DeckListBinder
+        {
+            get
+            {
+                App.Database.decks.Load();
+                return App.Database.decks.Local.ToObservableCollection();
+            }
+        }
+
+        #region Card Manips
 
         public void GotCard_Add(MagicCard selectedCard)
         {
             if (selectedCard == null) return;
-            App.database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity++;
-            App.database.SaveChanges();
+            App.Database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity++;
+            App.Database.SaveChanges();
         }
 
         public void GotCard_Remove(MagicCard selectedCard)
         {
             if (selectedCard == null) return;
-            var c = App.database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault();
+            var c = App.Database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault();
             c.CollectedQuantity--;
             if(c.CollectedQuantity < 0) c.CollectedQuantity = 0;
-            App.database.SaveChanges();
+            App.Database.SaveChanges();
         }
 
         public void SetFav(MagicCard card, string variantId)
         {
             card.FavouriteVariant = variantId;
-            App.database.SaveChanges();
+            App.Database.SaveChanges();
         }
 
         #endregion
 
         #region Deck Manips
-
-        public ObservableCollection<MagicDeck> BinderDeck
-        {
-            get
-            {
-                App.database.decks.Load();
-                return App.database.decks.Local.ToObservableCollection();
-            }
-        }
 
         public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
         {
@@ -150,8 +71,8 @@ namespace MaGeek.Data
                 deck.CardRelations.Add(cardRelation);
             }
             cardRelation.Quantity += qty;
-            App.database.SaveChanges();
-            App.state.ModifDeck();
+            App.Database.SaveChanges();
+            App.State.ModifDeck();
         }
 
         internal void ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
@@ -169,8 +90,8 @@ namespace MaGeek.Data
             if (cardRelation == null) return;
             cardRelation.Quantity -= qty;
             if (cardRelation.Quantity <= 0) deck.CardRelations.Remove(cardRelation);
-            App.database.SaveChanges();
-            App.state.ModifDeck();
+            App.Database.SaveChanges();
+            App.State.ModifDeck();
 
         }
 

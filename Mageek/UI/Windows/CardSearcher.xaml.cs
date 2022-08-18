@@ -31,7 +31,7 @@ namespace MaGeek.UI
 
         public ObservableCollection<MagicCard> CardsBind { 
             get {
-                var unfiltered = App.cardManager.BinderCards;
+                var unfiltered = App.CardManager.CardListBinder;
                 var filtered = unfiltered
                     .Where(x => x.Cmc >= FilterMinCmc)
                     .Where(x => x.Cmc <= FilterMaxCmc)
@@ -48,7 +48,7 @@ namespace MaGeek.UI
                     var tagged = new List<MagicCard>();
                     foreach (var card in filtered)
                     {
-                        if(App.database.Tags.Where(x=>x.CardId==card.CardId && x.Tag== TagFilterSelected).Any())
+                        if(App.Database.Tags.Where(x=>x.CardId==card.CardId && x.Tag== TagFilterSelected).Any())
                         {
                             tagged.Add(card);
                         }
@@ -63,7 +63,7 @@ namespace MaGeek.UI
         {
             get
             {
-                return App.database.AvailableTags();
+                return App.Database.AvailableTags();
             }
         }
 
@@ -213,7 +213,7 @@ namespace MaGeek.UI
 
         private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CardGrid.SelectedItem is MagicCard card) App.state.SelectCard(card);
+            if (CardGrid.SelectedItem is MagicCard card) App.State.SelectCard(card);
         }
 
         private void SearchButton_Pressed(object sender, System.Windows.RoutedEventArgs e)
@@ -230,7 +230,7 @@ namespace MaGeek.UI
         {
             if (string.IsNullOrEmpty(CurrentSearch.Text)) return;
             IsSearching = true;
-            await App.cardManager.MtgApi.SearchCardsOnline(CurrentSearch.Text);
+            await App.CardManager.Api.SearchCards(CurrentSearch.Text);
             ResetFilters();
             FilterName = CurrentSearch.Text;
             CurrentSearch.Text = "";
@@ -256,7 +256,7 @@ namespace MaGeek.UI
         {
             foreach (MagicCard c in CardGrid.SelectedItems)
             {
-                App.cardManager.AddCardToDeck(c.Variants[0], App.state.SelectedDeck,1);
+                App.CardManager.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1);
             }
         }
 

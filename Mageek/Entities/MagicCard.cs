@@ -94,7 +94,7 @@ namespace MaGeek.Data.Entities
 
         public string CardForeignName {
             get {
-                var a = Traductions.Where(x => x.Language.ToLower() == App.state.GetForeignLanguage().ToLower()).FirstOrDefault();
+                var a = Traductions.Where(x => x.Language.ToLower() == App.State.GetForeignLanguage().ToLower()).FirstOrDefault();
                 return a!= null ?  a.TraductedName : "(VO) "+CardId;
             }
         }

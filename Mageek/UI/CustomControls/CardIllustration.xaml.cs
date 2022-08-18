@@ -52,7 +52,10 @@ namespace MaGeek.UI
                 OnPropertyChanged("HasPower");
                 OnPropertyChanged("SelectedCard");
                 SetValue(CardProperty, value);
-                CardImage = new NotifyTaskCompletion<BitmapImage>(SelectedVariant.RetrieveImage());
+                //if (SelectedVariant != null)
+                {
+                    CardImage = new NotifyTaskCompletion<BitmapImage>(SelectedVariant.RetrieveImage());
+                }
             }
         }
 
@@ -128,7 +131,7 @@ namespace MaGeek.UI
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (selectedVariant != null) App.state.SelectCard(selectedVariant.Card);
+            if (selectedVariant != null) App.State.SelectCard(selectedVariant.Card);
         }
 
         #endregion

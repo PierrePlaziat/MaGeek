@@ -27,7 +27,7 @@ namespace MaGeek.UI
 
         #endregion
 
-        public ObservableCollection<MagicDeck> Decks { get { return App.cardManager.BinderDeck; } }
+        public ObservableCollection<MagicDeck> Decks { get { return App.CardManager.DeckListBinder; } }
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace MaGeek.UI
         {
             DataContext = this;
             InitializeComponent();
-            App.state.RaiseDeckModif += HandleDeckModified;
+            App.State.RaiseDeckModif += HandleDeckModified;
         }
 
         void HandleDeckModified(object sender, DeckModifEventArgs e)
@@ -50,7 +50,7 @@ namespace MaGeek.UI
         private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var deck = decklistbox.SelectedItem as MagicDeck;
-            if (deck != null) App.state.SelectDeck(deck);
+            if (deck != null) App.State.SelectDeck(deck);
         }
         
         internal void forceRefresh()
@@ -65,14 +65,14 @@ namespace MaGeek.UI
             {
                 string deckTitle = MessageBoxHelper.UserInputString("Please enter a title for this new deck");
                 if (deckTitle == null) return;
-                if (App.database.decks.Where(x => x.Title == deckTitle).Any())
+                if (App.Database.decks.Where(x => x.Title == deckTitle).Any())
                 {
                     MessageBoxHelper.ShowMsg("There is already a deck with that name.");
                     return; 
                 }
                 MagicDeck deck = new MagicDeck(deckTitle);
-                App.database.decks.Add(deck);
-                App.database.SaveChanges();
+                App.Database.decks.Add(deck);
+                App.Database.SaveChanges();
                 OnPropertyChanged("Decks");
             }
             catch (Exception ex)
@@ -83,41 +83,41 @@ namespace MaGeek.UI
         
         private void RenameDeck(object sender, RoutedEventArgs e)
         {
-            if (App.state.SelectedDeck == null) return;
-            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.state.SelectedDeck.Title+"\"");
+            if (App.State.SelectedDeck == null) return;
+            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.State.SelectedDeck.Title+"\"");
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
-            if (App.database.decks.Where(x => x.Title == newTitle).Any())
+            if (App.Database.decks.Where(x => x.Title == newTitle).Any())
             {
                 MessageBoxHelper.ShowMsg("There is already a deck with that name.");
                 return;
             }
-            App.state.SelectedDeck.Title = newTitle;
-            App.database.SaveChanges();
+            App.State.SelectedDeck.Title = newTitle;
+            App.Database.SaveChanges();
             forceRefresh();
         }
 
         private void DuplicateDeck(object sender, RoutedEventArgs e)
         {
-            if (App.state.SelectedDeck == null) return;
+            if (App.State.SelectedDeck == null) return;
             if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
             {
                 var deckToCopy = Decks[decklistbox.SelectedIndex];
                 var newDeck = new MagicDeck(deckToCopy);
                 Decks.Add(newDeck);
-                App.database.SaveChanges();
+                App.Database.SaveChanges();
             }
         }
 
         private void DeleteDeck(object sender, RoutedEventArgs e)
         {
-            if (App.state.SelectedDeck == null) return;
+            if (App.State.SelectedDeck == null) return;
             if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
             {
                 if (MessageBoxHelper.AskUser("Are you sure to delete this deck?"))
                 {
                     var deck = Decks[decklistbox.SelectedIndex];
                     Decks.Remove(deck);
-                    App.database.SaveChanges();
+                    App.Database.SaveChanges();
                 }
             }
         }

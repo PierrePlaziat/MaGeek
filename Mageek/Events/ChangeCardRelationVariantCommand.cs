@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Input;
 
-namespace MaGeek.Commands
+namespace MaGeek.Events
 {
     public class ChangeCardRelationVariantCommand : ICommand
     {
@@ -19,7 +19,7 @@ namespace MaGeek.Commands
         public void Execute(object parameter)
         {
             MagicCardVariant variant = (MagicCardVariant)parameter;
-            App.cardManager.ChangeRelation(relation, variant);
+            App.CardManager.ChangeRelation(relation, variant);
         }
 
         public event EventHandler CanExecuteChanged;
