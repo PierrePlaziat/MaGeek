@@ -7,14 +7,14 @@
         xmlns:local="clr-namespace:MaGeek.UI"
         mc:Ignorable="d"
         Title="DockSystem" Height="450" Width="800" 
-        Background="#222" Foreground="#eee"
+        Background="#555" Foreground="#eee"
         BorderThickness="0">
     
     <Grid>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" DockPanel.Dock="Top">
@@ -25,86 +25,105 @@
                 <Separator />
                 <MenuItem Header="_Exit" />
             </MenuItem>
+            <MenuItem Header="Layout">
+                <MenuItem Header="Save Current" />
+                <MenuItem Header="Reset Default" />
+                <Separator />
+                <MenuItem Header="Custom 1" />
+                <MenuItem Header="Custom 2" />
+            </MenuItem>
         </Menu>
 
         <avalonDock:DockingManager Grid.Row="1" x:Name="dockingManager">
-            
-            <avalonDock:LayoutRoot>
+
+            <avalonDock:LayoutRoot >
+
+                <avalonDock:LayoutRoot.TopSide>
+
+                    <avalonDock:LayoutAnchorSide>
+
+                        <avalonDock:LayoutAnchorGroup>
+
+                            <avalonDock:LayoutAnchorable 
+                                Title="Card Searcher" 
+                                CanClose="False"
+                                CanFloat="False"
+                                CanShowOnHover="False">
+                                <local:CardSearcher/>
+                            </avalonDock:LayoutAnchorable>
+
+                        </avalonDock:LayoutAnchorGroup>
+
+                    </avalonDock:LayoutAnchorSide>
+
+                </avalonDock:LayoutRoot.TopSide>
+
+                <avalonDock:LayoutRoot.LeftSide>
+
+                    <avalonDock:LayoutAnchorSide>
+
+                        <avalonDock:LayoutAnchorGroup>
+
+                            <avalonDock:LayoutAnchorable 
+                                Title="Deck Manager"
+                                CanClose="False"
+                                CanFloat="False"
+                                CanShowOnHover="False">
+                                <local:DeckInspector/>
+                            </avalonDock:LayoutAnchorable>
+
+                        </avalonDock:LayoutAnchorGroup>
+
+                    </avalonDock:LayoutAnchorSide>
+
+                </avalonDock:LayoutRoot.LeftSide>
                 
-                <!-- _______________________________________________________ -->
-
-                <avalonDock:LayoutPanel Orientation="Horizontal">
-
-                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="150" Orientation="Vertical">
-
-                        <avalonDock:LayoutAnchorablePane>
+                <avalonDock:LayoutRoot.RightSide>
+                    
+                    <avalonDock:LayoutAnchorSide>
+                        
+                        <avalonDock:LayoutAnchorGroup>
                             
-                            <avalonDock:LayoutAnchorable Title="Deck List">
-                                <local:DeckInspector Grid.Column="0" Grid.Row="0"></local:DeckInspector>
+                            <avalonDock:LayoutAnchorable 
+                                Title="Card Details"
+                                CanClose="False"
+                                CanFloat="False"
+                                CanShowOnHover="False">
+                                <local:CardInspector/>
                             </avalonDock:LayoutAnchorable>
+                            
+                        </avalonDock:LayoutAnchorGroup>
+                        
+                    </avalonDock:LayoutAnchorSide>
+                    
+                </avalonDock:LayoutRoot.RightSide>
+                
+                <!-- DOCUMENTS PANEL -->
 
-                            <avalonDock:LayoutAnchorable Title="Importer">
-                                <local:ImportExport Grid.Column="0" Grid.Row="2"></local:ImportExport>
-                            </avalonDock:LayoutAnchorable>
-
-                            <avalonDock:LayoutAnchorable Title="Options">
-                                <local:Options Grid.Column="0" Grid.Row="2"></local:Options>
-                            </avalonDock:LayoutAnchorable>
-
-                        </avalonDock:LayoutAnchorablePane>
-
-                    </avalonDock:LayoutAnchorablePaneGroup>
-
-                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="150" Orientation="Vertical">
-
-                        <avalonDock:LayoutAnchorablePane>
-
-                            <avalonDock:LayoutAnchorable Title="Card Search">
-                                <local:CardSearcher Grid.Row="0" Grid.Column="2"
-                    BorderThickness="0" 
-                    Background="#222"></local:CardSearcher>
-                            </avalonDock:LayoutAnchorable>
-                        </avalonDock:LayoutAnchorablePane>
-
-                        <avalonDock:LayoutAnchorablePane>
-
-                            <avalonDock:LayoutAnchorable Title="Deck Stats">
-                                <local:DeckStats  Grid.Column="0" Grid.Row="0"/>
-                            </avalonDock:LayoutAnchorable>
-
-                            <avalonDock:LayoutAnchorable Title="Deck Table">
-                                <local:DeckTable x:Name="SelectedDeck"  HorizontalAlignment="Stretch"  
-                                 Grid.Column="2"
-                                 Grid.Row="2"
-                                 Grid.ColumnSpan="1"
-                                 BorderThickness="0"
-                                 Background="#000">
-                                </local:DeckTable>
-                            </avalonDock:LayoutAnchorable>
-
-                        </avalonDock:LayoutAnchorablePane>
-
-                    </avalonDock:LayoutAnchorablePaneGroup>
-
-                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="150" Orientation="Vertical">
-
-                        <avalonDock:LayoutAnchorablePane>
-
-                            <avalonDock:LayoutAnchorable Title="Card Details">
-                                <local:CardInspector MaxWidth="255" x:Name="CardDetails" Grid.Column="4" Grid.RowSpan="3"></local:CardInspector>
-
-                            </avalonDock:LayoutAnchorable>
-
-                        </avalonDock:LayoutAnchorablePane>
-                    </avalonDock:LayoutAnchorablePaneGroup>
-
+                <avalonDock:LayoutPanel Orientation="Horizontal" >
+                    
+                    <avalonDock:LayoutDocumentPaneGroup >
+                        <avalonDock:LayoutDocumentPane>
+                            <avalonDock:LayoutDocument Title="Doc1">
+                                <TextBox/>
+                            </avalonDock:LayoutDocument>
+                            <avalonDock:LayoutDocument Title="Doc2">
+                                <TextBox/>
+                            </avalonDock:LayoutDocument>
+                        </avalonDock:LayoutDocumentPane>
+                        <avalonDock:LayoutDocumentPane>
+                            <avalonDock:LayoutDocument Title="Doc3">
+                                <TextBox/>
+                            </avalonDock:LayoutDocument>
+                        </avalonDock:LayoutDocumentPane>
+                    </avalonDock:LayoutDocumentPaneGroup>
+                    
                 </avalonDock:LayoutPanel>
-
-                <!-- _______________________________________________________ -->
-
+                
             </avalonDock:LayoutRoot>
+            
         </avalonDock:DockingManager>
-    
+
     </Grid>
     
 </Window>
