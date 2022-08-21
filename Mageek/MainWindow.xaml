@@ -71,7 +71,10 @@
                     Background="#222">
 
             <TabItem Header="Collection" Foreground="#999">
-                <local:DeckInspector x:Name="DeckList" Grid.Column="0" Grid.Row="0"></local:DeckInspector>
+                <local:DeckList x:Name="DeckList" Grid.Column="0" Grid.Row="0"></local:DeckList>
+            </TabItem>
+            <TabItem Header="Collection" Foreground="#999">
+                <local:DeckContent x:Name="DeckContent" Grid.Column="0" Grid.Row="0"></local:DeckContent>
             </TabItem>
 
             <TabItem Header="Importer" Foreground="#999">

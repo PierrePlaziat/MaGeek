@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:MaGeek.UI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             x:Name="myWindow" >
+             x:Name="myWindow" Background="Black">
 
     <Grid HorizontalAlignment="Stretch">
 
