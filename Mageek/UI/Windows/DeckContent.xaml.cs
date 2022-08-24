@@ -35,8 +35,22 @@ namespace MaGeek.UI
                 OnPropertyChanged();
                 OnPropertyChanged("CurrentCommanders");
                 OnPropertyChanged("CurrentNonCommanders");
-                OnPropertyChanged("HasCommander");
                 OnPropertyChanged("CurrentSide");
+                OnPropertyChanged("HasCommander");
+                OnPropertyChanged("Visible");
+            }
+        }
+
+        private string filterString = "";
+        public string FilterString {
+            get { return filterString; }
+            set { 
+                filterString = value; 
+                OnPropertyChanged();
+                OnPropertyChanged("CurrentCommanders");
+                OnPropertyChanged("CurrentNonCommanders");
+                OnPropertyChanged("CurrentSide");
+                OnPropertyChanged("HasCommander");
                 OnPropertyChanged("Visible");
             }
         }
@@ -46,7 +60,11 @@ namespace MaGeek.UI
             get
             {
                 if (currentDeck == null || currentDeck.CardRelations == null) return null;
-                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(x => x.RelationType == 1));
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(
+                    x => x.RelationType == 1
+                    && x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
+                    && x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower()))
+                );
             }
         }
 
@@ -65,7 +83,11 @@ namespace MaGeek.UI
             get
             {
                 if (currentDeck == null || currentDeck.CardRelations == null) return null;
-                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(x => x.RelationType == 0));
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(
+                    x => x.RelationType == 0
+                    && x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
+                    && x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower()))
+                );
             }
         }
 
@@ -74,7 +96,11 @@ namespace MaGeek.UI
             get
             {
                 if (currentDeck == null || currentDeck.CardRelations == null) return null;
-                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(x => x.RelationType == 2));
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(
+                    x => x.RelationType == 2
+                    && x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
+                    && x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower()))
+                );
             }
         }
 

@@ -14,14 +14,17 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Column="3">
-            <Button Click="AddDeck">Create</Button>
+        <DockPanel Grid.Row="0">
+            <Button Click="AddDeck" FontWeight="Black" Padding="4,-2,4,0" Background="DarkOliveGreen">+</Button>
+            <Button Click="AddDeck" FontWeight="Black" Padding="6,-4,6,0" Background="IndianRed">-</Button>
+            <Button Click="AddDeck" FontWeight="Bold" Padding="7,-1,7,0" Background="Gray">I</Button>
+            <Label>Filter:</Label>
+            <TextBox Text="{Binding FilterString}" Margin="0,0,3,0"></TextBox>
         </DockPanel>
 
         <ListView x:Name="decklistbox"
                   SelectionChanged="decklistbox_SelectionChanged"
                   Grid.Row="1" 
-                  Grid.ColumnSpan="4" 
                   Background="#222"
                   ItemsSource="{Binding Decks}"
                   Margin="0" Padding="0">
@@ -57,7 +60,8 @@
                         <Label Margin="0" Padding="2" 
                                FontSize="20" 
                                FontFamily="{StaticResource MtgSymbols}"
-                               Content="{Binding DeckColors}"/>
+                               Content="{Binding DeckColors}"
+                               Foreground="#EEE"/>
 
                         <Label Grid.Column="1" Foreground="White" 
                                HorizontalAlignment="Stretch" 
@@ -66,10 +70,10 @@
                         <DockPanel Grid.Column="2">
                             
                             <Label Content="{Binding CardCount}" 
-                                   Foreground="#444"/>
+                                   Foreground="#666"/>
                             
                             <Label Content="Cards" 
-                                   Foreground="#444"/>
+                                   Foreground="#666"/>
                             
                         </DockPanel>
 

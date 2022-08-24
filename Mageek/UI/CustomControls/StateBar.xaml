@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="MaGeek.UI.CustomControls.StateBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MaGeek.UI.CustomControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="20" d:DesignWidth="800"
+             >
+    <Grid Background="Black">
+        <DockPanel>
+            <Label>Selected Deck : - </Label>
+            <Label>Selected Card : - </Label>
+            <Label>Importation : </Label>
+            <Grid>
+                <ProgressBar></ProgressBar>
+                <Label BorderThickness="0">None</Label>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</UserControl>

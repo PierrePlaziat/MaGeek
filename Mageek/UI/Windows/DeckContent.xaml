@@ -7,32 +7,27 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Grid Background="#222">
+    <Grid>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="26"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto" MaxHeight="100"></RowDefinition>
             <RowDefinition Height="*"  ></RowDefinition>
             <RowDefinition Height="auto" MaxHeight="100"></RowDefinition>
         </Grid.RowDefinitions>
 
         <!-- TITLE -->
-                
-        <Grid Grid.Row="0">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="25"></ColumnDefinition>
-                <ColumnDefinition Width="25"></ColumnDefinition>
-                <ColumnDefinition Width="25"></ColumnDefinition>
-                <ColumnDefinition Width="25"></ColumnDefinition>
-                <ColumnDefinition Width="25"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" FontWeight="Bold" Foreground="White" Content="{Binding CurrentDeck.Title}"></Label>
 
-            <Label FontWeight="Bold" Foreground="White" Content="{Binding CurrentDeck.Title}"></Label>
+        <!-- Filter -->
 
-        </Grid>
-
+        <DockPanel Grid.Row="1">
+            <Label>Filter :</Label>
+            <TextBox Text="{Binding FilterString}"></TextBox>
+        </DockPanel>
+        
         <!-- Commandement --> 
 
         <ListView Name="LVCommandants"
@@ -40,7 +35,7 @@
                   BorderThickness="0"   
                   Background="DarkOrange" 
                   SelectionChanged="LVDeck_SelectionChanged" 
-                  Grid.Row="1"
+                  Grid.Row="2"
                   Visibility="{Binding HasCommander}">
 
             <ListView.ItemContainerStyle>
@@ -93,7 +88,7 @@
                     BorderThickness="0"  
                     Background="#000" 
                     SelectionChanged="LVDeck_SelectionChanged"
-                    Grid.Row="2" >
+                    Grid.Row="3" >
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -142,7 +137,7 @@
                     BorderThickness="0" 
                     Background="Black" 
                     SelectionChanged="LVDeck_SelectionChanged"
-                    Grid.Row="3" >
+                    Grid.Row="4" >
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -183,7 +178,7 @@
         </ListView>
 
 
-        <StackPanel Visibility="{Binding Visible}" Grid.RowSpan="3" Grid.ColumnSpan="2" Background="#444">
+        <StackPanel Visibility="{Binding Visible}" Grid.RowSpan="4" Grid.ColumnSpan="2" Background="#444">
             <Label>No deck selected</Label>
         </StackPanel>
 

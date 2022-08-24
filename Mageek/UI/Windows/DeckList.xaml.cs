@@ -27,7 +27,18 @@ namespace MaGeek.UI
 
         #endregion
 
-        public ObservableCollection<MagicDeck> Decks { get { return App.CardManager.DeckListBinder; } }
+        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( App.CardManager.DeckListBinder.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower()))); } }
+
+        private string filterString = "";
+        public string FilterString
+        {
+            get { return filterString; }
+            set { 
+                filterString = value;
+                OnPropertyChanged();
+                OnPropertyChanged("Decks");
+            } 
+        }
 
         #endregion
 

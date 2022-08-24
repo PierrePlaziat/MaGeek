@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="MaGeek.UI.CustomControls.TopMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MaGeek.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="20">
+
+    <Menu Background="Black" Foreground="White">
+        <MenuItem Header="File">
+            <MenuItem Header="Import" Foreground="Black" Click="Import_Click"/>
+            <MenuItem Header="Export" Foreground="Black" Click="Export_Click"/>
+        </MenuItem>
+        <MenuItem Header="Edit">
+            <MenuItem Header="Print" Foreground="Black" Click="Print_Click"/>
+            <MenuItem Header="Params" Foreground="Black" Click="Params_Click"/>
+        </MenuItem>
+        <MenuItem Header="Windows">
+            <MenuItem Header="Card Searcher" Foreground="Black" Click="CardSearcher_Click"/>
+            <MenuItem Header="Deck List" Foreground="Black" Click="DeckList_Click"/>
+            <MenuItem Header="Deck Content" Foreground="Black" Click="DeckContent_Click"/>
+        </MenuItem>
+        <MenuItem Header="Layout">
+            <MenuItem Header="Save Current" Foreground="Black" Click="SaveCurrentLayout"/>
+            <MenuItem Header="Reset Default" Foreground="Black" Click="ResetDefaultLayout"/>
+            <Separator />
+        </MenuItem>
+    </Menu>
+</UserControl>

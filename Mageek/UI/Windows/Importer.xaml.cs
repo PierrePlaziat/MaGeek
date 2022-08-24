@@ -13,7 +13,7 @@ using System.Windows.Controls;
 namespace MaGeek.UI
 {
 
-    public partial class ImportExport : UserControl, INotifyPropertyChanged
+    public partial class Importer : Window, INotifyPropertyChanged
     {
 
         public string currentImportState = "";
@@ -34,7 +34,7 @@ namespace MaGeek.UI
 
         #region CTOR
 
-        public ImportExport()
+        public Importer()
         {
             InitializeComponent();
             LoadPanel.Visibility = Visibility.Collapsed;
