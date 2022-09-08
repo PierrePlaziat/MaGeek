@@ -9,11 +9,9 @@
              >
     <Grid Background="Black">
         <DockPanel>
-            <Label>Importation : </Label>
-            <Grid>
-                <ProgressBar Margin="3"></ProgressBar>
-                <Label BorderThickness="0" Padding="6,4,4,4">None</Label>
-            </Grid>
+            <Label Content="{Binding ImportCount}"/>
+            <Label>Importations</Label>
+            <ProgressBar Margin="3" Value="{Binding CurrentPercent}"/>
         </DockPanel>
     </Grid>
 </UserControl>

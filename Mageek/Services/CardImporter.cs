@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Threading;
 
 namespace MaGeek.Data
 {
@@ -72,7 +73,7 @@ namespace MaGeek.Data
         {
             ImportWorker.DoWork += DoNextImport;
             ImportWorker.ProgressChanged += ReportImportProgress;
-            ImportWorker.RunWorkerCompleted += CompleteImportation;
+            ImportWorker.WorkerReportsProgress = true;
         }
 
         #endregion
@@ -128,8 +129,11 @@ namespace MaGeek.Data
         {
             ImportWorker.ReportProgress(0);
             List<Tuple<int,string>> deckList = null;
+            ImportWorker.ReportProgress(5);
             List<ICard> importResult = new List<ICard>();
+            ImportWorker.ReportProgress(10);
             // parse list 
+            ImportWorker.ReportProgress(15);
             if (currentlyImporting.Value.mode==ImportMode.Deck) importResult = ImportDeck(currentlyImporting.Value.content).Result;
             ImportWorker.ReportProgress(20);
             // ask api
@@ -141,21 +145,39 @@ namespace MaGeek.Data
             }
             // record results
             ImportWorker.ReportProgress(50);
-            foreach (ICard iCard in importResult) App.Database.cards.Add(new MagicCard(iCard));
-            ImportWorker.ReportProgress(80);
+            foreach (ICard iCard in importResult)
+            {
+                if (!IsAlreadyLocalCard(iCard))
+                {
+                    App.Database.cards.Add(new MagicCard(iCard));
+                }
+                if (!IsAlreadyLocalCardVariant(iCard))
+                {
+                    App.Database.cardVariants.Add(new MagicCardVariant(iCard));
+                }
+                App.Database.SaveChanges();
+            }
+            ImportWorker.ReportProgress(75);
             if (currentlyImporting.Value.mode == ImportMode.Deck) MakeDeck(currentlyImporting.Value.title, deckList);
+            ImportWorker.ReportProgress(80);
+            App.Database.SaveChanges();
             ImportWorker.ReportProgress(100);
+            currentlyImporting = null;
+        }
+
+        private bool IsAlreadyLocalCard(ICard iCard)
+        {
+            return App.Database.cards.Where(x=>x.CardId == iCard.Name).Any();
+        }
+
+        private bool IsAlreadyLocalCardVariant(ICard iCard)
+        {
+            return App.Database.cardVariants.Where(x => x.Id == iCard.Id).Any();
         }
 
         private void ReportImportProgress(object sender, ProgressChangedEventArgs e)
         {
             workerProgress = e.ProgressPercentage;
-        }
-
-        private void CompleteImportation(object sender, RunWorkerCompletedEventArgs e)
-        {
-            App.Database.SaveChanges();
-            currentlyImporting = null;
         }
 
         #region Logic
@@ -209,7 +231,7 @@ namespace MaGeek.Data
             do
             {
                 tmpResult = await service
-                    .Where(x => x.Set, content)
+                    .Where(x => x.SetName, content)
                     .Where(x => x.Page, i)
                     .Where(x => x.PageSize, 100)
                     .AllAsync();
