@@ -9,12 +9,10 @@
              >
     <Grid Background="Black">
         <DockPanel>
-            <Label>Selected Deck : - </Label>
-            <Label>Selected Card : - </Label>
             <Label>Importation : </Label>
             <Grid>
-                <ProgressBar></ProgressBar>
-                <Label BorderThickness="0">None</Label>
+                <ProgressBar Margin="3"></ProgressBar>
+                <Label BorderThickness="0" Padding="6,4,4,4">None</Label>
             </Grid>
         </DockPanel>
     </Grid>

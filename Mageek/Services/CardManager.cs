@@ -9,7 +9,8 @@ namespace MaGeek.Data
     public class CardManager
     {
 
-        public IMtgApi Api { get; } = new MtgApi();
+        public CardImporter Importer { get; } = new();
+
         public ObservableCollection<MagicCard> CardListBinder
         {
             get

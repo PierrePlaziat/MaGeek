@@ -71,25 +71,25 @@ namespace MaGeek.Data
         {
             if (!MessageBoxHelper.AskUser("Are you sure?")) return;
 
-            var cardRows = from o in App.Database.cards select o;
-            foreach (var row in cardRows) App.Database.cards.Remove(row);
+            var cardRows = from o in cards select o;
+            foreach (var row in cardRows) cards.Remove(row);
 
-            var cardVariantsrows = from o in App.Database.cardVariants select o;
-            foreach (var row in cardVariantsrows) App.Database.cardVariants.Remove(row);
+            var cardVariantsrows = from o in cardVariants select o;
+            foreach (var row in cardVariantsrows) cardVariants.Remove(row);
 
-            var traductionsrows = from o in App.Database.traductions select o;
-            foreach (var row in traductionsrows) App.Database.traductions.Remove(row);
+            var traductionsrows = from o in traductions select o;
+            foreach (var row in traductionsrows) traductions.Remove(row);
 
-            var decksrows = from o in App.Database.decks select o;
-            foreach (var row in decksrows) App.Database.decks.Remove(row);
+            var decksrows = from o in decks select o;
+            foreach (var row in decksrows) decks.Remove(row);
 
-            var cardsInDecksrows = from o in App.Database.cardsInDecks select o;
-            foreach (var row in cardsInDecksrows) App.Database.cardsInDecks.Remove(row);
+            var cardsInDecksrows = from o in cardsInDecks select o;
+            foreach (var row in cardsInDecksrows) cardsInDecks.Remove(row);
 
-            var Tagsrows = from o in App.Database.Tags select o;
-            foreach (var row in Tagsrows) App.Database.Tags.Remove(row);
+            var Tagsrows = from o in Tags select o;
+            foreach (var row in Tagsrows) Tags.Remove(row);
 
-            App.Database.SaveChanges();
+            SaveChanges();
 
             MessageBoxHelper.ShowMsg("DB successfully erased");
 
@@ -141,7 +141,7 @@ namespace MaGeek.Data
         {
             List<string> tags = new List<string>();
             tags.Add("");
-            var x = App.Database.Tags.GroupBy(test => test.Tag)
+            var x = Tags.GroupBy(test => test.Tag)
                 .Select(grp => grp.First()).ToList();
             foreach (var v in x)
             {

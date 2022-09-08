@@ -4,7 +4,7 @@ using System.Windows.Controls;
 namespace MaGeek.UI
 {
 
-    public partial class Options : UserControl
+    public partial class Options : Window
     {
 
         public Options()

@@ -1,0 +1,41 @@
+
+Creature (25)
+
+4 Voldaren Bloodcaster 
+1 Henrika Domnathi 
+4 Voldaren Epicure 
+4 Bloodtithe Harvester 
+2 Sokenzan Smelter 
+2 Vampire Socialite 
+2 Florian, Voldaren Scion 
+2 Dominating Vampire 
+4 Immersturm Predator
+
+Instant (7)
+
+2 Infernal Grasp 
+4 Voltage Surge 
+1 Village Rites
+
+Artifact (4)
+
+2 Mukotai Soulripper 
+2 Oni-Cult Anvil
+
+Land (24)
+
+2 Blightstep Pathway 
+3 Voldaren Estate 
+2 Den of the Bugbear 
+4 Bloodfell Caves 
+7 Swamp 
+6 Mountain
+
+Sideboard (15)
+
+1 Infernal Grasp 
+3 Duress 
+3 Falkenrath Forebear 
+4 Abrade 
+2 Callous Bloodmage 
+2 Anje, Maid of Dishonor 

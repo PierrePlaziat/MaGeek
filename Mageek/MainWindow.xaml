@@ -24,7 +24,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <cc:TopMenu Grid.Row="0" Grid.ColumnSpan="3"/>
+        <cc:TopMenu Grid.Row="0" />
 
         <avalonDock:DockingManager Grid.Row="1" x:Name="dockingManager">
 
@@ -102,16 +102,16 @@
             
         </avalonDock:DockingManager>
 
-        <Button Grid.Column="1" Grid.Row="1"
+        <Button Grid.Column="1" Grid.RowSpan="3"
                 HorizontalAlignment="Stretch" 
                 VerticalAlignment="Center" 
                 Height="5000" 
                 Content=">"
                 Click="Button_Click"/>
 
-        <local:CardInspector x:Name="CardDetails" Grid.Column="2" Grid.Row="1"></local:CardInspector>
+        <local:CardInspector x:Name="CardDetails" Grid.Column="2" Grid.RowSpan="3"></local:CardInspector>
 
-        <cc:StateBar Grid.Row="3" Grid.ColumnSpan="3"></cc:StateBar>
+        <cc:StateBar Grid.Row="3"></cc:StateBar>
         
     </Grid>
     

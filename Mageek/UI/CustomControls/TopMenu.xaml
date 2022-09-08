@@ -8,23 +8,56 @@
              d:DesignHeight="20">
 
     <Menu Background="Black" Foreground="White">
+
+        <MenuItem Header="Profile">
+            <MenuItem Header="Current Profile" Foreground="Black"/>
+            <MenuItem Header="Change Profile" Foreground="Black">
+                <MenuItem Header="Profile1" Foreground="Black"/>
+                <MenuItem Header="Profile2" Foreground="Black"/>
+                <MenuItem Header="Profile3" Foreground="Black"/>
+            </MenuItem>
+            <MenuItem Header="Manage Profiles" Foreground="Black">
+                <MenuItem Header="Create New Profile" Foreground="Black"/>
+                <MenuItem Header="Rename Current Profile" Foreground="Black"/>
+                <MenuItem Header="Delete Current Profile" Foreground="Black"/>
+            </MenuItem>
+        </MenuItem>
+
         <MenuItem Header="File">
-            <MenuItem Header="Import" Foreground="Black" Click="Import_Click"/>
-            <MenuItem Header="Export" Foreground="Black" Click="Export_Click"/>
+            <MenuItem Header="Import" Foreground="Black">
+                <MenuItem Header="From Txt" Foreground="Black" Click="Import_Click"/>
+                <MenuItem Header="Set" Foreground="Black" Click="OpenWindow_SetImporter"/>
+                <MenuItem Header="Preconstruit" Foreground="Black" Click="OpenWindow_PrecoImporter"/>
+            </MenuItem>
+            <MenuItem Header="Export" Foreground="Black">
+                <MenuItem Header="Deck List" Foreground="Black" Click="OpenWindow_DeckListExporter"/>
+                <MenuItem Header="Proxy Print" Foreground="Black" Click="OpenWindow_ProxyPrint"/>
+            </MenuItem>
         </MenuItem>
+
         <MenuItem Header="Edit">
-            <MenuItem Header="Print" Foreground="Black" Click="Print_Click"/>
-            <MenuItem Header="Params" Foreground="Black" Click="Params_Click"/>
+            <MenuItem Header="Parameters" Foreground="Black" Click="Params_Click"/>
         </MenuItem>
-        <MenuItem Header="Windows">
-            <MenuItem Header="Card Searcher" Foreground="Black" Click="CardSearcher_Click"/>
-            <MenuItem Header="Deck List" Foreground="Black" Click="DeckList_Click"/>
-            <MenuItem Header="Deck Content" Foreground="Black" Click="DeckContent_Click"/>
+
+        <MenuItem Header="Display">
+            <MenuItem Header="Tools" Foreground="Black">
+                <MenuItem Header="Card Searcher" Foreground="Black" Click="CardSearcher_Click"/>
+                <MenuItem Header="Deck List" Foreground="Black" Click="DeckList_Click"/>
+                <MenuItem Header="Deck Content" Foreground="Black" Click="DeckContent_Click"/>
+                <MenuItem Header="Deck Stats" Foreground="Black" Click="DeckContent_Click"/>
+                <MenuItem Header="Deck Table" Foreground="Black" Click="DeckContent_Click"/>
+            </MenuItem>
+            <MenuItem Header="Layout" Foreground="Black">
+                <MenuItem Header="Save Current" Foreground="Black" Click="SaveCurrentLayout"/>
+                <MenuItem Header="Reset Default" Foreground="Black" Click="ResetDefaultLayout"/>
+                <Separator />
+                <MenuItem Header="Default Layout" Foreground="Black" Click="ResetDefaultLayout"/>
+            </MenuItem>
         </MenuItem>
-        <MenuItem Header="Layout">
-            <MenuItem Header="Save Current" Foreground="Black" Click="SaveCurrentLayout"/>
-            <MenuItem Header="Reset Default" Foreground="Black" Click="ResetDefaultLayout"/>
-            <Separator />
+        
+        <MenuItem Header="Help">
+            <MenuItem Header="About" Foreground="Black" Click="AboutClicked"/>
         </MenuItem>
+        
     </Menu>
 </UserControl>

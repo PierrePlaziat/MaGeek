@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,14 +16,22 @@ using System.Windows.Shapes;
 
 namespace MaGeek.UI.CustomControls
 {
-    /// <summary>
-    /// Logique d'interaction pour StateBar.xaml
-    /// </summary>
+
     public partial class StateBar : UserControl
     {
+
+        public int pendingImportCount
+        {
+            get { return App.CardManager.Importer.pendingCount; }
+        }
+
         public StateBar()
         {
             InitializeComponent();
         }
+
+        // TODO
+
     }
+
 }

@@ -226,11 +226,17 @@ namespace MaGeek.UI
             if (e.Key == Key.Enter) DoSearch();
         }
 
-        private async void DoSearch()
+        private void DoSearch()
         {
             if (string.IsNullOrEmpty(CurrentSearch.Text)) return;
             IsSearching = true;
-            await App.CardManager.Api.SearchCards(CurrentSearch.Text);
+            App.CardManager.Importer.AddImport(
+                new Data.PendingImport 
+                { 
+                    mode = Data.ImportMode.Card, 
+                    content = CurrentSearch.Text 
+                }
+            );
             ResetFilters();
             FilterName = CurrentSearch.Text;
             CurrentSearch.Text = "";

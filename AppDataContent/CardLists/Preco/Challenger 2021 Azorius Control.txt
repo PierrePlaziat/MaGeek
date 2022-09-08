@@ -1,0 +1,49 @@
+
+Creature (6)
+
+2 Skyclave Cleric 
+2 Dream Trawler 
+2 Archon of Sun's Grace
+
+Sorcery (4)
+
+1 Emeria's Call 
+2 Shatter the Sky 
+1 Doomskar
+
+Instant (10)
+
+3 Neutralize 
+1 Saw It Coming 
+1 Negate 
+3 Thirst for Meaning 
+2 Behold the Multiverse
+
+Artifact (2)
+
+2 Glass Casket
+
+Enchantment (14)
+
+1 Shark Typhoon 
+3 Elspeth Conquers Death 
+4 The Birth of Meletis 
+4 Omen of the Sea 
+2 Banishing Light
+
+Land (24)
+
+4 Temple of Enlightenment 
+8 Plains 
+8 Island 
+4 Tranquil Cove
+
+Sideboard (15)
+
+1 Archon of Sun's Grace 
+2 Banishing Light 
+2 Glass Casket 
+2 Skyclave Apparition 
+3 Confounding Conundrum 
+3 Mystical Dispute 
+2 Essence Scatter 

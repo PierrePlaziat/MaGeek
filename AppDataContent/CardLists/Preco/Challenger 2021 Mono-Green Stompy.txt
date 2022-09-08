@@ -1,0 +1,42 @@
+
+Planeswalker (1)
+
+1 Garruk, Unleashed
+
+Creature (25)
+
+3 Kazandu Mammoth 
+2 Stonecoil Serpent 
+3 Swarm Shambler 
+2 Scavenging Ooze 
+2 Wildborn Preserver 
+2 Yorvo, Lord of Garenbrig 
+2 Gemrazer 
+4 Wildwood Tracker 
+2 Syr Faren, the Hengehammer 
+3 Thrashing Brontodon
+
+Sorcery (9)
+
+2 Turntimber Symbiosis 
+4 Lovestruck Beast 
+3 Primal Might
+
+Instant (6)
+
+4 Ram Through 
+2 Snakeskin Veil
+
+Land (19)
+
+19 Forest
+
+Sideboard (15)
+
+1 Thrashing Brontodon 
+2 Snakeskin Veil 
+2 Khalni Ambush 
+3 Chainweb Aracnir 
+2 Return to Nature 
+3 Oakhame Adversary 
+2 Run Afoul 
