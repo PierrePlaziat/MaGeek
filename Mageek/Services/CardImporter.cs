@@ -80,9 +80,11 @@ namespace MaGeek.Data
 
         #region PUBLIC
 
-        public int pendingCount { get { return pendingImports.Count; } }
+        public int pendingCount { get { return pendingImports.Count + (currentlyImporting != null ? 1 : 0);} }
 
         public int workerProgress { get; set; }
+
+        public string State { get; set; }
 
         public List<ISet> GetAllSets()
         {
@@ -127,24 +129,29 @@ namespace MaGeek.Data
 
         private void DoNextImport(object sender, DoWorkEventArgs e)
         {
+            State = "Init";
             ImportWorker.ReportProgress(0);
             List<Tuple<int,string>> deckList = null;
-            ImportWorker.ReportProgress(5);
             List<ICard> importResult = new List<ICard>();
             ImportWorker.ReportProgress(10);
-            // parse list 
+            State = "Parse List";
             ImportWorker.ReportProgress(15);
             if (currentlyImporting.Value.mode==ImportMode.Deck) importResult = ImportDeck(currentlyImporting.Value.content).Result;
             ImportWorker.ReportProgress(20);
-            // ask api
+            State = "Ask Api";
             switch (currentlyImporting.Value.mode)
             {
                 case ImportMode.Deck: deckList = ParseCardList(currentlyImporting.Value.content); break;
                 case ImportMode.Card: importResult = ImportCard(currentlyImporting.Value.content).Result; break;
                 case ImportMode.Set:  importResult = ImportSet(currentlyImporting.Value.content).Result; break;
             }
-            // record results
             ImportWorker.ReportProgress(50);
+            if (importResult == null)
+            {
+                State = "???";
+                return;
+            }
+            State = "Record cards in local";
             foreach (ICard iCard in importResult)
             {
                 if (!IsAlreadyLocalCard(iCard))
@@ -155,12 +162,20 @@ namespace MaGeek.Data
                 {
                     App.Database.cardVariants.Add(new MagicCardVariant(iCard));
                 }
-                App.Database.SaveChanges();
             }
             ImportWorker.ReportProgress(75);
-            if (currentlyImporting.Value.mode == ImportMode.Deck) MakeDeck(currentlyImporting.Value.title, deckList);
-            ImportWorker.ReportProgress(80);
+            State = "Saving DB";
             App.Database.SaveChanges();
+            if (currentlyImporting.Value.mode == ImportMode.Deck)
+            {
+                State = "Make Deck";
+                var title = (currentlyImporting.Value.title == null) ? DateTime.Now.ToString() : currentlyImporting.Value.title;
+                MakeDeck(currentlyImporting.Value.title, deckList);
+            }
+            ImportWorker.ReportProgress(80);
+            State = "Saving DB";
+            App.Database.SaveChanges();
+            State = "Done";
             ImportWorker.ReportProgress(100);
             currentlyImporting = null;
         }
@@ -196,6 +211,7 @@ namespace MaGeek.Data
 
         private async Task<List<ICard>> ImportCard(string content)
         {
+            State = "Import Card : " + content;
             ICardService service = mtg.GetCardService();
             IOperationResult<List<ICard>> tmpResult = null;
             List<ICard> cards = new();
@@ -258,11 +274,15 @@ namespace MaGeek.Data
             {
                 if (!string.IsNullOrEmpty(line))
                 {
-                    // TODO debug
-                    int quantity = int.Parse(line.Split(" ")[0]);
-                    string name = line[(line.IndexOf(' ') + 1)..];
-                    name = name.Split(" // ")[0];
-                    tuples.Add(new Tuple<int, string>(quantity,name) );
+                    State = "Parse List : " + line;
+                    try
+                    {
+                        int quantity = int.Parse(line.Split(" ")[0]);
+                        string name = line[(line.IndexOf(' ') + 1)..];
+                        name = name.Split(" // ")[0];
+                        tuples.Add(new Tuple<int, string>(quantity, name));
+                    }
+                    catch {};
                 }
             }
             return tuples;
@@ -276,9 +296,31 @@ namespace MaGeek.Data
                 int quantity = cardOccurence.Item1;
                 string name = cardOccurence.Item2;
                 MagicCard card = App.Database.cards.Where(x => x.CardId == name).FirstOrDefault();
-                MagicCardVariant variant = card.Variants[0];
-                if (card!=null) App.CardManager.AddCardToDeck(variant, deck, quantity);
+                if (card != null)
+                {
+                    MagicCardVariant variant = card.Variants[0];
+                    AddCardToDeck(variant, deck, quantity);
+                }
             }
+            App.Database.SaveChanges();
+            App.State.ModifDeck();
+        }
+        public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
+        {
+            if (card == null || deck == null) return;
+            var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
+            if (cardRelation == null)
+            {
+                cardRelation = new CardDeckRelation()
+                {
+                    Card = card,
+                    Deck = deck,
+                    Quantity = 0,
+                    RelationType = relation
+                };
+                deck.CardRelations.Add(cardRelation);
+            }
+            cardRelation.Quantity += qty;
         }
 
         #endregion

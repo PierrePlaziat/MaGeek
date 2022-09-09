@@ -53,6 +53,7 @@ namespace MaGeek.UI.Windows.Importers
         {
             var title = PrecoListView.SelectedItem as string;
             ImportPreco(title);
+            Close();
         }
 
         private void ImportPreco(string title)

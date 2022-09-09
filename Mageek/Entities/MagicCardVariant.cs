@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -33,6 +34,7 @@ namespace MaGeek.Data.Entities
             Rarity = selectedCard.Rarity;
             SetName = selectedCard.SetName;
             IsCustom = 0;
+            Card = App.Database.cards.Where(x=>x.CardId==selectedCard.Name).FirstOrDefault();
         }
 
         #endregion

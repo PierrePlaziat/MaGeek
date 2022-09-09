@@ -60,6 +60,7 @@ namespace MaGeek.UI.Windows.Importers
         {
             var title = setList[SetListView.SelectedIndex].Name;
             ImportSet(title);
+            Close();
         }
 
     }

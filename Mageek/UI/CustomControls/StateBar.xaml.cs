@@ -49,6 +49,13 @@ namespace MaGeek.UI.CustomControls
             set { currentPercent = value; OnPropertyChanged(); }
         }
 
+        string state = "";
+        public string State
+        {
+            get { return state; }
+            set { state = value; OnPropertyChanged(); }
+        }
+
         public StateBar()
         {
             InitializeComponent();
@@ -68,6 +75,7 @@ namespace MaGeek.UI.CustomControls
         {
             ImportCount = App.CardManager.Importer.pendingCount;
             CurrentPercent = App.CardManager.Importer.workerProgress;
+            State = App.CardManager.Importer.State;
         }
 
     }
