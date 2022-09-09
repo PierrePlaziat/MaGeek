@@ -1,4 +1,5 @@
 ﻿using MaGeek.Data.Entities;
+using MaGeek.UI;
 using MtgApiManager.Lib.Core;
 using MtgApiManager.Lib.Model;
 using MtgApiManager.Lib.Service;
@@ -76,6 +77,11 @@ namespace MaGeek.Data
             ImportWorker.WorkerReportsProgress = true;
         }
 
+        private void ReportImportProgress(object sender, ProgressChangedEventArgs e)
+        {
+            workerProgress = e.ProgressPercentage;
+        }
+
         #endregion
 
         #region PUBLIC
@@ -116,6 +122,8 @@ namespace MaGeek.Data
 
         #region Methods
 
+        #region LOOP
+
         private void LoopTimer(object sender, ElapsedEventArgs e)
         {
             if (!ImportWorker.IsBusy)  CheckNextImport();
@@ -129,56 +137,45 @@ namespace MaGeek.Data
 
         private void DoNextImport(object sender, DoWorkEventArgs e)
         {
-            State = "Init";
+            State = "Retrieving cards from Api";
             ImportWorker.ReportProgress(0);
-            List<Tuple<int,string>> deckList = null;
-            List<ICard> importResult = new List<ICard>();
-            ImportWorker.ReportProgress(10);
-            State = "Parse List";
-            ImportWorker.ReportProgress(15);
-            if (currentlyImporting.Value.mode==ImportMode.Deck) importResult = ImportDeck(currentlyImporting.Value.content).Result;
-            ImportWorker.ReportProgress(20);
-            State = "Ask Api";
-            switch (currentlyImporting.Value.mode)
-            {
-                case ImportMode.Deck: deckList = ParseCardList(currentlyImporting.Value.content); break;
-                case ImportMode.Card: importResult = ImportCard(currentlyImporting.Value.content).Result; break;
-                case ImportMode.Set:  importResult = ImportSet(currentlyImporting.Value.content).Result; break;
-            }
+            List<ICard> importResult = RetrieveFromApi();
+
+            State = "Recording cards in local";
             ImportWorker.ReportProgress(50);
-            if (importResult == null)
-            {
-                State = "???";
-                return;
-            }
-            State = "Record cards in local";
-            foreach (ICard iCard in importResult)
-            {
-                if (!IsAlreadyLocalCard(iCard))
-                {
-                    App.Database.cards.Add(new MagicCard(iCard));
-                }
-                if (!IsAlreadyLocalCardVariant(iCard))
-                {
-                    App.Database.cardVariants.Add(new MagicCardVariant(iCard));
-                }
-            }
+            RecordLocal(importResult);
+
+            State = "Making a Deck";
             ImportWorker.ReportProgress(75);
-            State = "Saving DB";
-            App.Database.SaveChanges();
-            if (currentlyImporting.Value.mode == ImportMode.Deck)
-            {
-                State = "Make Deck";
-                var title = (currentlyImporting.Value.title == null) ? DateTime.Now.ToString() : currentlyImporting.Value.title;
-                MakeDeck(currentlyImporting.Value.title, deckList);
-            }
-            ImportWorker.ReportProgress(80);
-            State = "Saving DB";
-            App.Database.SaveChanges();
+            if (currentlyImporting.Value.mode == ImportMode.Deck) MakeDeck();
+
             State = "Done";
             ImportWorker.ReportProgress(100);
             currentlyImporting = null;
         }
+
+        private List<ICard> RetrieveFromApi()
+        {
+            switch (currentlyImporting.Value.mode)
+            {
+                case ImportMode.Deck: return RetrieveList(ParseCardList(currentlyImporting.Value.content)).Result;
+                case ImportMode.Card: return RetrieveCard(currentlyImporting.Value.content).Result;
+                case ImportMode.Set: return RetrieveSet(currentlyImporting.Value.content).Result;
+                default: return new List<ICard>();
+            }
+        }
+
+        private void RecordLocal(List<ICard> results,bool onlyOne)
+        {
+            foreach (ICard foundCard in results)
+            {
+                MagicCard card = SaveLocalCard(foundCard);
+                card.AddVariant(foundCard);
+            }
+            App.Database.SaveChanges();
+        }
+
+        #region Logic
 
         private bool IsAlreadyLocalCard(ICard iCard)
         {
@@ -190,26 +187,18 @@ namespace MaGeek.Data
             return App.Database.cardVariants.Where(x => x.Id == iCard.Id).Any();
         }
 
-        private void ReportImportProgress(object sender, ProgressChangedEventArgs e)
-        {
-            workerProgress = e.ProgressPercentage;
-        }
-
-        #region Logic
-
-        private async Task<List<ICard>> ImportDeck(string content)
+        private async Task<List<ICard>> RetrieveList(List<Tuple<int, string>> cardList)
         {
             List<ICard> cards = new();
-            var cardlines = ParseCardList(content);
-            foreach (var cardline in cardlines)
+            foreach (var cardLine in cardList)
             {
-                var tmp = await ImportCard(cardline.Item2);
-                cards.AddRange(tmp);
+                var foundCards = await RetrieveCard(cardLine.Item2);
+                cards.AddRange(foundCards);
             }
             return cards;
         }
 
-        private async Task<List<ICard>> ImportCard(string content)
+        private async Task<List<ICard>> RetrieveCard(string content)
         {
             State = "Import Card : " + content;
             ICardService service = mtg.GetCardService();
@@ -238,7 +227,7 @@ namespace MaGeek.Data
             return cards;
         }
 
-        private async Task<List<ICard>> ImportSet(string content)
+        private async Task<List<ICard>> RetrieveSet(string content)
         {
             ICardService service = mtg.GetCardService();
             IOperationResult<List<ICard>> tmpResult = null;
@@ -288,10 +277,11 @@ namespace MaGeek.Data
             return tuples;
         }
 
-        private void MakeDeck(string title,List<Tuple<int, string>> deckList)
+        private void MakeDeck()
         {
+            var title = (currentlyImporting.Value.title == null) ? DateTime.Now.ToString() : currentlyImporting.Value.title
             var deck = new MagicDeck(title);
-            foreach (var cardOccurence in deckList)
+            foreach (var cardOccurence in ParseCardList(currentlyImporting.Value.content))
             {
                 int quantity = cardOccurence.Item1;
                 string name = cardOccurence.Item2;
@@ -305,6 +295,7 @@ namespace MaGeek.Data
             App.Database.SaveChanges();
             App.State.ModifDeck();
         }
+
         public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
         {
             if (card == null || deck == null) return;
