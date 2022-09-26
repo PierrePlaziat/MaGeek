@@ -5,9 +5,9 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MaGeek.UI"
       xmlns:cwpf="clr-namespace:Plaziat.CommonWpf"
-      mc:Ignorable="d">
+      mc:Ignorable="d" Width="255">
 
-    <Grid Background="red">
+    <Grid Width="255">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -21,7 +21,7 @@
             <RowDefinition Height="100"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <local:CardIllustration x:Name="yo" Width="250" Height="348" Margin="0" Background="Blue"
+        <local:CardIllustration x:Name="yo" Width="255" Height="348" Margin="0" Background="Blue"
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
                                 SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
@@ -48,9 +48,12 @@
 
         </DockPanel>
 
-        <Button Grid.Row="2" Click="LaunchCustomCardCreation">Create custom</Button>
+        <DockPanel Grid.Row="2">
+            <Button Width="75" Click="Button_Click">Update</Button>
+            <Button Click="LaunchCustomCardCreation">Create custom</Button>
+        </DockPanel>
 
-        <ListView  Grid.Row="3" BorderThickness="0" x:Name="VariantListBox"  
+        <ListView Grid.Row="3" BorderThickness="0" x:Name="VariantListBox"  
                   ItemsSource="{Binding Variants}" 
                   Background="#333" MouseUp="SelectVariant" SelectedIndex="0">
             <ListView.ContextMenu>
@@ -81,7 +84,7 @@
                                 </Style>
                             </Border.Style>
                         </Border>
-                        <Label Foreground="White" Content="{Binding SetName}"></Label>
+                        <Label Content="{Binding SetName}" Foreground="{Binding LineColoration}"></Label>
                     </DockPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>

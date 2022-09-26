@@ -38,7 +38,7 @@ namespace MaGeek.UI.Windows.Importers
 
         private void LoadSets()
         {
-            foreach (var set in App.CardManager.Importer.GetAllSets())
+            foreach (var set in App.CardManager.Importer.GetExistingSets())
             {
                 SetList.Add(set);
             }
@@ -47,7 +47,7 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ImportSet(string title)
         {
-            App.CardManager.Importer.AddImport(
+            App.CardManager.Importer.AddImportToQueue(
                 new Data.PendingImport
                 {
                     mode = Data.ImportMode.Set,

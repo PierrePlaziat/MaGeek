@@ -23,10 +23,10 @@ namespace MaGeek.UI
         {
             bool asOwned = AsOwnedCheckBox.IsChecked.Value;
             string title = string.IsNullOrEmpty(DeckTitle.Text) ? DateTime.Now.ToString() : DeckTitle.Text;
-            App.CardManager.Importer.AddImport(
+            App.CardManager.Importer.AddImportToQueue(
                 new Data.PendingImport
                 {
-                    mode = Data.ImportMode.Deck,
+                    mode = Data.ImportMode.List,
                     content = RichTextBoxHelper.GetContent(ImportTxt),
                     title = title,
                     asOwned = asOwned

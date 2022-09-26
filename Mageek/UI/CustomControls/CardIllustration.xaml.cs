@@ -52,7 +52,7 @@ namespace MaGeek.UI
                 OnPropertyChanged("HasPower");
                 OnPropertyChanged("SelectedCard");
                 SetValue(CardProperty, value);
-                //if (SelectedVariant != null)
+                if (SelectedVariant != null)
                 {
                     CardImage = new NotifyTaskCompletion<BitmapImage>(SelectedVariant.RetrieveImage());
                 }

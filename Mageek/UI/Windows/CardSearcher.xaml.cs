@@ -63,7 +63,7 @@ namespace MaGeek.UI
         {
             get
             {
-                return App.Database.AvailableTags();
+                return App.CardManager.AvailableTags();
             }
         }
 
@@ -230,10 +230,10 @@ namespace MaGeek.UI
         {
             if (string.IsNullOrEmpty(CurrentSearch.Text)) return;
             IsSearching = true;
-            App.CardManager.Importer.AddImport(
+            App.CardManager.Importer.AddImportToQueue(
                 new Data.PendingImport 
                 { 
-                    mode = Data.ImportMode.Card, 
+                    mode = Data.ImportMode.Search, 
                     content = CurrentSearch.Text 
                 }
             );

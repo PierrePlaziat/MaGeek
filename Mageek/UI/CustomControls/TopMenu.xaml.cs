@@ -16,10 +16,9 @@ namespace MaGeek.UI.CustomControls
 
         #region Import Export
 
-        private void Import_Click(object sender, RoutedEventArgs e)
+        private void OpenWindow_TxtImporter(object sender, RoutedEventArgs e)
         {
             var window = new TxtImporter();
-            window.Width = 260;
             window.Show();
         }
 
@@ -47,17 +46,40 @@ namespace MaGeek.UI.CustomControls
             window.Show();
         }
 
+        #endregion
 
+        #region Database
+
+        private void BackupDb(object sender, RoutedEventArgs e)
+        {
+            App.Database.BackupDb();
+        }
+
+        private void RestoreDb(object sender, RoutedEventArgs e)
+        {
+            App.Database.RestoreDb();
+        }
+
+        private void EraseDb(object sender, RoutedEventArgs e)
+        {
+            App.Database.EraseDb();
+        }
 
         #endregion
 
-        #region Tools
+        #region Language
 
-        private void Params_Click(object sender, RoutedEventArgs e)
+        private void ChangeLanguage(object sender, RoutedEventArgs e)
         {
-            var window = new Options();
-            window.Show();
+            MenuItem item = sender as MenuItem;
+            App.State.SetForeignLanguage(item.Header.ToString());
         }
+
+        #endregion
+
+        #region Display
+
+        #region Tools
 
         private void CardSearcher_Click(object sender, RoutedEventArgs e)
         {
@@ -90,10 +112,16 @@ namespace MaGeek.UI.CustomControls
 
         #endregion
 
+        #endregion
+
+        #region Help
+
         private void AboutClicked(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/PierrePlaziat/MaGeek");
         }
+
+        #endregion
     }
 
 }

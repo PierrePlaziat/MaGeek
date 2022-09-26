@@ -1,12 +1,16 @@
-﻿<Window x:Class="MaGeek.UI.Windows.ImportExport.ProxyPrint"
+﻿<Window x:Class="MaGeek.Welcome"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MaGeek.UI.Windows.ImportExport"
+        xmlns:local="clr-namespace:MaGeek"
         mc:Ignorable="d"
-        Title="ProxyPrint" Height="450" Width="800">
-    <Grid Name="DocumentPath">
-        <Label>Test</Label>
-    </Grid>
+        Title="Welcome" Height="450" Width="800">
+    
+    <StackPanel Background="#333">
+
+        <Label></Label>
+        
+    </StackPanel>
+    
 </Window>

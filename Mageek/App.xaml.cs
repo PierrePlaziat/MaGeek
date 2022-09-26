@@ -1,6 +1,5 @@
-﻿using MaGeek.Data;
-using System.IO;
-using System.Windows;
+﻿using System.Windows;
+using MaGeek.Data;
 
 namespace MaGeek
 {
@@ -8,15 +7,21 @@ namespace MaGeek
     public partial class App : Application
     {
 
-        public static AppState State = new AppState();
         public static LocalDb Database = new LocalDb(); 
         public static CardManager CardManager = new CardManager();
+        public static AppState State = new AppState();
 
         public App()
         {
-            Directory.CreateDirectory(@"./CardsIllus");
+            Database.InitDb();
         }
-        
+
+        internal static void Restart()
+        {
+            System.Diagnostics.Process.Start(ResourceAssembly.Location);
+            Current.Shutdown();
+        }
+
     }
 
 }

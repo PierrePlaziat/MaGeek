@@ -8,35 +8,32 @@
              d:DesignHeight="20">
 
     <Menu Background="Black" Foreground="White">
-
-        <MenuItem Header="Profile">
-            <MenuItem Header="Current Profile" Foreground="Black"/>
-            <MenuItem Header="Change Profile" Foreground="Black">
-                <MenuItem Header="Profile1" Foreground="Black"/>
-                <MenuItem Header="Profile2" Foreground="Black"/>
-                <MenuItem Header="Profile3" Foreground="Black"/>
-            </MenuItem>
-            <MenuItem Header="Manage Profiles" Foreground="Black">
-                <MenuItem Header="Create New Profile" Foreground="Black"/>
-                <MenuItem Header="Rename Current Profile" Foreground="Black"/>
-                <MenuItem Header="Delete Current Profile" Foreground="Black"/>
-            </MenuItem>
+        <MenuItem Header="Import">
+            <MenuItem Header="From Txt" Foreground="Black" Click="OpenWindow_TxtImporter"/>
+            <MenuItem Header="Set" Foreground="Black" Click="OpenWindow_SetImporter"/>
+            <MenuItem Header="Preconstruit" Foreground="Black" Click="OpenWindow_PrecoImporter"/>
+        </MenuItem>
+        <MenuItem Header="Export">
+            <MenuItem Header="Deck List" Foreground="Black" Click="OpenWindow_DeckListExporter"/>
+            <MenuItem Header="Proxy Print" Foreground="Black" Click="OpenWindow_ProxyPrint"/>
         </MenuItem>
 
-        <MenuItem Header="File">
-            <MenuItem Header="Import" Foreground="Black">
-                <MenuItem Header="From Txt" Foreground="Black" Click="Import_Click"/>
-                <MenuItem Header="Set" Foreground="Black" Click="OpenWindow_SetImporter"/>
-                <MenuItem Header="Preconstruit" Foreground="Black" Click="OpenWindow_PrecoImporter"/>
-            </MenuItem>
-            <MenuItem Header="Export" Foreground="Black">
-                <MenuItem Header="Deck List" Foreground="Black" Click="OpenWindow_DeckListExporter"/>
-                <MenuItem Header="Proxy Print" Foreground="Black" Click="OpenWindow_ProxyPrint"/>
-            </MenuItem>
+        <MenuItem Header="Database">
+            <MenuItem Header="Backup" Foreground="Black" Click="BackupDb"/>
+            <MenuItem Header="Restore" Foreground="Black" Click="RestoreDb"/>
+            <MenuItem Header="Erase" Foreground="Black" Click="EraseDb"/>
         </MenuItem>
 
-        <MenuItem Header="Edit">
-            <MenuItem Header="Parameters" Foreground="Black" Click="Params_Click"/>
+        <MenuItem Header="Language">
+            <MenuItem Header="French" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="German" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Spanish" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Italian" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Portuguese (Brazil)" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Japanese" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Chinese" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Korean" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Russian" Foreground="Black" Click="ChangeLanguage"/>
         </MenuItem>
 
         <MenuItem Header="Display">

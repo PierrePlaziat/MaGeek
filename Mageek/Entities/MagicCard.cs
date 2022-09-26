@@ -37,7 +37,6 @@ namespace MaGeek.Data.Entities
             Power = selectedCard.Power;
             Toughness = selectedCard.Toughness;
             AddNames(selectedCard.ForeignNames);
-            //AddLegalities(selectedCard.Legalities);
             CollectedQuantity = 0;
         }
 
@@ -48,6 +47,8 @@ namespace MaGeek.Data.Entities
             variant = new MagicCardVariant(iCard);
             Variants.Add(variant);
             AddNames(iCard.ForeignNames);
+            // 
+            if (string.IsNullOrEmpty(FavouriteVariant) && !string.IsNullOrEmpty(variant.ImageUrl)) FavouriteVariant = variant.Id;
         }
 
         private void AddNames(List<IForeignName> foreignNames)

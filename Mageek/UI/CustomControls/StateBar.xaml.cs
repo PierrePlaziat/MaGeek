@@ -73,8 +73,8 @@ namespace MaGeek.UI.CustomControls
 
         private void LoopTimer(object sender, ElapsedEventArgs e)
         {
-            ImportCount = App.CardManager.Importer.pendingCount;
-            CurrentPercent = App.CardManager.Importer.workerProgress;
+            ImportCount = App.CardManager.Importer.PendingCount;
+            CurrentPercent = App.CardManager.Importer.WorkerProgress;
             State = App.CardManager.Importer.State;
         }
 

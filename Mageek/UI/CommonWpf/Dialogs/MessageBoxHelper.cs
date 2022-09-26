@@ -1,5 +1,4 @@
 ﻿using MaGeek.Utils.CommonWpf;
-using System;
 using System.Windows;
 
 namespace Plaziat.CommonWpf

@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MaGeek.UI.Windows.ImportExport"
         mc:Ignorable="d"
-        Title="DeckListExporter" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="DeckListExporter" Height="500" Width="300" Background="Black">
+    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TextBox Background="Black" Foreground="White" Name="ExportBox"  VerticalContentAlignment="Stretch"  Height="500" Width="300"></TextBox>
+    </StackPanel>
 </Window>

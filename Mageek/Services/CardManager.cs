@@ -1,4 +1,5 @@
 ﻿using MaGeek.Data.Entities;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -97,6 +98,19 @@ namespace MaGeek.Data
         }
 
         #endregion
+
+        internal List<string> AvailableTags()
+        {
+            List<string> tags = new List<string>();
+            tags.Add("");
+            var x = App.Database.Tags.GroupBy(test => test.Tag)
+                .Select(grp => grp.First()).ToList();
+            foreach (var v in x)
+            {
+                tags.Add(v.Tag);
+            }
+            return tags;
+        }
 
     }
 

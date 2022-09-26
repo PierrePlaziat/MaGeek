@@ -67,6 +67,7 @@ namespace MaGeek.UI
             {
                 SelectedVariant = selectedCard.Variants.Where(x => !string.IsNullOrEmpty(x.ImageUrl)).FirstOrDefault();
             }
+            if(selectedVariant != null) VariantListBox.SelectedItem = selectedVariant;
         }
 
         private MagicCardVariant selectedVariant;
@@ -226,7 +227,7 @@ namespace MaGeek.UI
 
         private List<string> GetExistingTags()
         {
-            return App.Database.AvailableTags();
+            return App.CardManager.AvailableTags();
         }
 
         private void addItem(string text)
@@ -258,7 +259,11 @@ namespace MaGeek.UI
         }
 
         #endregion
-    
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 }

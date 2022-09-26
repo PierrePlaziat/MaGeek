@@ -14,8 +14,8 @@ namespace MaGeek.UI
             SelectCurrentLanguage();
         }
 
-        private void SaveDb_Click(object sender, RoutedEventArgs e) { App.Database.SaveDb(); }
-        private void LoadDb_Click(object sender, RoutedEventArgs e) { App.Database.LoadDb(); }
+        private void SaveDb_Click(object sender, RoutedEventArgs e) { App.Database.BackupDb(); }
+        private void LoadDb_Click(object sender, RoutedEventArgs e) { App.Database.RestoreDb(); }
         private void EraseDb_Click(object sender, RoutedEventArgs e) { App.Database.EraseDb(); }
 
         private void SelectCurrentLanguage()

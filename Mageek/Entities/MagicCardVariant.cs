@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace MaGeek.Data.Entities
@@ -39,6 +40,8 @@ namespace MaGeek.Data.Entities
 
         #endregion
 
+        #region Methods
+
         public async Task<BitmapImage> RetrieveImage()
         {
             var taskCompletion = new TaskCompletionSource<BitmapImage>();
@@ -64,6 +67,15 @@ namespace MaGeek.Data.Entities
             taskCompletion.SetResult(img);
             return img;
         }
+
+        // Should be done via data trigger so this isnt here
+        public Brush LineColoration { 
+            get { 
+                return string.IsNullOrEmpty(ImageUrl) ? Brushes.Black : Brushes.White; 
+            } 
+        }
+
+        #endregion
 
     }
 }
