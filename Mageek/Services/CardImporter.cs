@@ -38,6 +38,13 @@ namespace MaGeek.Data
             } 
         }
 
+        private string infoText = "";
+        public string InfoText
+        {
+            get { return infoText; }
+            set { infoText = value; }
+        }
+
         #endregion
 
         #region CTOR
@@ -58,7 +65,8 @@ namespace MaGeek.Data
 
         private void LoopTimer(object sender, ElapsedEventArgs e)
         {
-            if (!Worker.IsBusy) CheckNextImport();
+            UpdateInfoText();
+            if (!Worker.IsBusy) CheckNextImport(); 
         }
 
         private void ConfigureWorker()
@@ -103,6 +111,15 @@ namespace MaGeek.Data
             PendingImport.Enqueue(importation);
         }
 
+        private void UpdateInfoText()
+        {
+            int i = 0;
+            string s = "";
+            if (CurrentImport.HasValue) s += i++ + " : " + CurrentImport.Value.mode + " - " + CurrentImport.Value.content.Split("\n")[0];
+            foreach (var v in PendingImport) s += "\n" + i++ + " : " + v.mode + " - " + v.content.Split("\n")[0];
+            InfoText = s;
+        }
+
         #endregion
 
         #region Methods
@@ -131,6 +148,7 @@ namespace MaGeek.Data
 
             CurrentImport = null;
             State = "Done";
+            App.State.ModifCollec();
         }
 
         #endregion
@@ -372,7 +390,7 @@ namespace MaGeek.Data
 
         #endregion
 
-        #endregion 
+        #endregion
 
     }
 

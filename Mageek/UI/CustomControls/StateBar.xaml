@@ -10,7 +10,7 @@
     <Grid Background="Black">
         <DockPanel>
             <Label Content="{Binding ImportCount}"/>
-            <Label>Importations</Label>
+            <Label ToolTip="{Binding InfoText}">Importations</Label>
             <Grid>
                 <ProgressBar Margin="3" Value="{Binding CurrentPercent}"/>
                 <Label Content="{Binding State}" Foreground="Black"/>

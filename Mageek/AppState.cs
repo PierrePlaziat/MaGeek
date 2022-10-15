@@ -1,5 +1,6 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Events;
+using System;
 using System.Linq;
 
 namespace MaGeek
@@ -7,7 +8,7 @@ namespace MaGeek
     public class AppState
     {
 
-        #region Langue
+        #region Change Lang Event
 
         public string GetForeignLanguage()
         {
@@ -26,17 +27,15 @@ namespace MaGeek
         public void SetForeignLanguage(string value)
         {
             var p = App.Database.Params.Where(x => x.ParamName == "ForeignLanguage");
-            if (p.Any())
-            {
-                App.Database.Params.Remove(p.FirstOrDefault());
-            }
+            if (p.Any()) App.Database.Params.Remove(p.FirstOrDefault());
             App.Database.Params.Add(new Entities.Param() { ParamValue = value, ParamName = "ForeignLanguage" });
             App.Database.SaveChanges();
+            App.Restart();
         }
 
         #endregion
 
-        #region DECK FOCUS GESTION
+        #region Deck Focis Event
 
         private MagicDeck selectedDeck = null;
 
@@ -72,7 +71,7 @@ namespace MaGeek
 
         #endregion
 
-        #region CARD FOCUS GESTION
+        #region CardFocusEvent
 
         private MagicCard selectedCard = null;
         public MagicCard SelectedCard { get { return selectedCard; } }
@@ -86,6 +85,22 @@ namespace MaGeek
         protected virtual void RaiseCardSelect(SelectCardEventArgs e)
         {
             CardEventHandler raiseEvent = RaiseSelectCard;
+            if (raiseEvent != null) raiseEvent(this, e);
+        }
+
+        #endregion
+
+        #region Collec Modif Event
+
+        public void ModifCollec()
+        {
+            RaiseCollecModif(new CollecEventArgs());
+        }
+        public delegate void CollecEventHandler(object sender, CollecEventArgs args);
+        public event CollecEventHandler RaiseCollec;
+        protected virtual void RaiseCollecModif(CollecEventArgs e)
+        {
+            CollecEventHandler raiseEvent = RaiseCollec;
             if (raiseEvent != null) raiseEvent(this, e);
         }
 

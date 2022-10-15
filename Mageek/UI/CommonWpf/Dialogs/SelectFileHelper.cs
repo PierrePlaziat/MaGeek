@@ -31,11 +31,10 @@ namespace Plaziat.CommonWpf
             return null;
         }
 
-        public static string SelectAFile(string filter, string defaultExt)
+        public static string SelectAFile(string filter)
         {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.Filter = filter;
-            dlg.DefaultExt = defaultExt;
             if (dlg.ShowDialog() == true) return dlg.FileName;
             return null;
         }

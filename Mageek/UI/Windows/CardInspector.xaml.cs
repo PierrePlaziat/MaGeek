@@ -255,14 +255,20 @@ namespace MaGeek.UI
 
         private void NewTag_LostFocus(object sender, RoutedEventArgs e)
         {
-            sugestions.Visibility = System.Windows.Visibility.Collapsed;
+            sugestions.Visibility = Visibility.Collapsed;
         }
 
         #endregion
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void UpdateCardVariants(object sender, RoutedEventArgs e)
         {
-
+            App.CardManager.Importer.AddImportToQueue(
+                new Data.PendingImport
+                {
+                    mode = Data.ImportMode.Update,
+                    content = SelectedCard.CardId
+                }
+            );
         }
     }
 

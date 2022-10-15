@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaGeek.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -56,6 +57,8 @@ namespace MaGeek.UI.CustomControls
             set { state = value; OnPropertyChanged(); }
         }
 
+        public string InfoText { get { return App.CardManager.Importer.InfoText; } }
+
         public StateBar()
         {
             InitializeComponent();
@@ -76,6 +79,7 @@ namespace MaGeek.UI.CustomControls
             ImportCount = App.CardManager.Importer.PendingCount;
             CurrentPercent = App.CardManager.Importer.WorkerProgress;
             State = App.CardManager.Importer.State;
+            OnPropertyChanged("InfoText");
         }
 
     }

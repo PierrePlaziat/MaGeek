@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace MaGeek.UI.Windows.Importers
@@ -58,7 +57,7 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var title = setList[SetListView.SelectedIndex].Name;
+            var title = ((ISet)SetListView.SelectedItem).Name;
             ImportSet(title);
             Close();
         }

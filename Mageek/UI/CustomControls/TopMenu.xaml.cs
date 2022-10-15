@@ -18,7 +18,7 @@ namespace MaGeek.UI.CustomControls
 
         private void OpenWindow_TxtImporter(object sender, RoutedEventArgs e)
         {
-            var window = new TxtImporter();
+            var window = new TxtImporter() { Width = 310 };
             window.Show();
         }
 

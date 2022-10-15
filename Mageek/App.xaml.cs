@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.IO;
+using System.Windows;
 using MaGeek.Data;
 
 namespace MaGeek
@@ -11,8 +13,13 @@ namespace MaGeek
         public static CardManager CardManager = new CardManager();
         public static AppState State = new AppState();
 
+        public static string RoamingFolder { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek"); } }
+        public static string ImageFolder { get { return Path.Combine(App.RoamingFolder, "CardsIllus"); } }
+
         public App()
         {
+            if (!File.Exists(RoamingFolder)) Directory.CreateDirectory(RoamingFolder);
+            if (!File.Exists(ImageFolder)) Directory.CreateDirectory(ImageFolder);
             Database.InitDb();
         }
 

@@ -205,6 +205,12 @@ namespace MaGeek.UI
         { 
             DataContext = this;
             InitializeComponent();
+            App.State.RaiseCollec += State_RaiseCollec;
+        }
+
+        private void State_RaiseCollec(object sender, Events.CollecEventArgs args)
+        {
+            OnPropertyChanged("CardsBind");
         }
 
         #endregion

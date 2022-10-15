@@ -1,61 +1,36 @@
-
 TODO
 
-	avanlondock
-	
-		cant control correctly
-		Display Tools
-
-	Add a pin to card inspector
-
-		
-	importer
-		deck creation amelios
-			some cards have no illu
-		link update card
-		refresh bindings correctly after import
-	
-	deck list 
+	finish AvalonDock 
+		Open tool
+		Layout
+	finish importer
+		deck creation some cards have no illu
+		import/export decklist sidedeck and commander support
+	better deck list 
 		filter foreign language
 		order by
 
-	custom cards 
-		save
+	proxy export
+	save custom cards 
+	owned/notowned stats
 	
-	export proxy
+BUG
 	
-	stats
-		owned/notowned
-	
-	opti loadings wrap panels
-	
-	use appdata folder
-		db 
-		img
-	
-	import/export decklist sidedeck and commander support
+	cant load db ???
+	Set fav during import > crash
+	No scrollbar in sidedeck (and commandant?)
+	No more black corner
 
-	advanced card search
-		foreign language
-		type, subtype etc...
-	
 IDEAS
 
+	owned card variant and state
+	advanced card search
 	profiles
 	prices
 	auto deck
 	cross deck stats
-	owned card variant and state
 	card deck relation tags
 	sort deck table with tags
 	different variant in deck (/!\ difficulties with EF)
-	
-BUG
-
-	No scrollbar in sidedeck (and commandant?)
-	Set fav during import > crash
-	Deck Table Not async enough
-	cant save database wrong path name
-	cant loas db ???
-	No more black corner
-		
+	Add a pin to card inspector
+	save current import list on quit

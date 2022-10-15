@@ -6,7 +6,20 @@
         xmlns:local="clr-namespace:MaGeek.UI.Windows.ImportExport"
         mc:Ignorable="d"
         Title="ProxyPrint" Height="450" Width="800">
-    <Grid Name="DocumentPath">
-        <Label>Test</Label>
+    
+    <Grid>
+        <StackPanel>
+
+            <DockPanel>
+                <Button Click="GO">GO!</Button>
+            </DockPanel>
+            
+            <Grid Name="DocumentPath">
+
+                <Label>TEST !!!</Label>
+                
+            </Grid>
+            
+        </StackPanel>
     </Grid>
 </Window>

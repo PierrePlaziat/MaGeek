@@ -11,8 +11,10 @@ using System.Windows.Media.Imaging;
 
 namespace MaGeek.Data.Entities
 {
+
     public class MagicCardVariant
     {
+
         [Key]
         public string Id { get; set; }
         public string ImageUrl { get; set; }
@@ -49,7 +51,7 @@ namespace MaGeek.Data.Entities
             string localFileName = "";
             if(IsCustom==0)
             {
-                localFileName = @"./CardsIllus/" + Id + ".png";
+                localFileName = Path.Combine(App.ImageFolder, Id + ".png");
                 if (!File.Exists(localFileName))
                 {
                     await Task.Run(async () => { 
@@ -57,10 +59,10 @@ namespace MaGeek.Data.Entities
                     });
                 }
             }
-            else
-            {
-                localFileName = @"./CardsIllus/Custom/" + ImageUrl;
-            }
+            //else
+            //{
+            //    localFileName = @"./CardsIllus/Custom/" + ImageUrl;
+            //}
             var path = Path.GetFullPath(localFileName);
             Uri imgUri = new Uri("file://" + path, UriKind.Absolute);
             img = new BitmapImage(imgUri);
@@ -68,8 +70,8 @@ namespace MaGeek.Data.Entities
             return img;
         }
 
-        // Should be done via data trigger so this isnt here
-        public Brush LineColoration { 
+        public Brush LineColoration
+        { 
             get { 
                 return string.IsNullOrEmpty(ImageUrl) ? Brushes.Black : Brushes.White; 
             } 
@@ -78,4 +80,5 @@ namespace MaGeek.Data.Entities
         #endregion
 
     }
+
 }
