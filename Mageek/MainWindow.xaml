@@ -1,4 +1,4 @@
-﻿<Window x:Class="MaGeek.MainWindow"
+﻿        <Window x:Class="MaGeek.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -20,7 +20,7 @@
 
         <cc:TopMenu Grid.Row="0" />
 
-        <avalonDock:DockingManager Grid.Row="1" x:Name="dockingManager">
+        <avalonDock:DockingManager Grid.Row="1" x:Name="dockingManager" >
 
             <avalonDock:DockingManager.Theme>
                 <avalonDock:ExpressionDarkTheme/>
@@ -28,89 +28,17 @@
 
             <avalonDock:LayoutRoot>
 
-                <avalonDock:LayoutRoot.TopSide>
-                    <avalonDock:LayoutAnchorSide>
-                        <avalonDock:LayoutAnchorGroup>
-
-                        </avalonDock:LayoutAnchorGroup>
-                    </avalonDock:LayoutAnchorSide>
-                </avalonDock:LayoutRoot.TopSide>
-
-                <avalonDock:LayoutRoot.LeftSide>
-                    <avalonDock:LayoutAnchorSide>
-                        <avalonDock:LayoutAnchorGroup>
-
-                            <avalonDock:LayoutAnchorable 
-                                    Title="Deck List"
-                                    CanClose="False"
-                                    CanShowOnHover="False">
-                                <local:DeckList/>
-                            </avalonDock:LayoutAnchorable>
-
-                            <avalonDock:LayoutAnchorable 
-                                    Title="Deck Content"
-                                    CanClose="False"
-                                    CanShowOnHover="False">
-                                <local:DeckContent/>
-                            </avalonDock:LayoutAnchorable>
-
-                        </avalonDock:LayoutAnchorGroup>
-                    </avalonDock:LayoutAnchorSide>
-                </avalonDock:LayoutRoot.LeftSide>
-
                 <avalonDock:LayoutPanel>
 
                     <LayoutAnchorablePane>
 
-                            <avalonDock:LayoutAnchorable 
-                                Title="Card Searcher" 
-                                CanClose="False"
-                                CanFloat="False"
-                                CanShowOnHover="False">
-                                <local:CardSearcher/>
-                            </avalonDock:LayoutAnchorable>
+                        <avalonDock:LayoutAnchorable x:Name="CS" Title="Card Searcher">
+                            <local:CardSearcher/>
+                        </avalonDock:LayoutAnchorable>
 
                     </LayoutAnchorablePane>
 
                 </avalonDock:LayoutPanel>
-
-                <avalonDock:LayoutRoot.RightSide>
-                    <avalonDock:LayoutAnchorSide>
-                        <avalonDock:LayoutAnchorGroup>
-
-                            <avalonDock:LayoutAnchorable Title="Card Inspector" 
-                                CanClose="False"
-                                AutoHideMinWidth="255" AutoHideWidth="255" FloatingWidth="255">
-                                <local:CardInspector x:Name="CardDetails" Grid.Column="2" Grid.RowSpan="3" Width="255"></local:CardInspector>
-                            </avalonDock:LayoutAnchorable>
-
-                        </avalonDock:LayoutAnchorGroup>
-                    </avalonDock:LayoutAnchorSide>
-                </avalonDock:LayoutRoot.RightSide>
-
-                <avalonDock:LayoutRoot.BottomSide>
-                    <avalonDock:LayoutAnchorSide>
-                        <avalonDock:LayoutAnchorGroup>
-
-                        <avalonDock:LayoutAnchorable 
-                                    Title="Deck Stats" 
-                                    CanClose="False"
-                                    CanFloat="False"
-                                    CanShowOnHover="False">
-                            <local:DeckStats/>
-                        </avalonDock:LayoutAnchorable>
-
-                        <avalonDock:LayoutAnchorable 
-                                    Title="Deck Table" 
-                                    CanClose="False"
-                                    CanFloat="False"
-                                    CanShowOnHover="False">
-                            <local:DeckTable/>
-                        </avalonDock:LayoutAnchorable>
-
-                        </avalonDock:LayoutAnchorGroup>
-                    </avalonDock:LayoutAnchorSide>
-                </avalonDock:LayoutRoot.BottomSide>
 
             </avalonDock:LayoutRoot>
 

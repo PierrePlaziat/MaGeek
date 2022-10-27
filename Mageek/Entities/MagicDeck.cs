@@ -29,12 +29,14 @@ namespace MaGeek.Data.Entities
         public MagicDeck(MagicDeck deckToCopy)
         {
             this.Title = deckToCopy.Title+ " - Copie";
-            CardRelations = new ObservableCollection<CardDeckRelation>(deckToCopy.CardRelations);
+            CardRelations = new ObservableCollection<CardDeckRelation>();
+            foreach (CardDeckRelation relation in deckToCopy.CardRelations)
+            {
+                App.CardManager.AddCardToDeck(relation.Card,this,relation.Quantity,relation.RelationType);
+            }
         }
 
         #endregion
-
-        // TODO Optimize, probably Move
 
         #region Accessors
 

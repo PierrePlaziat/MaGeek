@@ -11,12 +11,29 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xml.Schema;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace MaGeek.UI
 {
 
-    public partial class CardInspector : UserControl, INotifyPropertyChanged
+    public partial class CardInspector : UserControl, INotifyPropertyChanged, IXmlSerializable
     {
+
+        public XmlSchema GetSchema()
+        {
+            return (null);
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            reader.Read();
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+        }
 
         #region Binding
 
@@ -77,9 +94,9 @@ namespace MaGeek.UI
             set { selectedVariant = value; OnPropertyChanged(); }
         }
 
-        void HandleCardSelected(object sender, SelectCardEventArgs e)
+        void HandleCardSelected(MagicCard Card)
         {
-            SelectedCard = e.Card;
+            SelectedCard = Card;
         }
 
         public int CollectedQuantity {
@@ -124,7 +141,7 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.State.RaiseSelectCard += HandleCardSelected;
+            App.State.CardSelectedEvent += HandleCardSelected;
         }
 
         #endregion

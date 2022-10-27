@@ -1,11 +1,14 @@
 TODO
 
-	finish AvalonDock 
-		Open tool
-		Layout
-	finish importer
-		deck creation some cards have no illu
-		import/export decklist sidedeck and commander support
+	import/export decklist sidedeck and commander support
+	event decklist changed
+
+	AvalonDock 
+		Layout Restore doesnt contain custom controls
+		save in appdata
+		CardInspector 255 px wide max
+		
+		
 	better deck list 
 		filter foreign language
 		order by
@@ -16,6 +19,8 @@ TODO
 	
 BUG
 	
+	duplicate deck crash
+	deck creation some cards have no illu
 	cant load db ???
 	Set fav during import > crash
 	No scrollbar in sidedeck (and commandant?)

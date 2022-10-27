@@ -16,7 +16,10 @@ namespace MaGeek.Data.Entities
         public virtual MagicDeck Deck { get; set; }
         public virtual MagicCardVariant Card { get; set; }
         public int Quantity { get; set; }
-        public int RelationType{ get; set; } // ==0 normal, 1==commandant , 2 sideDeck
+        /// <summary>
+        /// 0== normal, 1==commandant , 2 sideDeck
+        /// </summary>
+        public int RelationType{ get; set; } 
 
         [NotMapped]
         public ICommand ChangeIlluCommand { get; set; }

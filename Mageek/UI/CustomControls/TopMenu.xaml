@@ -41,14 +41,13 @@
                 <MenuItem Header="Card Searcher" Foreground="Black" Click="CardSearcher_Click"/>
                 <MenuItem Header="Deck List" Foreground="Black" Click="DeckList_Click"/>
                 <MenuItem Header="Deck Content" Foreground="Black" Click="DeckContent_Click"/>
-                <MenuItem Header="Deck Stats" Foreground="Black" Click="DeckContent_Click"/>
-                <MenuItem Header="Deck Table" Foreground="Black" Click="DeckContent_Click"/>
+                <MenuItem Header="Card Inspector" Foreground="Black" Click="CardInspector_Click"/>
+                <MenuItem Header="Deck Stats" Foreground="Black" Click="DeckStats_Click"/>
+                <MenuItem Header="Deck Table" Foreground="Black" Click="DeckTable_Click"/>
             </MenuItem>
             <MenuItem Header="Layout" Foreground="Black">
-                <MenuItem Header="Save Current" Foreground="Black" Click="SaveCurrentLayout"/>
-                <MenuItem Header="Reset Default" Foreground="Black" Click="ResetDefaultLayout"/>
-                <Separator />
-                <MenuItem Header="Default Layout" Foreground="Black" Click="ResetDefaultLayout"/>
+                <MenuItem Header="Save" Foreground="Black" Click="LayoutBackup_Click"/>
+                <MenuItem Header="Load" Foreground="Black" Click="LayoutRestore_Click"/>
             </MenuItem>
         </MenuItem>
         

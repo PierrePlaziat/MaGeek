@@ -6,12 +6,31 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace MaGeek.UI
 {
 
-    public partial class CardSearcher : UserControl, INotifyPropertyChanged
+    public partial class CardSearcher : UserControl, INotifyPropertyChanged, IXmlSerializable
     {
+
+        public XmlSchema GetSchema()
+        {
+            return (null);
+        }
+        
+        public virtual void ReadXml(XmlReader reader)
+        {
+            reader.Read();
+        }
+
+        public virtual void WriteXml(XmlWriter writer)
+        {
+            
+        }
+
 
         #region Attributes
 
@@ -205,12 +224,7 @@ namespace MaGeek.UI
         { 
             DataContext = this;
             InitializeComponent();
-            App.State.RaiseCollec += State_RaiseCollec;
-        }
-
-        private void State_RaiseCollec(object sender, Events.CollecEventArgs args)
-        {
-            OnPropertyChanged("CardsBind");
+            App.State.UpdateCardCollecEvent += () => { OnPropertyChanged("CardsBind"); };
         }
 
         #endregion
@@ -219,7 +233,7 @@ namespace MaGeek.UI
 
         private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CardGrid.SelectedItem is MagicCard card) App.State.SelectCard(card);
+            if (CardGrid.SelectedItem is MagicCard card) App.State.RaiseCardSelected(card);
         }
 
         private void SearchButton_Pressed(object sender, System.Windows.RoutedEventArgs e)
@@ -281,6 +295,7 @@ namespace MaGeek.UI
         {
             OnPropertyChanged("AvailableTags");
         }
+
     }
 
 }

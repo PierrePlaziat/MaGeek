@@ -22,7 +22,7 @@ namespace MaGeek.UI.Windows.Importers
 
         #endregion
 
-        string path = "D:\\PROJECTS\\VS\\MaGeek\\AppDataContent\\CardLists\\Preco";
+        string path = "D:\\PROJECTS\\VS\\MaGeek\\Preco";
 
         List<string> precoList = new List<string>();
         public List<string> PrecoList { 

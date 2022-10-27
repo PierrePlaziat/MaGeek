@@ -131,7 +131,7 @@ namespace MaGeek.UI
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (selectedVariant != null) App.State.SelectCard(selectedVariant.Card);
+            if (selectedVariant != null) App.State.RaiseCardSelected(selectedVariant.Card);
         }
 
         #endregion

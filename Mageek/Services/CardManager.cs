@@ -74,7 +74,7 @@ namespace MaGeek.Data
             }
             cardRelation.Quantity += qty;
             App.Database.SaveChanges();
-            App.State.ModifDeck();
+            App.State.RaiseUpdateDeck();
         }
 
         internal void ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
@@ -93,7 +93,7 @@ namespace MaGeek.Data
             cardRelation.Quantity -= qty;
             if (cardRelation.Quantity <= 0) deck.CardRelations.Remove(cardRelation);
             App.Database.SaveChanges();
-            App.State.ModifDeck();
+            App.State.RaiseUpdateDeck();
 
         }
 

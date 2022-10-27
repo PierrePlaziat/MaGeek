@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using MaGeek.Data;
+using MaGeek.Services;
 
 namespace MaGeek
 {
@@ -12,6 +13,7 @@ namespace MaGeek
         public static LocalDb Database = new LocalDb(); 
         public static CardManager CardManager = new CardManager();
         public static AppState State = new AppState();
+        public static LanguageManager Lang = new LanguageManager();
 
         public static string RoamingFolder { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek"); } }
         public static string ImageFolder { get { return Path.Combine(App.RoamingFolder, "CardsIllus"); } }

@@ -1,4 +1,5 @@
-﻿using MaGeek.UI.Windows.Importers;
+﻿using MaGeek.Events;
+using MaGeek.UI.Windows.Importers;
 using MaGeek.UI.Windows.ImportExport;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,7 +73,7 @@ namespace MaGeek.UI.CustomControls
         private void ChangeLanguage(object sender, RoutedEventArgs e)
         {
             MenuItem item = sender as MenuItem;
-            App.State.SetForeignLanguage(item.Header.ToString());
+            App.Lang.SetForeignLanguage(item.Header.ToString());
         }
 
         #endregion
@@ -83,31 +84,50 @@ namespace MaGeek.UI.CustomControls
 
         private void CardSearcher_Click(object sender, RoutedEventArgs e)
         {
-
+            App.State.RaiseLayoutAction(LayoutEventType.Open_CardSearcher);
         }
 
         private void DeckList_Click(object sender, RoutedEventArgs e)
         {
-
+            App.State.RaiseLayoutAction(LayoutEventType.Open_DeckList);
         }
 
         private void DeckContent_Click(object sender, RoutedEventArgs e)
         {
+            App.State.RaiseLayoutAction(LayoutEventType.Open_DeckContent);
+        }
 
+        private void DeckTable_Click(object sender, RoutedEventArgs e)
+        {
+            App.State.RaiseLayoutAction(LayoutEventType.Open_DeckTable);
+        }
+
+        private void DeckStats_Click(object sender, RoutedEventArgs e)
+        {
+            App.State.RaiseLayoutAction(LayoutEventType.Open_DeckStats);
+        }
+
+        private void CardInspector_Click(object sender, RoutedEventArgs e)
+        {
+            App.State.RaiseLayoutAction(LayoutEventType.Open_CardInspector);
         }
 
         #endregion
 
         #region Layout
 
-        private void SaveCurrentLayout(object sender, RoutedEventArgs e)
+        private void LayoutBackup_Click(object sender, RoutedEventArgs e)
         {
-
+            App.State.RaiseLayoutAction(LayoutEventType.Save);
+        }
+        private void LayoutRestore_Click(object sender, RoutedEventArgs e)
+        {
+            App.State.RaiseLayoutAction(LayoutEventType.Load);
         }
 
         private void ResetDefaultLayout(object sender, RoutedEventArgs e)
         {
-
+            App.State.RaiseLayoutAction(LayoutEventType.ResetLayout);
         }
 
         #endregion
@@ -122,6 +142,7 @@ namespace MaGeek.UI.CustomControls
         }
 
         #endregion
+
     }
 
 }

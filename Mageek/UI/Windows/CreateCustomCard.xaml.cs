@@ -6,11 +6,29 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace MaGeek.UI
 {
-    public partial class CreateCustomCard : Window, INotifyPropertyChanged
+    public partial class CreateCustomCard : Window, INotifyPropertyChanged, IXmlSerializable
     {
+
+        public XmlSchema GetSchema()
+        {
+            return (null);
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+
+            reader.Read();
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+        }
 
         #region Binding
 

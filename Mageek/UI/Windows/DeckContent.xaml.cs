@@ -6,12 +6,29 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Linq;
 using System.Windows.Controls;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace MaGeek.UI
 {
 
-    public partial class DeckContent : UserControl, INotifyPropertyChanged
+    public partial class DeckContent : UserControl, INotifyPropertyChanged, IXmlSerializable
     {
+
+        public XmlSchema GetSchema()
+        {
+            return (null);
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            reader.Read();
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+        }
 
         #region Attributes
 
@@ -108,12 +125,12 @@ namespace MaGeek.UI
 
         #endregion
 
-        void HandleDeckSelected(object sender, SelectDeckEventArgs e)
+        void HandleDeckSelected(MagicDeck deck)
         {
-            CurrentDeck = e.Deck;
+            CurrentDeck = deck;
         }
 
-        void HandleDeckModif(object sender, DeckModifEventArgs e)
+        void HandleDeckModif()
         {
             var v = CurrentDeck;
             CurrentDeck = null;
@@ -126,8 +143,8 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.State.RaiseSelectDeck += HandleDeckSelected;
-            App.State.RaiseDeckModif += HandleDeckModif;
+            App.State.SelectDeckEvent += HandleDeckSelected;
+            App.State.UpdateDeckEvent += HandleDeckModif;
         }
 
 
@@ -151,14 +168,14 @@ namespace MaGeek.UI
 
         private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((sender as ListView).SelectedItem is CardDeckRelation cardRel) App.State.SelectCard(cardRel.Card.Card);
+            if ((sender as ListView).SelectedItem is CardDeckRelation cardRel) App.State.RaiseCardSelected(cardRel.Card.Card);
         }
 
         private void SetCommandant(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 1;
-            App.State.ModifDeck();
+            App.State.RaiseUpdateDeck();
             App.Database.SaveChanges();
         }
 
@@ -166,7 +183,7 @@ namespace MaGeek.UI
         {
             CardDeckRelation cardRel = LVCommandants.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
-            App.State.ModifDeck();
+            App.State.RaiseUpdateDeck();
             App.Database.SaveChanges();
         }
 
@@ -175,7 +192,7 @@ namespace MaGeek.UI
             CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 2;
             App.Database.SaveChanges();
-            App.State.ModifDeck();
+            App.State.RaiseUpdateDeck();
         }
 
         private void ToDeck(object sender, RoutedEventArgs e)
@@ -183,7 +200,7 @@ namespace MaGeek.UI
             CardDeckRelation cardRel = LVDeckSide.SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
             App.Database.SaveChanges();
-            App.State.ModifDeck();
+            App.State.RaiseUpdateDeck();
         }
     }
 

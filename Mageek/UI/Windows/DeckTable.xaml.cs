@@ -7,13 +7,29 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace MaGeek.UI
 {
 
-    public partial class DeckTable : UserControl, INotifyPropertyChanged
+    public partial class DeckTable : UserControl, INotifyPropertyChanged, IXmlSerializable
     {
 
+        public XmlSchema GetSchema()
+        {
+            return (null);
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            reader.Read();
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+        }
 
         #region Attributes
 
@@ -489,24 +505,25 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.State.RaiseSelectDeck += HandleDeckSelected;
-            App.State.RaiseDeckModif += HandleDeckModified;
+            App.State.SelectDeckEvent += HandleDeckSelected;
+            App.State.UpdateDeckEvent += HandleDeckModified;
         }
 
-        void HandleDeckModified(object sender, DeckModifEventArgs e)
+        void HandleDeckModified()
         {
             FullRefresh();
         }
 
-        void HandleDeckSelected(object sender, SelectDeckEventArgs e)
+        void HandleDeckSelected(MagicDeck deck)
         {
-            CurrentDeck = e.Deck;
-            FullRefresh();
+            CurrentDeck = deck;
         }
 
         private void FullRefresh()
         {
-            CurrentDeck = App.State.SelectedDeck;
+            var deck = CurrentDeck;
+            CurrentDeck = null;
+            CurrentDeck = deck;
         }
 
         #endregion
@@ -539,7 +556,7 @@ namespace MaGeek.UI
             var cr = b.DataContext as CardDeckRelation;
             cr.RelationType = 1;
             App.Database.SaveChanges();
-            App.State.ModifDeck();
+            App.State.RaiseUpdateDeck();
         }
 
         private void UnsetCommandant_Click(object sender, RoutedEventArgs e)
@@ -548,7 +565,7 @@ namespace MaGeek.UI
             var cr = b.DataContext as CardDeckRelation;
             cr.RelationType = 0;
             App.Database.SaveChanges();
-            App.State.ModifDeck();
+            App.State.RaiseUpdateDeck();
         }
 
         private void ToSide_Click(object sender, RoutedEventArgs e)
@@ -557,7 +574,7 @@ namespace MaGeek.UI
             var cr = b.DataContext as CardDeckRelation;
             cr.RelationType = 2;
             App.Database.SaveChanges();
-            App.State.ModifDeck();
+            App.State.RaiseUpdateDeck();
         }
 
         private void AddOne_Click(object sender, RoutedEventArgs e)

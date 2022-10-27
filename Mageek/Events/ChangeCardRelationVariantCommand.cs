@@ -6,6 +6,7 @@ namespace MaGeek.Events
 {
     public class ChangeCardRelationVariantCommand : ICommand
     {
+
         private CardDeckRelation relation;
 
         public ChangeCardRelationVariantCommand(CardDeckRelation relation)

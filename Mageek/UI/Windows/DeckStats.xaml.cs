@@ -8,12 +8,29 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace MaGeek.UI
 {
 
-    public partial class DeckStats : UserControl, INotifyPropertyChanged
+    public partial class DeckStats : UserControl, INotifyPropertyChanged, IXmlSerializable
     {
+
+        public XmlSchema GetSchema()
+        {
+            return (null);
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            reader.Read();
+        }
+
+        public void WriteXml(XmlWriter writer)
+        {
+        }
 
         #region PropertyChange
 
@@ -52,18 +69,18 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.State.RaiseSelectDeck += HandleDeckSelected;
-            App.State.RaiseDeckModif += HandleDeckModified;
+            App.State.SelectDeckEvent += HandleDeckSelected;
+            App.State.UpdateDeckEvent += HandleDeckModified;
         }
 
-        void HandleDeckModified(object sender, DeckModifEventArgs e)
+        void HandleDeckModified()
         {
             FullRefresh();
         }
 
-        void HandleDeckSelected(object sender, SelectDeckEventArgs e)
+        void HandleDeckSelected(MagicDeck deck)
         {
-            CurrentDeck = e.Deck;
+            CurrentDeck = deck;
             FullRefresh();
         }
 
@@ -73,7 +90,7 @@ namespace MaGeek.UI
 
         private void FullRefresh()
         {
-            CurrentDeck = App.State.SelectedDeck;
+            // = App.State.SelectedDeck;
             DrawManacurve();
             SetCreaturesNb();
             SetSpellsNb();
@@ -98,6 +115,7 @@ namespace MaGeek.UI
         }
         private void SetCreaturesNb()
         {
+            if (CurrentDeck == null) return;
             int count = 0;
             foreach (var v in CurrentDeck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("creature")))
             {
@@ -119,6 +137,7 @@ namespace MaGeek.UI
 
         private void SetSpellsNb()
         {
+            if (CurrentDeck == null) return;
             int count = 0;
             foreach (var v in CurrentDeck.CardRelations.Where(x => !x.Card.Card.Type.ToLower().Contains("creature") && !x.Card.Card.Type.ToLower().Contains("land")))
             {
@@ -140,6 +159,7 @@ namespace MaGeek.UI
         }
         private void SetLandsNb()
         {
+            if (CurrentDeck == null) return;
             int count = 0;
             foreach (var v in CurrentDeck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("land")))
             {
@@ -168,6 +188,7 @@ namespace MaGeek.UI
 
         private void DrawManacurve()
         {
+            if (CurrentDeck == null) return;
             int mana0 = CurrentDeck.CardRelations.Where(x => !x.Card.Card.Type.ToLower().Contains("land") && x.Card.Card.Cmc == 0).Count();
             int mana1 = CurrentDeck.CardRelations.Where(x => x.Card.Card.Cmc == 1).Count();
             int mana2 = CurrentDeck.CardRelations.Where(x => x.Card.Card.Cmc == 2).Count();
@@ -248,6 +269,7 @@ namespace MaGeek.UI
 
         private MagicCardVariant DoDraw()
         {
+            if (CurrentDeck == null) return null;
             if (currentDeck.CardRelations.Count <= alreadyDrawed.Count) return null;
             int rgn;
             do { rgn = random.Next(CurrentDeck.CardRelations.Count); }
@@ -285,6 +307,7 @@ namespace MaGeek.UI
         }
         private void SetStandardOk()
         {
+            if (CurrentDeck == null) return;
             bool ok = true;
             ok = ok && CurrentDeck.CardCount >= 60;
             ok = ok && HasMaxCardOccurence(4);
@@ -303,6 +326,7 @@ namespace MaGeek.UI
         }
         private void SetCommanderOk()
         {
+            if (CurrentDeck == null) return;
             bool ok = true;
             ok = ok && CurrentDeck.CardCount == 100;
             ok = ok && HasMaxCardOccurence(1);
@@ -312,6 +336,7 @@ namespace MaGeek.UI
 
         private bool HasMaxCardOccurence(int limit)
         {
+            if (CurrentDeck == null) return false;
             bool ok = true;
             foreach (var v in CurrentDeck.CardRelations.Where(x => !x.Card.Card.Type.ToString().ToLower().Contains("land")))
             {

@@ -27,9 +27,9 @@ namespace Plaziat.CommonWpf
             else return false;
         }
 
-        internal static string UserInputString(string message)
+        internal static string UserInputString(string message, string preFill)
         {
-            InputDialog inputDialog = new InputDialog(message, "New Deck");
+            InputDialog inputDialog = new InputDialog(message, preFill);
             if (inputDialog.ShowDialog() == true)
             {
                 if (string.IsNullOrEmpty(inputDialog.Answer)) return null;
@@ -37,6 +37,7 @@ namespace Plaziat.CommonWpf
             }
             else return null;
         }
+
     }
 
 }

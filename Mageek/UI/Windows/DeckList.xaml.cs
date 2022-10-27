@@ -8,6 +8,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace MaGeek.UI
 {
@@ -48,12 +51,8 @@ namespace MaGeek.UI
         {
             DataContext = this;
             InitializeComponent();
-            App.State.RaiseDeckModif += HandleDeckModified;
-        }
-
-        void HandleDeckModified(object sender, DeckModifEventArgs e)
-        {
-            forceRefresh();
+            App.State.UpdateDeckEvent += () => { forceRefresh(); };
+            App.State.UpdateDeckListEvent += () => { forceRefresh(); };
         }
 
         #endregion
@@ -61,7 +60,7 @@ namespace MaGeek.UI
         private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var deck = decklistbox.SelectedItem as MagicDeck;
-            if (deck != null) App.State.SelectDeck(deck);
+            if (deck != null) App.State.RaiseDeckSelect(deck);
         }
         
         internal void forceRefresh()
@@ -74,7 +73,7 @@ namespace MaGeek.UI
         {
             try
             {
-                string deckTitle = MessageBoxHelper.UserInputString("Please enter a title for this new deck");
+                string deckTitle = MessageBoxHelper.UserInputString("Please enter a title for this new deck","");
                 if (deckTitle == null) return;
                 if (App.Database.decks.Where(x => x.Title == deckTitle).Any())
                 {
@@ -84,7 +83,8 @@ namespace MaGeek.UI
                 MagicDeck deck = new MagicDeck(deckTitle);
                 App.Database.decks.Add(deck);
                 App.Database.SaveChanges();
-                OnPropertyChanged("Decks");
+                App.State.RaiseUpdateDeckList();
+                App.State.RaiseDeckSelect(deck);
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace MaGeek.UI
         private void RenameDeck(object sender, RoutedEventArgs e)
         {
             if (App.State.SelectedDeck == null) return;
-            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.State.SelectedDeck.Title+"\"");
+            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.State.SelectedDeck.Title+"\"", App.State.SelectedDeck.Title);
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
             if (App.Database.decks.Where(x => x.Title == newTitle).Any())
             {
@@ -104,7 +104,7 @@ namespace MaGeek.UI
             }
             App.State.SelectedDeck.Title = newTitle;
             App.Database.SaveChanges();
-            forceRefresh();
+            App.State.RaiseUpdateDeck();
         }
 
         private void DuplicateDeck(object sender, RoutedEventArgs e)
@@ -114,8 +114,9 @@ namespace MaGeek.UI
             {
                 var deckToCopy = Decks[decklistbox.SelectedIndex];
                 var newDeck = new MagicDeck(deckToCopy);
-                Decks.Add(newDeck);
+                App.Database.decks.Add(newDeck);
                 App.Database.SaveChanges();
+                App.State.RaiseUpdateDeckList();
             }
         }
 
@@ -127,8 +128,9 @@ namespace MaGeek.UI
                 if (MessageBoxHelper.AskUser("Are you sure to delete this deck?"))
                 {
                     var deck = Decks[decklistbox.SelectedIndex];
-                    Decks.Remove(deck);
+                    App.Database.decks.Remove(deck);
                     App.Database.SaveChanges();
+                    App.State.RaiseUpdateDeckList();
                 }
             }
         }
