@@ -10,6 +10,8 @@ namespace MaGeek.Data.Entities
     public class MagicCard
     {
 
+        #region Entity
+
         [Key]
         public string CardId { get; set; }
         public string Type { get; set; }
@@ -22,6 +24,8 @@ namespace MaGeek.Data.Entities
         public virtual List<MagicCardVariant> Variants { get; set; } = new List<MagicCardVariant>();
         public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
         public string FavouriteVariant { get; set; } = "";
+
+        #endregion
 
         #region CTOR
 
@@ -99,12 +103,6 @@ namespace MaGeek.Data.Entities
                 return a!= null ?  a.TraductedName : "(VO) "+CardId;
             }
         }
-
-        public int DevotionB { get { return ManaCost != null ? ManaCost.Length - ManaCost.Replace("B", "").Length : 0;  } }
-        public int DevotionW { get { return ManaCost != null ? ManaCost.Length - ManaCost.Replace("W", "").Length : 0; } }
-        public int DevotionU { get { return ManaCost != null ? ManaCost.Length - ManaCost.Replace("U", "").Length : 0; } }
-        public int DevotionG { get { return ManaCost != null ? ManaCost.Length - ManaCost.Replace("G", "").Length : 0; } }
-        public int DevotionR { get { return ManaCost != null ? ManaCost.Length - ManaCost.Replace("R", "").Length : 0; } }
 
         #endregion
 

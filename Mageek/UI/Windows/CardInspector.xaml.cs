@@ -1,49 +1,17 @@
 ﻿using MaGeek.Data.Entities;
 using MaGeek.Entities;
-using MaGeek.Events;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Xml.Schema;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace MaGeek.UI
 {
 
-    public partial class CardInspector : UserControl, INotifyPropertyChanged, IXmlSerializable
+    public partial class CardInspector : TemplatedUserControl
     {
-
-        public XmlSchema GetSchema()
-        {
-            return (null);
-        }
-
-        public void ReadXml(XmlReader reader)
-        {
-            reader.Read();
-        }
-
-        public void WriteXml(XmlWriter writer)
-        {
-        }
-
-        #region Binding
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
 
         #region Attributes
 
@@ -150,19 +118,19 @@ namespace MaGeek.UI
 
         private void AddCardToCollection(object sender, RoutedEventArgs e)
         {
-            App.CardManager.GotCard_Add(selectedCard);
+            App.MaGeek.Utils.GotCard_Add(selectedCard);
             OnPropertyChanged("CollectedQuantity");
         }
 
         private void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
-            App.CardManager.GotCard_Remove(SelectedCard);
+            App.MaGeek.Utils.GotCard_Remove(SelectedCard);
             OnPropertyChanged("CollectedQuantity");
         }
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            App.CardManager.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1);
+            App.MaGeek.Utils.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1);
         }
 
         #endregion
@@ -178,7 +146,7 @@ namespace MaGeek.UI
         private void SetFav(object sender, RoutedEventArgs e)
         {
             var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;  
-            App.CardManager.SetFav(cardvar.Card, cardvar.Id);
+            App.MaGeek.Utils.SetFav(cardvar.Card, cardvar.Id);
         }
 
         private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)
@@ -244,7 +212,7 @@ namespace MaGeek.UI
 
         private List<string> GetExistingTags()
         {
-            return App.CardManager.AvailableTags();
+            return App.MaGeek.AllTags;
         }
 
         private void addItem(string text)
@@ -279,7 +247,7 @@ namespace MaGeek.UI
 
         private void UpdateCardVariants(object sender, RoutedEventArgs e)
         {
-            App.CardManager.Importer.AddImportToQueue(
+            App.MaGeek.Importer.AddImportToQueue(
                 new Data.PendingImport
                 {
                     mode = Data.ImportMode.Update,

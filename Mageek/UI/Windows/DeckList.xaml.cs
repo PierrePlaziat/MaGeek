@@ -1,36 +1,20 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.Events;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-using System.Xml;
 
 namespace MaGeek.UI
 {
 
-    public partial class DeckList : UserControl, INotifyPropertyChanged
+    public partial class DeckList : TemplatedUserControl
     {
 
         #region Attributes
 
-        #region PropertyChange
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
-
-        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( App.CardManager.DeckListBinder.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower()))); } }
+        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( App.MaGeek.AllDecks.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower()))); } }
 
         private string filterString = "";
         public string FilterString

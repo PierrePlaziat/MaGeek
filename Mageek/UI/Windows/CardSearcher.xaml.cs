@@ -1,56 +1,25 @@
 ﻿using MaGeek.Data.Entities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 
 namespace MaGeek.UI
 {
 
-    public partial class CardSearcher : UserControl, INotifyPropertyChanged, IXmlSerializable
-    {
-
-        public XmlSchema GetSchema()
-        {
-            return (null);
-        }
-        
-        public virtual void ReadXml(XmlReader reader)
-        {
-            reader.Read();
-        }
-
-        public virtual void WriteXml(XmlWriter writer)
-        {
-            
-        }
+    public partial class CardSearcher : TemplatedUserControl
+    { 
 
 
         #region Attributes
-
-        #region PropertyChange
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
 
         public bool IsSearching { get { return isSearching; } set { isSearching = value; OnPropertyChanged(); OnPropertyChanged("IsNotSearching"); } }
         private bool isSearching = false;
 
         public ObservableCollection<MagicCard> CardsBind { 
             get {
-                var unfiltered = App.CardManager.CardListBinder;
+                var unfiltered = App.MaGeek.AllCards;
                 var filtered = unfiltered
                     .Where(x => x.Cmc >= FilterMinCmc)
                     .Where(x => x.Cmc <= FilterMaxCmc)
@@ -82,7 +51,7 @@ namespace MaGeek.UI
         {
             get
             {
-                return App.CardManager.AvailableTags();
+                return App.MaGeek.AllTags;
             }
         }
 
@@ -250,7 +219,7 @@ namespace MaGeek.UI
         {
             if (string.IsNullOrEmpty(CurrentSearch.Text)) return;
             IsSearching = true;
-            App.CardManager.Importer.AddImportToQueue(
+            App.MaGeek.Importer.AddImportToQueue(
                 new Data.PendingImport 
                 { 
                     mode = Data.ImportMode.Search, 
@@ -282,7 +251,7 @@ namespace MaGeek.UI
         {
             foreach (MagicCard c in CardGrid.SelectedItems)
             {
-                App.CardManager.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1);
+                App.MaGeek.Utils.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1);
             }
         }
 

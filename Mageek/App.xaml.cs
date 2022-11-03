@@ -11,7 +11,7 @@ namespace MaGeek
     {
 
         public static LocalDb Database = new LocalDb(); 
-        public static CardManager CardManager = new CardManager();
+        public static MageekManager MaGeek = new MageekManager();
         public static AppState State = new AppState();
         public static LanguageManager Lang = new LanguageManager();
 

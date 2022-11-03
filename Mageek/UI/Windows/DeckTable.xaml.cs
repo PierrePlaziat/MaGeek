@@ -1,47 +1,17 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.Events;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-using System.Xml;
 
 namespace MaGeek.UI
 {
 
-    public partial class DeckTable : UserControl, INotifyPropertyChanged, IXmlSerializable
+    public partial class DeckTable : TemplatedUserControl
     {
 
-        public XmlSchema GetSchema()
-        {
-            return (null);
-        }
-
-        public void ReadXml(XmlReader reader)
-        {
-            reader.Read();
-        }
-
-        public void WriteXml(XmlWriter writer)
-        {
-        }
-
         #region Attributes
-
-        #region PropertyChange
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
 
         #region TableState
 
@@ -582,7 +552,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.CardManager.AddCardToDeck(c, CurrentDeck,1);
+            App.MaGeek.Utils.AddCardToDeck(c, CurrentDeck,1);
         }
 
         private void RemoveOne_Click(object sender, RoutedEventArgs e)
@@ -590,7 +560,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.CardManager.RemoveCardFromDeck(c.Card, CurrentDeck);
+            App.MaGeek.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
     }

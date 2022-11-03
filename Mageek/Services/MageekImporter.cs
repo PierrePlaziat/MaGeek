@@ -16,7 +16,7 @@ using Timer = System.Timers.Timer;
 namespace MaGeek.Data
 {
 
-    public class CardImporter
+    public class MageekImporter
     {
 
         #region Attributes
@@ -26,10 +26,6 @@ namespace MaGeek.Data
         PendingImport? CurrentImport = null;
         BackgroundWorker Worker = new BackgroundWorker();
         Timer timer;
-
-        #endregion
-
-        #region Accessors
 
         public string State { get; set; }
         public int WorkerProgress { get; set; }
@@ -50,7 +46,7 @@ namespace MaGeek.Data
 
         #region CTOR
 
-        public CardImporter()
+        public MageekImporter()
         {
             ConfigureTimer();
             ConfigureWorker();
@@ -81,10 +77,6 @@ namespace MaGeek.Data
         {
             WorkerProgress = e.ProgressPercentage;
         }
-
-        #endregion
-
-        #region Functions
 
         #endregion
 
@@ -150,6 +142,12 @@ namespace MaGeek.Data
             CurrentImport = null;
             State = "Done";
             App.State.RaiseUpdateCardCollec();
+            App.Current.Dispatcher.Invoke(new Action(() => { 
+                App.State.RaiseUpdateDeckList();
+                var c = App.State.SelectedCard;
+                App.State.RaiseCardSelected(null);
+                App.State.RaiseCardSelected(c);
+            })); 
         }
 
         #endregion
@@ -373,7 +371,6 @@ namespace MaGeek.Data
             deck.CardRelations[0].RelationType = 1;
             App.Database.decks.Add(deck);
             App.Database.SaveChanges();
-            App.State.RaiseUpdateDeckList();
         }
 
         public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)

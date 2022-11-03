@@ -7,12 +7,14 @@ using System.Linq;
 namespace MaGeek.Data
 {
 
-    public class CardManager
+    public class MageekManager
     {
 
-        public CardImporter Importer { get; } = new();
+        public MageekImporter Importer { get; } = new();
 
-        public ObservableCollection<MagicCard> CardListBinder
+        public MageekUtils Utils { get; } = new();
+
+        public ObservableCollection<MagicCard> AllCards
         {
             get
             {
@@ -20,7 +22,7 @@ namespace MaGeek.Data
                 return App.Database.cards.Local.ToObservableCollection();
             }
         }
-        public ObservableCollection<MagicDeck> DeckListBinder
+        public ObservableCollection<MagicDeck> AllDecks
         {
             get
             {
@@ -29,87 +31,17 @@ namespace MaGeek.Data
             }
         }
 
-        #region Card Manips
-
-        public void GotCard_Add(MagicCard selectedCard)
+        public List<string> AllTags
         {
-            if (selectedCard == null) return;
-            App.Database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity++;
-            App.Database.SaveChanges();
-        }
+            get
+            { 
+                List<string> tags = new List<string>();
+                tags.Add("");
 
-        public void GotCard_Remove(MagicCard selectedCard)
-        {
-            if (selectedCard == null) return;
-            var c = App.Database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault();
-            c.CollectedQuantity--;
-            if(c.CollectedQuantity < 0) c.CollectedQuantity = 0;
-            App.Database.SaveChanges();
-        }
-
-        public void SetFav(MagicCard card, string variantId)
-        {
-            card.FavouriteVariant = variantId;
-            App.Database.SaveChanges();
-        }
-
-        #endregion
-
-        #region Deck Manips
-
-        public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
-        {
-            if (card == null || deck == null) return;
-            var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
-            if (cardRelation == null)
-            {
-                cardRelation = new CardDeckRelation()
-                {
-                    Card = card,
-                    Deck = deck,
-                    Quantity = 0,
-                    RelationType = relation
-                };
-                deck.CardRelations.Add(cardRelation);
+                foreach (var tag in App.Database.Tags.GroupBy(x=>x.Tag).Select(x=>x.First()))
+                    tags.Add(tag.Tag);
+                return tags;
             }
-            cardRelation.Quantity += qty;
-            App.Database.SaveChanges();
-            App.State.RaiseUpdateDeck();
-        }
-
-        internal void ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
-        {
-            int qty = cardDeckRelation.Quantity;
-            var deck = cardDeckRelation.Deck;
-            int rel = cardDeckRelation.RelationType;
-            RemoveCardFromDeck(cardDeckRelation.Card.Card, cardDeckRelation.Deck, cardDeckRelation.Quantity);
-            AddCardToDeck(magicCardVariant, deck, qty,rel);
-        }
-
-        public void RemoveCardFromDeck(MagicCard card, MagicDeck deck, int qty = 1)
-        {
-            var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
-            if (cardRelation == null) return;
-            cardRelation.Quantity -= qty;
-            if (cardRelation.Quantity <= 0) deck.CardRelations.Remove(cardRelation);
-            App.Database.SaveChanges();
-            App.State.RaiseUpdateDeck();
-
-        }
-
-        #endregion
-
-        internal List<string> AvailableTags()
-        {
-            List<string> tags = new List<string>();
-            tags.Add("");
-            var x = App.Database.Tags.GroupBy(test => test.Tag)
-                .Select(grp => grp.First()).ToList();
-            foreach (var v in x)
-            {
-                tags.Add(v.Tag);
-            }
-            return tags;
         }
 
     }

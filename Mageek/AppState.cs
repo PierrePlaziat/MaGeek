@@ -1,7 +1,4 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.Events;
-using System;
-using System.Linq;
 
 namespace MaGeek
 {
@@ -17,7 +14,6 @@ namespace MaGeek
 
         #region Events
 
-
         // Layout Action 
 
         public delegate void LayoutActionHandler(LayoutEventType Type);
@@ -28,7 +24,7 @@ namespace MaGeek
 
         public delegate void CardSelectedHandler(MagicCard Card);
         public event CardSelectedHandler CardSelectedEvent;
-        public virtual void RaiseCardSelected(MagicCard Card) { CardSelectedEvent(Card); }
+        public virtual void RaiseCardSelected(MagicCard Card) { selectedCard = Card; CardSelectedEvent(Card); }
 
         // Deck Selected
 

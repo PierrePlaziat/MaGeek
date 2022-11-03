@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="MaGeek.UI.DeckStats"
+﻿<local:TemplatedUserControl x:Class="MaGeek.UI.DeckStats"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -50,10 +50,10 @@
                             <PathGeometry>
                                 <PathGeometry.Figures>
                                     <PathFigureCollection x:Name="ManacurvePathFigureCollection">
-                                        <PathFigure StartPoint="{Binding ManaCurveStart}">
+                                        <PathFigure StartPoint="{Binding CurveStart}">
                                             <PathFigure.Segments>
                                                 <PathSegmentCollection>
-                                                    <PolyLineSegment Points="{Binding Manacurve}" />
+                                                    <PolyLineSegment Points="{Binding CurvePoints}" />
                                                 </PathSegmentCollection>
                                             </PathFigure.Segments>
                                         </PathFigure>
@@ -72,84 +72,39 @@
                 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="B"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionB}" 
+                    <Label Content="{Binding DevotionB}" 
                            FontWeight="Bold" Foreground="White" Padding="3"/>
                 
                     <Separator Width="20" Background="Transparent"/>
                 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="W"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionW}" 
+                    <Label Content="{Binding DevotionW}" 
                            FontWeight="Bold" Foreground="White" Padding="3"/>
                 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="U"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionU}"
+                    <Label Content="{Binding DevotionU}"
                            FontWeight="Bold" Foreground="White" Padding="3"/>
                 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="G"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionG}"
+                    <Label Content="{Binding DevotionG}"
                            FontWeight="Bold" Foreground="White" Padding="3"/>
                 
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label FontFamily="{StaticResource MtgSymbols}" Content="R"
                            FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.DevotionR}"
+                    <Label Content="{Binding DevotionR}"
                            FontWeight="Bold" Foreground="White" Padding="3"/>
 
                 </DockPanel>
 
-                <!--
-                
-                <Label>Color sources</Label>
-
-                <DockPanel>
-
-                    <Separator Width="20" Background="Transparent"/>
-
-                    <Label FontFamily="{StaticResource MtgSymbols}" Content="B"
-                           FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.SourcesB}" 
-                           FontWeight="Bold" Foreground="White" Padding="3"/>
-
-                    <Separator Width="20" Background="Transparent"/>
-
-                    <Label FontFamily="{StaticResource MtgSymbols}" Content="W"
-                           FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.SourcesW}" 
-                           FontWeight="Bold" Foreground="White" Padding="3"/>
-
-                    <Separator Width="20" Background="Transparent"/>
-
-                    <Label FontFamily="{StaticResource MtgSymbols}" Content="U"
-                           FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.SourcesU}"
-                           FontWeight="Bold" Foreground="White" Padding="3"/>
-
-                    <Separator Width="20" Background="Transparent"/>
-
-                    <Label FontFamily="{StaticResource MtgSymbols}" Content="G"
-                           FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.SourcesG}"
-                           FontWeight="Bold" Foreground="White" Padding="3"/>
-
-                    <Separator Width="20" Background="Transparent"/>
-
-                    <Label FontFamily="{StaticResource MtgSymbols}" Content="R"
-                           FontSize="20" Foreground="#DDD" Margin="0" Padding="0" />
-                    <Label Content="{Binding CurrentDeck.SourcesR}"
-                           FontWeight="Bold" Foreground="White" Padding="3"/>
-
-                </DockPanel>
-
-                -->
-                
                 <Label>card types</Label>
 
                 <DockPanel>
@@ -157,17 +112,38 @@
                     <Separator Width="20" Background="Transparent"/>
 
                     <Label Content="Creatures" Foreground="#DDD" />
-                    <Label Content="{Binding CreaturesNb}" FontWeight="Bold" Foreground="White" />
+                    <Label Content="{Binding CreatureCount}" FontWeight="Bold" Foreground="White" />
+
+                    <Label Content="Instant" Foreground="#DDD" />
+                    <Label Content="{Binding InstantCount}" FontWeight="Bold" Foreground="White" />
+
+                    <Label Content="Sorcery" Foreground="#DDD" />
+                    <Label Content="{Binding SorceryCount}" FontWeight="Bold" Foreground="White" />
+
+                    <Label Content="Enchantment" Foreground="#DDD" />
+                    <Label Content="{Binding EnchantmentCount}" FontWeight="Bold" Foreground="White" />
 
                     <Separator Width="20" Background="Transparent"/>
 
-                    <Label Content="Spells" Foreground="#DDD" />
-                    <Label Content="{Binding SpellsNb}" FontWeight="Bold" Foreground="White" />
+                </DockPanel>
+
+                <DockPanel>
 
                     <Separator Width="20" Background="Transparent"/>
 
-                    <Label Content="Lands" Foreground="#DDD" />
-                    <Label Content="{Binding LandsNb}" FontWeight="Bold" Foreground="White" />
+                    <Label Content="Artifact" Foreground="#DDD" />
+                    <Label Content="{Binding ArtifactCount}" FontWeight="Bold" Foreground="White" />
+
+                    <Label Content="BasicLand" Foreground="#DDD" />
+                    <Label Content="{Binding BasicLandCount}" FontWeight="Bold" Foreground="White" />
+
+                    <Label Content="SpecialLand" Foreground="#DDD" />
+                    <Label Content="{Binding SpecialLandCount}" FontWeight="Bold" Foreground="White" />
+
+                    <Label Content="Other" Foreground="#DDD" />
+                    <Label Content="{Binding OtherCount}" FontWeight="Bold" Foreground="White" />
+
+                    <Separator Width="20" Background="Transparent"/>
 
                 </DockPanel>
 
@@ -211,9 +187,8 @@
             
         </ScrollViewer>
 
-
         <Grid Visibility="{Binding Visible}" 
-              Background="Black"
+              Background="#222"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
               Grid.RowSpan="2">
@@ -223,4 +198,4 @@
         </Grid>
         
     </Grid>
-</UserControl>
+</local:TemplatedUserControl>

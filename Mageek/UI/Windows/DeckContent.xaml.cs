@@ -1,46 +1,18 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.Events;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Linq;
 using System.Windows.Controls;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-using System.Xml;
+using System.Collections.Generic;
+using System;
 
 namespace MaGeek.UI
 {
 
-    public partial class DeckContent : UserControl, INotifyPropertyChanged, IXmlSerializable
+    public partial class DeckContent : TemplatedUserControl
     {
 
-        public XmlSchema GetSchema()
-        {
-            return (null);
-        }
-
-        public void ReadXml(XmlReader reader)
-        {
-            reader.Read();
-        }
-
-        public void WriteXml(XmlWriter writer)
-        {
-        }
-
         #region Attributes
-
-        #region PropertyChange
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
 
         private MagicDeck currentDeck;
         public MagicDeck CurrentDeck
@@ -51,7 +23,14 @@ namespace MaGeek.UI
                 currentDeck = value;
                 OnPropertyChanged();
                 OnPropertyChanged("CurrentCommanders");
-                OnPropertyChanged("CurrentNonCommanders");
+                OnPropertyChanged("CurrentCreatures");
+                OnPropertyChanged("CurrentInstants");
+                OnPropertyChanged("CurrentSorceries");
+                OnPropertyChanged("CurrentEnchantments");
+                OnPropertyChanged("CurrentArtifacts");
+                OnPropertyChanged("CurrentOthers");
+                OnPropertyChanged("CurrentNonBasicLands");
+                OnPropertyChanged("CurrentBasicLands");
                 OnPropertyChanged("CurrentSide");
                 OnPropertyChanged("HasCommander");
                 OnPropertyChanged("Visible");
@@ -65,45 +44,133 @@ namespace MaGeek.UI
                 filterString = value; 
                 OnPropertyChanged();
                 OnPropertyChanged("CurrentCommanders");
-                OnPropertyChanged("CurrentNonCommanders");
+                OnPropertyChanged("CurrentCreatures");
+                OnPropertyChanged("CurrentInstants");
+                OnPropertyChanged("CurrentSorceries");
+                OnPropertyChanged("CurrentEnchantments");
+                OnPropertyChanged("CurrentArtifacts");
+                OnPropertyChanged("CurrentOthers");
+                OnPropertyChanged("CurrentNonBasicLands");
+                OnPropertyChanged("CurrentBasicLands");
                 OnPropertyChanged("CurrentSide");
                 OnPropertyChanged("HasCommander");
                 OnPropertyChanged("Visible");
             }
         }
 
-        public ObservableCollection<CardDeckRelation> CurrentCommanders
+        public List<CardDeckRelation> CurrentCommanders 
+        { 
+            get {
+                if (currentDeck == null) return null;
+                return FilterCardEnumerator(
+                    App.MaGeek.Utils.GetCommanders(currentDeck)
+                ).ToList();
+            }
+        }
+        public List<CardDeckRelation> CurrentCreatures
         {
             get
             {
-                if (currentDeck == null || currentDeck.CardRelations == null) return null;
-                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(
-                    x => x.RelationType == 1
-                    && x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
-                    && x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower()))
-                );
+                if (currentDeck == null) return null;
+                return FilterCardEnumerator(
+                    App.MaGeek.Utils.GetCreatures(currentDeck)
+                ).ToList();
             }
         }
-
-        public Visibility HasCommander
+        public List<CardDeckRelation> CurrentInstants
         {
             get
             {
-                if (CurrentCommanders==null) return Visibility.Collapsed;
-                if (CurrentCommanders.Count<=0) return Visibility.Collapsed;
-                else return Visibility.Visible;
+                if (currentDeck == null) return null;
+                return FilterCardEnumerator(
+                    App.MaGeek.Utils.GetInstants(currentDeck)
+                ).ToList();
+            }
+        }
+        public List<CardDeckRelation> CurrentSorceries
+        {
+            get
+            {
+                if (currentDeck == null) return null;
+                return FilterCardEnumerator(
+                    App.MaGeek.Utils.GetSorceries(currentDeck)
+                ).ToList();
+            }
+        }
+        public List<CardDeckRelation> CurrentEnchantments
+        {
+            get
+            {
+                if (currentDeck == null) return null;
+                return FilterCardEnumerator(
+                    App.MaGeek.Utils.GetEnchantments(currentDeck)
+                ).ToList();
             }
         }
 
-        public ObservableCollection<CardDeckRelation> CurrentNonCommanders
+        public ObservableCollection<CardDeckRelation> CurrentArtifacts
         {
             get
             {
                 if (currentDeck == null || currentDeck.CardRelations == null) return null;
                 return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(
                     x => x.RelationType == 0
-                    && x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
-                    && x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower()))
+                    && x.Card.Card.Type.ToLower().Contains("artifact")
+                    && ( x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
+                    .OrderBy(x => x.Card.Card.Cmc.Value)
+                    .ThenBy(x => x.Card.Card.CardForeignName)
+                );
+            }
+        }
+
+        public ObservableCollection<CardDeckRelation> CurrentNonBasicLands
+        {
+            get
+            {
+                if (currentDeck == null || currentDeck.CardRelations == null) return null;
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(
+                    x => x.RelationType == 0
+                    && x.Card.Card.Type.ToLower().Contains("land")
+                    && ! x.Card.Card.Type.ToLower().Contains("basic")
+                    && ( x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
+                    .OrderBy(x => x.Card.Card.Cmc.Value)
+                    .ThenBy(x => x.Card.Card.CardForeignName)
+                );
+            }
+        }
+
+        public ObservableCollection<CardDeckRelation> CurrentBasicLands
+        {
+            get
+            {
+                if (currentDeck == null || currentDeck.CardRelations == null) return null;
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(
+                    x => x.RelationType == 0
+                    && x.Card.Card.Type.ToLower().Contains("land")
+                    && x.Card.Card.Type.ToLower().Contains("basic")
+                    && ( x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
+                    .OrderBy(x => x.Card.Card.Cmc.Value)
+                    .ThenBy(x => x.Card.Card.CardForeignName)
+                );
+            }
+        }
+
+        public ObservableCollection<CardDeckRelation> CurrentOthers
+        {
+            get
+            {
+                if (currentDeck == null || currentDeck.CardRelations == null) return null;
+                return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(
+                    x => x.RelationType == 0
+                    && !x.Card.Card.Type.ToLower().Contains("artifact")
+                    && !x.Card.Card.Type.ToLower().Contains("creature")
+                    && !x.Card.Card.Type.ToLower().Contains("instant")
+                    && !x.Card.Card.Type.ToLower().Contains("sorcery")
+                    && !x.Card.Card.Type.ToLower().Contains("enchantment")
+                    && !x.Card.Card.Type.ToLower().Contains("land")
+                    && ( x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
+                    .OrderBy(x => x.Card.Card.Cmc.Value)
+                    .ThenBy(x => x.Card.Card.CardForeignName)
                 );
             }
         }
@@ -115,13 +182,25 @@ namespace MaGeek.UI
                 if (currentDeck == null || currentDeck.CardRelations == null) return null;
                 return new ObservableCollection<CardDeckRelation>(currentDeck.CardRelations.Where(
                     x => x.RelationType == 2
-                    && x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
-                    && x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower()))
+                    && ( x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
+                    .OrderBy(x => x.Card.Card.Cmc.Value)
+                    .ThenBy(x => x.Card.Card.CardForeignName)
                 );
             }
         }
 
-        public Visibility Visible { get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; } }
+        public Visibility Visible 
+        {
+            get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; } }
+        public Visibility HasCommander
+        {
+            get
+            {
+                if (CurrentCommanders == null) return Visibility.Collapsed;
+                if (CurrentCommanders.Count <= 0) return Visibility.Collapsed;
+                else return Visibility.Visible;
+            }
+        }
 
         #endregion
 
@@ -150,12 +229,21 @@ namespace MaGeek.UI
 
         #endregion
 
+        private IEnumerable<CardDeckRelation> FilterCardEnumerator(IEnumerable<CardDeckRelation> enumerable)
+        {
+            if (enumerable == null) return null;
+            return enumerable.Where(x =>
+                    x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
+                && x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())
+            );
+        }
+
         private void LessCard(object sender, System.Windows.RoutedEventArgs e)
         {
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.CardManager.RemoveCardFromDeck(c.Card, CurrentDeck);
+            App.MaGeek.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
         private void MoreCard(object sender, System.Windows.RoutedEventArgs e)
@@ -163,17 +251,26 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.CardManager.AddCardToDeck(c, CurrentDeck,1);
+            App.MaGeek.Utils.AddCardToDeck(c, CurrentDeck,1);
         }
 
-        private void LVDeck_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((sender as ListView).SelectedItem is CardDeckRelation cardRel) App.State.RaiseCardSelected(cardRel.Card.Card);
+            ListView sendedBy = (sender as ListView);
+            if (sendedBy.SelectedItem is CardDeckRelation cardRel) App.State.RaiseCardSelected(cardRel.Card.Card);
+            //sendedBy.UnselectAll(); // TODO (implies some refactor)
+        }
+
+        private ListView GetListView(object sender)
+        {
+            MenuItem menuItem = sender as MenuItem;
+            ContextMenu parentContextMenu = menuItem.CommandParameter as ContextMenu;
+            return parentContextMenu.PlacementTarget as ListView;
         }
 
         private void SetCommandant(object sender, RoutedEventArgs e)
         {
-            CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
+            CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 1;
             App.State.RaiseUpdateDeck();
             App.Database.SaveChanges();
@@ -181,7 +278,7 @@ namespace MaGeek.UI
 
         private void UnsetCommandant(object sender, RoutedEventArgs e)
         {
-            CardDeckRelation cardRel = LVCommandants.SelectedItem as CardDeckRelation;
+            CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
             App.State.RaiseUpdateDeck();
             App.Database.SaveChanges();
@@ -189,7 +286,7 @@ namespace MaGeek.UI
 
         private void ToSide(object sender, RoutedEventArgs e)
         {
-            CardDeckRelation cardRel = LVDeck.SelectedItem as CardDeckRelation;
+            CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 2;
             App.Database.SaveChanges();
             App.State.RaiseUpdateDeck();
@@ -197,7 +294,7 @@ namespace MaGeek.UI
 
         private void ToDeck(object sender, RoutedEventArgs e)
         {
-            CardDeckRelation cardRel = LVDeckSide.SelectedItem as CardDeckRelation;
+            CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
             App.Database.SaveChanges();
             App.State.RaiseUpdateDeck();
