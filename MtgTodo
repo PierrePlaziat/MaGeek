@@ -1,41 +1,39 @@
 TODO
+	
+	?	No more black corner
+	?	cant load db 
+	!	Set fav during import > crash
+	!	change relation during import > crash
+	
+	DeckStats
+		.	owned/notowned stats
+		.	other types
 
-	import/export decklist sidedeck and commander support
-	event decklist changed
+	Importer
+		.	save current import list on quit
+		.	cancel support
+		? 	non commander preco not all cards
+		?	import/export some cards have no illu
 
 	AvalonDock 
-		Layout Restore doesnt contain custom controls
-		save in appdata
-		CardInspector 255 px wide max
+		.	save in appdata
+		?	Layout Restore doesnt contain custom controls
+		?	CardInspector 255 px wide max
 		
-		
-	better deck list 
-		filter foreign language
-		order by
-
-	proxy export
-	save custom cards 
-	owned/notowned stats
-	
-BUG
-	
-	duplicate deck crash
-	deck creation some cards have no illu
-	cant load db ???
-	Set fav during import > crash
-	No scrollbar in sidedeck (and commandant?)
-	No more black corner
+	proxy 
+		?	export
+		?	print
+		.	save custom cards 
+		.	print custom cards 
 
 IDEAS
 
-	owned card variant and state
-	advanced card search
-	profiles
-	prices
-	auto deck
-	cross deck stats
-	card deck relation tags
-	sort deck table with tags
-	different variant in deck (/!\ difficulties with EF)
-	Add a pin to card inspector
-	save current import list on quit
+	.	Card Pin
+	!	prices
+	!	owned card variant and state
+	?	advanced card search
+	?	profiles
+	?	different variant in deck (/!\ difficulties with EF)
+	X	auto deck
+	X	cross deck stats
+	X	sort deck table and/or decklist with tags
