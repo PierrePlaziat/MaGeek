@@ -394,6 +394,46 @@ namespace MaGeek.Data
             );
         }
 
+        internal int OwnedRatio(MagicDeck currentDeck)
+        {
+            if (currentDeck == null) return 0;
+            if (currentDeck.CardRelations == null) return 0;
+            int total = 0;
+            int miss = 0;
+            foreach(var v in currentDeck.CardRelations)
+            {
+                total += v.Quantity;
+
+                int got = v.Card.Card.CollectedQuantity;
+                int need = v.Quantity;
+                int diff = need - got;
+                if (diff > 0)
+                {
+                    miss += diff;
+                }
+            }
+            if (total == 0) return 100;
+            return 100 - ( miss * 100 / total );
+        }
+
+        internal string ListMissingCards(MagicDeck currentDeck)
+        {
+            if (currentDeck == null) return null;
+            if (currentDeck.CardRelations == null) return null;
+            string missList = "";
+            foreach (var v in currentDeck.CardRelations)
+            {
+                int got = v.Card.Card.CollectedQuantity;
+                int need = v.Quantity;
+                int diff = need - got;
+                if (diff > 0)
+                {
+                    missList += diff + " " + v.Card.Card.CardId + "\n";
+                }
+            }
+            return missList;
+        }
+
         #endregion
 
     }

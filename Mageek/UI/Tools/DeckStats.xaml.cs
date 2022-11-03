@@ -1,4 +1,5 @@
 ﻿using MaGeek.Data.Entities;
+using MaGeek.UI.Windows.ImportExport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,8 +42,9 @@ namespace MaGeek.UI
         public int DevotionG        { get { return App.MaGeek.Utils.DevotionG(currentDeck); } }
         public int DevotionR        { get { return App.MaGeek.Utils.DevotionR(currentDeck); } }
         public string StandardOk    { get { return App.MaGeek.Utils.validity_Standard(currentDeck) ? "YES" : "NO"; } }
-        public string CommanderOk   { get { return App.MaGeek.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; } }
-       
+        public string CommanderOk { get { return App.MaGeek.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; } }
+        public int OwnedRatio { get { return App.MaGeek.Utils.OwnedRatio(currentDeck); } }
+
         #endregion
 
         #region CTOR
@@ -87,6 +89,7 @@ namespace MaGeek.UI
             OnPropertyChanged(nameof(DevotionU));
             OnPropertyChanged(nameof(DevotionG));
             OnPropertyChanged(nameof(DevotionR));
+            OnPropertyChanged(nameof(OwnedRatio));
             DrawManacurve(App.MaGeek.Utils.GetManaCurve(currentDeck));
             DrawNewHand();
         }
@@ -195,6 +198,15 @@ namespace MaGeek.UI
 
         #endregion
 
+        private void ListMissing(object sender, RoutedEventArgs e)
+        {
+            string missList = App.MaGeek.Utils.ListMissingCards(currentDeck);
+            if (!string.IsNullOrEmpty(missList))
+            {
+                var window = new DeckListExporter(missList);
+                window.Show();
+            }
+        }
     }
 
 }

@@ -1,27 +1,16 @@
 ﻿using MaGeek.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace MaGeek.UI.Windows.ImportExport
 {
     public partial class DeckListExporter : Window
     {
 
-        public DeckListExporter()
+        public DeckListExporter(string preFill = null)
         {
             InitializeComponent();
-            ExportBox.Text = ExportList(App.State.SelectedDeck);
+            if (preFill==null) ExportBox.Text = ExportList(App.State.SelectedDeck);
+            else ExportBox.Text = preFill;
         }
 
         private string ExportList(MagicDeck selectedDeck)

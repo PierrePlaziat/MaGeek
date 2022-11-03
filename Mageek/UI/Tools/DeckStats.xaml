@@ -15,7 +15,7 @@
 
                 <Label>Manacurve</Label>
 
-                <Grid Width="446" HorizontalAlignment="Left">
+                <Grid Width="500" HorizontalAlignment="Left">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
@@ -180,6 +180,23 @@
 
                     <Label Content="Commander" Foreground="#DDD" />
                     <Label Content="{Binding CommanderOk}" FontWeight="Bold" Foreground="White" />
+
+                </DockPanel>
+
+                <Label>Owned</Label>
+
+                <DockPanel>
+
+                    <Separator Width="20" Background="Transparent"/>
+
+                    <Label Content="{Binding OwnedRatio}" FontWeight="Bold" Foreground="White" />
+                    <Label Content="%" Foreground="#DDD" />
+
+                    <Separator Width="20" Background="Transparent"/>
+
+                    <Button Click="ListMissing">List missing</Button>
+                    
+                    <Separator Width="20" Background="Transparent"/>
 
                 </DockPanel>
 
