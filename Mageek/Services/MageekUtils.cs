@@ -407,10 +407,7 @@ namespace MaGeek.Data
                 int got = v.Card.Card.CollectedQuantity;
                 int need = v.Quantity;
                 int diff = need - got;
-                if (diff > 0)
-                {
-                    miss += diff;
-                }
+                if (diff > 0) miss += diff;
             }
             if (total == 0) return 100;
             return 100 - ( miss * 100 / total );
@@ -426,10 +423,7 @@ namespace MaGeek.Data
                 int got = v.Card.Card.CollectedQuantity;
                 int need = v.Quantity;
                 int diff = need - got;
-                if (diff > 0)
-                {
-                    missList += diff + " " + v.Card.Card.CardId + "\n";
-                }
+                if (diff > 0) missList += diff + " " + v.Card.Card.CardId + "\n";
             }
             return missList;
         }

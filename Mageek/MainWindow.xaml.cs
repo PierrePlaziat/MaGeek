@@ -88,6 +88,7 @@ namespace MaGeek
             anchor_CardInspector.FindParent<LayoutAnchorablePane>().DockWidth = new GridLength(255);
             dockingManager.UpdateLayout();
             anchor_CardInspector.ToggleAutoHide();
+            //anchor_CardInspector.Parent
         }
 
         #endregion
@@ -119,14 +120,14 @@ namespace MaGeek
                 xmlLayout.Serialize(fs);
                 xmlLayoutString = fs.ToString();
             }
-            File.WriteAllText("WriteText.txt", xmlLayoutString);
+            File.WriteAllText(App.RoamingFolder+"\\Layout.txt", xmlLayoutString);
         }
 
         private void LoadLayout()
         {
             var serializer = new XmlLayoutSerializer(dockingManager);
             serializer.LayoutSerializationCallback += (s, args) => { };
-            serializer.Deserialize("WriteText.txt");
+            serializer.Deserialize(App.RoamingFolder + "\\Layout.txt");
         }
 
         #endregion

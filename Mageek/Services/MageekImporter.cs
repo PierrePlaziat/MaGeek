@@ -234,7 +234,7 @@ namespace MaGeek.Data
                             int quantity = int.Parse(line.Split(" ")[0]);
                             string name = line[(line.IndexOf(' ') + 1)..];
                             name = name.Split(" // ")[0];
-                            tuples.Add(new ImportLine() { Quantity = quantity, Name = name , Side = side});
+                            tuples.Add(new ImportLine() { Quantity = quantity, Name = name.Trim() , Side = side});
                         }
                     catch { };
 
@@ -253,8 +253,8 @@ namespace MaGeek.Data
             ICardService service = MtgApi.GetCardService();
             List<ICard> cards = new();
             // Search VO
-            int nbApiCallsNedded = await GetApiCallsNeeded(service, cardName, false);
-            for (int i = 1; i <= nbApiCallsNedded; i++)
+            int nbApiCallsNeedded = await GetApiCallsNeeded(service, cardName, false);
+            for (int i = 1; i <= nbApiCallsNeedded; i++)
             {
                 Thread.Sleep(200);
                 IOperationResult<List<ICard>> tmpResult = await service
@@ -268,8 +268,8 @@ namespace MaGeek.Data
             // search Foreign
             if (foreignIncluded)
             {
-                nbApiCallsNedded = await GetApiCallsNeeded(service, cardName, true);
-                for (int i = 1; i <= nbApiCallsNedded; i++)
+                nbApiCallsNeedded = await GetApiCallsNeeded(service, cardName, true);
+                for (int i = 1; i <= nbApiCallsNeedded; i++)
                 {
                     Thread.Sleep(200);
                     IOperationResult<List<ICard>> tmpResult = await service
@@ -297,7 +297,13 @@ namespace MaGeek.Data
                         .Where(x => x.Name, cardName)
                         .Where(x => x.PageSize, 1)
                         .AllAsync();
-            return ((int)firstResult.PagingInfo.TotalPages / 100) + 1;
+            if (firstResult.IsSuccess)
+                return ((int)firstResult.PagingInfo.TotalPages / 100) + 1;
+            else
+            {
+                MessageBoxHelper.ShowMsg("API error : " + firstResult.Exception.Message);
+                return 0;
+            }
         }
 
         private async Task<List<ICard>> FilterExactName(List<ICard> cards,string cardName, bool foreignIncluded)

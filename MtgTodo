@@ -4,10 +4,6 @@ TODO
 	?	cant load db 
 	!	Set fav during import > crash
 	!	change relation during import > crash
-	
-	DeckStats
-		.	owned/notowned stats
-		.	other types
 
 	Importer
 		.	save current import list on quit
@@ -17,8 +13,8 @@ TODO
 
 	AvalonDock 
 		.	save in appdata
-		?	Layout Restore doesnt contain custom controls
 		?	CardInspector 255 px wide max
+		?	Layout Restore doesnt contain custom controls
 		
 	proxy 
 		?	export
