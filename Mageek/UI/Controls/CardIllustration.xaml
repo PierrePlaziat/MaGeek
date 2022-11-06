@@ -95,8 +95,7 @@
         </Grid>
 
         <!-- Corners -->
-        
-        <Grid>
+        <Grid Background="DarkRed">
             
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10"></ColumnDefinition>
@@ -119,13 +118,13 @@
                 <Image.RenderTransform>
                     <RotateTransform CenterX="5" CenterY="5" Angle="180" />
                 </Image.RenderTransform>
-            </Image >
+            </Image>
             <Image Grid.Column="0" Grid.Row="2" Source="\Resources\Corner.png" >
-            <Image.RenderTransform>
-                <RotateTransform  CenterX="5" CenterY="5" Angle="270" />
-            </Image.RenderTransform>
-        </Image >
-            
+                <Image.RenderTransform>
+                    <RotateTransform  CenterX="5" CenterY="5" Angle="270" />
+                </Image.RenderTransform>
+            </Image>
+
         </Grid>
 
     </Grid>

@@ -11,10 +11,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Corner.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Resources\Images\Icone.ico" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\Corner.png" />
     <Resource Include="Resources\Images\document.png" />
     <Resource Include="Resources\Images\property-blue.png" />
   </ItemGroup>
