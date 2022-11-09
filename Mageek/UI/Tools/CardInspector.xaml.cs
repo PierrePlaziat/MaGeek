@@ -64,7 +64,7 @@ namespace MaGeek.UI
 
         void HandleCardSelected(MagicCard Card)
         {
-            SelectedCard = Card;
+            if (!isPinned) SelectedCard = Card;
         }
 
         public int CollectedQuantity {
@@ -254,6 +254,14 @@ namespace MaGeek.UI
                     content = SelectedCard.CardId
                 }
             );
+        }
+
+        bool isPinned = false;
+        private void PinCard(object sender, RoutedEventArgs e)
+        {
+            isPinned = !isPinned;
+            if (isPinned) PinButton.Background = Brushes.Gray;
+            else PinButton.Background = Brushes.Black;
         }
     }
 

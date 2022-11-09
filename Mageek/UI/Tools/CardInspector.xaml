@@ -50,7 +50,8 @@
 
         <DockPanel Grid.Row="2">
             <Button Width="75" Click="UpdateCardVariants">Update</Button>
-            <Button Click="LaunchCustomCardCreation">Create custom</Button>
+            <!--<Button Click="LaunchCustomCardCreation">Create custom</Button>-->
+            <Button Click="PinCard" Name="PinButton">PIN</Button>
         </DockPanel>
 
         <ListView Grid.Row="3" BorderThickness="0" x:Name="VariantListBox"  
