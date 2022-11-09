@@ -30,10 +30,57 @@
 
                 <avalonDock:LayoutPanel>
 
-                    <LayoutAnchorablePane>
+                    <LayoutAnchorablePane DockMinWidth="400" DockWidth="10" FloatingWidth="300">
 
-                        <avalonDock:LayoutAnchorable x:Name="CS" Title="Card Searcher">
-                            <local:CardSearcher/>
+                        <avalonDock:LayoutAnchorable x:Name="DL" Title="Deck List">
+                            <local:DeckList/>
+                        </avalonDock:LayoutAnchorable>
+
+                    </LayoutAnchorablePane>
+
+                    <LayoutAnchorablePane DockMinWidth="400" DockWidth="10" FloatingWidth="300">
+
+                        <avalonDock:LayoutAnchorable x:Name="DC" Title="Deck Content" >
+                            <local:DeckContent/>
+                        </avalonDock:LayoutAnchorable>
+
+                    </LayoutAnchorablePane>
+
+
+                    <avalonDock:LayoutPanel Orientation="Vertical" DockWidth="30*">
+                        
+                        <LayoutAnchorablePane>
+
+                            <avalonDock:LayoutAnchorable x:Name="CS" Title="Card Searcher">
+                                <local:CardSearcher/>
+                            </avalonDock:LayoutAnchorable>
+
+                        </LayoutAnchorablePane>
+
+
+                        <avalonDock:LayoutPanel>
+
+                            <LayoutAnchorablePane >
+
+                                <avalonDock:LayoutAnchorable x:Name="DS" Title="Deck Stats">
+                                    <local:DeckStats/>
+                                </avalonDock:LayoutAnchorable>
+
+                                <avalonDock:LayoutAnchorable x:Name="DT" Title="Deck Table">
+                                    <local:DeckTable/>
+                                </avalonDock:LayoutAnchorable>
+
+                            </LayoutAnchorablePane>
+
+                        </avalonDock:LayoutPanel>
+
+                    </avalonDock:LayoutPanel>
+
+                    <LayoutAnchorablePane DockMinWidth="255" DockWidth="*" FloatingWidth="255" ResizableAbsoluteDockWidth="255">
+
+                        <avalonDock:LayoutAnchorable x:Name="CI" Title="Card Inspector" 
+                                                     AutoHideMinWidth="255" AutoHideWidth="255" FloatingWidth="255">
+                            <local:CardInspector/>
                         </avalonDock:LayoutAnchorable>
 
                     </LayoutAnchorablePane>
