@@ -1,13 +1,9 @@
 ﻿using MaGeek.Data.Entities;
-using MaGeek.UI;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 
-namespace MaGeek.Data
+namespace MaGeek
 {
 
     public class MageekUtils
@@ -31,8 +27,8 @@ namespace MaGeek.Data
                 deck.CardRelations.Add(cardRelation);
             }
             cardRelation.Quantity += qty;
-            App.Database.SaveChanges();
-            App.State.RaiseUpdateDeck();
+            App.DB.SaveChanges();
+            App.STATE.RaiseUpdateDeck();
         }
 
         internal void ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
@@ -50,31 +46,31 @@ namespace MaGeek.Data
             if (cardRelation == null) return;
             cardRelation.Quantity -= qty;
             if (cardRelation.Quantity <= 0) deck.CardRelations.Remove(cardRelation);
-            App.Database.SaveChanges();
-            App.State.RaiseUpdateDeck();
+            App.DB.SaveChanges();
+            App.STATE.RaiseUpdateDeck();
 
         }
 
         public void GotCard_Add(MagicCard selectedCard)
         {
             if (selectedCard == null) return;
-            App.Database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity++;
-            App.Database.SaveChanges();
+            App.DB.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity++;
+            App.DB.SaveChanges();
         }
 
         public void GotCard_Remove(MagicCard selectedCard)
         {
             if (selectedCard == null) return;
-            var c = App.Database.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault();
+            var c = App.DB.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault();
             c.CollectedQuantity--;
             if(c.CollectedQuantity < 0) c.CollectedQuantity = 0;
-            App.Database.SaveChanges();
+            App.DB.SaveChanges();
         }
 
         public void SetFav(MagicCard card, string variantId)
         {
             card.FavouriteVariant = variantId;
-            App.Database.SaveChanges();
+            App.DB.SaveChanges();
         }
 
         #endregion

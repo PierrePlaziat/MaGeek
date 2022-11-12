@@ -37,7 +37,7 @@ namespace MaGeek.UI.Windows.Importers
 
         private void LoadSets()
         {
-            foreach (var set in App.MaGeek.Importer.GetExistingSets())
+            foreach (var set in App.CARDS.Importer.GetExistingSets())
             {
                 SetList.Add(set);
             }
@@ -46,10 +46,10 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ImportSet(string title)
         {
-            App.MaGeek.Importer.AddImportToQueue(
-                new Data.PendingImport
+            App.CARDS.Importer.AddImportToQueue(
+                new PendingImport
                 {
-                    mode = Data.ImportMode.Set,
+                    mode = ImportMode.Set,
                     content = title,
                 }
             );

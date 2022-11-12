@@ -33,7 +33,7 @@ namespace MaGeek.Data.Entities
             CardRelations = new ObservableCollection<CardDeckRelation>();
             foreach (CardDeckRelation relation in deckToCopy.CardRelations)
             {
-                App.MaGeek.Utils.AddCardToDeck(relation.Card,this,relation.Quantity,relation.RelationType);
+                App.CARDS.Utils.AddCardToDeck(relation.Card,this,relation.Quantity,relation.RelationType);
             }
         }
 
@@ -41,8 +41,8 @@ namespace MaGeek.Data.Entities
 
         #region Accessors
 
-        public string DeckColors { get { return App.MaGeek.Utils.DeckColors(this); } }
-        public int CardCount { get { return App.MaGeek.Utils.count_Total(this); } }
+        public string DeckColors { get { return App.CARDS.Utils.DeckColors(this); } }
+        public int CardCount { get { return App.CARDS.Utils.count_Total(this); } }
 
         #endregion
 

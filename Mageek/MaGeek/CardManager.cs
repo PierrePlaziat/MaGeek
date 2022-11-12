@@ -4,13 +4,13 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 
-namespace MaGeek.Data
+namespace MaGeek
 {
 
-    public class MageekManager
+    public class CardManager
     {
 
-        public MageekImporter Importer { get; } = new();
+        public ImportManager Importer { get; } = new();
 
         public MageekUtils Utils { get; } = new();
 
@@ -18,16 +18,16 @@ namespace MaGeek.Data
         {
             get
             {
-                App.Database.cards.Load();
-                return App.Database.cards.Local.ToObservableCollection();
+                App.DB.cards.Load();
+                return App.DB.cards.Local.ToObservableCollection();
             }
         }
         public ObservableCollection<MagicDeck> AllDecks
         {
             get
             {
-                App.Database.decks.Load();
-                return App.Database.decks.Local.ToObservableCollection();
+                App.DB.decks.Load();
+                return App.DB.decks.Local.ToObservableCollection();
             }
         }
 
@@ -38,7 +38,7 @@ namespace MaGeek.Data
                 List<string> tags = new List<string>();
                 tags.Add("");
 
-                foreach (var tag in App.Database.Tags.GroupBy(x=>x.Tag).Select(x=>x.First()))
+                foreach (var tag in App.DB.Tags.GroupBy(x=>x.Tag).Select(x=>x.First()))
                     tags.Add(tag.Tag);
                 return tags;
             }

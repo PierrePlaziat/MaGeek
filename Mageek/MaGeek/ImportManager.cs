@@ -6,17 +6,18 @@ using Plaziat.CommonWpf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using static MaGeek.Data.PendingImport;
 using Timer = System.Timers.Timer;
 
-namespace MaGeek.Data
+namespace MaGeek
 {
 
-    public class MageekImporter
+    public class ImportManager
     {
 
         #region Attributes
@@ -27,7 +28,7 @@ namespace MaGeek.Data
         BackgroundWorker Worker = new BackgroundWorker();
         Timer timer;
 
-        public string State { get; set; }
+        public string Message { get; set; }
         public int WorkerProgress { get; set; }
         public int PendingCount { 
             get { 
@@ -42,14 +43,24 @@ namespace MaGeek.Data
             set { infoText = value; }
         }
 
+        enum ImporterState { Init, Play, Pause, Cancel }
+        ImporterState state = ImporterState.Init;
+
         #endregion
 
         #region CTOR
 
-        public MageekImporter()
+        public ImportManager()
         {
             ConfigureTimer();
             ConfigureWorker();
+            InitImporter();
+        }
+
+        private void InitImporter()
+        {
+            LoadState();
+            state = ImporterState.Play;
         }
 
         private void ConfigureTimer()
@@ -68,7 +79,7 @@ namespace MaGeek.Data
 
         private void ConfigureWorker()
         {
-            Worker.DoWork += DoNextImport;
+            Worker.DoWork += Work_DoNextImport;
             Worker.ProgressChanged += ReportImportProgress;
             Worker.WorkerReportsProgress = true;
         }
@@ -81,11 +92,6 @@ namespace MaGeek.Data
         #endregion
 
         #region Methods
-
-        public void AddImportToQueue(PendingImport importation)
-        {
-            PendingImport.Enqueue(importation);
-        }
 
         public List<ISet> GetExistingSets()
         {
@@ -108,6 +114,25 @@ namespace MaGeek.Data
             return sets;
         }
 
+        public void AddImportToQueue(PendingImport importation)
+        {
+            PendingImport.Enqueue(importation);
+        }
+
+
+        public void PlayImports()
+        {
+            if (state==ImporterState.Pause) state = ImporterState.Play;
+        }
+        public void PauseImports()
+        {
+            if (state == ImporterState.Play) state = ImporterState.Pause;
+        }
+        public void CancelImport()
+        {
+            if (state == ImporterState.Play) state = ImporterState.Cancel;
+        }
+
         private void UpdateInfoText()
         {
             int i = 0;
@@ -117,62 +142,83 @@ namespace MaGeek.Data
             InfoText = s;
         }
 
-        #region Loop
+
+        #region Worker
 
         private void CheckNextImport()
         {
+            if (state != ImporterState.Play) return;
             if (PendingImport.Count>0) CurrentImport = PendingImport.Dequeue();
             if (CurrentImport != null) Worker.RunWorkerAsync();
         }
 
-        private void DoNextImport(object sender, DoWorkEventArgs e)
+        private void Work_DoNextImport(object sender, DoWorkEventArgs e)
         {
-            State = "Calling MtgApi";
-            Worker.ReportProgress(0);
-            List<ICard> importResult = Import(CurrentImport);
+            List<ICard> importResult = new List<ICard>();
+            if (state == ImporterState.Cancel) Work_Cancel(); else importResult = Work_CallApi().Result;
+            if (state == ImporterState.Cancel) Work_Cancel(); else Work_RecordLocal(importResult);
+            if (state == ImporterState.Cancel) Work_Cancel(); else Work_MakeADeck();
+            Work_Finalize();
+        }
 
-            State = "Recording cards localy";
+        private async Task<List<ICard>> Work_CallApi()
+        {
+            Message = "Calling MtgApi";
+            Worker.ReportProgress(0);
+            return await Import(CurrentImport); 
+        }
+
+        private void Work_RecordLocal(List<ICard> importResult)
+        {
+            Message = "Recording cards localy";
             Worker.ReportProgress(50);
             RecordCards(importResult);
+        }
 
-            Worker.ReportProgress(100);
-            State = "Making a Deck";
+        private void Work_MakeADeck()
+        {
+            Message = "Making a Deck";
+            Worker.ReportProgress(75);
             if (CurrentImport.Value.mode == ImportMode.List) MakeDeck();
+        }
+
+        private void Work_Finalize()
+        {
+            Worker.ReportProgress(99);
+            Message = "Finalize";
 
             CurrentImport = null;
-            State = "Done";
-            App.State.RaiseUpdateCardCollec();
+            App.STATE.RaiseUpdateCardCollec();
             App.Current.Dispatcher.Invoke(new Action(() => { 
-                App.State.RaiseUpdateDeckList();
-                var c = App.State.SelectedCard;
-                App.State.RaiseCardSelected(null);
-                App.State.RaiseCardSelected(c);
-            })); 
+                App.STATE.RaiseUpdateDeckList();
+                var c = App.STATE.SelectedCard;
+                App.STATE.RaiseCardSelected(null);
+                App.STATE.RaiseCardSelected(c);
+            }));
+
+            Worker.ReportProgress(100);
+            Message = "Done";
+        }
+
+        private void Work_Cancel()
+        {
+            state = ImporterState.Pause;
         }
 
         #endregion
 
         #region Importation
 
-        private List<ICard> Import(PendingImport? currentImport)
+        private async Task<List<ICard>> Import(PendingImport? currentImport)
         {
             switch (CurrentImport.Value.mode)
             {
-                case ImportMode.Set:    return ImportSet(CurrentImport.Value.content).Result;
-                case ImportMode.Search: return ImportCard(CurrentImport.Value.content, false,false,true).Result;
-                case ImportMode.Update: return ImportCard(CurrentImport.Value.content, true, false, false).Result;
-                case ImportMode.List:   return ImportList(ParseCardList(CurrentImport.Value.content)).Result;
+                case ImportMode.Set:    return await ImportSet(CurrentImport.Value.content);
+                case ImportMode.Search: return await ImportCard(CurrentImport.Value.content, false,false,true);
+                case ImportMode.Update: return await ImportCard(CurrentImport.Value.content, true, false, false);
+                case ImportMode.List:   return await ImportList(await ParseCardList(CurrentImport.Value.content));
                 default:                return new List<ICard>();
             }
-        }
-
-        private async Task<List<ICard>> ImportCard(string cardName,bool onlyTheOne,bool skipIfExists, bool foreignIncluded)
-        {
-            State = "Retrieve Card : " + cardName;
-            if (skipIfExists && App.Database.cards .Where(x => x.CardId == cardName).Any()) return new List<ICard>();
-            List<ICard> cards = await RequestCard(cardName,foreignIncluded);
-            if (onlyTheOne) cards = await FilterExactName(cards, cardName, foreignIncluded);
-            return cards;
         }
 
         private async Task<List<ICard>> ImportSet(string content)
@@ -216,32 +262,44 @@ namespace MaGeek.Data
             return cards;
         }
 
-        private List<ImportLine> ParseCardList(string cardlist)
+        private async Task<List<ImportLine>> ParseCardList(string cardlist)
         {
-            var lines = cardlist.Split(Environment.NewLine).ToList();
             List<ImportLine> tuples = new List<ImportLine>();
-            bool side = false;
-            foreach (string line in lines)
+            await Task.Run(() =>
             {
-                if (!string.IsNullOrEmpty(line))
+                var lines = cardlist.Split(Environment.NewLine).ToList();
+                bool side = false;
+                foreach (string line in lines)
                 {
-                    State = "Parse List : " + line;
-                    if (line.StartsWith("Sideboard")) side = true;
-                    else
+                    if (!string.IsNullOrEmpty(line))
                     {
-                        try
+                        Message = "Parse List : " + line;
+                        if (line.StartsWith("Sideboard")) side = true;
+                        else
                         {
-                            int quantity = int.Parse(line.Split(" ")[0]);
-                            string name = line[(line.IndexOf(' ') + 1)..];
-                            name = name.Split(" // ")[0];
-                            tuples.Add(new ImportLine() { Quantity = quantity, Name = name.Trim() , Side = side});
-                        }
-                    catch { };
+                            try
+                            {
+                                int quantity = int.Parse(line.Split(" ")[0]);
+                                string name = line[(line.IndexOf(' ') + 1)..];
+                                name = name.Split(" // ")[0];
+                                tuples.Add(new ImportLine() { Quantity = quantity, Name = name.Trim(), Side = side });
+                            }
+                            catch { };
 
+                        }
                     }
                 }
-            }
+            });
             return tuples;
+        }
+
+        private async Task<List<ICard>> ImportCard(string cardName,bool onlyTheOne,bool skipIfExists, bool foreignIncluded)
+        {
+            Message = "Retrieve Card : " + cardName;
+            if (skipIfExists && App.DB.cards .Where(x => x.CardId == cardName).Any()) return new List<ICard>();
+            List<ICard> cards = await RequestCard(cardName,foreignIncluded);
+            if (onlyTheOne) cards = await FilterExactName(cards, cardName, foreignIncluded);
+            return cards;
         }
 
         #endregion
@@ -274,7 +332,7 @@ namespace MaGeek.Data
                     Thread.Sleep(200);
                     IOperationResult<List<ICard>> tmpResult = await service
                         .Where(x => x.Name, cardName)
-                        .Where(x => x.Language, App.Lang.GetForeignLanguage())
+                        .Where(x => x.Language, App.LANG.GetForeignLanguage())
                         .Where(x => x.Page, i)
                         .Where(x => x.PageSize, 100)
                         .AllAsync();
@@ -290,7 +348,7 @@ namespace MaGeek.Data
             IOperationResult<List<ICard>> firstResult = null;
             if (foreign) firstResult = await service
                         .Where(x => x.Name, cardName)
-                        .Where(x => x.Language, App.Lang.GetForeignLanguage())
+                        .Where(x => x.Language, App.LANG.GetForeignLanguage())
                         .Where(x => x.PageSize, 1)
                         .AllAsync();
             else firstResult = await service
@@ -315,7 +373,7 @@ namespace MaGeek.Data
                 {
                     if (IsExactCardName(cardName, card.Name)) 
                         filteredCards.Add(card);
-                    if (foreignIncluded && card.ForeignNames!=null && IsExactCardName(cardName, card.ForeignNames.Where(x=>x.Language==App.Lang.GetForeignLanguage()).FirstOrDefault().Name)) 
+                    if (foreignIncluded && card.ForeignNames!=null && IsExactCardName(cardName, card.ForeignNames.Where(x=>x.Language==App.LANG.GetForeignLanguage()).FirstOrDefault().Name)) 
                         filteredCards.Add(card);
                 }
             });
@@ -345,19 +403,19 @@ namespace MaGeek.Data
         private static void RecordCard(ICard cardData)
         {
             // Card
-            var localCard = App.Database.cards.Where(x => x.CardId == cardData.Name).FirstOrDefault();
+            var localCard = App.DB.cards.Where(x => x.CardId == cardData.Name).FirstOrDefault();
             if (localCard == null)
             {
                 localCard = new MagicCard(cardData);
-                App.Database.cards.Add(localCard);
-                App.Database.SaveChanges();
+                App.DB.cards.Add(localCard);
+                App.DB.SaveChanges();
             }
             // Variant
             var localVariant = localCard.Variants.Where(x => x.Id == cardData.Id).FirstOrDefault();
             if (localVariant == null)
             {
                 localCard.AddVariant(cardData);
-                App.Database.SaveChanges();
+                App.DB.SaveChanges();
             }
         }
 
@@ -365,9 +423,9 @@ namespace MaGeek.Data
         {
             var title = (CurrentImport.Value.title == null) ? DateTime.Now.ToString() : CurrentImport.Value.title;
             var deck = new MagicDeck(title);
-            foreach (var cardOccurence in ParseCardList(CurrentImport.Value.content))
+            foreach (var cardOccurence in ParseCardList(CurrentImport.Value.content).Result)
             {
-                MagicCard card = App.Database.cards.Where(x => x.CardId == cardOccurence.Name).FirstOrDefault();
+                MagicCard card = App.DB.cards.Where(x => x.CardId == cardOccurence.Name).FirstOrDefault();
                 if (card != null)
                 {
                     MagicCardVariant variant = card.Variants[0];
@@ -375,8 +433,8 @@ namespace MaGeek.Data
                 }
             }
             deck.CardRelations[0].RelationType = 1;
-            App.Database.decks.Add(deck);
-            App.Database.SaveChanges();
+            App.DB.decks.Add(deck);
+            App.DB.SaveChanges();
         }
 
         public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
@@ -400,21 +458,49 @@ namespace MaGeek.Data
 
         #endregion
 
+        #region SaveState
+
+        string StatePath { get { return App.RoamingFolder + "\\ImporterState.txt" ; } }
+
+        public void SaveState()
+        {
+            string jsonString = "";
+            foreach (var v in PendingImport)
+            {
+                jsonString += JsonSerializer.Serialize(PendingImport)+"\n";
+            }
+            File.WriteAllText(StatePath, jsonString);
+        }
+
+        public void LoadState()
+        {
+            if (!File.Exists(StatePath)) return;
+            string jsonString = File.ReadAllText(StatePath);
+            PendingImport = new Queue<PendingImport>();
+            foreach (var v in jsonString.Split('\n'))
+            {
+                PendingImport.Enqueue(JsonSerializer.Deserialize<PendingImport>(jsonString)!);
+            }
+            File.WriteAllText(StatePath, "");
+        }
+
+        #endregion
+
         #endregion
 
     }
 
     #region Data Struct
 
+    public struct ImportLine
+    {
+        public int Quantity;
+        public string Name;
+        public bool Side;
+    }
+
     public struct PendingImport
     {
-
-        public struct ImportLine
-        {
-            public int Quantity;
-            public string Name;
-            public bool Side;
-        }
 
         public ImportMode mode { get; set; }
         public string content { get; set; }

@@ -1,15 +1,23 @@
 TODO
 	
-	!	cant load db 
-	!	Set fav during import > crash
-	!	change relation during import > crash
-	!	importlist > some cards have no illu
-	?	save current import list on quit
-	.	cancel support
+	
 	.	proxy 
 		.	export
 		.	print
-
+	
+	!	Importation
+	
+		.	Link & test
+			v	save current import list on quit
+			v	cancel support
+		.	Crash
+			!	Set fav during 
+			!	change relation during import
+		
+	?	No illu card bugs
+			at deck import some cards have no illu
+			edge case at card select
+			
 IDEAS
 	?	AvalonDock Layout Restore doesnt contain custom controls
 	.	custom cards 

@@ -11,7 +11,7 @@ namespace MaGeek
         public MainWindow()
         {
             DataContext = this;
-            App.State.LayoutActionEvent += HandleLayoutAction;
+            App.STATE.LayoutActionEvent += HandleLayoutAction;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
             InitializeComponent();
         }

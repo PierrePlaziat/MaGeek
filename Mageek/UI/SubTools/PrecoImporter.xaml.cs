@@ -58,11 +58,11 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ImportPreco(string title)
         {
-            App.MaGeek.Importer.AddImportToQueue(
-                new Data.PendingImport
+            App.CARDS.Importer.AddImportToQueue(
+                new PendingImport
                 {
                     title = title,
-                    mode = Data.ImportMode.List,
+                    mode = ImportMode.List,
                     content = File.ReadAllText(path + "\\" + title),
                 }
             );

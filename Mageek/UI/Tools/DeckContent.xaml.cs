@@ -63,7 +63,7 @@ namespace MaGeek.UI
             get {
                 if (currentDeck == null) return null;
                 return FilterCardEnumerator(
-                    App.MaGeek.Utils.GetCommanders(currentDeck)
+                    App.CARDS.Utils.GetCommanders(currentDeck)
                 ).ToList();
             }
         }
@@ -73,7 +73,7 @@ namespace MaGeek.UI
             {
                 if (currentDeck == null) return null;
                 return FilterCardEnumerator(
-                    App.MaGeek.Utils.GetCreatures(currentDeck)
+                    App.CARDS.Utils.GetCreatures(currentDeck)
                 ).ToList();
             }
         }
@@ -83,7 +83,7 @@ namespace MaGeek.UI
             {
                 if (currentDeck == null) return null;
                 return FilterCardEnumerator(
-                    App.MaGeek.Utils.GetInstants(currentDeck)
+                    App.CARDS.Utils.GetInstants(currentDeck)
                 ).ToList();
             }
         }
@@ -93,7 +93,7 @@ namespace MaGeek.UI
             {
                 if (currentDeck == null) return null;
                 return FilterCardEnumerator(
-                    App.MaGeek.Utils.GetSorceries(currentDeck)
+                    App.CARDS.Utils.GetSorceries(currentDeck)
                 ).ToList();
             }
         }
@@ -103,7 +103,7 @@ namespace MaGeek.UI
             {
                 if (currentDeck == null) return null;
                 return FilterCardEnumerator(
-                    App.MaGeek.Utils.GetEnchantments(currentDeck)
+                    App.CARDS.Utils.GetEnchantments(currentDeck)
                 ).ToList();
             }
         }
@@ -222,8 +222,8 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.State.SelectDeckEvent += HandleDeckSelected;
-            App.State.UpdateDeckEvent += HandleDeckModif;
+            App.STATE.SelectDeckEvent += HandleDeckSelected;
+            App.STATE.UpdateDeckEvent += HandleDeckModif;
         }
 
 
@@ -243,7 +243,7 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.MaGeek.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
+            App.CARDS.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
         private void MoreCard(object sender, System.Windows.RoutedEventArgs e)
@@ -251,13 +251,13 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.MaGeek.Utils.AddCardToDeck(c, CurrentDeck,1);
+            App.CARDS.Utils.AddCardToDeck(c, CurrentDeck,1);
         }
 
         private void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListView sendedBy = (sender as ListView);
-            if (sendedBy.SelectedItem is CardDeckRelation cardRel) App.State.RaiseCardSelected(cardRel.Card.Card);
+            if (sendedBy.SelectedItem is CardDeckRelation cardRel) App.STATE.RaiseCardSelected(cardRel.Card.Card);
             //sendedBy.UnselectAll(); // TODO (implies some refactor)
         }
 
@@ -272,32 +272,32 @@ namespace MaGeek.UI
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 1;
-            App.State.RaiseUpdateDeck();
-            App.Database.SaveChanges();
+            App.STATE.RaiseUpdateDeck();
+            App.DB.SaveChanges();
         }
 
         private void UnsetCommandant(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
-            App.State.RaiseUpdateDeck();
-            App.Database.SaveChanges();
+            App.STATE.RaiseUpdateDeck();
+            App.DB.SaveChanges();
         }
 
         private void ToSide(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 2;
-            App.Database.SaveChanges();
-            App.State.RaiseUpdateDeck();
+            App.DB.SaveChanges();
+            App.STATE.RaiseUpdateDeck();
         }
 
         private void ToDeck(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
-            App.Database.SaveChanges();
-            App.State.RaiseUpdateDeck();
+            App.DB.SaveChanges();
+            App.STATE.RaiseUpdateDeck();
         }
     }
 

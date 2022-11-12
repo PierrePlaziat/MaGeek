@@ -475,8 +475,8 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.State.SelectDeckEvent += HandleDeckSelected;
-            App.State.UpdateDeckEvent += HandleDeckModified;
+            App.STATE.SelectDeckEvent += HandleDeckSelected;
+            App.STATE.UpdateDeckEvent += HandleDeckModified;
         }
 
         void HandleDeckModified()
@@ -525,8 +525,8 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             cr.RelationType = 1;
-            App.Database.SaveChanges();
-            App.State.RaiseUpdateDeck();
+            App.DB.SaveChanges();
+            App.STATE.RaiseUpdateDeck();
         }
 
         private void UnsetCommandant_Click(object sender, RoutedEventArgs e)
@@ -534,8 +534,8 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             cr.RelationType = 0;
-            App.Database.SaveChanges();
-            App.State.RaiseUpdateDeck();
+            App.DB.SaveChanges();
+            App.STATE.RaiseUpdateDeck();
         }
 
         private void ToSide_Click(object sender, RoutedEventArgs e)
@@ -543,8 +543,8 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             cr.RelationType = 2;
-            App.Database.SaveChanges();
-            App.State.RaiseUpdateDeck();
+            App.DB.SaveChanges();
+            App.STATE.RaiseUpdateDeck();
         }
 
         private void AddOne_Click(object sender, RoutedEventArgs e)
@@ -552,7 +552,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.MaGeek.Utils.AddCardToDeck(c, CurrentDeck,1);
+            App.CARDS.Utils.AddCardToDeck(c, CurrentDeck,1);
         }
 
         private void RemoveOne_Click(object sender, RoutedEventArgs e)
@@ -560,7 +560,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.MaGeek.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
+            App.CARDS.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
     }

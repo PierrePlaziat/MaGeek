@@ -20,7 +20,7 @@ namespace MaGeek.Events
         public void Execute(object parameter)
         {
             MagicCardVariant variant = (MagicCardVariant)parameter;
-            App.MaGeek.Utils.ChangeRelation(relation, variant);
+            App.CARDS.Utils.ChangeRelation(relation, variant);
         }
 
         public event EventHandler CanExecuteChanged;

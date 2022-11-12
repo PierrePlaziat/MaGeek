@@ -37,7 +37,7 @@ namespace MaGeek.Data.Entities
             Rarity = selectedCard.Rarity;
             SetName = selectedCard.SetName;
             IsCustom = 0;
-            Card = App.Database.cards.Where(x=>x.CardId==selectedCard.Name).FirstOrDefault();
+            Card = App.DB.cards.Where(x=>x.CardId==selectedCard.Name).FirstOrDefault();
         }
 
         #endregion

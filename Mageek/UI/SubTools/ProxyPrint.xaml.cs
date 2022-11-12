@@ -26,7 +26,7 @@ namespace MaGeek.UI.Windows.ImportExport
             DrawingVisual visual = new DrawingVisual();
             DrawingContext context = visual.RenderOpen();
             int count = 0; 
-            foreach (var rel in App.State.SelectedDeck.CardRelations)
+            foreach (var rel in App.STATE.SelectedDeck.CardRelations)
             {
                 ImageSource source = rel.Card.RetrieveImage().Result;
                 for (int i=0;i<rel.Quantity;i++)

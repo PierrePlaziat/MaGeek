@@ -9,10 +9,10 @@ using MaGeek.Entities;
 using Plaziat.CommonWpf;
 using Path = System.IO.Path;
 
-namespace MaGeek.Data
+namespace MaGeek
 {
 
-    public class LocalDb : DbContext
+    public class DbManager : DbContext
     {
 
         #region Attributes
@@ -155,101 +155,8 @@ namespace MaGeek.Data
             {
                 try
                 {
-                    EmptyDb();
-                    using (var restoreDb = new SqliteConnection("Data Source = " + loadFile ))
-                    {
-                        restoreDb.Open();
-
-                        foreach (var row in ReadTable(restoreDb, "cards", 9))
-                        {
-                            cards.Add(
-                                new MagicCard()
-                                {
-                                    CardId = row[0],
-                                    Type = row[1],
-                                    ManaCost = row[2],
-                                    Cmc = int.Parse(row[3]),
-                                    Text = row[4],
-                                    Power = row[5],
-                                    Toughness = row[6],
-                                    CollectedQuantity = int.Parse(row[7]),
-                                    FavouriteVariant = row[8],
-                                }
-                            );
-                        }
-                        foreach (var row in ReadTable(restoreDb, "cardVariants", 7))
-                        {
-                            var v = new MagicCardVariant()
-                            {
-                                Id = row[0],
-                                ImageUrl = row[1],
-                                Rarity = row[2],
-                                SetName = row[3],
-                                Card = cards.Where(x => x.CardId == row[4]).FirstOrDefault(),
-                                IsCustom = int.Parse(row[5]),
-                                CustomName = row[6],
-                            };
-                            cardVariants.Add(v);
-                            if (v.Card.Variants == null) v.Card.Variants = new List<MagicCardVariant>();    
-                            v.Card.Variants.Add(v);
-                         }
-                        foreach (var row in ReadTable(restoreDb, "traductions", 4))
-                        {
-                            var t = new CardTraduction()
-                            {
-                                TraductionId = int.Parse(row[0]),
-                                CardId = row[1],
-                                Card = cards.Where(x => x.CardId == row[1]).FirstOrDefault(),
-                                Language = row[2],
-                                TraductedName = row[3],
-                            };
-                            traductions.Add(t);
-                            if (t.Card.Traductions == null) t.Card.Traductions = new List<CardTraduction>();
-                            t.Card.Traductions.Add(t);
-                        }
-                        foreach (var row in ReadTable(restoreDb, "decks", 2))
-                        {
-                            decks.Add(
-                                new MagicDeck()
-                                {
-                                    DeckId = int.Parse(row[0]),
-                                    Title = row[1],
-                                }
-                            );
-                        }
-                        foreach (var row in ReadTable(restoreDb, "cardsInDecks", 4))
-                        {
-                            var c = new CardDeckRelation()
-                            {
-                                DeckId = int.Parse(row[0]),
-                                CardId = row[1],
-                                Quantity = int.Parse(row[2]),
-                                RelationType = int.Parse(row[3]),
-                                Deck = decks.Where(x => x.DeckId == int.Parse(row[0])).FirstOrDefault(),
-                                Card = cardVariants.Where(x => x.Id == row[1]).FirstOrDefault(),
-                            };
-                            cardsInDecks.Add(c);
-                            if (c.Deck.CardRelations == null) c.Deck.CardRelations = new System.Collections.ObjectModel.ObservableCollection<CardDeckRelation>();
-                            c.Deck.CardRelations.Add(c);
-                            if (c.Card.DeckRelations == null) c.Card.DeckRelations = new System.Collections.ObjectModel.ObservableCollection<CardDeckRelation>();   
-                            c.Card.DeckRelations.Add(c);
-                        }
-                        foreach (var row in ReadTable(restoreDb, "Tags", 3))
-                        {
-                            Tags.Add(
-                                new CardTag()
-                                {
-                                    Id = int.Parse(row[0]),
-                                    Tag = row[1],
-                                    CardId = row[2],
-                                    Card = cards.Where(x => x.CardId == row[2]).FirstOrDefault(),
-                                }
-                            );
-                        }
-                        restoreDb.Close();
-                        SaveChanges();
-                    }
-                    MessageBoxHelper.ShowMsg("DB successfully loaded");
+                    File.Copy(loadFile, App.RoamingFolder + "\\DbToRestore.db");
+                    MessageBoxHelper.ShowMsg("DB will restored at restart");
                     App.Restart();
                 }
                 catch (IOException iox)

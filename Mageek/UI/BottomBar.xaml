@@ -9,12 +9,14 @@
              >
     <Grid Background="Black">
         <DockPanel>
+            <Button Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444">||</Button>
             <Label Content="{Binding ImportCount}"/>
             <Label ToolTip="{Binding InfoText}">Importations</Label>
             <Grid>
                 <ProgressBar Margin="3" Value="{Binding CurrentPercent}"/>
                 <Label Content="{Binding State}" Foreground="Black"/>
             </Grid>
+            <Button Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444">X</Button>
         </DockPanel>
     </Grid>
 </UserControl>

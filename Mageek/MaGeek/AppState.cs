@@ -5,12 +5,15 @@ namespace MaGeek
     public class AppState
     {
 
+        #region State
 
         private MagicCard selectedCard = null;
         public MagicCard SelectedCard { get { return selectedCard; } }
 
         private MagicDeck selectedDeck = null;
         public MagicDeck SelectedDeck { get { return selectedDeck; } }
+
+        #endregion
 
         #region Events
 
@@ -43,6 +46,8 @@ namespace MaGeek
         public delegate void UpdateDeckHandler();
         public event UpdateDeckHandler UpdateDeckEvent;
         public virtual void RaiseUpdateDeck() { UpdateDeckEvent(); }
+
+        // Update Deck List
 
 
         public delegate void UpdateDeckListHandler();

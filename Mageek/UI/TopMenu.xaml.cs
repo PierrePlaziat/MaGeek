@@ -53,17 +53,17 @@ namespace MaGeek.UI.CustomControls
 
         private void BackupDb(object sender, RoutedEventArgs e)
         {
-            App.Database.BackupDb();
+            App.DB.BackupDb();
         }
 
         private void RestoreDb(object sender, RoutedEventArgs e)
         {
-            App.Database.RestoreDb();
+            App.DB.RestoreDb();
         }
 
         private void EraseDb(object sender, RoutedEventArgs e)
         {
-            App.Database.EraseDb();
+            App.DB.EraseDb();
         }
 
         #endregion
@@ -73,7 +73,7 @@ namespace MaGeek.UI.CustomControls
         private void ChangeLanguage(object sender, RoutedEventArgs e)
         {
             MenuItem item = sender as MenuItem;
-            App.Lang.SetForeignLanguage(item.Header.ToString());
+            App.LANG.SetForeignLanguage(item.Header.ToString());
         }
 
         #endregion
@@ -84,32 +84,32 @@ namespace MaGeek.UI.CustomControls
 
         private void CardSearcher_Click(object sender, RoutedEventArgs e)
         {
-            App.State.RaiseLayoutAction(LayoutEventType.Open_CardSearcher);
+            App.STATE.RaiseLayoutAction(LayoutEventType.Open_CardSearcher);
         }
 
         private void DeckList_Click(object sender, RoutedEventArgs e)
         {
-            App.State.RaiseLayoutAction(LayoutEventType.Open_DeckList);
+            App.STATE.RaiseLayoutAction(LayoutEventType.Open_DeckList);
         }
 
         private void DeckContent_Click(object sender, RoutedEventArgs e)
         {
-            App.State.RaiseLayoutAction(LayoutEventType.Open_DeckContent);
+            App.STATE.RaiseLayoutAction(LayoutEventType.Open_DeckContent);
         }
 
         private void DeckTable_Click(object sender, RoutedEventArgs e)
         {
-            App.State.RaiseLayoutAction(LayoutEventType.Open_DeckTable);
+            App.STATE.RaiseLayoutAction(LayoutEventType.Open_DeckTable);
         }
 
         private void DeckStats_Click(object sender, RoutedEventArgs e)
         {
-            App.State.RaiseLayoutAction(LayoutEventType.Open_DeckStats);
+            App.STATE.RaiseLayoutAction(LayoutEventType.Open_DeckStats);
         }
 
         private void CardInspector_Click(object sender, RoutedEventArgs e)
         {
-            App.State.RaiseLayoutAction(LayoutEventType.Open_CardInspector);
+            App.STATE.RaiseLayoutAction(LayoutEventType.Open_CardInspector);
         }
 
         #endregion
@@ -118,16 +118,16 @@ namespace MaGeek.UI.CustomControls
 
         private void LayoutBackup_Click(object sender, RoutedEventArgs e)
         {
-            App.State.RaiseLayoutAction(LayoutEventType.Save);
+            App.STATE.RaiseLayoutAction(LayoutEventType.Save);
         }
         private void LayoutRestore_Click(object sender, RoutedEventArgs e)
         {
-            App.State.RaiseLayoutAction(LayoutEventType.Load);
+            App.STATE.RaiseLayoutAction(LayoutEventType.Load);
         }
 
         private void ResetDefaultLayout(object sender, RoutedEventArgs e)
         {
-            App.State.RaiseLayoutAction(LayoutEventType.ResetLayout);
+            App.STATE.RaiseLayoutAction(LayoutEventType.ResetLayout);
         }
 
         #endregion
