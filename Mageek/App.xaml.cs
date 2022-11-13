@@ -1,5 +1,4 @@
-﻿using Plaziat.CommonWpf;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows;
 
@@ -19,10 +18,9 @@ namespace MaGeek
 
         public App()
         {
-            InitDb();
             if (!File.Exists(RoamingFolder)) Directory.CreateDirectory(RoamingFolder);
             if (!File.Exists(ImageFolder)) Directory.CreateDirectory(ImageFolder);
-            DB.InitDb();
+            InitDb();
         }
 
         private void InitDb()
@@ -33,7 +31,8 @@ namespace MaGeek
                 File.Copy(App.RoamingFolder + "\\DbToRestore.db", Path.Combine(App.RoamingFolder, "MaGeek.db"));
                 File.Delete(App.RoamingFolder + "\\DbToRestore.db");
             }
-            DB = new DbManager(); 
+            DB = new DbManager();
+            DB.InitDb();
         }
 
         internal static void Restart()

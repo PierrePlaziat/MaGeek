@@ -64,6 +64,8 @@ namespace MaGeek.UI.CustomControls
             InitializeComponent();
             ConfigureTimer();
             DataContext = this;
+
+            App.CARDS.Importer.PlayImports();
         }
 
         private void ConfigureTimer()

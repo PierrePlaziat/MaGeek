@@ -53,14 +53,14 @@ namespace MaGeek
         public ImportManager()
         {
             ConfigureTimer();
-            ConfigureWorker();
             InitImporter();
         }
 
         private void InitImporter()
         {
             LoadState();
-            state = ImporterState.Play;
+            ConfigureWorker();
+            state = ImporterState.Pause;
         }
 
         private void ConfigureTimer()
@@ -73,6 +73,8 @@ namespace MaGeek
 
         private void LoopTimer(object sender, ElapsedEventArgs e)
         {
+            if (state == ImporterState.Init) return;
+            SaveState();
             UpdateInfoText();
             if (!Worker.IsBusy) CheckNextImport(); 
         }
@@ -154,18 +156,19 @@ namespace MaGeek
 
         private void Work_DoNextImport(object sender, DoWorkEventArgs e)
         {
+            if (state == ImporterState.Init) return;
             List<ICard> importResult = new List<ICard>();
-            if (state == ImporterState.Cancel) Work_Cancel(); else importResult = Work_CallApi().Result;
+            if (state == ImporterState.Cancel) Work_Cancel(); else importResult = Work_CallApi();
             if (state == ImporterState.Cancel) Work_Cancel(); else Work_RecordLocal(importResult);
             if (state == ImporterState.Cancel) Work_Cancel(); else Work_MakeADeck();
             Work_Finalize();
         }
 
-        private async Task<List<ICard>> Work_CallApi()
+        private List<ICard> Work_CallApi()
         {
             Message = "Calling MtgApi";
             Worker.ReportProgress(0);
-            return await Import(CurrentImport); 
+            return Import(CurrentImport).Result; 
         }
 
         private void Work_RecordLocal(List<ICard> importResult)
@@ -465,23 +468,28 @@ namespace MaGeek
         public void SaveState()
         {
             string jsonString = "";
-            foreach (var v in PendingImport)
-            {
-                jsonString += JsonSerializer.Serialize(PendingImport)+"\n";
-            }
+            var x = PendingImport.ToList();
+            if (CurrentImport!=null) x.Add(CurrentImport.Value);
+            jsonString += JsonSerializer.Serialize(x);
             File.WriteAllText(StatePath, jsonString);
         }
 
         public void LoadState()
         {
-            if (!File.Exists(StatePath)) return;
-            string jsonString = File.ReadAllText(StatePath);
-            PendingImport = new Queue<PendingImport>();
-            foreach (var v in jsonString.Split('\n'))
+            try
             {
-                PendingImport.Enqueue(JsonSerializer.Deserialize<PendingImport>(jsonString)!);
+                if (!File.Exists(StatePath)) return;
+                string jsonString = File.ReadAllText(StatePath);
+                File.WriteAllText(StatePath, "");
+                if (string.IsNullOrEmpty(jsonString)) return;
+                List<PendingImport> loadedImports = JsonSerializer.Deserialize<List<PendingImport>>(jsonString);
+                PendingImport = new Queue<PendingImport>();
+                foreach (var import in loadedImports) PendingImport.Enqueue(import);
             }
-            File.WriteAllText(StatePath, "");
+            catch
+            {
+                File.WriteAllText(StatePath, "");
+            }
         }
 
         #endregion
@@ -506,7 +514,7 @@ namespace MaGeek
         public string content { get; set; }
         public bool asOwned { get; set; }
         public string title { get; set; }
-
+                
         public PendingImport(ImportMode Mode, string Content, bool asGot = false, string title = "")
         {
             this.mode = Mode;
