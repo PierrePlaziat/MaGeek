@@ -1,32 +1,29 @@
 TODO
+
+TEST
 	
-FOR V1	
-	
+	.	TEST !
+
+For V2
+
 	.	proxy support
 		.	export
 		.	print
-
-	!	Importation management
-		.	pause / cancel support
-	!	Crash during import local
-		.	Set fav during 
-		.	change relation
-
-	?	No illu card bugs
-			at deck import some cards have no illu
-			edge case at card select
+	!	prices
 
 MAYBE
 
-	?	AvalonDock Layout Restore doesnt contain custom controls
+	!	owned card variant and state
+	!	AvalonDock Layout Restore doesnt contain custom controls
+	!	different variant in deck (/!\ difficulties with EF)
+
 	.	custom cards 
 		.	save 
 		.	print 
-	!	prices
-	!	owned card variant and state
+	
 	?	advanced card search
 	?	profiles
-	?	different variant in deck (/!\ difficulties with EF)
+	
 	X	auto deck
 	X	cross deck stats
 	X	sort by tags

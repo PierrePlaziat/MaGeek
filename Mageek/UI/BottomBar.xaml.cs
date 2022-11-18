@@ -1,22 +1,9 @@
-﻿using MaGeek.Data;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Controls.Primitives;
 
 namespace MaGeek.UI.CustomControls
 {
@@ -33,6 +20,17 @@ namespace MaGeek.UI.CustomControls
         }
 
         #endregion
+
+        public string SelectedString
+        {
+            get {
+                string s = "";
+                if (App.STATE.SelectedDeck != null) s += "Selected Deck : " + App.STATE.SelectedDeck.Title;
+                s += " | ";
+                if (App.STATE.SelectedCard != null) s += "Selected Card : " + App.STATE.SelectedCard.CardId;
+                return s;
+            }
+        }
 
         Timer loopTimer;
 
@@ -65,7 +63,20 @@ namespace MaGeek.UI.CustomControls
             ConfigureTimer();
             DataContext = this;
 
-            App.CARDS.Importer.PlayImports();
+            App.CARDS.Importer.Play();
+
+            App.STATE.CardSelectedEvent += STATE_CardSelectedEvent;
+            App.STATE.SelectDeckEvent += STATE_SelectDeckEvent; ;
+        }
+
+        private void STATE_SelectDeckEvent(Data.Entities.MagicDeck deck)
+        {
+            OnPropertyChanged("SelectedString");
+        }
+
+        private void STATE_CardSelectedEvent(Data.Entities.MagicCard Card)
+        {
+            OnPropertyChanged("SelectedString");
         }
 
         private void ConfigureTimer()
@@ -82,6 +93,21 @@ namespace MaGeek.UI.CustomControls
             CurrentPercent = App.CARDS.Importer.WorkerProgress;
             State = App.CARDS.Importer.Message;
             OnPropertyChanged("InfoText");
+        }
+
+        private void ButtonPlay_Click(object sender, RoutedEventArgs e)
+        {
+            App.CARDS.Importer.Play();
+        }
+
+        private void ButtonPause_Click(object sender, RoutedEventArgs e)
+        {
+            App.CARDS.Importer.Pause();
+        }
+
+        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
+        {
+            App.CARDS.Importer.CancelAll();
         }
 
     }

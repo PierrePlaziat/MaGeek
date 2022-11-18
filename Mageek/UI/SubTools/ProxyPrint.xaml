@@ -11,7 +11,9 @@
         <StackPanel>
 
             <DockPanel>
-                <Button Click="GO">GO!</Button>
+                <Button Click="GO1">STEP 1</Button>
+                <Button Click="GO2">STEP 2</Button>
+                <Button Click="GO3">STEP 3</Button>
             </DockPanel>
             
             <Grid Name="DocumentPath">

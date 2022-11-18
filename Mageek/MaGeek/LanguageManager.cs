@@ -16,7 +16,7 @@ namespace MaGeek
             else
             {
                 App.DB.Params.Add(new Entities.Param() { ParamValue = "French", ParamName = "ForeignLanguage" });
-                App.DB.SaveChanges();
+                App.DB.SafeSaveChanges();
                 return "French";
             }
         }
@@ -26,7 +26,7 @@ namespace MaGeek
             var p = App.DB.Params.Where(x => x.ParamName == "ForeignLanguage");
             if (p.Any()) App.DB.Params.Remove(p.FirstOrDefault());
             App.DB.Params.Add(new Entities.Param() { ParamValue = value, ParamName = "ForeignLanguage" });
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
             App.Restart();
         }
 

@@ -133,7 +133,7 @@
 
         <StackPanel Background="#222" Grid.ColumnSpan="2" Grid.RowSpan="5"
                     Visibility="{Binding Visible}">
-            <Label>No card selected</Label>
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center">No card selected</Label>
         </StackPanel>
         
     </Grid>

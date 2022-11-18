@@ -524,7 +524,11 @@
         <StackPanel Visibility="{Binding Visible}" 
                     Grid.RowSpan="4" Grid.ColumnSpan="2"
                     Background="#222">
-            <Label>No deck selected</Label>
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center">No deck selected</Label>
+            <Separator Background="Transparent"/>
+            <Button Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Click="CreateDeck">Create a new deck</Button>
+            <Separator Background="Transparent"/>
+            <Button Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OpenDeckImport">Import a deck</Button>
         </StackPanel>
 
     </Grid>

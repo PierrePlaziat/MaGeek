@@ -50,6 +50,7 @@ namespace MaGeek.UI.Windows.Importers
                 new PendingImport
                 {
                     mode = ImportMode.Set,
+                    title = "[SET] "+title,
                     content = title,
                 }
             );
@@ -62,5 +63,10 @@ namespace MaGeek.UI.Windows.Importers
             Close();
         }
 
+        private void ImportSelectedDecks(object sender, RoutedEventArgs e)
+        {
+            foreach(var v in SetListView.SelectedItems) ImportSet(((ISet)v).Name);
+            Close();
+        }
     }
 }

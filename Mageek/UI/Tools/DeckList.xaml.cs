@@ -55,25 +55,7 @@ namespace MaGeek.UI
 
         private void AddDeck(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                string deckTitle = MessageBoxHelper.UserInputString("Please enter a title for this new deck","");
-                if (deckTitle == null) return;
-                if (App.DB.decks.Where(x => x.Title == deckTitle).Any())
-                {
-                    MessageBoxHelper.ShowMsg("There is already a deck with that name.");
-                    return; 
-                }
-                MagicDeck deck = new MagicDeck(deckTitle);
-                App.DB.decks.Add(deck);
-                App.DB.SaveChanges();
-                App.STATE.RaiseUpdateDeckList();
-                App.STATE.RaiseDeckSelect(deck);
-            }
-            catch (Exception ex)
-            {
-                MessageBoxHelper.ShowMsg(ex.Message);
-            }
+            App.CARDS.Utils.AddDeck();
         }
         
         private void RenameDeck(object sender, RoutedEventArgs e)
@@ -87,7 +69,7 @@ namespace MaGeek.UI
                 return;
             }
             App.STATE.SelectedDeck.Title = newTitle;
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
             App.STATE.RaiseUpdateDeck();
         }
 
@@ -99,7 +81,7 @@ namespace MaGeek.UI
                 var deckToCopy = Decks[decklistbox.SelectedIndex];
                 var newDeck = new MagicDeck(deckToCopy);
                 App.DB.decks.Add(newDeck);
-                App.DB.SaveChanges();
+                App.DB.SafeSaveChanges();
                 App.STATE.RaiseUpdateDeckList();
             }
         }
@@ -113,11 +95,12 @@ namespace MaGeek.UI
                 {
                     var deck = Decks[decklistbox.SelectedIndex];
                     App.DB.decks.Remove(deck);
-                    App.DB.SaveChanges();
+                    App.DB.SafeSaveChanges();
                     App.STATE.RaiseUpdateDeckList();
                 }
             }
         }
+
     }
 
 }

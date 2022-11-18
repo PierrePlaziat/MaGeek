@@ -17,6 +17,12 @@ namespace MaGeek
 
         #region Events
 
+        // Import local prevent UI Action
+
+        public delegate void PreventUIActionHandler(bool on);
+        public event PreventUIActionHandler PreventUIActionEvent;
+        public virtual void RaisePreventUIAction(bool on) { PreventUIActionEvent(on); }
+
         // Layout Action 
 
         public delegate void LayoutActionHandler(LayoutEventType Type);

@@ -8,6 +8,11 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
         <DataGrid Name="SetListView" 
                   AutoGenerateColumns="True"
                   ItemsSource="{Binding SetList}"
@@ -17,8 +22,11 @@
                   CanUserReorderColumns="True"
                   CanUserResizeColumns="True"
                   CanUserResizeRows="False"
-                  CanUserSortColumns="True">
+                  CanUserSortColumns="True"
+                  SelectionMode="Extended">
         </DataGrid>
+
+        <Button Grid.Row="1" Click="ImportSelectedDecks">Import Selected Sets</Button>
             
     </Grid>
 </Window>

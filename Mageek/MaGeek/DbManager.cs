@@ -145,7 +145,7 @@ namespace MaGeek
             foreach (var row in from o in decks select o) decks.Remove(row);
             foreach (var row in from o in cardsInDecks select o) cardsInDecks.Remove(row);
             foreach (var row in from o in Tags select o) Tags.Remove(row);
-            SaveChanges();
+            SafeSaveChanges();
         }
 
         public void RestoreDb() // TODO DEBUG
@@ -184,6 +184,16 @@ namespace MaGeek
         }
 
         #endregion
+
+        public object locker = new object();
+
+        public void SafeSaveChanges()
+        {
+            lock (locker)
+            {
+                SaveChanges();
+            }
+        }
 
     }
 

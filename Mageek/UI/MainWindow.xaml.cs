@@ -1,19 +1,44 @@
 ﻿using AvalonDock.Layout.Serialization;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace MaGeek
 {
 
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+
+        #region Property Changed
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        #endregion
+
+        private Visibility preventActionVisibility = Visibility.Hidden;
+        public Visibility PreventActionVisibility { 
+            get {  return preventActionVisibility; }
+            set { preventActionVisibility = value; OnPropertyChanged(); } 
+        }
 
         public MainWindow()
         {
             DataContext = this;
             App.STATE.LayoutActionEvent += HandleLayoutAction;
+            App.STATE.PreventUIActionEvent += STATE_PreventUIActionEvent;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
             InitializeComponent();
+        }
+
+        private void STATE_PreventUIActionEvent(bool on)
+        {
+            if (on) { PreventActionVisibility = Visibility.Visible; }
+            else { PreventActionVisibility = Visibility.Collapsed; }
         }
 
         void HandleLayoutAction(LayoutEventType type)

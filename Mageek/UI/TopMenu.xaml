@@ -8,14 +8,16 @@
              d:DesignHeight="20">
 
     <Menu Background="Black" Foreground="White">
+        
         <MenuItem Header="Import">
             <MenuItem Header="From Txt" Foreground="Black" Click="OpenWindow_TxtImporter"/>
             <MenuItem Header="Set" Foreground="Black" Click="OpenWindow_SetImporter"/>
             <MenuItem Header="Preconstruit" Foreground="Black" Click="OpenWindow_PrecoImporter"/>
         </MenuItem>
+        
         <MenuItem Header="Export">
             <MenuItem Header="Deck List" Foreground="Black" Click="OpenWindow_DeckListExporter"/>
-            <MenuItem Header="Proxy Print" Foreground="Black" Click="OpenWindow_ProxyPrint"/>
+            <!--<MenuItem Header="Proxy Print" Foreground="Black" Click="OpenWindow_ProxyPrint"/>-->
         </MenuItem>
 
         <MenuItem Header="Database">
@@ -56,4 +58,5 @@
         </MenuItem>-->
         
     </Menu>
+    
 </UserControl>

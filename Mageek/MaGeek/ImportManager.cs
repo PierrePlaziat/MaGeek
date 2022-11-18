@@ -23,19 +23,27 @@ namespace MaGeek
         #region Attributes
 
         IMtgServiceProvider MtgApi = new MtgServiceProvider();
+        BackgroundWorker Worker = new BackgroundWorker();
+
+        #region State
+
         Queue<PendingImport> PendingImport = new Queue<PendingImport>();
         PendingImport? CurrentImport = null;
-        BackgroundWorker Worker = new BackgroundWorker();
-        Timer timer;
 
-        public string Message { get; set; }
+        enum ImporterState { Init, Play, Pause, Canceling }
+        ImporterState state = ImporterState.Init;
+
+        #endregion
+
+        #region UI
+
+        public string Message { get; set; } = "Init";
         public int WorkerProgress { get; set; }
         public int PendingCount { 
             get { 
                 return PendingImport.Count + (CurrentImport != null ? 1 : 0);
             } 
         }
-
         private string infoText = "";
         public string InfoText
         {
@@ -43,8 +51,21 @@ namespace MaGeek
             set { infoText = value; }
         }
 
-        enum ImporterState { Init, Play, Pause, Cancel }
-        ImporterState state = ImporterState.Init;
+        #endregion
+
+        #endregion
+
+        #region Timer
+
+        Timer timer;
+
+        private void ConfigureTimer()
+        {
+            timer = new Timer(1000);
+            timer.AutoReset=true;
+            timer.Elapsed += MainLoop;
+            timer.Start();
+        }
 
         #endregion
 
@@ -52,31 +73,11 @@ namespace MaGeek
 
         public ImportManager()
         {
-            ConfigureTimer();
-            InitImporter();
-        }
-
-        private void InitImporter()
-        {
             LoadState();
             ConfigureWorker();
+            ConfigureTimer();
             state = ImporterState.Pause;
-        }
-
-        private void ConfigureTimer()
-        {
-            timer = new Timer(1000);
-            timer.AutoReset=true;
-            timer.Elapsed += LoopTimer;
-            timer.Start();
-        }
-
-        private void LoopTimer(object sender, ElapsedEventArgs e)
-        {
-            if (state == ImporterState.Init) return;
-            SaveState();
-            UpdateInfoText();
-            if (!Worker.IsBusy) CheckNextImport(); 
+            Message = "Init done"; 
         }
 
         private void ConfigureWorker()
@@ -84,11 +85,6 @@ namespace MaGeek
             Worker.DoWork += Work_DoNextImport;
             Worker.ProgressChanged += ReportImportProgress;
             Worker.WorkerReportsProgress = true;
-        }
-
-        private void ReportImportProgress(object sender, ProgressChangedEventArgs e)
-        {
-            WorkerProgress = e.ProgressPercentage;
         }
 
         #endregion
@@ -121,29 +117,54 @@ namespace MaGeek
             PendingImport.Enqueue(importation);
         }
 
+        #region State
 
-        public void PlayImports()
+        private void MainLoop(object sender, ElapsedEventArgs e)
         {
-            if (state==ImporterState.Pause) state = ImporterState.Play;
+            if (state == ImporterState.Init) return;
+            if (!Worker.IsBusy && state == ImporterState.Play) CheckNextImport(); 
+
+            //TODO : Move those so they are recalculated only when needed
+            SaveState();
+            UpdateInfoText();
+
         }
-        public void PauseImports()
+
+        public void Play()
         {
-            if (state == ImporterState.Play) state = ImporterState.Pause;
+            if (state == ImporterState.Pause)
+            {
+                state = ImporterState.Play;
+                Message = "Play";
+            }
         }
-        public void CancelImport()
+        public void Pause()
         {
-            if (state == ImporterState.Play) state = ImporterState.Cancel;
+            if (state == ImporterState.Play)
+            {
+                state = ImporterState.Pause;
+                Message = "Pause";
+            }
+        }
+        public void CancelAll()
+        {
+            Message = "Canceling";
+            state = ImporterState.Canceling;
+            PendingImport = new();
+            CurrentImport = null;
+            Message = "Canceled";
         }
 
         private void UpdateInfoText()
         {
             int i = 0;
             string s = "";
-            if (CurrentImport.HasValue) s += i++ + " : " + CurrentImport.Value.mode + " - " + CurrentImport.Value.content.Split("\n")[0];
-            foreach (var v in PendingImport) s += "\n" + i++ + " : " + v.mode + " - " + v.content.Split("\n")[0];
+            if (CurrentImport.HasValue) s += i++ + " : " + CurrentImport.Value.mode + " - " + CurrentImport.Value.title;
+            foreach (var v in PendingImport) s += "\n" + i++ + " : " + v.mode + " - " + v.title;
             InfoText = s;
         }
 
+        #endregion
 
         #region Worker
 
@@ -158,9 +179,13 @@ namespace MaGeek
         {
             if (state == ImporterState.Init) return;
             List<ICard> importResult = new List<ICard>();
-            if (state == ImporterState.Cancel) Work_Cancel(); else importResult = Work_CallApi();
-            if (state == ImporterState.Cancel) Work_Cancel(); else Work_RecordLocal(importResult);
-            if (state == ImporterState.Cancel) Work_Cancel(); else Work_MakeADeck();
+            if   (state != ImporterState.Canceling)  importResult = Work_CallApi();
+            while(state != ImporterState.Canceling && state == ImporterState.Pause) { };
+            App.STATE.RaisePreventUIAction(true);
+            if   (state != ImporterState.Canceling)  Work_RecordLocal(importResult);
+            App.STATE.RaisePreventUIAction(false);
+            while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
+            if   (state != ImporterState.Canceling) Work_MakeADeck(importResult);
             Work_Finalize();
         }
 
@@ -178,11 +203,17 @@ namespace MaGeek
             RecordCards(importResult);
         }
 
-        private void Work_MakeADeck()
+        private void Work_MakeADeck(List<ICard> importResult)
         {
             Message = "Making a Deck";
             Worker.ReportProgress(75);
-            if (CurrentImport.Value.mode == ImportMode.List) MakeDeck();
+            if (CurrentImport.Value.mode == ImportMode.List) MakeDeck(ParseCardList(CurrentImport.Value.content).Result);
+            if (CurrentImport.Value.mode == ImportMode.Set)
+            {
+                List<ImportLine> importLines = new();
+                foreach(var v in importResult) importLines.Add(new ImportLine() { Name= v.Name, Quantity=1 });
+                MakeDeck(importLines);
+            }
         }
 
         private void Work_Finalize()
@@ -200,12 +231,13 @@ namespace MaGeek
             }));
 
             Worker.ReportProgress(100);
+            if (state == ImporterState.Canceling) state = ImporterState.Play;
             Message = "Done";
         }
 
-        private void Work_Cancel()
+        private void ReportImportProgress(object sender, ProgressChangedEventArgs e)
         {
-            state = ImporterState.Pause;
+            WorkerProgress = e.ProgressPercentage;
         }
 
         #endregion
@@ -411,22 +443,22 @@ namespace MaGeek
             {
                 localCard = new MagicCard(cardData);
                 App.DB.cards.Add(localCard);
-                App.DB.SaveChanges();
+                App.DB.SafeSaveChanges();
             }
             // Variant
             var localVariant = localCard.Variants.Where(x => x.Id == cardData.Id).FirstOrDefault();
             if (localVariant == null)
             {
                 localCard.AddVariant(cardData);
-                App.DB.SaveChanges();
+                App.DB.SafeSaveChanges();
             }
         }
 
-        private void MakeDeck()
+        private void MakeDeck(List<ImportLine> importLines)
         {
             var title = (CurrentImport.Value.title == null) ? DateTime.Now.ToString() : CurrentImport.Value.title;
             var deck = new MagicDeck(title);
-            foreach (var cardOccurence in ParseCardList(CurrentImport.Value.content).Result)
+            foreach (var cardOccurence in importLines)
             {
                 MagicCard card = App.DB.cards.Where(x => x.CardId == cardOccurence.Name).FirstOrDefault();
                 if (card != null)
@@ -435,9 +467,12 @@ namespace MaGeek
                     AddCardToDeck(variant, deck, cardOccurence.Quantity,cardOccurence.Side ? 2 : 0);
                 }
             }
-            deck.CardRelations[0].RelationType = 1;
-            App.DB.decks.Add(deck);
-            App.DB.SaveChanges();
+            if (deck.CardRelations.Count>0)
+            {
+                deck.CardRelations[0].RelationType = 1;
+                App.DB.decks.Add(deck);
+                App.DB.SafeSaveChanges();
+            }
         }
 
         public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)

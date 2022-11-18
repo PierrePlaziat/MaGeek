@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using System;
+using MaGeek.UI.Windows.Importers;
 
 namespace MaGeek.UI
 {
@@ -273,7 +274,7 @@ namespace MaGeek.UI
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 1;
             App.STATE.RaiseUpdateDeck();
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
         }
 
         private void UnsetCommandant(object sender, RoutedEventArgs e)
@@ -281,14 +282,14 @@ namespace MaGeek.UI
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
             App.STATE.RaiseUpdateDeck();
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
         }
 
         private void ToSide(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 2;
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
             App.STATE.RaiseUpdateDeck();
         }
 
@@ -296,8 +297,19 @@ namespace MaGeek.UI
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
             cardRel.RelationType = 0;
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
             App.STATE.RaiseUpdateDeck();
+        }
+
+        private void CreateDeck(object sender, RoutedEventArgs e)
+        {
+            App.CARDS.Utils.AddDeck();
+        }
+
+        private void OpenDeckImport(object sender, RoutedEventArgs e)
+        {
+            var window = new PrecoImporter();
+            window.Show();
         }
     }
 

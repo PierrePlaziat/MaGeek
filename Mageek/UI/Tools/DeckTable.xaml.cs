@@ -525,7 +525,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             cr.RelationType = 1;
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
             App.STATE.RaiseUpdateDeck();
         }
 
@@ -534,7 +534,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             cr.RelationType = 0;
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
             App.STATE.RaiseUpdateDeck();
         }
 
@@ -543,7 +543,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             cr.RelationType = 2;
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
             App.STATE.RaiseUpdateDeck();
         }
 

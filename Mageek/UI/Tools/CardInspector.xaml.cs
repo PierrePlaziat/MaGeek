@@ -164,7 +164,7 @@ namespace MaGeek.UI
             if (!string.IsNullOrEmpty(NewTag.Text))
             {
                 App.DB.Tags.Add(new CardTag(NewTag.Text, selectedCard));
-                App.DB.SaveChanges();
+                App.DB.SafeSaveChanges();
                 OnPropertyChanged("Tags");
                 NewTag.Text = "";
                 sugestions.Visibility = System.Windows.Visibility.Collapsed;
@@ -175,7 +175,7 @@ namespace MaGeek.UI
         {
             CardTag cardTag = (CardTag)((Button)sender).DataContext;
             App.DB.Tags.Remove(cardTag);
-            App.DB.SaveChanges();
+            App.DB.SafeSaveChanges();
             OnPropertyChanged("Tags");
             sugestions.Visibility = System.Windows.Visibility.Collapsed;
         }

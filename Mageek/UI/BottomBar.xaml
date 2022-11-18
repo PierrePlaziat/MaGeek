@@ -8,15 +8,18 @@
              d:DesignHeight="20" d:DesignWidth="800"
              >
     <Grid Background="Black">
-        <DockPanel>
-            <Button Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444">||</Button>
+        <DockPanel Margin="3,0,0,0">
+            <Button Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444" Click="ButtonPause_Click">||</Button>
+            <Button Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444" Click="ButtonPlay_Click">></Button>
             <Label Content="{Binding ImportCount}"/>
             <Label ToolTip="{Binding InfoText}">Importations</Label>
             <Grid>
-                <ProgressBar Margin="3" Value="{Binding CurrentPercent}"/>
+                <ProgressBar Margin="3" Value="{Binding CurrentPercent}" Width="500 "/>
                 <Label Content="{Binding State}" Foreground="Black"/>
             </Grid>
-            <Button Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444">X</Button>
+            <Button Width="20" ToolTip="Cancell all importations" Background="#222" Foreground="#444" Click="ButtonCancel_Click">X</Button>
+            <Label HorizontalAlignment="Right" Content="{Binding SelectedString}"></Label>
         </DockPanel>
+        
     </Grid>
 </UserControl>
