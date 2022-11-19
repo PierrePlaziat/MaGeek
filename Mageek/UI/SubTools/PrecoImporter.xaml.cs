@@ -43,7 +43,7 @@ namespace MaGeek.UI.Windows.Importers
             foreach (string file in files)
             {
                 var splited = file.Split("\\");
-                string title = splited[splited.Length - 1];
+                string title = splited[splited.Length - 1].Replace(".txt","");
                 PrecoList.Add(title);
             }
             OnPropertyChanged("PrecoList");
@@ -51,8 +51,13 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var title = PrecoListView.SelectedItem as string;
-            ImportPreco(title);
+            ImportPreco(PrecoListView.SelectedItem as string);
+            Close();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var v in PrecoListView.SelectedItems) ImportPreco(v as string);
             Close();
         }
 
@@ -61,9 +66,9 @@ namespace MaGeek.UI.Windows.Importers
             App.CARDS.Importer.AddImportToQueue(
                 new PendingImport
                 {
-                    title = title,
+                    title = "[Preco] " + title,
                     mode = ImportMode.List,
-                    content = File.ReadAllText(path + "\\" + title),
+                    content = File.ReadAllText(path + "\\" + title + ".txt"),
                 }
             );
         }

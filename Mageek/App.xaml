@@ -35,6 +35,8 @@
 
         <Style TargetType="{x:Type ListView}">
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="#222"/>
+            <Setter Property="Foreground" Value="#999"/>
         </Style>
 
         <Style TargetType="{x:Type ProgressBar}">

@@ -93,7 +93,7 @@
 
         <cc:StateBar Grid.Row="3"></cc:StateBar>
 
-        <Grid Grid.RowSpan="3" Background="#000" Opacity=".5" Visibility="{Binding PreventActionVisibility}">
+        <Grid Grid.RowSpan="2" Background="#000" Opacity=".5" Visibility="{Binding PreventActionVisibility}">
             <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="20">Please wait while importing localy...</Label>
         </Grid>
         

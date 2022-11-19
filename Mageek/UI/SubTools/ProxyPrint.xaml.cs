@@ -88,7 +88,7 @@ namespace MaGeek.UI.Windows.ImportExport
         private void CreatePdf(MemoryStream lMemoryStream, string filePath)
         {
             MemoryStream lOutStream = new MemoryStream();
-            NiXPS.Converter.XpsToPdf(lMemoryStream, lOutStream);
+            //NiXPS.Converter.XpsToPdf(lMemoryStream, lOutStream);
             File.WriteAllBytes(filePath, lOutStream.ToArray());
         }
     }

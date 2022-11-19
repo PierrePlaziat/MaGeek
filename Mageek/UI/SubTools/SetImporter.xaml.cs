@@ -44,13 +44,13 @@ namespace MaGeek.UI.Windows.Importers
             OnPropertyChanged("SetList");
         }
 
-        private void ImportSet(string title)
+        private void ImportSet(string title, string date, string type)
         {
             App.CARDS.Importer.AddImportToQueue(
                 new PendingImport
                 {
                     mode = ImportMode.Set,
-                    title = "[SET] "+title,
+                    title = "["+date+"] "+type+" set] "+title,
                     content = title,
                 }
             );
@@ -59,13 +59,21 @@ namespace MaGeek.UI.Windows.Importers
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var title = ((ISet)SetListView.SelectedItem).Name;
-            ImportSet(title);
+            var date = ((ISet)SetListView.SelectedItem).ReleaseDate;
+            var type = ((ISet)SetListView.SelectedItem).Type;
+            ImportSet(title,date,type);
             Close();
         }
 
         private void ImportSelectedDecks(object sender, RoutedEventArgs e)
         {
-            foreach(var v in SetListView.SelectedItems) ImportSet(((ISet)v).Name);
+            foreach (var v in SetListView.SelectedItems)
+            {
+                var title = ((ISet)v).Name;
+                var date = ((ISet)v).ReleaseDate;
+                var type = ((ISet)v).Type;
+                ImportSet(title, date, type);
+            }
             Close();
         }
     }

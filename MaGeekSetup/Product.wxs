@@ -26,6 +26,23 @@
 
       <ComponentRef Id="ApplicationShortcut" />
 			<ComponentGroupRef Id="Resources_files" />
+			<ComponentGroupRef Id="pl_files" />
+			<ComponentGroupRef Id="fr_files" />
+			<ComponentGroupRef Id="es_files" />
+			<ComponentGroupRef Id="de_files" />
+			<ComponentGroupRef Id="cs_CZ_files" />
+			<ComponentGroupRef Id="ca_ES_files" />
+			<ComponentGroupRef Id="ja_files" />
+			<ComponentGroupRef Id="ko_files" />
+			<ComponentGroupRef Id="nl_BE_files" />
+			<ComponentGroupRef Id="pt_files" />
+			<ComponentGroupRef Id="ro_files" />
+			<ComponentGroupRef Id="ru_files" />
+			<ComponentGroupRef Id="sv_files" />
+			<ComponentGroupRef Id="zh_Hans_files" />
+			<ComponentGroupRef Id="zh_Hant_files" />
+			<ComponentGroupRef Id="hu_files" />
+			<ComponentGroupRef Id="it_files" />
 
     </Feature>
   
@@ -86,7 +103,9 @@
             </Directory>
           </Directory>
         </Directory>
-        <Directory Id="Resources" Name="Resources" />
+        <Directory Id="Resources" Name="Resources">
+          <Directory Id="Resources_Images" Name="Images" />
+        </Directory>
 			</Directory>
       
       <Directory Id="ProgramMenuFolder">
@@ -219,6 +238,18 @@
       <Component Id="MaGeek.pdb" Guid="a98aaa1d-f4e1-4dd8-bd4c-534021f07142">
         <File Id="MaGeek.pdb" Name="MaGeek.pdb" Source="$(var.MaGeek_TargetDir)MaGeek.pdb" />
       </Component>
+      <Component Id="Microsoft.WindowsAPICodePack.Shell.dll" Guid="3a691db3-59f6-4b4a-aa9a-5b390141548a">
+        <File Id="Microsoft.WindowsAPICodePack.Shell.dll" Name="Microsoft.WindowsAPICodePack.Shell.dll" Source="$(var.MaGeek_TargetDir)Microsoft.WindowsAPICodePack.Shell.dll" />
+      </Component>
+      <Component Id="AvalonDock.Themes.Expression.dll" Guid="05206b1f-b05d-4de9-8676-97269289bb2b">
+        <File Id="AvalonDock.Themes.Expression.dll" Name="AvalonDock.Themes.Expression.dll" Source="$(var.MaGeek_TargetDir)AvalonDock.Themes.Expression.dll" />
+      </Component>
+      <Component Id="AvalonDock.dll" Guid="38950e40-a540-4611-9332-6b4336ce96a7">
+        <File Id="AvalonDock.dll" Name="AvalonDock.dll" Source="$(var.MaGeek_TargetDir)AvalonDock.dll" />
+      </Component>
+      <Component Id="Microsoft.WindowsAPICodePack.dll" Guid="c9869358-f3d0-446e-8e99-a68be8ecc7a7">
+        <File Id="Microsoft.WindowsAPICodePack.dll" Name="Microsoft.WindowsAPICodePack.dll" Source="$(var.MaGeek_TargetDir)Microsoft.WindowsAPICodePack.dll" />
+      </Component>
 	  </ComponentGroup>
 	</Fragment>
 
@@ -274,6 +305,142 @@
     <ComponentGroup Id="Resources_files" Directory="Resources">
       <Component Id="Resources_Icone.ico" Guid="7fb9d505-ffd2-4bd1-871d-c88f585c6561">
         <File Id="Resources_Icone.ico" Name="Icone.ico" Source="$(var.MaGeek_TargetDir)Icone.ico" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="pl_files" Directory="pl">
+      <Component Id="pl_AvalonDock.resources.dll" Guid="79cd45a9-455f-4c33-bf7a-8f01137fab80">
+        <File Id="pl_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)pl\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="fr_files" Directory="fr">
+      <Component Id="fr_AvalonDock.resources.dll" Guid="068b8e90-8be4-46cb-b27d-c1f6ed1d1bd7">
+        <File Id="fr_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)fr\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="es_files" Directory="es">
+      <Component Id="es_AvalonDock.resources.dll" Guid="7460c0f9-4360-4dcf-9d04-23d4a138c188">
+        <File Id="es_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)es\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="de_files" Directory="de">
+      <Component Id="de_AvalonDock.resources.dll" Guid="7db33afc-771a-4ab5-80bf-b7b19b5a456d">
+        <File Id="de_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)de\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="cs_CZ_files" Directory="cs_CZ">
+      <Component Id="cs_CZ_AvalonDock.resources.dll" Guid="39eb407f-e55d-4e81-85f6-9c0e3d06d527">
+        <File Id="cs_CZ_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)cs-CZ\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ca_ES_files" Directory="ca_ES">
+      <Component Id="ca_ES_AvalonDock.resources.dll" Guid="778db76c-8b09-4c30-b60a-1a83a8869854">
+        <File Id="ca_ES_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ca-ES\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ja_files" Directory="ja">
+      <Component Id="ja_AvalonDock.resources.dll" Guid="4bec9c0f-b475-4256-8730-5ce01d593616">
+        <File Id="ja_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ja\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ko_files" Directory="ko">
+      <Component Id="ko_AvalonDock.resources.dll" Guid="560d1bbd-0ce0-42d2-afb4-0c861e0a117c">
+        <File Id="ko_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ko\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="nl_BE_files" Directory="nl_BE">
+      <Component Id="nl_BE_AvalonDock.resources.dll" Guid="fa62a913-515e-4e60-a3d6-3e7e9e240193">
+        <File Id="nl_BE_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)nl-BE\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="pt_files" Directory="pt">
+      <Component Id="pt_AvalonDock.resources.dll" Guid="9b57f50b-3b33-4b58-ba2a-87e81f0f83da">
+        <File Id="pt_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)pt\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ro_files" Directory="ro">
+      <Component Id="ro_AvalonDock.resources.dll" Guid="b43bc0eb-39a2-46b2-a450-1a5748f76692">
+        <File Id="ro_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ro\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ru_files" Directory="ru">
+      <Component Id="ru_AvalonDock.resources.dll" Guid="a17454ec-902a-4f6e-827e-8f8e45a50145">
+        <File Id="ru_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)ru\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="sv_files" Directory="sv">
+      <Component Id="sv_AvalonDock.resources.dll" Guid="b47b01df-4d3c-47a7-b163-ba63e86d4365">
+        <File Id="sv_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)sv\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="zh_Hans_files" Directory="zh_Hans">
+      <Component Id="zh_Hans_AvalonDock.resources.dll" Guid="87702ba9-904b-49e0-96c3-8c5e0d9af7a0">
+        <File Id="zh_Hans_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)zh-Hans\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="zh_Hant_files" Directory="zh_Hant">
+      <Component Id="zh_Hant_AvalonDock.resources.dll" Guid="26593ea2-25b1-48aa-a722-9842764bb93e">
+        <File Id="zh_Hant_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)zh-Hant\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="hu_files" Directory="hu">
+      <Component Id="hu_AvalonDock.resources.dll" Guid="6f4a444f-7103-4e46-9d4c-f651e1ef1c57">
+        <File Id="hu_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)hu\AvalonDock.resources.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="it_files" Directory="it">
+      <Component Id="it_AvalonDock.resources.dll" Guid="76a029a8-2c29-4ec6-bbb4-5c452bb1bb62">
+        <File Id="it_AvalonDock.resources.dll" Name="AvalonDock.resources.dll" Source="$(var.MaGeek_TargetDir)it\AvalonDock.resources.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>
