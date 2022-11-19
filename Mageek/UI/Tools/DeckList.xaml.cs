@@ -14,7 +14,7 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( App.CARDS.AllDecks.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower()))); } }
+        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( App.CARDS.AllDecks.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower())).OrderBy(x=>x.Title)); } }
 
         private string filterString = "";
         public string FilterString
