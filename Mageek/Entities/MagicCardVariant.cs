@@ -23,6 +23,7 @@ namespace MaGeek.Data.Entities
         public string SetName { get; set; }
         public int IsCustom { get; set; }
         public string CustomName { get; set; }
+        public int Got { get; set; }
 
         public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
         public virtual MagicCard Card { get; set; }
@@ -38,6 +39,7 @@ namespace MaGeek.Data.Entities
             Rarity = selectedCard.Rarity;
             SetName = selectedCard.SetName;
             IsCustom = 0;
+            Got = 0;
             MultiverseId = selectedCard.MultiverseId;
             Card = App.DB.cards.Where(x=>x.CardId==selectedCard.Name).FirstOrDefault();
         }
@@ -77,6 +79,14 @@ namespace MaGeek.Data.Entities
             get { 
                 return string.IsNullOrEmpty(ImageUrl) ? Brushes.Black : Brushes.White; 
             } 
+        }
+
+        public float GetPrice
+        {
+            get
+            {
+                return PriceManager.GetCardPrize(this);
+            }
         }
 
         #endregion

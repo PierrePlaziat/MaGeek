@@ -122,19 +122,19 @@ namespace MaGeek
 
         }
 
-        public void GotCard_Add(MagicCard selectedCard)
+        public void GotCard_Add(MagicCardVariant selectedCard)
         {
             if (selectedCard == null) return;
-            App.DB.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault().CollectedQuantity++;
+            App.DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault().Got++;
             App.DB.SafeSaveChanges();
         }
 
-        public void GotCard_Remove(MagicCard selectedCard)
+        public void GotCard_Remove(MagicCardVariant selectedCard)
         {
             if (selectedCard == null) return;
-            var c = App.DB.cards.Where(x => x.CardId == selectedCard.CardId).FirstOrDefault();
-            c.CollectedQuantity--;
-            if(c.CollectedQuantity < 0) c.CollectedQuantity = 0;
+            var c = App.DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
+            c.Got--;
+            if(c.Got < 0) c.Got = 0;
             App.DB.SafeSaveChanges();
         }
 
@@ -439,7 +439,7 @@ namespace MaGeek
             {
                 total += v.Quantity;
 
-                int got = v.Card.Card.CollectedQuantity;
+                int got = v.Card.Got;
                 int need = v.Quantity;
                 int diff = need - got;
                 if (diff > 0) miss += diff;
@@ -455,7 +455,7 @@ namespace MaGeek
             string missList = "";
             foreach (var v in currentDeck.CardRelations)
             {
-                int got = v.Card.Card.CollectedQuantity;
+                int got = v.Card.Got;
                 int need = v.Quantity;
                 int diff = need - got;
                 if (diff > 0) missList += diff + " " + v.Card.Card.CardId + "\n";

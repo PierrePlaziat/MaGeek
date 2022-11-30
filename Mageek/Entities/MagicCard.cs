@@ -20,7 +20,6 @@ namespace MaGeek.Data.Entities
         public string Text { get; set; }
         public string Power { get; set; }
         public string Toughness { get; set; }
-        public int CollectedQuantity { get; set; }
         public virtual List<MagicCardVariant> Variants { get; set; } = new List<MagicCardVariant>();
         public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
         public string FavouriteVariant { get; set; } = "";
@@ -41,7 +40,6 @@ namespace MaGeek.Data.Entities
             Power = selectedCard.Power;
             Toughness = selectedCard.Toughness;
             AddNames(selectedCard.ForeignNames);
-            CollectedQuantity = 0;
         }
 
         public void AddVariant(ICard iCard)
@@ -100,7 +98,7 @@ namespace MaGeek.Data.Entities
         public string CardForeignName {
             get {
                 var a = Traductions.Where(x => x.Language.ToLower() == App.LANG.GetForeignLanguage().ToLower()).FirstOrDefault();
-                return a!= null ?  a.TraductedName : "(VO) "+CardId;
+                return a!= null ?  a.TraductedName : CardId;
             }
         }
 

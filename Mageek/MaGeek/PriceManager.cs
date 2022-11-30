@@ -32,7 +32,7 @@ namespace MaGeek
             float price = 0;
 
             var v = App.DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
-            if ( v == null) price = RetrievePrice(variant);
+            if (v == null) price = RetrievePrice(variant);
             else if (IsOutDated(v.LastUpdate)) price = RetrievePrice(variant);
             else price = float.Parse(v.Value);
             return price;

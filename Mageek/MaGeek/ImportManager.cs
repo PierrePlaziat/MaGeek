@@ -456,7 +456,7 @@ namespace MaGeek
                 App.DB.SafeSaveChanges();
             }
             // Owned Quantity
-            if (localCard != null && Owned) localCard.CollectedQuantity ++;
+            //if (localCard != null && Owned) localCard.CollectedQuantity ++;
         }
 
         private void MakeDeck(List<ImportLine> importLines)

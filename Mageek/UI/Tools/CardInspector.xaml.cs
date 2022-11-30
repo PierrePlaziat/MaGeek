@@ -66,11 +66,12 @@ namespace MaGeek.UI
         public int CollectedQuantity {
             get
             {
-                if (selectedCard != null) return selectedCard.CollectedQuantity;
-                else return 0;
+                if (Variants == null) return 0;
+                int q = 0;
+                foreach (var v in Variants) q += v.Got;
+                return q;
             }
         }
-
 
         public List<MagicCardVariant> Variants
         {
@@ -142,14 +143,20 @@ namespace MaGeek.UI
 
         private void AddCardToCollection(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Utils.GotCard_Add(selectedCard);
-            OnPropertyChanged("CollectedQuantity");
+            App.CARDS.Utils.GotCard_Add(SelectedVariant);
+            OnPropertyChanged(nameof(CollectedQuantity));
+
+            var variantList = Variants;
+            Variants = null;
+
+            OnPropertyChanged(nameof(Variants));
         }
 
         private void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Utils.GotCard_Remove(SelectedCard);
-            OnPropertyChanged("CollectedQuantity");
+            App.CARDS.Utils.GotCard_Remove(SelectedVariant);
+            OnPropertyChanged(nameof(CollectedQuantity));
+            OnPropertyChanged(nameof(Variants));
         }
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
