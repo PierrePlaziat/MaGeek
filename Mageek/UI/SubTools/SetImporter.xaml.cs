@@ -19,6 +19,13 @@ namespace MaGeek.UI.Windows.Importers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        bool asOwned = false;
+        public bool AsOwned
+        {
+            get { return asOwned; }
+            set { asOwned = value; OnPropertyChanged(); }
+        }
+
         #endregion
 
         List<ISet> setList = new List<ISet>();
@@ -44,7 +51,7 @@ namespace MaGeek.UI.Windows.Importers
             OnPropertyChanged("SetList");
         }
 
-        private void ImportSet(string title, string date, string type)
+        private void ImportSet(string title, string date, string type, bool asOwned)
         {
             App.CARDS.Importer.AddImportToQueue(
                 new PendingImport
@@ -52,6 +59,7 @@ namespace MaGeek.UI.Windows.Importers
                     mode = ImportMode.Set,
                     title = "["+date+"] "+type+" set] "+title,
                     content = title,
+                    asOwned = asOwned,
                 }
             );
         }
@@ -61,7 +69,7 @@ namespace MaGeek.UI.Windows.Importers
             var title = ((ISet)SetListView.SelectedItem).Name;
             var date = ((ISet)SetListView.SelectedItem).ReleaseDate;
             var type = ((ISet)SetListView.SelectedItem).Type;
-            ImportSet(title,date,type);
+            ImportSet(title,date,type,asOwned);
             Close();
         }
 
@@ -72,7 +80,7 @@ namespace MaGeek.UI.Windows.Importers
                 var title = ((ISet)v).Name;
                 var date = ((ISet)v).ReleaseDate;
                 var type = ((ISet)v).Type;
-                ImportSet(title, date, type);
+                ImportSet(title, date, type,AsOwned);
             }
             Close();
         }

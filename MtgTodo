@@ -1,29 +1,28 @@
 TODO
 
-TEST
+	.	owned card variant and state
 	
-	.	TEST !
-
-For V2
-
 	.	proxy support
 		.	export
 		.	print
-	!	prices
+	
+	! 	various crashes during import
+		
 
 MAYBE
 
-	!	owned card variant and state
 	!	AvalonDock Layout Restore doesnt contain custom controls
 	!	different variant in deck (/!\ difficulties with EF)
+	?	profiles
 
 	.	custom cards 
 		.	save 
 		.	print 
 	
 	?	advanced card search
-	?	profiles
+	?	Maybe replace All api calls by scryfall api?
 	
 	X	auto deck
 	X	cross deck stats
 	X	sort by tags
+	

@@ -3,6 +3,7 @@ using MtgApiManager.Lib.Core;
 using MtgApiManager.Lib.Model;
 using MtgApiManager.Lib.Service;
 using Plaziat.CommonWpf;
+using ScryfallApi.Client;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,6 +22,7 @@ namespace MaGeek
     {
 
         #region Attributes
+
 
         IMtgServiceProvider MtgApi = new MtgServiceProvider();
         BackgroundWorker Worker = new BackgroundWorker();
@@ -428,14 +430,15 @@ namespace MaGeek
 
         private void RecordCards(List<ICard> results)
         {
+            bool owned = CurrentImport.HasValue ? CurrentImport.Value.asOwned : false;
             for (int i = 0; i < results.Count; i++)
             {
-                RecordCard(results[i]);
+                RecordCard(results[i], owned);
                 Worker.ReportProgress((i * 100 / results.Count) / 2 + 50);
             }
         }
 
-        private static void RecordCard(ICard cardData)
+        private static void RecordCard(ICard cardData,bool Owned)
         {
             // Card
             var localCard = App.DB.cards.Where(x => x.CardId == cardData.Name).FirstOrDefault();
@@ -452,6 +455,8 @@ namespace MaGeek
                 localCard.AddVariant(cardData);
                 App.DB.SafeSaveChanges();
             }
+            // Owned Quantity
+            if (localCard != null && Owned) localCard.CollectedQuantity ++;
         }
 
         private void MakeDeck(List<ImportLine> importLines)

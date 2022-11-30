@@ -17,6 +17,7 @@ namespace MaGeek.Data.Entities
 
         [Key]
         public string Id { get; set; }
+        public string MultiverseId { get; set; }
         public string ImageUrl { get; set; }
         public string Rarity { get; set; }
         public string SetName { get; set; }
@@ -37,6 +38,7 @@ namespace MaGeek.Data.Entities
             Rarity = selectedCard.Rarity;
             SetName = selectedCard.SetName;
             IsCustom = 0;
+            MultiverseId = selectedCard.MultiverseId;
             Card = App.DB.cards.Where(x=>x.CardId==selectedCard.Name).FirstOrDefault();
         }
 

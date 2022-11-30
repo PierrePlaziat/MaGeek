@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows;
+using System.Threading;
 
 namespace MaGeek
 {
@@ -495,8 +496,18 @@ namespace MaGeek
             return ok;
         }
 
+        internal float EstimateDeckPrice(MagicDeck selectedDeck)
+        {
+            float total = 0;
+            foreach (var v in selectedDeck.CardRelations)
+            {
+                total += v.Quantity * PriceManager.GetCardPrize(v.CardId);
+            }
+            return total;
+        }
+
         #endregion
-        
+
     }
 
 }

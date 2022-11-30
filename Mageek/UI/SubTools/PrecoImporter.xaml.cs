@@ -22,6 +22,13 @@ namespace MaGeek.UI.Windows.Importers
 
         #endregion
 
+        bool asOwned = false;
+        public bool AsOwned
+        {
+            get { return asOwned; }
+            set { asOwned = value; OnPropertyChanged(); }
+        }
+
         string path = "D:\\PROJECTS\\VS\\MaGeek\\Preco";
 
         List<string> precoList = new List<string>();
@@ -51,17 +58,17 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ImportPreco(PrecoListView.SelectedItem as string);
+            ImportPreco(PrecoListView.SelectedItem as string, AsOwned);
             Close();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var v in PrecoListView.SelectedItems) ImportPreco(v as string);
+            foreach (var v in PrecoListView.SelectedItems) ImportPreco(v as string, AsOwned);
             Close();
         }
 
-        private void ImportPreco(string title)
+        private void ImportPreco(string title, bool asOwned)
         {
             App.CARDS.Importer.AddImportToQueue(
                 new PendingImport
@@ -69,6 +76,7 @@ namespace MaGeek.UI.Windows.Importers
                     title = "[Preco] " + title,
                     mode = ImportMode.List,
                     content = File.ReadAllText(path + "\\" + title + ".txt"),
+                    asOwned = asOwned
                 }
             );
         }

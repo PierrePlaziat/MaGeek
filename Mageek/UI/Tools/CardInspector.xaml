@@ -15,9 +15,7 @@
         
         <Grid.RowDefinitions>
             <RowDefinition Height="348"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="100"></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -25,73 +23,83 @@
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
                                 SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
-        <DockPanel Grid.Row="1" Background="Black" Height="21">
+        <StackPanel Grid.Row="1">
+            
+            <DockPanel Background="Black" Height="21">
 
-            <Button Width="20" 
-                    HorizontalAlignment="Left" 
-                    Click="SubstractCardFromCollection" 
-                    Content="-"/>
+                <Button Width="20" 
+                        HorizontalAlignment="Left" 
+                        Click="SubstractCardFromCollection" 
+                        Content="-"/>
 
-            <Label  Width="35" 
-                    HorizontalAlignment="Center" 
-                    Foreground="White" 
-                    Padding="5,2" 
-                    Content="{Binding CollectedQuantity}"/>
+                <Label  Width="35" 
+                        HorizontalAlignment="Center" 
+                        Foreground="White" 
+                        Padding="5,2" 
+                        Content="{Binding CollectedQuantity}"/>
 
-            <Button Width="20" 
-                    HorizontalAlignment="Right" 
-                    Click="AddCardToCollection" 
-                    Content="+"/>
+                <Button Width="20" 
+                        HorizontalAlignment="Right" 
+                        Click="AddCardToCollection" 
+                        Content="+"/>
 
-            <Button Click="AddToCurrentDeck" 
-                    Content="Add to Deck"/>
+                <Button Click="AddToCurrentDeck" 
+                        Content="Add to Deck"/>
 
-        </DockPanel>
+            </DockPanel>
 
-        <DockPanel Grid.Row="2">
-            <Button Width="75" Click="UpdateCardVariants">Update</Button>
-            <!--<Button Click="LaunchCustomCardCreation">Create custom</Button>-->
-            <Button Click="PinCard" Name="PinButton">PIN</Button>
-        </DockPanel>
+            <DockPanel>
+                <Button Width="75" Click="UpdateCardVariants">Update</Button>
+                <!--<Button Click="LaunchCustomCardCreation">Create custom</Button>-->
+                <Button Click="PinCard" Name="PinButton">PIN</Button>
+            </DockPanel>
+            
+            <DockPanel>
+                <Label>Price Estimation : </Label>
+                <Label Content="{Binding Price}" Background="Black" Foreground="{Binding PriceColor}" FontWeight="Black"></Label>
+                <Label Foreground="White"> €</Label>
+            </DockPanel>
 
-        <ListView Grid.Row="3" BorderThickness="0" x:Name="VariantListBox"  
-                  ItemsSource="{Binding Variants}" 
-                  Background="#333" MouseUp="SelectVariant" SelectedIndex="0">
-            <ListView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Set FAV" Click="SetFav"/>
-                </ContextMenu>
-            </ListView.ContextMenu>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel>
-                        <Border Width="10" Height="10" CornerRadius="2 2 2 2" >
-                            <Border.Style>
-                                <Style TargetType="{x:Type Border}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Rarity}" Value="Common">
-                                            <Setter Property="Background" Value="Black"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Rarity}" Value="Uncommon">
-                                            <Setter Property="Background" Value="LightGray"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Rarity}" Value="Rare">
-                                            <Setter Property="Background" Value="Gold"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Rarity}" Value="Mythic">
-                                            <Setter Property="Background" Value="OrangeRed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                        </Border>
-                        <Label Content="{Binding SetName}" Foreground="{Binding LineColoration}"></Label>
-                    </DockPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            <ListView  BorderThickness="0" x:Name="VariantListBox"  
+                      ItemsSource="{Binding Variants}" 
+                      Background="#333" MouseUp="SelectVariant" SelectedIndex="0">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Set FAV" Click="SetFav"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <Border Width="10" Height="10" CornerRadius="2 2 2 2" >
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Rarity}" Value="Common">
+                                                <Setter Property="Background" Value="Black"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Rarity}" Value="Uncommon">
+                                                <Setter Property="Background" Value="LightGray"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Rarity}" Value="Rare">
+                                                <Setter Property="Background" Value="Gold"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Rarity}" Value="Mythic">
+                                                <Setter Property="Background" Value="OrangeRed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                            <Label Content="{Binding SetName}" Foreground="{Binding LineColoration}"></Label>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-        <StackPanel Grid.Row="4" Background="#222">
+        </StackPanel>
+        
+        <StackPanel Grid.Row="2" Background="#222">
         
             <DockPanel>
                 <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>

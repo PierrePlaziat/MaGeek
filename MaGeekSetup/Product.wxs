@@ -130,7 +130,11 @@
   
   <Fragment>
 	  <ComponentGroup Id="ProgramFilesFolder_files" Directory="INSTALLFOLDER">
-
+      
+      <Component Id="System.Text.Encodings.Web.dll" Guid="3e9ae95e-8bbe-45d9-bdbd-bd670b7dca15">
+        <File Id="System.Text.Encodings.Web.dll" Name="System.Text.Encodings.Web.dll" Source="$(var.MaGeek_TargetDir)System.Text.Encodings.Web.dll" />
+      </Component>
+      
       <Component Id="ProductComponent" Guid="4e53269e-7cf7-48b6-ba55-0906ee45863e">
         <File Id="MaGeek.exe" Source="$(var.MaGeek_TargetDir)MaGeek.exe" KeyPath="yes" />
       </Component>
@@ -444,4 +448,5 @@
       </Component>
     </ComponentGroup>
   </Fragment>
+
 </Wix>

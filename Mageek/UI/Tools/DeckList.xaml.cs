@@ -101,6 +101,12 @@ namespace MaGeek.UI
             }
         }
 
+        private void CalculateDeckPrice(object sender, RoutedEventArgs e)
+        {
+            if (App.STATE.SelectedDeck == null) return;
+            float totalPrice = App.CARDS.Utils.EstimateDeckPrice(App.STATE.SelectedDeck);
+            MessageBox.Show("Estimation : " + totalPrice + " €");
+        }
     }
 
 }

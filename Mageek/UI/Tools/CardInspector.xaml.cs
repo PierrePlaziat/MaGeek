@@ -15,15 +15,6 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        public List<CardTag> Tags
-        {
-            get
-            {
-                if(selectedCard==null) return null;
-                return App.DB.Tags.Where(x=>x.CardId==selectedCard.CardId).ToList();
-            }
-        }
-
         private MagicCard selectedCard;
         public MagicCard SelectedCard
         {
@@ -31,12 +22,12 @@ namespace MaGeek.UI
             set
             {
                 selectedCard = value;
-                OnPropertyChanged("Variants");
+                OnPropertyChanged(nameof(Variants));
                 OnPropertyChanged();
                 AutoSelectVariant();
-                OnPropertyChanged("CollectedQuantity");
-                OnPropertyChanged("Visible");
-                OnPropertyChanged("Tags");
+                OnPropertyChanged(nameof(CollectedQuantity));
+                OnPropertyChanged(nameof(Visible));
+                OnPropertyChanged(nameof(Tags));
             }
         }
 
@@ -59,7 +50,12 @@ namespace MaGeek.UI
         public MagicCardVariant SelectedVariant
         {
             get { return selectedVariant; }
-            set { selectedVariant = value; OnPropertyChanged(); }
+            set { 
+                selectedVariant = value; 
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Price));
+                OnPropertyChanged(nameof(PriceColor));
+            }
         }
 
         void HandleCardSelected(MagicCard Card)
@@ -100,6 +96,34 @@ namespace MaGeek.UI
 
         public Visibility Visible { get { return selectedCard == null ? Visibility.Visible : Visibility.Collapsed; } }
 
+
+        public string Price {
+            get {
+                if (SelectedVariant == null) return "/";
+                return PriceManager.GetCardPrize(SelectedVariant).ToString();
+            } 
+        }
+
+        public Brush PriceColor { 
+            get {
+                var p = PriceManager.GetCardPrize(SelectedVariant);
+                if (p>=10) return Brushes.White;
+                else if (p>=5) return Brushes.Orange;
+                else if (p>=2) return Brushes.Yellow;
+                else if (p>=1) return Brushes.Green;
+                else if (p>=0.2) return Brushes.LightGray;
+                else return Brushes.DarkGray;
+            } 
+        }
+
+        public List<CardTag> Tags
+        {
+            get
+            {
+                if(selectedCard==null) return null;
+                return App.DB.Tags.Where(x=>x.CardId==selectedCard.CardId).ToList();
+            }
+        }
 
         #endregion
 
