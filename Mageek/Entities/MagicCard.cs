@@ -102,6 +102,17 @@ namespace MaGeek.Data.Entities
             }
         }
 
+        public int Got
+        {
+            get
+            {
+                if (Variants == null) return 0;
+                int q = 0;
+                foreach (var v in Variants) q += v.Got;
+                return q;
+            }
+        }
+
         #endregion
 
     }

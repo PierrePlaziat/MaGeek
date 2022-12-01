@@ -66,10 +66,8 @@ namespace MaGeek.UI
         public int CollectedQuantity {
             get
             {
-                if (Variants == null) return 0;
-                int q = 0;
-                foreach (var v in Variants) q += v.Got;
-                return q;
+                if (SelectedCard == null) return 0;
+                return SelectedCard.Got;
             }
         }
 
@@ -113,7 +111,8 @@ namespace MaGeek.UI
                 else if (p>=2) return Brushes.Yellow;
                 else if (p>=1) return Brushes.Green;
                 else if (p>=0.2) return Brushes.LightGray;
-                else return Brushes.DarkGray;
+                else if (p>=0) return Brushes.DarkGray;
+                else return Brushes.Black;
             } 
         }
 
@@ -143,18 +142,16 @@ namespace MaGeek.UI
 
         private void AddCardToCollection(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Utils.GotCard_Add(SelectedVariant);
+            MagicCardVariant variant = (MagicCardVariant) ((Button)sender).DataContext;
+            App.CARDS.Utils.GotCard_Add(variant);
             OnPropertyChanged(nameof(CollectedQuantity));
-
-            var variantList = Variants;
-            Variants = null;
-
             OnPropertyChanged(nameof(Variants));
         }
 
         private void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Utils.GotCard_Remove(SelectedVariant);
+            MagicCardVariant variant = (MagicCardVariant)((Button)sender).DataContext;
+            App.CARDS.Utils.GotCard_Remove(variant);
             OnPropertyChanged(nameof(CollectedQuantity));
             OnPropertyChanged(nameof(Variants));
         }

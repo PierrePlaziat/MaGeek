@@ -54,6 +54,7 @@ namespace MaGeek
 
         private static float RetrievePrice(MagicCardVariant variant)
         {
+            if (string.IsNullOrEmpty(variant.MultiverseId)) return -1;
             Thread.Sleep(150);
             float price = -1;
             using (var w = new WebClient())
@@ -72,6 +73,8 @@ namespace MaGeek
             }
             if (price != -1)
             {
+                var v = App.DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
+                if (v != null) App.DB.Prices.Remove(v);
                 App.DB.Prices.Add(
                     new Price() { 
                         MultiverseId = variant.MultiverseId, 

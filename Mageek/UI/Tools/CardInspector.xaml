@@ -23,14 +23,22 @@
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
                                 SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
-        <StackPanel Grid.Row="1">
-            
-            <DockPanel Background="Black" Height="21">
+        <StackPanel Grid.Row="1" >
 
-                <!--<Button Width="20" 
-                        HorizontalAlignment="Left" 
-                        Click="SubstractCardFromCollection" 
-                        Content="-"/>-->
+            <DockPanel>
+                <Button Width="75" Click="UpdateCardVariants">Update</Button>
+                <!--<Button Click="LaunchCustomCardCreation">Create custom</Button>-->
+                <Button Click="PinCard" Name="PinButton">PIN</Button>
+            </DockPanel>
+            
+            <DockPanel>
+
+                <Button Click="AddToCurrentDeck" 
+                        Content="Add to Deck"/>
+            </DockPanel>
+
+
+            <DockPanel Background="Black">
 
                 <Label  Width="35" 
                         HorizontalAlignment="Center" 
@@ -43,29 +51,12 @@
                         Foreground="White" 
                         Padding="5,2" 
                         Content="{Binding CollectedQuantity}"/>
+                <Label>Price Estimation : </Label>
+                <Label Content="{Binding Price}" Background="Black" Foreground="{Binding PriceColor}" FontWeight="Black"/>
+                <Label Foreground="{Binding PriceColor}">€</Label>
 
-                <!--<Button Width="20" 
-                        HorizontalAlignment="Right" 
-                        Click="AddCardToCollection" 
-                        Content="+"/>-->
-
-                <Button Click="AddToCurrentDeck" 
-                        Content="Add to Deck"/>
-
-            </DockPanel>
-
-            <DockPanel>
-                <Button Width="75" Click="UpdateCardVariants">Update</Button>
-                <!--<Button Click="LaunchCustomCardCreation">Create custom</Button>-->
-                <Button Click="PinCard" Name="PinButton">PIN</Button>
             </DockPanel>
             
-            <DockPanel>
-                <Label>Price Estimation : </Label>
-                <Label Content="{Binding Price}" Background="Black" Foreground="{Binding PriceColor}" FontWeight="Black"></Label>
-                <Label Foreground="White"> €</Label>
-            </DockPanel>
-
             <ListView BorderThickness="0" 
                       x:Name="VariantListBox"  
                       ItemsSource="{Binding Variants}" 
@@ -82,7 +73,7 @@
                     <DataTemplate>
 
 
-                        <DockPanel Grid.Column="0">
+                        <DockPanel Grid.Column="0"  Height="21" Margin="0">
                             
                             <DockPanel Grid.Column="1" Background="Black" Height="21">
                                 
@@ -126,7 +117,7 @@
                                     </Style>
                                 </Border.Style>
                             </Border>
-                            <Label Content="{Binding SetName}" Foreground="{Binding LineColoration}"></Label>
+                            <Label Content="{Binding SetName}" Foreground="{Binding LineColoration}" Margin="0" Padding="5,1"></Label>
 
                         </DockPanel>
                     </DataTemplate>
