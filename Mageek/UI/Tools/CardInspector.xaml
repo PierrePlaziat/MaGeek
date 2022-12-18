@@ -1,4 +1,4 @@
-﻿<local:TemplatedUserControl x:Class="MaGeek.UI.CardInspector"
+﻿ <local:TemplatedUserControl x:Class="MaGeek.UI.CardInspector"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -123,10 +123,22 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-
+            
         </StackPanel>
         
         <StackPanel Grid.Row="2" Background="#222">
+
+            <ListView ItemsSource="{Binding Legalities}" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <Label Content="{Binding Format}"></Label>
+                            <Label>:</Label>
+                            <Label Content="{Binding IsLegal}"></Label>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         
             <DockPanel>
                 <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>

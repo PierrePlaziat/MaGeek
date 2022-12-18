@@ -1,6 +1,10 @@
-﻿using AvalonDock.Layout.Serialization;
+﻿using AvalonDock.Layout;
+using AvalonDock.Layout.Serialization;
+using MaGeek.UI;
+using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
@@ -72,8 +76,20 @@ namespace MaGeek
         private void LoadLayout()
         {
             var serializer = new XmlLayoutSerializer(dockingManager);
-            serializer.LayoutSerializationCallback += (s, args) => { };
+            serializer.LayoutSerializationCallback += (s, args) => {};
             serializer.Deserialize(App.RoamingFolder + "\\Layout.txt");
+            foreach (var element in dockingManager.Layout.Descendents().OfType<LayoutAnchorable>())
+            {
+                switch (element.Title)
+                {
+                    case "Deck List": element.Content = new DeckList(); break;
+                    case "Deck Content": element.Content = new DeckContent(); break;
+                    case "Deck Stats": element.Content = new DeckStats(); break;
+                    case "Deck Table": element.Content = new DeckTable(); break;
+                    case "Card Inspector": element.Content = new CardInspector(); break;
+                    case "Card Searcher": element.Content = new CardSearcher(); break;
+                }
+            }
         }
 
     }

@@ -20,6 +20,7 @@ namespace MaGeek
         string[] Tables = {
             "CREATE TABLE \"Params\" (\r\n\t\"ParamName\"\tTEXT,\r\n\t\"ParamValue\"\tTEXT\r\n)",
             "CREATE TABLE \"Prices\" (\r\n\t\"MultiverseId\"\tTEXT,\r\n\t\"LastUpdate\"\tTEXT,\r\n\t\"Value\"\tTEXT,\r\n\tPRIMARY KEY(\"MultiverseId\")\r\n)",
+            "CREATE TABLE \"Legalities\" (\r\n\t\"Id\"\tINTEGER,\r\n\t\"MultiverseId\"\tTEXT,\r\n\t\"LastUpdate\"\tTEXT,\r\n\t\"Format\"\tTEXT,\r\n\t\"IsLegal\"\tTEXT,\r\n\tPRIMARY KEY(\"Id\")\r\n)",
             "CREATE TABLE \"Tags\" (\r\n\t\"Id\"\tINTEGER,\r\n\t\"Tag\"\tTEXT,\r\n\t\"CardId\"\tINTEGER,\r\n\tPRIMARY KEY(\"Id\")\r\n)",
             "CREATE TABLE \"cardVariants\" (\r\n\t\"Id\"\tTEXT,\r\n\t\"MultiverseId\"\tTEXT,\r\n\t\"ImageUrl\"\tTEXT,\r\n\t\"Rarity\"\tTEXT,\r\n\t\"SetName\"\tINTEGER,\r\n\t\"CardId\"\tTEXT,\r\n\t\"IsCustom\"\tINTEGER,\r\n\t\"CustomName\"\tTEXT,\r\n\t\"Got\"\tINTEGER\r\n)",
             "CREATE TABLE \"cards\" (\r\n\t\"CardId\"\tTEXT,\r\n\t\"Type\"\tTEXT,\r\n\t\"ManaCost\"\tTEXT,\r\n\t\"Cmc\"\tINTEGER,\r\n\t\"Text\"\tTEXT,\r\n\t\"Power\"\tTEXT,\r\n\t\"Toughness\"\tTEXT,\r\n\t\"FavouriteVariant\"\tTEXT\r\n)",
@@ -55,6 +56,7 @@ namespace MaGeek
         public DbSet<CardTag> Tags { get; set; }
         public DbSet<Param> Params { get; set; }
         public DbSet<Price> Prices { get; set; }
+        public DbSet<Legality> Legalities{ get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -84,12 +86,13 @@ namespace MaGeek
                         .HasForeignKey(t => t.DeckId);
 
             modelBuilder.Entity<CardDeckRelation>()
-                        .HasOne(s => s.Card)
+                        .HasOne(s => s.Card) 
                         .WithMany(e => e.DeckRelations)
                         .HasForeignKey(t => t.CardId);
             modelBuilder.Entity<MagicDeck>().Property(e => e.DeckId).ValueGeneratedOnAdd();
             modelBuilder.Entity<CardTraduction>().Property(e => e.TraductionId).ValueGeneratedOnAdd();
             modelBuilder.Entity<CardTag>().Property(e => e.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Legality>().Property(e => e.Id).ValueGeneratedOnAdd();
         }
 
         #endregion

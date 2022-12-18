@@ -1,26 +1,17 @@
+BUGS
+
+	! 	various crashes relative to db access
+	-	different variant in deck (/!\ difficulties with EF)
+	
 TODO
-	
+
 	.	proxy support
-		.	export
-		.	print
+	.	legality integration int deckstats
+	.	advanced card search
 	
-	! 	various crashes during import
-		
-
-MAYBE
-
-	!	AvalonDock Layout Restore doesnt contain custom controls
-	!	different variant in deck (/!\ difficulties with EF)
-	?	profiles
-
-	.	custom cards 
-		.	save 
-		.	print 
+LATER
 	
-	?	advanced card search
-	?	Maybe replace All api calls by scryfall api?
-	
-	X	auto deck
-	X	cross deck stats
-	X	sort by tags
-	
+	.	custom cards support	>	how to generate image ?
+	.	profiles				>	Folders in Appdata containing db and importer state
+	.	tags sort and stats for deck
+	.	auto deck

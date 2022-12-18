@@ -39,18 +39,18 @@
         </MenuItem>
 
         <MenuItem Header="Display">
-            <!--<MenuItem Header="Tools" Foreground="Black">-->
+            <MenuItem Header="Tools" Foreground="Black">
                 <MenuItem Header="Card Searcher" Foreground="Black" Click="CardSearcher_Click"/>
                 <MenuItem Header="Deck List" Foreground="Black" Click="DeckList_Click"/>
                 <MenuItem Header="Deck Content" Foreground="Black" Click="DeckContent_Click"/>
                 <MenuItem Header="Card Inspector" Foreground="Black" Click="CardInspector_Click"/>
                 <MenuItem Header="Deck Stats" Foreground="Black" Click="DeckStats_Click"/>
                 <MenuItem Header="Deck Table" Foreground="Black" Click="DeckTable_Click"/>
-            <!--</MenuItem>
-            <MenuItem Header="Layout" Foreground="Black">
-                <MenuItem Header="Save" Foreground="Black" Click="LayoutBackup_Click"/>
-                <MenuItem Header="Load" Foreground="Black" Click="LayoutRestore_Click"/>
-            </MenuItem>-->
+            </MenuItem>
+        <MenuItem Header="Layout" Foreground="Black">
+            <MenuItem Header="Save" Foreground="Black" Click="LayoutBackup_Click"/>
+            <MenuItem Header="Load" Foreground="Black" Click="LayoutRestore_Click"/>
+        </MenuItem>
         </MenuItem>
 
         <!-- <MenuItem Header="Help">

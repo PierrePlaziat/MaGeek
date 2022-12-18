@@ -53,6 +53,7 @@ namespace MaGeek.UI
             set { 
                 selectedVariant = value; 
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(Legalities));
                 OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceColor));
             }
@@ -96,16 +97,26 @@ namespace MaGeek.UI
         public Visibility Visible { get { return selectedCard == null ? Visibility.Visible : Visibility.Collapsed; } }
 
 
-        public string Price {
-            get {
+        public string Price
+        {
+            get
+            {
                 if (SelectedVariant == null) return "/";
-                return PriceManager.GetCardPrize(SelectedVariant).ToString();
-            } 
+                return ScryfallManager.GetCardPrize(SelectedVariant).ToString();
+            }
+        }
+        public List<Legality> Legalities
+        {
+            get
+            {
+                if (SelectedVariant == null) return new List<Legality>();
+                return ScryfallManager.GetCardLegal(SelectedVariant);
+            }
         }
 
         public Brush PriceColor { 
             get {
-                var p = PriceManager.GetCardPrize(SelectedVariant);
+                var p = ScryfallManager.GetCardPrize(SelectedVariant);
                 if (p>=10) return Brushes.White;
                 else if (p>=5) return Brushes.Orange;
                 else if (p>=2) return Brushes.Yellow;

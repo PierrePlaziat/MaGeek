@@ -85,7 +85,7 @@ namespace MaGeek.Data.Entities
         {
             get
             {
-                return PriceManager.GetCardPrize(this);
+                return ScryfallManager.GetCardPrize(this);
             }
         }
 

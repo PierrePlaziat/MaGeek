@@ -501,7 +501,7 @@ namespace MaGeek
             float total = 0;
             foreach (var v in selectedDeck.CardRelations)
             {
-                total += v.Quantity * PriceManager.GetCardPrize(v.CardId);
+                total += v.Quantity * ScryfallManager.GetCardPrize(v.CardId);
             }
             return total;
         }
