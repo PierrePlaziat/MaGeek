@@ -17,7 +17,7 @@
         
         <MenuItem Header="Export">
             <MenuItem Header="Deck List" Foreground="Black" Click="OpenWindow_DeckListExporter"/>
-            <!--<MenuItem Header="Proxy Print" Foreground="Black" Click="OpenWindow_ProxyPrint"/>-->
+            <MenuItem Header="Proxy Print" Foreground="Black" Click="OpenWindow_ProxyPrint"/>
         </MenuItem>
 
         <MenuItem Header="Database">

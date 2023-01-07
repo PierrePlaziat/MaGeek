@@ -101,6 +101,12 @@ namespace MaGeek
 
         public void InitDb()
         {
+            if (File.Exists(App.RoamingFolder + "\\DbToRestore.db"))
+            {
+                File.Delete(Path.Combine(App.RoamingFolder, "MaGeek.db"));
+                File.Copy(App.RoamingFolder + "\\DbToRestore.db", Path.Combine(App.RoamingFolder, "MaGeek.db"));
+                File.Delete(App.RoamingFolder + "\\DbToRestore.db");
+            }
             if (File.Exists(DbPath)) return;
             SqliteConnection dbCo = new SqliteConnection(ConnexionString);
             dbCo.Open();

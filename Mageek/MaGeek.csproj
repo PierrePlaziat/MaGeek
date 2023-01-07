@@ -15,6 +15,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <COMReference Include="{d37e2a3e-8545-3a39-9f4f-31827c9124ab}">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>4</VersionMinor>
+      <VersionMajor>2</VersionMajor>
+      <Guid>d37e2a3e-8545-3a39-9f4f-31827c9124ab</Guid>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Resources\Images\Icone.ico" />
   </ItemGroup>
 
@@ -35,6 +44,10 @@
     <PackageReference Include="ScryfallAPI.Client" Version="3.1.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.2" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <Resource Include="Resources\Fonts\Magic_Symbols_2008.ttf" />

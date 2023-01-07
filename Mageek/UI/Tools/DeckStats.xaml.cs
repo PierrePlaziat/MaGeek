@@ -42,8 +42,8 @@ namespace MaGeek.UI
         public int DevotionG        { get { return App.CARDS.Utils.DevotionG(currentDeck); } }
         public int DevotionR        { get { return App.CARDS.Utils.DevotionR(currentDeck); } }
         public string StandardOk    { get { return App.CARDS.Utils.validity_Standard(currentDeck) ? "YES" : "NO"; } }
-        public string CommanderOk { get { return App.CARDS.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; } }
-        public int OwnedRatio { get { return App.CARDS.Utils.OwnedRatio(currentDeck); } }
+        public string CommanderOk   { get { return App.CARDS.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; } }
+        public int OwnedRatio       { get { return App.CARDS.Utils.OwnedRatio(currentDeck); } }
 
         #endregion
 

@@ -43,7 +43,7 @@ namespace MaGeek.UI.CustomControls
 
         private void OpenWindow_ProxyPrint(object sender, RoutedEventArgs e)
         {
-            var window = new ProxyPrint();
+            var window = new ProxyPrint(App.STATE.SelectedDeck);
             window.Show();
         }
 
@@ -73,7 +73,7 @@ namespace MaGeek.UI.CustomControls
         private void ChangeLanguage(object sender, RoutedEventArgs e)
         {
             MenuItem item = sender as MenuItem;
-            App.LANG.SetForeignLanguage(item.Header.ToString());
+            App.STATE.LANG.SetForeignLanguage(item.Header.ToString());
         }
 
         #endregion

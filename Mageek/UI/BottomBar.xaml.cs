@@ -63,7 +63,7 @@ namespace MaGeek.UI.CustomControls
             ConfigureTimer();
             DataContext = this;
 
-            App.CARDS.Importer.Play();
+            //App.CARDS.Importer.Play();
 
             App.STATE.CardSelectedEvent += STATE_CardSelectedEvent;
             App.STATE.SelectDeckEvent += STATE_SelectDeckEvent; ;

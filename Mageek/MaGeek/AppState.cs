@@ -5,6 +5,8 @@ namespace MaGeek
     public class AppState
     {
 
+        public LanguageManager LANG = new LanguageManager();
+
         #region State
 
         private MagicCard selectedCard = null;

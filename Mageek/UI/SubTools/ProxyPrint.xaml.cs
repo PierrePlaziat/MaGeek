@@ -1,95 +1,164 @@
 ﻿using System.Windows;
-using System.IO;
-using System.IO.Packaging;
+using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Xps;
-using System.Windows.Xps.Packaging;
+using System;
 using MaGeek.Data.Entities;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace MaGeek.UI.Windows.ImportExport
 {
 
-    public partial class ProxyPrint : Window
+    public partial class ProxyPrint : Window, INotifyPropertyChanged
     {
 
-        const int print_width = 250;
-        const int print_heigth = 348;
-        const int pront_marge = 10;
+        #region PropertyChange
 
-        DrawingVisual dv;
-        MemoryStream memoryStream;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public ProxyPrint()
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            InitializeComponent();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private void GO1(object sender, RoutedEventArgs e)
+        #endregion
+
+        MagicDeck selectedDeck;
+        public  MagicDeck SelectedDeck
         {
-            if (App.STATE.SelectedDeck == null) return;
-            dv = DrawVisual(App.STATE.SelectedDeck);
+            get { return selectedDeck; }
+            set { selectedDeck = value; OnPropertyChanged(); }
         }
 
-        private void GO2(object sender, RoutedEventArgs e)
+        List<MagicCardVariant> ListOfCardsToPrint;
+
+        private MagicCardVariant card0;
+        public MagicCardVariant Card0
         {
-            if (dv == null) return;
-            memoryStream = CreateXps(dv);
+            get { return card0; }
+            set { card0 = value; OnPropertyChanged(); }
+        }
+        
+        private MagicCardVariant card1;
+        public MagicCardVariant Card1
+        {
+            get { return card1; }
+            set { card1 = value; OnPropertyChanged(); }
+        }
+        
+        private MagicCardVariant card2;
+        public MagicCardVariant Card2
+        {
+            get { return card2; }
+            set { card2 = value; OnPropertyChanged(); }
+        }
+        
+        private MagicCardVariant card3;
+        public MagicCardVariant Card3
+        {
+            get { return card3; }
+            set { card3 = value; OnPropertyChanged(); }
+        }
+        
+        private MagicCardVariant card4;
+        public MagicCardVariant Card4
+        {
+            get { return card4; }
+            set { card4 = value; OnPropertyChanged(); }
+        }
+        
+        private MagicCardVariant card5;
+        public MagicCardVariant Card5
+        {
+            get { return card5; }
+            set { card5 = value; OnPropertyChanged(); }
+        }
+        
+        private MagicCardVariant card6;
+        public MagicCardVariant Card6
+        {
+            get { return card6; }
+            set { card6 = value; OnPropertyChanged(); }
+        }
+        
+        private MagicCardVariant card7;
+        public MagicCardVariant Card7
+        {
+            get { return card7; }
+            set { card7 = value; OnPropertyChanged(); }
+        }
+        
+        private MagicCardVariant card8;
+        public MagicCardVariant Card8
+        {
+            get { return card8; }
+            set { card1 = value; OnPropertyChanged(); }
         }
 
-        private void GO3(object sender, RoutedEventArgs e)
-        {
-            if (memoryStream == null) return;
-            CreatePdf(memoryStream, @"C:\Users\Plaziat\Desktop\test.pdf");
-        }
 
-        // STEP 1: Make a WPF Visual
-        private DrawingVisual DrawVisual(MagicDeck deck)
+        public ProxyPrint(MagicDeck _selectedDeck)
         {
-            DrawingVisual visual = new DrawingVisual();
-            DrawingContext context = visual.RenderOpen();
-            int count = 0; 
-            foreach (var rel in deck.CardRelations)
+            if (_selectedDeck != null) 
             {
-                //ImageSource source = rel.Card.RetrieveImage().Result;
-                for (int i=0;i<rel.Quantity;i++)
+                SelectedDeck= _selectedDeck;
+                InitializeComponent();
+                DataContext = this;
+                DetermineListOfCardsToPrint();
+                PrintDialog printDialog = new PrintDialog();
+                if (printDialog.ShowDialog() == true) LetsGo(printDialog);
+            }
+        }
+
+        private void DetermineListOfCardsToPrint()
+        {
+            ListOfCardsToPrint= new List<MagicCardVariant>();
+            foreach(var v in selectedDeck.CardRelations)
+            {
+                for(int i=0;i<v.Quantity;i++) ListOfCardsToPrint.Add(v.Card);
+            }
+        }
+
+        private void LetsGo(PrintDialog printDialog)
+        {
+            SetCard(0, 0);
+            for (int page = 0; page <= SelectedDeck.CardCount/9; page++)
+            {
+                for(int emplacement=0;emplacement<9;emplacement++)
                 {
-                    context.DrawRectangle(Brushes.Chocolate, new Pen(Brushes.CadetBlue, 5), GetRectForCount(count));
-                    //context.DrawImage(source, GetRectForCount(count));
-                    count++;
+                    SetCard(page, emplacement);
                 }
+                Print(printDialog,page);
             }
-            context.Close();
-            return visual;
         }
 
-        private Rect GetRectForCount(int count)
+        private void SetCard(int page,int emplacement)
         {
-            int x = (count % 3) * (print_width + pront_marge);
-            int y = (count % 3) * (print_heigth + pront_marge);
-            return new Rect(x,y,print_width,print_heigth);
-        }
-
-        // STEP 2: Convert this WPF Visual to an XPS Document
-        private MemoryStream CreateXps(DrawingVisual visual)
-        {
-            MemoryStream memoryStream = new MemoryStream();
+            MagicCardVariant c = null;
+            if (9 * page + emplacement < selectedDeck.CardCount) c = ListOfCardsToPrint[9 * page + emplacement]; 
+            switch(emplacement)
             {
-                Package package = Package.Open(memoryStream, FileMode.Create);
-                XpsDocument doc = new XpsDocument(package);
-                XpsDocumentWriter writer = XpsDocument.CreateXpsDocumentWriter(doc);
-                writer.Write(visual);
-                doc.Close();
-                package.Close();
+                case 0: Card0 = c; break;
+                case 1: Card1 = c; break;
+                case 2: Card2 = c; break;
+                case 3: Card3 = c; break;
+                case 4: Card4 = c; break;
+                case 5: Card5 = c; break;
+                case 6: Card6 = c; break;
+                case 7: Card7 = c; break;
+                case 8: Card8 = c; break;
             }
-            return memoryStream;
         }
 
-        // STEP 3: Convert this XPS Document to a PDF file
-        private void CreatePdf(MemoryStream lMemoryStream, string filePath)
+        private void Print(PrintDialog printDialog,int page)
         {
-            MemoryStream lOutStream = new MemoryStream();
-            //NiXPS.Converter.XpsToPdf(lMemoryStream, lOutStream);
-            File.WriteAllBytes(filePath, lOutStream.ToArray());
+            VisualBrush visualBrush = new VisualBrush(this); 
+            DrawingVisual drawingVisual = new DrawingVisual();
+            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawRectangle(visualBrush, null, new Rect(new Point(), new Size(ActualWidth, ActualHeight)));
+            }
+            printDialog.PrintVisual(drawingVisual, "Mageek Proxy : " + selectedDeck.Title+" - page " + page);
         }
     }
 

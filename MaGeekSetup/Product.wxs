@@ -449,4 +449,15 @@
     </ComponentGroup>
   </Fragment>
 
+
+  <Fragment>
+    <ComponentGroup Id="ProgramFilesFolder_files" Directory="ProgramFilesFolder">
+      <Component Id="ScryfallApi.Client.dll" Guid="23c2b4bc-dafc-4e2d-89be-da14301f227f">
+        <File Id="ScryfallApi.Client.dll" Name="ScryfallApi.Client.dll" Source="$(var.MaGeek_TargetDir)ScryfallApi.Client.dll" />
+      </Component>
+      <Component Id="Microsoft.Extensions.Http.dll" Guid="f6bd16d7-ec59-4452-9895-9b63bf37d0ae">
+        <File Id="Microsoft.Extensions.Http.dll" Name="Microsoft.Extensions.Http.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.Http.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
 </Wix>

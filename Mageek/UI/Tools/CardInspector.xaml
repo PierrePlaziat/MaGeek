@@ -16,7 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="348"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="100"></RowDefinition>
+            <RowDefinition Height="250"></RowDefinition>
         </Grid.RowDefinitions>
 
         <local:CardIllustration x:Name="yo" Width="255" Height="348" Margin="0" Background="Blue"
@@ -128,17 +128,24 @@
         
         <StackPanel Grid.Row="2" Background="#222">
 
-            <ListView ItemsSource="{Binding Legalities}" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <DockPanel>
-                            <Label Content="{Binding Format}"></Label>
-                            <Label>:</Label>
-                            <Label Content="{Binding IsLegal}"></Label>
-                        </DockPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <ScrollViewer Height="150">
+
+                <ListView ItemsSource="{Binding Legalities}" >
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="2"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <Label Content="{Binding Format}" Foreground="{Binding IsLegalColor}"></Label>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                
+            </ScrollViewer>
         
             <DockPanel>
                 <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>

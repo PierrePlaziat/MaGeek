@@ -369,7 +369,7 @@ namespace MaGeek
                     Thread.Sleep(200);
                     IOperationResult<List<ICard>> tmpResult = await service
                         .Where(x => x.Name, cardName)
-                        .Where(x => x.Language, App.LANG.GetForeignLanguage())
+                        .Where(x => x.Language, App.STATE.LANG.GetForeignLanguage())
                         .Where(x => x.Page, i)
                         .Where(x => x.PageSize, 100)
                         .AllAsync();
@@ -385,7 +385,7 @@ namespace MaGeek
             IOperationResult<List<ICard>> firstResult = null;
             if (foreign) firstResult = await service
                         .Where(x => x.Name, cardName)
-                        .Where(x => x.Language, App.LANG.GetForeignLanguage())
+                        .Where(x => x.Language, App.STATE.LANG.GetForeignLanguage())
                         .Where(x => x.PageSize, 1)
                         .AllAsync();
             else firstResult = await service
@@ -410,7 +410,7 @@ namespace MaGeek
                 {
                     if (IsExactCardName(cardName, card.Name)) 
                         filteredCards.Add(card);
-                    if (foreignIncluded && card.ForeignNames!=null && IsExactCardName(cardName, card.ForeignNames.Where(x=>x.Language==App.LANG.GetForeignLanguage()).FirstOrDefault().Name)) 
+                    if (foreignIncluded && card.ForeignNames!=null && IsExactCardName(cardName, card.ForeignNames.Where(x=>x.Language==App.STATE.LANG.GetForeignLanguage()).FirstOrDefault().Name)) 
                         filteredCards.Add(card);
                 }
             });
@@ -478,6 +478,11 @@ namespace MaGeek
                 App.DB.decks.Add(deck);
                 App.DB.SafeSaveChanges();
             }
+
+            if (CurrentImport.Value.mode == ImportMode.Set) foreach (var v in deck.CardRelations)
+                {
+                    v.Quantity = 1;
+                }
         }
 
         public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)

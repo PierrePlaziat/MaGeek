@@ -3,25 +3,97 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MaGeek.UI.Windows.ImportExport"
+        xmlns:local="clr-namespace:MaGeek.UI.Windows.ImportExport" xmlns:ui="clr-namespace:MaGeek.UI"
         mc:Ignorable="d"
-        Title="ProxyPrint" Height="450" Width="800">
+        Title="ProxyPrint" Height="1188" Width="840">
     
     <Grid>
-        <StackPanel>
 
-            <DockPanel>
-                <Button Click="GO1">STEP 1</Button>
-                <Button Click="GO2">STEP 2</Button>
-                <Button Click="GO3">STEP 3</Button>
-            </DockPanel>
-            
-            <Grid Name="DocumentPath">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="352"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="352"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="352"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="252"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="252"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="252"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-                <Label>TEST !!!</Label>
-                
+            <Grid Name="Emplacement0" Background="Black" Grid.Row="1" Grid.Column="1">
+                <Grid Background="White" Margin="1"/>
+                <ui:CardIllustration SelectedVariant="{Binding Card0}"
+                                     Margin="0" Padding="0" BorderThickness="0"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             </Grid>
-            
-        </StackPanel>
+
+            <Grid Name="Emplacement1" Background="Black" Grid.Row="1" Grid.Column="3">
+                <Grid Background="White" Margin="1"/>
+                <ui:CardIllustration SelectedVariant="{Binding Card1}"
+                                     Margin="0" Padding="0" BorderThickness="0"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Grid>
+
+            <Grid Name="Emplacement2" Background="Black" Grid.Row="1" Grid.Column="5">
+                <Grid Background="White" Margin="1"/>
+                <ui:CardIllustration SelectedVariant="{Binding Card2}"
+                                     Margin="0" Padding="0" BorderThickness="0"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Grid>
+
+            <Grid Name="Emplacement3" Background="Black" Grid.Row="3" Grid.Column="1">
+                <Grid Background="White" Margin="1"/>
+                <ui:CardIllustration SelectedVariant="{Binding Card3}"
+                                     Margin="0" Padding="0" BorderThickness="0"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Grid>
+
+            <Grid Name="Emplacement4" Background="Black" Grid.Row="3" Grid.Column="3">
+                <Grid Background="White" Margin="1"/>
+                <ui:CardIllustration SelectedVariant="{Binding Card4}"
+                                     Margin="0" Padding="0" BorderThickness="0"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Grid>
+
+            <Grid Name="Emplacement5" Background="Black" Grid.Row="3" Grid.Column="5">
+                <Grid Background="White" Margin="1"/>
+                <ui:CardIllustration SelectedVariant="{Binding Card5}"
+                                     Margin="0" Padding="0" BorderThickness="0"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Grid>
+
+            <Grid Name="Emplacement6" Background="Black" Grid.Row="5" Grid.Column="1">
+                <Grid Background="White" Margin="1"/>
+                <ui:CardIllustration SelectedVariant="{Binding Card6}"
+                                     Margin="0" Padding="0" BorderThickness="0"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Grid>
+
+            <Grid Name="Emplacement7" Background="Black" Grid.Row="5" Grid.Column="3">
+                <Grid Background="White" Margin="1"/>
+                <ui:CardIllustration SelectedVariant="{Binding Card7}"
+                                     Margin="0" Padding="0" BorderThickness="0"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Grid>
+
+            <Grid Name="Emplacement8" Background="Black" Grid.Row="5" Grid.Column="5">
+                <Grid Background="White" Margin="1"/>
+                <ui:CardIllustration SelectedVariant="{Binding Card8}"
+                                     Margin="0" Padding="0" BorderThickness="0"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Grid>
+        
+        </Grid>
+        
     </Grid>
+    
 </Window>

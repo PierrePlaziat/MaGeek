@@ -1,11 +1,8 @@
-BUGS
 
-	! 	various crashes relative to db access
-	-	different variant in deck (/!\ difficulties with EF)
-	
 TODO
 
 	.	proxy support
+			Testing
 	.	legality integration int deckstats
 	.	advanced card search
 	
@@ -15,3 +12,10 @@ LATER
 	.	profiles				>	Folders in Appdata containing db and importer state
 	.	tags sort and stats for deck
 	.	auto deck
+	.	pie charts
+	
+BUGS
+
+	! 	various crashes relative to db access
+	-	different variant in deck (/!\ difficulties with EF)
+	
