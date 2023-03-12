@@ -56,7 +56,7 @@
                                 <MenuItem Header="Rename" Click="RenameDeck"/>
                                 <MenuItem Header="Duplicate" Click="DuplicateDeck"/>
                                 <MenuItem Header="Delete" Click="DeleteDeck"/>
-                                <MenuItem Header="€€€?" Click="CalculateDeckPrice"/>
+                                <MenuItem Header="€€€?" Click="EstimateDeckPrice"/>
                             </ContextMenu>
                         </Grid.ContextMenu>
                         

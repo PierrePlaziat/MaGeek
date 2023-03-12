@@ -9,7 +9,7 @@ namespace MaGeek.UI.Windows.ImportExport
         public DeckListExporter(string preFill = null)
         {
             InitializeComponent();
-            if (preFill==null) ExportBox.Text = ExportList(App.STATE.SelectedDeck);
+            if (preFill==null) ExportBox.Text = ExportList(App.State.SelectedDeck);
             else ExportBox.Text = preFill;
         }
 

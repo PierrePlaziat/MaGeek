@@ -8,11 +8,15 @@ using MaGeek.Data.Entities;
 using MaGeek.Entities;
 using Plaziat.CommonWpf;
 using Path = System.IO.Path;
+using Microsoft.Extensions.DependencyModel;
 
 namespace MaGeek
 {
 
-    public class DbManager : DbContext
+    /// <summary>
+    /// Entity Framework over Sqlite
+    /// </summary>
+    public class CardDatabase : DbContext
     {
 
         #region Attributes
@@ -29,9 +33,7 @@ namespace MaGeek
             "CREATE TABLE \"traductions\" (\r\n\t\"TraductionId\"\tINTEGER,\r\n\t\"CardId\"\tTEXT,\r\n\t\"Language\"\tTEXT,\r\n\t\"TraductedName\"\tTEXT,\r\n\tPRIMARY KEY(\"TraductionId\")\r\n)",
         };
 
-        string DbPath { get { return Path.Combine(App.RoamingFolder, "MaGeek.db"); } }
-
-        string ConnexionString { get { return "Data Source = " + DbPath; } }
+        string ConnexionString { get { return "Data Source = " + App.Config.Path_Db; } }
 
         private string BackupName
         {
@@ -99,15 +101,17 @@ namespace MaGeek
 
         #region Sqlite Management
 
+        string tmpDbPath { get { return App.Config.Path_Db + ".tmp"; } }
+
         public void InitDb()
         {
-            if (File.Exists(App.RoamingFolder + "\\DbToRestore.db"))
+            if (File.Exists(tmpDbPath))
             {
-                File.Delete(Path.Combine(App.RoamingFolder, "MaGeek.db"));
-                File.Copy(App.RoamingFolder + "\\DbToRestore.db", Path.Combine(App.RoamingFolder, "MaGeek.db"));
-                File.Delete(App.RoamingFolder + "\\DbToRestore.db");
+                File.Delete(App.Config.Path_Db);
+                File.Copy(tmpDbPath, App.Config.Path_Db);
+                File.Delete(tmpDbPath);
             }
-            if (File.Exists(DbPath)) return;
+            if (File.Exists(App.Config.Path_Db)) return;
             SqliteConnection dbCo = new SqliteConnection(ConnexionString);
             dbCo.Open();
             foreach (string instruction in Tables) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
@@ -145,7 +149,7 @@ namespace MaGeek
             if (!MessageBoxHelper.AskUser("Do you really want to erase all card data?")) return;
             EmptyDb();
             MessageBoxHelper.ShowMsg("DB successfully erased.");
-            App.Restart();
+            RestartApp();
         }
 
         private void EmptyDb()
@@ -166,9 +170,9 @@ namespace MaGeek
             {
                 try
                 {
-                    File.Copy(loadFile, App.RoamingFolder + "\\DbToRestore.db");
+                    File.Copy(loadFile, tmpDbPath);
                     MessageBoxHelper.ShowMsg("DB will restored at restart");
-                    App.Restart();
+                    RestartApp();
                 }
                 catch (IOException iox)
                 {
@@ -206,6 +210,13 @@ namespace MaGeek
             }
         }
 
+        private void RestartApp()
+        {
+            System.Diagnostics.Process.Start(App.ResourceAssembly.Location);
+            App.Current.Shutdown();
+        }
+
     }
+
 
 }

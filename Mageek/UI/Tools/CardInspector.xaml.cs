@@ -102,7 +102,7 @@ namespace MaGeek.UI
             get
             {
                 if (SelectedVariant == null) return "/";
-                return ScryfallManager.GetCardPrize(SelectedVariant).ToString();
+                return App.Biz.Utils.GetCardPrize(SelectedVariant).ToString(); 
             }
         }
         public List<Legality> Legalities
@@ -110,13 +110,13 @@ namespace MaGeek.UI
             get
             {
                 if (SelectedVariant == null) return new List<Legality>();
-                return ScryfallManager.GetCardLegal(SelectedVariant);
+                return App.Biz.Utils.GetCardLegal(SelectedVariant);
             }
         }
 
         public Brush PriceColor { 
             get {
-                var p = ScryfallManager.GetCardPrize(SelectedVariant);
+                var p = App.Biz.Utils.GetCardPrize(SelectedVariant);
                 if (p>=10) return Brushes.White;
                 else if (p>=5) return Brushes.Orange;
                 else if (p>=2) return Brushes.Yellow;
@@ -132,7 +132,7 @@ namespace MaGeek.UI
             get
             {
                 if(selectedCard==null) return null;
-                return App.DB.Tags.Where(x=>x.CardId==selectedCard.CardId).ToList();
+                return App.Biz.Utils.FindTagsForCard(selectedCard.CardId);
             }
         }
 
@@ -144,7 +144,7 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.STATE.CardSelectedEvent += HandleCardSelected;
+            App.Events.CardSelectedEvent += HandleCardSelected;
         }
 
         #endregion
@@ -154,7 +154,7 @@ namespace MaGeek.UI
         private void AddCardToCollection(object sender, RoutedEventArgs e)
         {
             MagicCardVariant variant = (MagicCardVariant) ((Button)sender).DataContext;
-            App.CARDS.Utils.GotCard_Add(variant);
+            App.Biz.Utils.GotCard_Add(variant);
             OnPropertyChanged(nameof(CollectedQuantity));
             OnPropertyChanged(nameof(Variants));
         }
@@ -162,14 +162,14 @@ namespace MaGeek.UI
         private void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
             MagicCardVariant variant = (MagicCardVariant)((Button)sender).DataContext;
-            App.CARDS.Utils.GotCard_Remove(variant);
+            App.Biz.Utils.GotCard_Remove(variant);
             OnPropertyChanged(nameof(CollectedQuantity));
             OnPropertyChanged(nameof(Variants));
         }
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Utils.AddCardToDeck(SelectedVariant, App.STATE.SelectedDeck,1);
+            App.Biz.Utils.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1);
         }
 
         #endregion
@@ -185,7 +185,7 @@ namespace MaGeek.UI
         private void SetFav(object sender, RoutedEventArgs e)
         {
             var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;  
-            App.CARDS.Utils.SetFav(cardvar.Card, cardvar.Id);
+            App.Biz.Utils.SetFav(cardvar.Card, cardvar.Id);
         }
 
         private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)
@@ -202,8 +202,7 @@ namespace MaGeek.UI
         {
             if (!string.IsNullOrEmpty(NewTag.Text))
             {
-                App.DB.Tags.Add(new CardTag(NewTag.Text, selectedCard));
-                App.DB.SafeSaveChanges();
+                App.Biz.Utils.TagCard(selectedCard,NewTag.Text);
                 OnPropertyChanged("Tags");
                 NewTag.Text = "";
                 sugestions.Visibility = System.Windows.Visibility.Collapsed;
@@ -213,8 +212,7 @@ namespace MaGeek.UI
         private void DeleteTag(object sender, RoutedEventArgs e)
         {
             CardTag cardTag = (CardTag)((Button)sender).DataContext;
-            App.DB.Tags.Remove(cardTag);
-            App.DB.SafeSaveChanges();
+            App.Biz.Utils.UnTagCard(cardTag);
             OnPropertyChanged("Tags");
             sugestions.Visibility = System.Windows.Visibility.Collapsed;
         }
@@ -251,7 +249,7 @@ namespace MaGeek.UI
 
         private List<string> GetExistingTags()
         {
-            return App.CARDS.AllTags;
+            return App.Biz.AllTags;
         }
 
         private void addItem(string text)
@@ -286,7 +284,7 @@ namespace MaGeek.UI
 
         private void UpdateCardVariants(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Importer.AddImportToQueue(
+            App.Biz.Importer.AddImportToQueue(
                 new PendingImport
                 {
                     mode = ImportMode.Update,

@@ -1,68 +1,48 @@
 ﻿using MaGeek.Data.Entities;
 
-namespace MaGeek
+namespace MaGeek.AppFramework
 {
-    public class AppState
+
+    /// <summary>
+    /// Event Observer
+    /// </summary>
+    public class AppEvents
     {
 
-        public LanguageManager LANG = new LanguageManager();
-
-        #region State
-
-        private MagicCard selectedCard = null;
-        public MagicCard SelectedCard { get { return selectedCard; } }
-
-        private MagicDeck selectedDeck = null;
-        public MagicDeck SelectedDeck { get { return selectedDeck; } }
-
-        #endregion
-
-        #region Events
-
         // Import local prevent UI Action
-
+        public virtual void RaisePreventUIAction(bool on) { PreventUIActionEvent?.Invoke(on); }
         public delegate void PreventUIActionHandler(bool on);
         public event PreventUIActionHandler PreventUIActionEvent;
-        public virtual void RaisePreventUIAction(bool on) { PreventUIActionEvent(on); }
 
         // Layout Action 
-
+        public virtual void RaiseLayoutAction(LayoutEventType Type) { LayoutActionEvent?.Invoke(Type); }
         public delegate void LayoutActionHandler(LayoutEventType Type);
         public event LayoutActionHandler LayoutActionEvent;
-        public virtual void RaiseLayoutAction(LayoutEventType Type) { LayoutActionEvent(Type); }
 
         // Card Selected
-
+        public virtual void RaiseCardSelected(MagicCard Card) { CardSelectedEvent?.Invoke(Card); }
         public delegate void CardSelectedHandler(MagicCard Card);
         public event CardSelectedHandler CardSelectedEvent;
-        public virtual void RaiseCardSelected(MagicCard Card) { selectedCard = Card; CardSelectedEvent(Card); }
 
         // Deck Selected
-
+        public virtual void RaiseDeckSelect(MagicDeck deck) { SelectDeckEvent?.Invoke(deck); }
         public delegate void SelectDeckHandler(MagicDeck deck);
         public event SelectDeckHandler SelectDeckEvent;
-        public virtual void RaiseDeckSelect(MagicDeck deck) { selectedDeck = deck; SelectDeckEvent(deck); }
 
         // Update Card Collec 
-
+        public virtual void RaiseUpdateCardCollec() { UpdateCardCollecEvent?.Invoke(); }
         public delegate void UpdateCardCollecdHandler();
         public event UpdateCardCollecdHandler UpdateCardCollecEvent;
-        public virtual void RaiseUpdateCardCollec() { UpdateCardCollecEvent(); }
 
         // Update Deck 
-
+        public virtual void RaiseUpdateDeck() { UpdateDeckEvent?.Invoke(); }
         public delegate void UpdateDeckHandler();
         public event UpdateDeckHandler UpdateDeckEvent;
-        public virtual void RaiseUpdateDeck() { UpdateDeckEvent(); }
 
         // Update Deck List
-
-
+        public virtual void RaiseUpdateDeckList() { UpdateDeckListEvent?.Invoke(); }
         public delegate void UpdateDeckListHandler();
         public event UpdateDeckListHandler UpdateDeckListEvent;
-        public virtual void RaiseUpdateDeckList() { UpdateDeckListEvent(); }
-
-        #endregion
 
     }
 

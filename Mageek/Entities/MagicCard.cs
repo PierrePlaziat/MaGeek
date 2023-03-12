@@ -1,4 +1,5 @@
-﻿using MtgApiManager.Lib.Model;
+﻿using MaGeek.AppFramework;
+using MtgApiManager.Lib.Model;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -97,7 +98,7 @@ namespace MaGeek.Data.Entities
 
         public string CardForeignName {
             get {
-                var a = Traductions.Where(x => x.Language.ToLower() == App.STATE.LANG.GetForeignLanguage().ToLower()).FirstOrDefault();
+                var a = Traductions.Where(x => x.Language.ToLower() == App.Config.Settings[Setting.ForeignLangugage].ToLower()).FirstOrDefault();
                 return a!= null ?  a.TraductedName : CardId;
             }
         }

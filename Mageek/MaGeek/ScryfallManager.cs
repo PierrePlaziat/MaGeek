@@ -14,12 +14,19 @@ using System.Collections.Generic;
 namespace MaGeek
 {
 
-    public static class ScryfallManager
+    public class ScryfallManager
     {
+
+        static CardDatabase DB;
+
+        public ScryfallManager(CardDatabase db)
+        {
+            DB = db;
+        }
 
         // COMMON
 
-        private static bool IsOutDated(string lastUpdate, int dayLimit)
+        private bool IsOutDated(string lastUpdate, int dayLimit)
         {
             DateTime lastUp = DateTime.Parse(lastUpdate);
             if (lastUp < DateTime.Now.AddDays(-dayLimit)) return true;
@@ -28,17 +35,17 @@ namespace MaGeek
 
         // PRIZE
 
-        public static float GetCardPrize(string variantId)
+        public float GetCardPrize(string variantId)
         {
-            MagicCardVariant variant = App.DB.cardVariants.Where(x=>x.Id == variantId).FirstOrDefault();
+            MagicCardVariant variant = DB.cardVariants.Where(x=>x.Id == variantId).FirstOrDefault();
             if (variant == null) return 0;
             return GetCardPrize(variant);
         }
-        public static float GetCardPrize(MagicCardVariant variant)
+        public float GetCardPrize(MagicCardVariant variant)
         {
             if (variant == null) return -1;
             float price = 0;
-            var v = App.DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
+            var v = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
 
             // NO DATA
             if (v == null)
@@ -48,7 +55,7 @@ namespace MaGeek
             // OUTDATED
             else if (IsOutDated(v.LastUpdate, 1))
             {
-                App.DB.Prices.Remove(v);
+                DB.Prices.Remove(v);
                 price = RetrieveCardPrize(variant);
             }
             // DATA OK 
@@ -56,7 +63,7 @@ namespace MaGeek
 
             return price;
         }
-        private static float RetrieveCardPrize(MagicCardVariant variant)
+        private float RetrieveCardPrize(MagicCardVariant variant)
         {
             if (string.IsNullOrEmpty(variant.MultiverseId)) return -1;
             float price = -1;
@@ -79,31 +86,31 @@ namespace MaGeek
             // SAVE
             if (price != -1)
             {
-                App.DB.Prices.Add(
+                DB.Prices.Add(
                     new Entities.Price() { 
                         MultiverseId = variant.MultiverseId, 
                         LastUpdate = DateTime.Now.ToString(), 
                         Value = price.ToString(),
                     }
                 );
-                App.DB.SafeSaveChanges();
+                DB.SafeSaveChanges();
             }
             return price;
         }
 
         // LEGAL
 
-        public static List<Legality> GetCardLegal(string variantId)
+        public List<Legality> GetCardLegal(string variantId)
         {
-            MagicCardVariant variant = App.DB.cardVariants.Where(x=>x.Id == variantId).FirstOrDefault();
+            MagicCardVariant variant = DB.cardVariants.Where(x=>x.Id == variantId).FirstOrDefault();
             if (variant == null) return new List<Legality>();
             return GetCardLegal(variant);
         }
-        public static List<Legality> GetCardLegal(MagicCardVariant variant)
+        public List<Legality> GetCardLegal(MagicCardVariant variant)
         {
             if (variant == null) return new List<Legality>();
             List<Legality> legal = new List<Legality>();
-            List<Legality> previous = App.DB.Legalities.Where(x => x.MultiverseId == variant.MultiverseId).ToList();
+            List<Legality> previous = DB.Legalities.Where(x => x.MultiverseId == variant.MultiverseId).ToList();
 
             // NO DATA
             if (previous == null || previous.FirstOrDefault()==null)
@@ -113,14 +120,14 @@ namespace MaGeek
             // OUTDATED
             else if (IsOutDated(previous.FirstOrDefault().LastUpdate, 30))
             {
-                App.DB.Legalities.RemoveRange(previous);
+                DB.Legalities.RemoveRange(previous);
                 legal = RetrieveCardLegal(variant);
             }
             // DATA OK 
             else legal = previous;
             return legal;
         }
-        private static List<Legality> RetrieveCardLegal(MagicCardVariant variant)
+        private List<Legality> RetrieveCardLegal(MagicCardVariant variant)
         {
             if (string.IsNullOrEmpty(variant.MultiverseId)) return new List<Legality>();
             List<Legality> legal = new List<Legality>();
@@ -151,8 +158,8 @@ namespace MaGeek
 
             // SAVE
             
-            App.DB.Legalities.AddRange(legal);
-            App.DB.SafeSaveChanges();
+            DB.Legalities.AddRange(legal);
+            DB.SafeSaveChanges();
             return legal;
         }
 

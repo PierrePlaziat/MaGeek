@@ -28,22 +28,22 @@ namespace MaGeek.UI
 
         public Visibility Visible { get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; } }
 
-        public int CreatureCount    { get { return App.CARDS.Utils.count_Creature(currentDeck); } }
-        public int InstantCount     { get { return App.CARDS.Utils.count_Instant(currentDeck); } }
-        public int SorceryCount     { get { return App.CARDS.Utils.count_Sorcery(currentDeck); } }
-        public int EnchantmentCount { get { return App.CARDS.Utils.count_Enchantment(currentDeck); } }
-        public int ArtifactCount    { get { return App.CARDS.Utils.count_Artifact(currentDeck); } }
-        public int BasicLandCount   { get { return App.CARDS.Utils.count_BasicLand(currentDeck); } }
-        public int SpecialLandCount { get { return App.CARDS.Utils.count_SpecialLand(currentDeck); } }
-        public int OtherCount       { get { return App.CARDS.Utils.count_other(currentDeck); } }
-        public int DevotionB        { get { return App.CARDS.Utils.DevotionB(currentDeck); } }
-        public int DevotionW        { get { return App.CARDS.Utils.DevotionW(currentDeck); } }
-        public int DevotionU        { get { return App.CARDS.Utils.DevotionU(currentDeck); } }
-        public int DevotionG        { get { return App.CARDS.Utils.DevotionG(currentDeck); } }
-        public int DevotionR        { get { return App.CARDS.Utils.DevotionR(currentDeck); } }
-        public string StandardOk    { get { return App.CARDS.Utils.validity_Standard(currentDeck) ? "YES" : "NO"; } }
-        public string CommanderOk   { get { return App.CARDS.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; } }
-        public int OwnedRatio       { get { return App.CARDS.Utils.OwnedRatio(currentDeck); } }
+        public int CreatureCount    { get { return App.Biz.Utils.count_Creature(currentDeck); } }
+        public int InstantCount     { get { return App.Biz.Utils.count_Instant(currentDeck); } }
+        public int SorceryCount     { get { return App.Biz.Utils.count_Sorcery(currentDeck); } }
+        public int EnchantmentCount { get { return App.Biz.Utils.count_Enchantment(currentDeck); } }
+        public int ArtifactCount    { get { return App.Biz.Utils.count_Artifact(currentDeck); } }
+        public int BasicLandCount   { get { return App.Biz.Utils.count_BasicLand(currentDeck); } }
+        public int SpecialLandCount { get { return App.Biz.Utils.count_SpecialLand(currentDeck); } }
+        public int OtherCount       { get { return App.Biz.Utils.count_other(currentDeck); } }
+        public int DevotionB        { get { return App.Biz.Utils.DevotionB(currentDeck); } }
+        public int DevotionW        { get { return App.Biz.Utils.DevotionW(currentDeck); } }
+        public int DevotionU        { get { return App.Biz.Utils.DevotionU(currentDeck); } }
+        public int DevotionG        { get { return App.Biz.Utils.DevotionG(currentDeck); } }
+        public int DevotionR        { get { return App.Biz.Utils.DevotionR(currentDeck); } }
+        public string StandardOk    { get { return App.Biz.Utils.validity_Standard(currentDeck) ? "YES" : "NO"; } }
+        public string CommanderOk   { get { return App.Biz.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; } }
+        public int OwnedRatio       { get { return App.Biz.Utils.OwnedRatio(currentDeck); } }
 
         #endregion
 
@@ -53,8 +53,8 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.STATE.SelectDeckEvent += HandleDeckSelected;
-            App.STATE.UpdateDeckEvent += HandleDeckModified;
+            App.Events.SelectDeckEvent += HandleDeckSelected;
+            App.Events.UpdateDeckEvent += HandleDeckModified;
         }
 
         void HandleDeckModified()
@@ -90,7 +90,7 @@ namespace MaGeek.UI
             OnPropertyChanged(nameof(DevotionG));
             OnPropertyChanged(nameof(DevotionR));
             OnPropertyChanged(nameof(OwnedRatio));
-            DrawManacurve(App.CARDS.Utils.GetManaCurve(currentDeck));
+            DrawManacurve(App.Biz.Utils.GetManaCurve(currentDeck));
             DrawNewHand();
         }
 
@@ -200,7 +200,7 @@ namespace MaGeek.UI
 
         private void ListMissing(object sender, RoutedEventArgs e)
         {
-            string missList = App.CARDS.Utils.ListMissingCards(currentDeck);
+            string missList = App.Biz.Utils.ListMissingCards(currentDeck);
             if (!string.IsNullOrEmpty(missList))
             {
                 var window = new DeckListExporter(missList);

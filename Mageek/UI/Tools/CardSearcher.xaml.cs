@@ -19,7 +19,7 @@ namespace MaGeek.UI
 
         public ObservableCollection<MagicCard> CardsBind { 
             get {
-                var unfiltered = App.CARDS.AllCards;
+                var unfiltered = App.Biz.AllCards;
                 var filtered = unfiltered
                     .Where(x => x.Cmc >= FilterMinCmc)
                     .Where(x => x.Cmc <= FilterMaxCmc)
@@ -36,7 +36,7 @@ namespace MaGeek.UI
                     var tagged = new List<MagicCard>();
                     foreach (var card in filtered)
                     {
-                        if(App.DB.Tags.Where(x=>x.CardId==card.CardId && x.Tag== TagFilterSelected).Any())
+                        if(App.Biz.Utils.DoesCardHasTag(card.CardId, TagFilterSelected))
                         {
                             tagged.Add(card);
                         }
@@ -51,7 +51,7 @@ namespace MaGeek.UI
         {
             get
             {
-                return App.CARDS.AllTags;
+                return App.Biz.AllTags;
             }
         }
 
@@ -193,7 +193,7 @@ namespace MaGeek.UI
         { 
             DataContext = this;
             InitializeComponent();
-            App.STATE.UpdateCardCollecEvent += () => { OnPropertyChanged("CardsBind"); };
+            App.Events.UpdateCardCollecEvent += () => { OnPropertyChanged("CardsBind"); };
         }
 
         #endregion
@@ -202,7 +202,7 @@ namespace MaGeek.UI
 
         private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CardGrid.SelectedItem is MagicCard card) App.STATE.RaiseCardSelected(card);
+            if (CardGrid.SelectedItem is MagicCard card) App.Events.RaiseCardSelected(card);
         }
 
         private void SearchButton_Pressed(object sender, System.Windows.RoutedEventArgs e)
@@ -219,7 +219,7 @@ namespace MaGeek.UI
         {
             if (string.IsNullOrEmpty(CurrentSearch.Text)) return;
             IsSearching = true;
-            App.CARDS.Importer.AddImportToQueue(
+            App.Biz.Importer.AddImportToQueue(
                 new PendingImport 
                 { 
                     mode = ImportMode.Search, 
@@ -251,7 +251,7 @@ namespace MaGeek.UI
         {
             foreach (MagicCard c in CardGrid.SelectedItems)
             {
-                App.CARDS.Utils.AddCardToDeck(c.Variants[0], App.STATE.SelectedDeck,1);
+                App.Biz.Utils.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1);
             }
         }
 

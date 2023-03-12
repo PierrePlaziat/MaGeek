@@ -33,8 +33,8 @@ namespace MaGeek
         public MainWindow()
         {
             DataContext = this;
-            App.STATE.LayoutActionEvent += HandleLayoutAction;
-            App.STATE.PreventUIActionEvent += STATE_PreventUIActionEvent;
+            App.Events.LayoutActionEvent += HandleLayoutAction;
+            App.Events.PreventUIActionEvent += STATE_PreventUIActionEvent;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
             InitializeComponent();
         }
@@ -70,14 +70,14 @@ namespace MaGeek
                 xmlLayout.Serialize(fs);
                 xmlLayoutString = fs.ToString();
             }
-            File.WriteAllText(App.RoamingFolder+"\\Layout.txt", xmlLayoutString);
+            File.WriteAllText(App.Config.Path_LayoutSave, xmlLayoutString);
         }
 
         private void LoadLayout()
         {
             var serializer = new XmlLayoutSerializer(dockingManager);
             serializer.LayoutSerializationCallback += (s, args) => {};
-            serializer.Deserialize(App.RoamingFolder + "\\Layout.txt");
+            serializer.Deserialize(App.Config.Path_LayoutSave);
             foreach (var element in dockingManager.Layout.Descendents().OfType<LayoutAnchorable>())
             {
                 switch (element.Title)

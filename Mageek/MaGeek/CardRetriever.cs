@@ -1,4 +1,5 @@
-﻿using MaGeek.Data.Entities;
+﻿using MaGeek.AppFramework;
+using MaGeek.Data.Entities;
 using MtgApiManager.Lib.Core;
 using MtgApiManager.Lib.Model;
 using MtgApiManager.Lib.Service;
@@ -18,10 +19,15 @@ using Timer = System.Timers.Timer;
 namespace MaGeek
 {
 
-    public class ImportManager
+    /// <summary>
+    /// API helper
+    /// </summary>
+    public class CardImporter
     {
 
         #region Attributes
+
+        public CardDatabase DB { get; private set; }
 
 
         IMtgServiceProvider MtgApi = new MtgServiceProvider();
@@ -73,14 +79,16 @@ namespace MaGeek
 
         #region CTOR
 
-        public ImportManager()
+        public CardImporter(CardDatabase dB)
         {
             LoadState();
             ConfigureWorker();
             ConfigureTimer();
             state = ImporterState.Pause;
-            Message = "Init done"; 
+            Message = "Init done";
+            DB = dB;
         }
+
 
         private void ConfigureWorker()
         {
@@ -183,9 +191,9 @@ namespace MaGeek
             List<ICard> importResult = new List<ICard>();
             if   (state != ImporterState.Canceling)  importResult = Work_CallApi();
             while(state != ImporterState.Canceling && state == ImporterState.Pause) { };
-            App.STATE.RaisePreventUIAction(true);
+            App.Events.RaisePreventUIAction(true);
             if   (state != ImporterState.Canceling)  Work_RecordLocal(importResult);
-            App.STATE.RaisePreventUIAction(false);
+            App.Events.RaisePreventUIAction(false);
             while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
             if   (state != ImporterState.Canceling) Work_MakeADeck(importResult);
             Work_Finalize();
@@ -224,12 +232,12 @@ namespace MaGeek
             Message = "Finalize";
 
             CurrentImport = null;
-            App.STATE.RaiseUpdateCardCollec();
+            App.Events.RaiseUpdateCardCollec();
             App.Current.Dispatcher.Invoke(new Action(() => { 
-                App.STATE.RaiseUpdateDeckList();
-                var c = App.STATE.SelectedCard;
-                App.STATE.RaiseCardSelected(null);
-                App.STATE.RaiseCardSelected(c);
+                App.Events.RaiseUpdateDeckList();
+                var c = App.State.SelectedCard;
+                App.Events.RaiseCardSelected(null);
+                App.Events.RaiseCardSelected(c);
             }));
 
             Worker.ReportProgress(100);
@@ -333,7 +341,7 @@ namespace MaGeek
         private async Task<List<ICard>> ImportCard(string cardName,bool onlyTheOne,bool skipIfExists, bool foreignIncluded)
         {
             Message = "Retrieve Card : " + cardName;
-            if (skipIfExists && App.DB.cards .Where(x => x.CardId == cardName).Any()) return new List<ICard>();
+            if (skipIfExists && DB.cards .Where(x => x.CardId == cardName).Any()) return new List<ICard>();
             List<ICard> cards = await RequestCard(cardName,foreignIncluded);
             if (onlyTheOne) cards = await FilterExactName(cards, cardName, foreignIncluded);
             return cards;
@@ -369,7 +377,7 @@ namespace MaGeek
                     Thread.Sleep(200);
                     IOperationResult<List<ICard>> tmpResult = await service
                         .Where(x => x.Name, cardName)
-                        .Where(x => x.Language, App.STATE.LANG.GetForeignLanguage())
+                        .Where(x => x.Language, App.Config.Settings[Setting.ForeignLangugage])
                         .Where(x => x.Page, i)
                         .Where(x => x.PageSize, 100)
                         .AllAsync();
@@ -385,7 +393,7 @@ namespace MaGeek
             IOperationResult<List<ICard>> firstResult = null;
             if (foreign) firstResult = await service
                         .Where(x => x.Name, cardName)
-                        .Where(x => x.Language, App.STATE.LANG.GetForeignLanguage())
+                        .Where(x => x.Language, App.Config.Settings[Setting.ForeignLangugage])
                         .Where(x => x.PageSize, 1)
                         .AllAsync();
             else firstResult = await service
@@ -410,7 +418,7 @@ namespace MaGeek
                 {
                     if (IsExactCardName(cardName, card.Name)) 
                         filteredCards.Add(card);
-                    if (foreignIncluded && card.ForeignNames!=null && IsExactCardName(cardName, card.ForeignNames.Where(x=>x.Language==App.STATE.LANG.GetForeignLanguage()).FirstOrDefault().Name)) 
+                    if (foreignIncluded && card.ForeignNames!=null && IsExactCardName(cardName, card.ForeignNames.Where(x=>x.Language==App.Config.Settings[Setting.ForeignLangugage]).FirstOrDefault().Name)) 
                         filteredCards.Add(card);
                 }
             });
@@ -438,22 +446,22 @@ namespace MaGeek
             }
         }
 
-        private static void RecordCard(ICard cardData,bool Owned)
+        private void RecordCard(ICard cardData,bool Owned)
         {
             // Card
-            var localCard = App.DB.cards.Where(x => x.CardId == cardData.Name).FirstOrDefault();
+            var localCard = DB.cards.Where(x => x.CardId == cardData.Name).FirstOrDefault();
             if (localCard == null)
             {
                 localCard = new MagicCard(cardData);
-                App.DB.cards.Add(localCard);
-                App.DB.SafeSaveChanges();
+                DB.cards.Add(localCard);
+                DB.SafeSaveChanges();
             }
             // Variant
             var localVariant = localCard.Variants.Where(x => x.Id == cardData.Id).FirstOrDefault();
             if (localVariant == null)
             {
                 localCard.AddVariant(cardData);
-                App.DB.SafeSaveChanges();
+                DB.SafeSaveChanges();
             }
             // Owned Quantity
             //if (localCard != null && Owned) localCard.CollectedQuantity ++;
@@ -465,7 +473,7 @@ namespace MaGeek
             var deck = new MagicDeck(title);
             foreach (var cardOccurence in importLines)
             {
-                MagicCard card = App.DB.cards.Where(x => x.CardId == cardOccurence.Name).FirstOrDefault();
+                MagicCard card = DB.cards.Where(x => x.CardId == cardOccurence.Name).FirstOrDefault();
                 if (card != null)
                 {
                     MagicCardVariant variant = card.Variants[0];
@@ -475,8 +483,8 @@ namespace MaGeek
             if (deck.CardRelations.Count>0)
             {
                 deck.CardRelations[0].RelationType = 1;
-                App.DB.decks.Add(deck);
-                App.DB.SafeSaveChanges();
+                DB.decks.Add(deck);
+                DB.SafeSaveChanges();
             }
 
             if (CurrentImport.Value.mode == ImportMode.Set) foreach (var v in deck.CardRelations)
@@ -508,7 +516,7 @@ namespace MaGeek
 
         #region SaveState
 
-        string StatePath { get { return App.RoamingFolder + "\\ImporterState.txt" ; } }
+        string StatePath { get { return App.Config.Path_ImporterState ; } }
 
         public void SaveState()
         {

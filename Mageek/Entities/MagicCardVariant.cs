@@ -41,7 +41,9 @@ namespace MaGeek.Data.Entities
             IsCustom = 0;
             Got = 0;
             MultiverseId = selectedCard.MultiverseId;
-            Card = App.DB.cards.Where(x=>x.CardId==selectedCard.Name).FirstOrDefault();
+
+            
+            Card = App.Biz.Utils.FindCardById(selectedCard.Name);
         }
 
         #endregion
@@ -55,7 +57,7 @@ namespace MaGeek.Data.Entities
             string localFileName = "";
             if(IsCustom==0)
             {
-                localFileName = Path.Combine(App.ImageFolder, Id + ".png");
+                localFileName = Path.Combine(App.Config.Path_ImageFolder, Id + ".png");
                 if (!File.Exists(localFileName))
                 {
                     await Task.Run(async () => { 
@@ -85,7 +87,7 @@ namespace MaGeek.Data.Entities
         {
             get
             {
-                return ScryfallManager.GetCardPrize(this);
+                return App.Biz.Utils.GetCardPrize(this);
             }
         }
 

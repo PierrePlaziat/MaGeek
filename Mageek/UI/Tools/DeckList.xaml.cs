@@ -14,7 +14,7 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( App.CARDS.AllDecks.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower())).OrderBy(x=>x.Title)); } }
+        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( App.Biz.AllDecks.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower())).OrderBy(x=>x.Title)); } }
 
         private string filterString = "";
         public string FilterString
@@ -35,8 +35,8 @@ namespace MaGeek.UI
         {
             DataContext = this;
             InitializeComponent();
-            App.STATE.UpdateDeckEvent += () => { forceRefresh(); };
-            App.STATE.UpdateDeckListEvent += () => { forceRefresh(); };
+            App.Events.UpdateDeckEvent += () => { forceRefresh(); };
+            App.Events.UpdateDeckListEvent += () => { forceRefresh(); };
         }
 
         #endregion
@@ -44,7 +44,7 @@ namespace MaGeek.UI
         private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var deck = decklistbox.SelectedItem as MagicDeck;
-            if (deck != null) App.STATE.RaiseDeckSelect(deck);
+            if (deck != null) App.Events.RaiseDeckSelect(deck);
         }
         
         internal void forceRefresh()
@@ -55,56 +55,28 @@ namespace MaGeek.UI
 
         private void AddDeck(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Utils.AddDeck();
+            App.Biz.Utils.AddDeck();
         }
         
         private void RenameDeck(object sender, RoutedEventArgs e)
         {
-            if (App.STATE.SelectedDeck == null) return;
-            string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \""+App.STATE.SelectedDeck.Title+"\"", App.STATE.SelectedDeck.Title);
-            if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
-            if (App.DB.decks.Where(x => x.Title == newTitle).Any())
-            {
-                MessageBoxHelper.ShowMsg("There is already a deck with that name.");
-                return;
-            }
-            App.STATE.SelectedDeck.Title = newTitle;
-            App.DB.SafeSaveChanges();
-            App.STATE.RaiseUpdateDeck();
+            App.Biz.Utils.RenameDeck(App.State.SelectedDeck);
         }
 
         private void DuplicateDeck(object sender, RoutedEventArgs e)
         {
-            if (App.STATE.SelectedDeck == null) return;
-            if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
-            {
-                var deckToCopy = Decks[decklistbox.SelectedIndex];
-                var newDeck = new MagicDeck(deckToCopy);
-                App.DB.decks.Add(newDeck);
-                App.DB.SafeSaveChanges();
-                App.STATE.RaiseUpdateDeckList();
-            }
+            App.Biz.Utils.DuplicateDeck(Decks[decklistbox.SelectedIndex]);
         }
 
         private void DeleteDeck(object sender, RoutedEventArgs e)
         {
-            if (App.STATE.SelectedDeck == null) return;
-            if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
-            {
-                if (MessageBoxHelper.AskUser("Are you sure to delete this deck?"))
-                {
-                    var deck = Decks[decklistbox.SelectedIndex];
-                    App.DB.decks.Remove(deck);
-                    App.DB.SafeSaveChanges();
-                    App.STATE.RaiseUpdateDeckList();
-                }
-            }
+            App.Biz.Utils.DeleteDeck(Decks[decklistbox.SelectedIndex]);
         }
 
-        private void CalculateDeckPrice(object sender, RoutedEventArgs e)
+        private void EstimateDeckPrice(object sender, RoutedEventArgs e)
         {
-            if (App.STATE.SelectedDeck == null) return;
-            float totalPrice = App.CARDS.Utils.EstimateDeckPrice(App.STATE.SelectedDeck);
+            if (App.State.SelectedDeck == null) return;
+            float totalPrice = App.Biz.Utils.EstimateDeckPrice(App.State.SelectedDeck);
             MessageBox.Show("Estimation : " + totalPrice + " €");
         }
     }

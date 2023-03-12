@@ -1,12 +1,10 @@
 ﻿using MaGeek.Data.Entities;
+using MaGeek.Entities;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows;
-using System.Threading;
 
 namespace MaGeek
 {
@@ -14,8 +12,19 @@ namespace MaGeek
     public class MageekUtils
     {
 
-        #region Deck Manips
+        #region CTOR
 
+        private CardDatabase DB;
+        public MageekUtils(CardDatabase DB) { 
+            this.DB = DB;
+            ScryfallManager = new ScryfallManager(DB);
+        }
+        public ScryfallManager ScryfallManager;
+
+        #endregion
+
+
+        #region Deck Manips
 
         public void AddDeck()
         {
@@ -23,16 +32,16 @@ namespace MaGeek
             {
                 string deckTitle = MessageBoxHelper.UserInputString("Please enter a title for this new deck", "");
                 if (deckTitle == null) return;
-                if (App.DB.decks.Where(x => x.Title == deckTitle).Any())
+                if (DB.decks.Where(x => x.Title == deckTitle).Any())
                 {
                     MessageBoxHelper.ShowMsg("There is already a deck with that name.");
                     return;
                 }
                 MagicDeck deck = new MagicDeck(deckTitle);
-                App.DB.decks.Add(deck);
-                App.DB.SafeSaveChanges();
-                App.STATE.RaiseUpdateDeckList();
-                App.STATE.RaiseDeckSelect(deck);
+                DB.decks.Add(deck);
+                DB.SafeSaveChanges();
+                App.Events.RaiseUpdateDeckList();
+                App.Events.RaiseDeckSelect(deck);
             }
             catch (Exception ex)
             {
@@ -45,25 +54,25 @@ namespace MaGeek
             if (deckToRename == null) return;
             string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \"" + deckToRename.Title + "\"", deckToRename.Title);
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
-            if (App.DB.decks.Where(x => x.Title == newTitle).Any())
+            if (DB.decks.Where(x => x.Title == newTitle).Any())
             {
                 MessageBoxHelper.ShowMsg("There is already a deck with that name.");
                 return;
             }
             deckToRename.Title = newTitle;
-            App.DB.SafeSaveChanges();
-            App.STATE.RaiseUpdateDeck();
+            DB.SafeSaveChanges();
+            App.Events.RaiseUpdateDeck();
         }
 
         public void DuplicateDeck(MagicDeck originalDeck)
         {
             //if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
-            if (App.STATE.SelectedDeck == null) return;
+            if (App.State.SelectedDeck == null) return;
             var deckToCopy = originalDeck;
             var newDeck = new MagicDeck(deckToCopy);
-            App.DB.decks.Add(newDeck);
-            App.DB.SafeSaveChanges();
-            App.STATE.RaiseUpdateDeckList();
+            DB.decks.Add(newDeck);
+            DB.SafeSaveChanges();
+            App.Events.RaiseUpdateDeckList();
         }
 
         public void DeleteDeck(MagicDeck deckToDelete)
@@ -72,9 +81,9 @@ namespace MaGeek
             if (MessageBoxHelper.AskUser("Are you sure to delete this deck ? ("+deckToDelete.Title+")"))
             {
                 var deck = deckToDelete;
-                App.DB.decks.Remove(deck);
-                App.DB.SafeSaveChanges();
-                App.STATE.RaiseUpdateDeckList();
+                DB.decks.Remove(deck);
+                DB.SafeSaveChanges();
+                App.Events.RaiseUpdateDeckList();
             }
         }
 
@@ -98,8 +107,8 @@ namespace MaGeek
                 deck.CardRelations.Add(cardRelation);
             }
             cardRelation.Quantity += qty;
-            App.DB.SafeSaveChanges();
-            App.STATE.RaiseUpdateDeck();
+            DB.SafeSaveChanges();
+            App.Events.RaiseUpdateDeck();
         }
 
         public void ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
@@ -117,31 +126,52 @@ namespace MaGeek
             if (cardRelation == null) return;
             cardRelation.Quantity -= qty;
             if (cardRelation.Quantity <= 0) deck.CardRelations.Remove(cardRelation);
-            App.DB.SafeSaveChanges();
-            App.STATE.RaiseUpdateDeck();
+            DB.SafeSaveChanges();
+            App.Events.RaiseUpdateDeck();
 
         }
 
         public void GotCard_Add(MagicCardVariant selectedCard)
         {
             if (selectedCard == null) return;
-            App.DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault().Got++;
-            App.DB.SafeSaveChanges();
+            DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault().Got++;
+            DB.SafeSaveChanges();
         }
 
         public void GotCard_Remove(MagicCardVariant selectedCard)
         {
             if (selectedCard == null) return;
-            var c = App.DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
+            var c = DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
             c.Got--;
             if(c.Got < 0) c.Got = 0;
-            App.DB.SafeSaveChanges();
+            DB.SafeSaveChanges();
         }
 
         public void SetFav(MagicCard card, string variantId)
         {
             card.FavouriteVariant = variantId;
-            App.DB.SafeSaveChanges();
+            DB.SafeSaveChanges();
+        }
+
+        #endregion
+
+        #region Tags
+
+        internal bool DoesCardHasTag(string cardId, string tagFilterSelected)
+        {
+            return FindTagsForCard(cardId).Where(x => x.Tag == tagFilterSelected).Any();
+        }
+
+        internal void TagCard(MagicCard selectedCard, string text)
+        {
+            DB.Tags.Add(new CardTag(text, selectedCard));
+            DB.SafeSaveChanges();
+        }
+
+        internal void UnTagCard(CardTag cardTag)
+        {
+            DB.Tags.Remove(cardTag);
+            DB.SafeSaveChanges();
         }
 
         #endregion
@@ -496,6 +526,8 @@ namespace MaGeek
             return ok;
         }
 
+        #endregion
+
         internal float EstimateDeckPrice(MagicDeck selectedDeck)
         {
             float total = 0;
@@ -506,8 +538,47 @@ namespace MaGeek
             return total;
         }
 
-        #endregion
+        internal void ChangeCardDeckRelation(CardDeckRelation cardRel, int v)
+        {
+            cardRel.RelationType = 0;
+            DB.SafeSaveChanges();
+            App.Events.RaiseUpdateDeck();
+        }
 
+        internal MagicCard FindCardById(string cardId)
+        {
+            return DB.cards.Where(x => x.CardId == cardId).FirstOrDefault();
+        }
+
+        internal List<CardTag> FindTagsForCard(string cardId)
+        {
+            return DB.Tags.Where(x => x.CardId == cardId).ToList();
+        }
+
+        internal void Backup()
+        {
+            DB.BackupDb();
+        }
+
+        internal void RestoreDb()
+        {
+            DB.RestoreDb();
+        }
+
+        internal void EraseDb()
+        {
+            DB.EraseDb();
+        }
+
+        internal float GetCardPrize(MagicCardVariant selectedVariant)
+        {
+            return ScryfallManager.GetCardPrize(selectedVariant);
+        }
+
+        internal List<Legality> GetCardLegal(MagicCardVariant selectedVariant)
+        {
+            return ScryfallManager.GetCardLegal(selectedVariant);
+        }
     }
 
 }

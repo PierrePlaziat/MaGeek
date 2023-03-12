@@ -475,8 +475,8 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            App.STATE.SelectDeckEvent += HandleDeckSelected;
-            App.STATE.UpdateDeckEvent += HandleDeckModified;
+            App.Events.SelectDeckEvent += HandleDeckSelected;
+            App.Events.UpdateDeckEvent += HandleDeckModified;
         }
 
         void HandleDeckModified()
@@ -524,27 +524,21 @@ namespace MaGeek.UI
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
-            cr.RelationType = 1;
-            App.DB.SafeSaveChanges();
-            App.STATE.RaiseUpdateDeck();
+            App.Biz.Utils.ChangeCardDeckRelation(cr, 1);
         }
 
         private void UnsetCommandant_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
-            cr.RelationType = 0;
-            App.DB.SafeSaveChanges();
-            App.STATE.RaiseUpdateDeck();
+            App.Biz.Utils.ChangeCardDeckRelation(cr, 0);
         }
 
         private void ToSide_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
-            cr.RelationType = 2;
-            App.DB.SafeSaveChanges();
-            App.STATE.RaiseUpdateDeck();
+            App.Biz.Utils.ChangeCardDeckRelation(cr, 2);
         }
 
         private void AddOne_Click(object sender, RoutedEventArgs e)
@@ -552,7 +546,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.CARDS.Utils.AddCardToDeck(c, CurrentDeck,1);
+            App.Biz.Utils.AddCardToDeck(c, CurrentDeck,1);
         }
 
         private void RemoveOne_Click(object sender, RoutedEventArgs e)
@@ -560,7 +554,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.CARDS.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
+            App.Biz.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
     }

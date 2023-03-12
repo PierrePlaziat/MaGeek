@@ -25,9 +25,9 @@ namespace MaGeek.UI.CustomControls
         {
             get {
                 string s = "";
-                if (App.STATE.SelectedDeck != null) s += "Selected Deck : " + App.STATE.SelectedDeck.Title;
+                if (App.State.SelectedDeck != null) s += "Selected Deck : " + App.State.SelectedDeck.Title;
                 s += " | ";
-                if (App.STATE.SelectedCard != null) s += "Selected Card : " + App.STATE.SelectedCard.CardId;
+                if (App.State.SelectedCard != null) s += "Selected Card : " + App.State.SelectedCard.CardId;
                 return s;
             }
         }
@@ -55,7 +55,7 @@ namespace MaGeek.UI.CustomControls
             set { state = value; OnPropertyChanged(); }
         }
 
-        public string InfoText { get { return App.CARDS.Importer.InfoText; } }
+        public string InfoText { get { return App.Biz.Importer.InfoText; } }
 
         public StateBar()
         {
@@ -65,8 +65,8 @@ namespace MaGeek.UI.CustomControls
 
             //App.CARDS.Importer.Play();
 
-            App.STATE.CardSelectedEvent += STATE_CardSelectedEvent;
-            App.STATE.SelectDeckEvent += STATE_SelectDeckEvent; ;
+            App.Events.CardSelectedEvent += STATE_CardSelectedEvent;
+            App.Events.SelectDeckEvent += STATE_SelectDeckEvent; ;
         }
 
         private void STATE_SelectDeckEvent(Data.Entities.MagicDeck deck)
@@ -89,25 +89,25 @@ namespace MaGeek.UI.CustomControls
 
         private void LoopTimer(object sender, ElapsedEventArgs e)
         {
-            ImportCount = App.CARDS.Importer.PendingCount;
-            CurrentPercent = App.CARDS.Importer.WorkerProgress;
-            State = App.CARDS.Importer.Message;
+            ImportCount = App.Biz.Importer.PendingCount;
+            CurrentPercent = App.Biz.Importer.WorkerProgress;
+            State = App.Biz.Importer.Message;
             OnPropertyChanged("InfoText");
         }
 
         private void ButtonPlay_Click(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Importer.Play();
+            App.Biz.Importer.Play();
         }
 
         private void ButtonPause_Click(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Importer.Pause();
+            App.Biz.Importer.Pause();
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            App.CARDS.Importer.CancelAll();
+            App.Biz.Importer.CancelAll();
         }
 
     }
