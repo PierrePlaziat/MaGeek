@@ -1,25 +1,21 @@
 ﻿using System;
 using Newtonsoft.Json;
 using System.Net;
-using ScryfallApi.Client;
-using MaGeek.Data.Entities;
+using MaGeek.Entities;
 using ScryfallApi.Client.Models;
 using System.Windows;
 using System.Linq;
 using System.Threading;
-using System.Windows.Documents;
-using MaGeek.Entities;
 using System.Collections.Generic;
 
-namespace MaGeek
+namespace MaGeek.AppBusiness
 {
 
     public class ScryfallManager
     {
 
-        static CardDatabase DB;
-
-        public ScryfallManager(CardDatabase db)
+        static MageekDbContext DB;
+        public ScryfallManager(MageekDbContext db)
         {
             DB = db;
         }
@@ -37,7 +33,7 @@ namespace MaGeek
 
         public float GetCardPrize(string variantId)
         {
-            MagicCardVariant variant = DB.cardVariants.Where(x=>x.Id == variantId).FirstOrDefault();
+            MagicCardVariant variant = DB.cardVariants.Where(x => x.Id == variantId).FirstOrDefault();
             if (variant == null) return 0;
             return GetCardPrize(variant);
         }
@@ -87,13 +83,14 @@ namespace MaGeek
             if (price != -1)
             {
                 DB.Prices.Add(
-                    new Entities.Price() { 
-                        MultiverseId = variant.MultiverseId, 
-                        LastUpdate = DateTime.Now.ToString(), 
+                    new Entities.Price()
+                    {
+                        MultiverseId = variant.MultiverseId,
+                        LastUpdate = DateTime.Now.ToString(),
                         Value = price.ToString(),
                     }
                 );
-                DB.SafeSaveChanges();
+                DB.SaveChanges();
             }
             return price;
         }
@@ -102,7 +99,7 @@ namespace MaGeek
 
         public List<Legality> GetCardLegal(string variantId)
         {
-            MagicCardVariant variant = DB.cardVariants.Where(x=>x.Id == variantId).FirstOrDefault();
+            MagicCardVariant variant = DB.cardVariants.Where(x => x.Id == variantId).FirstOrDefault();
             if (variant == null) return new List<Legality>();
             return GetCardLegal(variant);
         }
@@ -113,7 +110,7 @@ namespace MaGeek
             List<Legality> previous = DB.Legalities.Where(x => x.MultiverseId == variant.MultiverseId).ToList();
 
             // NO DATA
-            if (previous == null || previous.FirstOrDefault()==null)
+            if (previous == null || previous.FirstOrDefault() == null)
             {
                 legal = RetrieveCardLegal(variant);
             }
@@ -143,7 +140,7 @@ namespace MaGeek
             try
             {
                 var scryCard = JsonConvert.DeserializeObject<Card>(json_data);
-                foreach (var l in scryCard.Legalities) 
+                foreach (var l in scryCard.Legalities)
                 {
                     legal.Add(new Legality()
                     {
@@ -157,9 +154,9 @@ namespace MaGeek
             catch (Exception e) { MessageBox.Show("Couldnt parse legalities : " + e.Message); }
 
             // SAVE
-            
+
             DB.Legalities.AddRange(legal);
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
             return legal;
         }
 

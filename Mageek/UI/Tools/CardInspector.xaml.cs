@@ -1,4 +1,4 @@
-﻿using MaGeek.Data.Entities;
+﻿using MaGeek.AppBusiness;
 using MaGeek.Entities;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,8 +140,10 @@ namespace MaGeek.UI
 
         #region CTOR
 
+        MageekDbContext db;
         public CardInspector()
         {
+            db = App.Biz.DB.GetNewContext();
             InitializeComponent();
             DataContext = this;
             App.Events.CardSelectedEvent += HandleCardSelected;
@@ -247,9 +249,11 @@ namespace MaGeek.UI
             }
         }
 
+
+
         private List<string> GetExistingTags()
         {
-            return App.Biz.AllTags;
+            return App.Biz.DB.GetTagsDistinct(db);
         }
 
         private void addItem(string text)

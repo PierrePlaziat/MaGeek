@@ -1,4 +1,4 @@
-﻿using MaGeek.Data.Entities;
+﻿using MaGeek.Entities;
 using MaGeek.UI.Windows.ImportExport;
 using System;
 using System.Collections.Generic;

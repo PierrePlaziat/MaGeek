@@ -1,4 +1,4 @@
-﻿using MaGeek.Data.Entities;
+﻿using MaGeek.Entities;
 using Microsoft.Win32;
 using System;
 using System.ComponentModel;

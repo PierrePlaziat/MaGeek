@@ -1,4 +1,5 @@
-﻿using MaGeek.Data.Entities;
+﻿using MaGeek.AppBusiness;
+using MaGeek.Entities;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.ObjectModel;
@@ -14,7 +15,7 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( App.Biz.AllDecks.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower())).OrderBy(x=>x.Title)); } }
+        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( db.decks.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower())).OrderBy(x=>x.Title)); } }
 
         private string filterString = "";
         public string FilterString
@@ -31,8 +32,11 @@ namespace MaGeek.UI
 
         #region CTOR
 
+        MageekDbContext db;
+
         public DeckList()
         {
+            db = App.Biz.DB.GetNewContext();
             DataContext = this;
             InitializeComponent();
             App.Events.UpdateDeckEvent += () => { forceRefresh(); };

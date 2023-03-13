@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace MaGeek.Data.Entities
+namespace MaGeek.Entities
 {
 
     public class MagicCardVariant

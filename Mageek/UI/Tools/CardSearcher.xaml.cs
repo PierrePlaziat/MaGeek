@@ -1,4 +1,6 @@
-﻿using MaGeek.Data.Entities;
+﻿using MaGeek.AppBusiness;
+using MaGeek.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,18 +11,27 @@ namespace MaGeek.UI
 {
 
     public partial class CardSearcher : TemplatedUserControl
-    { 
+    {
 
 
         #region Attributes
+
+        private bool filterActive = false;
+
+        public bool FilterActive
+        {
+            get { return filterActive; }
+            set { filterActive = value; }
+        }
+
 
         public bool IsSearching { get { return isSearching; } set { isSearching = value; OnPropertyChanged(); OnPropertyChanged("IsNotSearching"); } }
         private bool isSearching = false;
 
         public ObservableCollection<MagicCard> CardsBind { 
             get {
-                var unfiltered = App.Biz.AllCards;
-                var filtered = unfiltered
+                if (!filterActive) return new ObservableCollection<MagicCard>(db.cards);
+                var filtered = db.cards
                     .Where(x => x.Cmc >= FilterMinCmc)
                     .Where(x => x.Cmc <= FilterMaxCmc)
                     .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower()) || x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
@@ -51,7 +62,7 @@ namespace MaGeek.UI
         {
             get
             {
-                return App.Biz.AllTags;
+                return App.Biz.DB.GetTagsDistinct(db);
             }
         }
 
@@ -189,8 +200,10 @@ namespace MaGeek.UI
 
         #region CTOR
 
+        MageekDbContext db;
         public CardSearcher()
         { 
+            db = App.Biz.DB.GetNewContext();
             DataContext = this;
             InitializeComponent();
             App.Events.UpdateCardCollecEvent += () => { OnPropertyChanged("CardsBind"); };
@@ -257,6 +270,7 @@ namespace MaGeek.UI
 
         private void FilterTag_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            FilterActive = true;
             OnPropertyChanged("CardsBind");
         }
 

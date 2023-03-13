@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MaGeek.Data.Entities
+namespace MaGeek.Entities
 {
 
     public class CardTraduction

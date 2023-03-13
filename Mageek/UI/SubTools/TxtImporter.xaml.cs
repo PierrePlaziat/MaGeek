@@ -1,4 +1,5 @@
-﻿using MaGeek.CommonWpf;
+﻿using MaGeek.AppBusiness;
+using MaGeek.CommonWpf;
 using System;
 using System.Windows;
 

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace MaGeek.Data.Entities
+namespace MaGeek.Entities
 {
     public class MagicCard
     {

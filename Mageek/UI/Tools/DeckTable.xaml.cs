@@ -1,4 +1,4 @@
-﻿using MaGeek.Data.Entities;
+﻿using MaGeek.Entities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

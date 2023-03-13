@@ -1,8 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System;
-using MaGeek.Data.Entities;
+using MaGeek.Entities;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using MaGeek.Data.Entities;
+﻿using MaGeek.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace MaGeek.Entities

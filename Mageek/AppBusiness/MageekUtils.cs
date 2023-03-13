@@ -1,12 +1,11 @@
-﻿using MaGeek.Data.Entities;
-using MaGeek.Entities;
+﻿using MaGeek.Entities;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace MaGeek
+namespace MaGeek.AppBusiness
 {
 
     public class MageekUtils
@@ -14,8 +13,9 @@ namespace MaGeek
 
         #region CTOR
 
-        private CardDatabase DB;
-        public MageekUtils(CardDatabase DB) { 
+        private MageekDbContext DB;
+        public MageekUtils(MageekDbContext DB)
+        {
             this.DB = DB;
             ScryfallManager = new ScryfallManager(DB);
         }
@@ -39,7 +39,7 @@ namespace MaGeek
                 }
                 MagicDeck deck = new MagicDeck(deckTitle);
                 DB.decks.Add(deck);
-                DB.SafeSaveChanges();
+                DB.SaveChanges();
                 App.Events.RaiseUpdateDeckList();
                 App.Events.RaiseDeckSelect(deck);
             }
@@ -60,7 +60,7 @@ namespace MaGeek
                 return;
             }
             deckToRename.Title = newTitle;
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
             App.Events.RaiseUpdateDeck();
         }
 
@@ -71,18 +71,18 @@ namespace MaGeek
             var deckToCopy = originalDeck;
             var newDeck = new MagicDeck(deckToCopy);
             DB.decks.Add(newDeck);
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
             App.Events.RaiseUpdateDeckList();
         }
 
         public void DeleteDeck(MagicDeck deckToDelete)
         {
             //if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
-            if (MessageBoxHelper.AskUser("Are you sure to delete this deck ? ("+deckToDelete.Title+")"))
+            if (MessageBoxHelper.AskUser("Are you sure to delete this deck ? (" + deckToDelete.Title + ")"))
             {
                 var deck = deckToDelete;
                 DB.decks.Remove(deck);
-                DB.SafeSaveChanges();
+                DB.SaveChanges();
                 App.Events.RaiseUpdateDeckList();
             }
         }
@@ -107,7 +107,7 @@ namespace MaGeek
                 deck.CardRelations.Add(cardRelation);
             }
             cardRelation.Quantity += qty;
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
             App.Events.RaiseUpdateDeck();
         }
 
@@ -126,7 +126,7 @@ namespace MaGeek
             if (cardRelation == null) return;
             cardRelation.Quantity -= qty;
             if (cardRelation.Quantity <= 0) deck.CardRelations.Remove(cardRelation);
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
             App.Events.RaiseUpdateDeck();
 
         }
@@ -135,7 +135,7 @@ namespace MaGeek
         {
             if (selectedCard == null) return;
             DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault().Got++;
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
         }
 
         public void GotCard_Remove(MagicCardVariant selectedCard)
@@ -143,14 +143,14 @@ namespace MaGeek
             if (selectedCard == null) return;
             var c = DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
             c.Got--;
-            if(c.Got < 0) c.Got = 0;
-            DB.SafeSaveChanges();
+            if (c.Got < 0) c.Got = 0;
+            DB.SaveChanges();
         }
 
         public void SetFav(MagicCard card, string variantId)
         {
             card.FavouriteVariant = variantId;
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
         }
 
         #endregion
@@ -165,13 +165,13 @@ namespace MaGeek
         internal void TagCard(MagicCard selectedCard, string text)
         {
             DB.Tags.Add(new CardTag(text, selectedCard));
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
         }
 
         internal void UnTagCard(CardTag cardTag)
         {
             DB.Tags.Remove(cardTag);
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
         }
 
         #endregion
@@ -195,15 +195,15 @@ namespace MaGeek
             return manaCurve;
         }
 
-        public string DeckColors (MagicDeck deck) 
-        { 
+        public string DeckColors(MagicDeck deck)
+        {
             string retour = "";
             if (DevotionB(deck) > 0) retour += "b";
             if (DevotionW(deck) > 0) retour += "w";
             if (DevotionU(deck) > 0) retour += "u";
             if (DevotionG(deck) > 0) retour += "g";
             if (DevotionR(deck) > 0) retour += "r";
-            return retour; 
+            return retour;
         }
 
         public int DevotionB(MagicDeck deck)
@@ -224,7 +224,7 @@ namespace MaGeek
         }
         public int DevotionU(MagicDeck deck)
         {
-            if (deck== null) return 0;
+            if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
             foreach (var c in deck.CardRelations) devotion += DevotionU(c.Card.Card) * c.Quantity;
@@ -247,35 +247,35 @@ namespace MaGeek
             return devotion;
         }
 
-        private int DevotionB (MagicCard card)
-        { 
-            return card.ManaCost != null ? 
-                card.ManaCost.Length - card.ManaCost.Replace("B", "").Length 
-                : 0; 
+        private int DevotionB(MagicCard card)
+        {
+            return card.ManaCost != null ?
+                card.ManaCost.Length - card.ManaCost.Replace("B", "").Length
+                : 0;
         }
-        private int DevotionW (MagicCard card)
-        { 
-            return card.ManaCost != null ? 
-                card.ManaCost.Length - card.ManaCost.Replace("W", "").Length 
-                : 0; 
+        private int DevotionW(MagicCard card)
+        {
+            return card.ManaCost != null ?
+                card.ManaCost.Length - card.ManaCost.Replace("W", "").Length
+                : 0;
         }
-        private int DevotionU (MagicCard card)
-        { 
-            return card.ManaCost != null ? 
-                card.ManaCost.Length - card.ManaCost.Replace("U", "").Length 
-                : 0; 
+        private int DevotionU(MagicCard card)
+        {
+            return card.ManaCost != null ?
+                card.ManaCost.Length - card.ManaCost.Replace("U", "").Length
+                : 0;
         }
-        private int DevotionG (MagicCard card)
-        { 
-            return card.ManaCost != null ? 
-                card.ManaCost.Length - card.ManaCost.Replace("G", "").Length 
-                : 0; 
+        private int DevotionG(MagicCard card)
+        {
+            return card.ManaCost != null ?
+                card.ManaCost.Length - card.ManaCost.Replace("G", "").Length
+                : 0;
         }
-        private int DevotionR (MagicCard card)
-        { 
-            return card.ManaCost != null ? 
-                card.ManaCost.Length - card.ManaCost.Replace("R", "").Length 
-                : 0; 
+        private int DevotionR(MagicCard card)
+        {
+            return card.ManaCost != null ?
+                card.ManaCost.Length - card.ManaCost.Replace("R", "").Length
+                : 0;
         }
 
         #endregion
@@ -283,11 +283,11 @@ namespace MaGeek
         #region counts
 
         public int count_Total(MagicDeck deck)
-        { 
+        {
             int count = 0;
             if (deck.CardRelations != null)
             {
-                foreach (var card in deck.CardRelations.Where(x => x.RelationType<2))
+                foreach (var card in deck.CardRelations.Where(x => x.RelationType < 2))
                 {
                     count += card.Quantity;
                 }
@@ -465,7 +465,7 @@ namespace MaGeek
             if (currentDeck.CardRelations == null) return 0;
             int total = 0;
             int miss = 0;
-            foreach(var v in currentDeck.CardRelations)
+            foreach (var v in currentDeck.CardRelations)
             {
                 total += v.Quantity;
 
@@ -475,7 +475,7 @@ namespace MaGeek
                 if (diff > 0) miss += diff;
             }
             if (total == 0) return 100;
-            return 100 - ( miss * 100 / total );
+            return 100 - miss * 100 / total;
         }
 
         internal string ListMissingCards(MagicDeck currentDeck)
@@ -501,8 +501,8 @@ namespace MaGeek
         {
             if (deck == null) return false;
             bool ok = true;
-            ok = ok && count_Total (deck)>= 60;
-            ok = ok && HasMaxCardOccurence(deck,4);
+            ok = ok && count_Total(deck) >= 60;
+            ok = ok && HasMaxCardOccurence(deck, 4);
             return ok;
         }
         public bool validity_Commander(MagicDeck deck)
@@ -510,7 +510,7 @@ namespace MaGeek
             if (deck == null) return false;
             bool ok = true;
             ok = ok && count_Total(deck) == 100;
-            ok = ok && HasMaxCardOccurence(deck,1);
+            ok = ok && HasMaxCardOccurence(deck, 1);
             ok = ok && deck.CardRelations.Where(x => x.RelationType == 1).Any();
             return ok;
         }
@@ -541,7 +541,7 @@ namespace MaGeek
         internal void ChangeCardDeckRelation(CardDeckRelation cardRel, int v)
         {
             cardRel.RelationType = 0;
-            DB.SafeSaveChanges();
+            DB.SaveChanges();
             App.Events.RaiseUpdateDeck();
         }
 
@@ -557,17 +557,17 @@ namespace MaGeek
 
         internal void Backup()
         {
-            DB.BackupDb();
+            App.Biz.DB.BackupDb();
         }
 
         internal void RestoreDb()
         {
-            DB.RestoreDb();
+            App.Biz.DB.RestoreDb(DB);
         }
 
         internal void EraseDb()
         {
-            DB.EraseDb();
+            App.Biz.DB.EraseDb(DB);
         }
 
         internal float GetCardPrize(MagicCardVariant selectedVariant)

@@ -69,12 +69,12 @@ namespace MaGeek.UI.CustomControls
             App.Events.SelectDeckEvent += STATE_SelectDeckEvent; ;
         }
 
-        private void STATE_SelectDeckEvent(Data.Entities.MagicDeck deck)
+        private void STATE_SelectDeckEvent(Entities.MagicDeck deck)
         {
             OnPropertyChanged("SelectedString");
         }
 
-        private void STATE_CardSelectedEvent(Data.Entities.MagicCard Card)
+        private void STATE_CardSelectedEvent(Entities.MagicCard Card)
         {
             OnPropertyChanged("SelectedString");
         }

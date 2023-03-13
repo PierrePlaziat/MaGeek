@@ -1,4 +1,5 @@
-﻿using MtgApiManager.Lib.Model;
+﻿using MaGeek.AppBusiness;
+using MtgApiManager.Lib.Model;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
