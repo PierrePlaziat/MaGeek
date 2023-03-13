@@ -1,5 +1,5 @@
-﻿using MaGeek.AppFramework;
-using MaGeek.Entities;
+﻿using MaGeek.AppData.Entities;
+using MaGeek.AppFramework;
 using MtgApiManager.Lib.Core;
 using MtgApiManager.Lib.Model;
 using MtgApiManager.Lib.Service;
@@ -26,7 +26,15 @@ namespace MaGeek.AppBusiness
 
         #region Attributes
 
-        public MageekDbContext DB { get; private set; }
+        public MageekDbContext db;
+        public MageekDbContext DB
+        {
+            get
+            {
+                if (db == null) db = App.Biz.DB.GetNewContext();
+                return db;
+            }
+        }
 
 
         IMtgServiceProvider MtgApi = new MtgServiceProvider();
@@ -80,14 +88,13 @@ namespace MaGeek.AppBusiness
 
         #region CTOR
 
-        public MageekImporter(MageekDbContext dB)
+        public MageekImporter()
         {
             LoadState();
             ConfigureWorker();
             ConfigureTimer();
             state = ImporterState.Pause;
             Message = "Init done";
-            DB = dB;
         }
 
 
@@ -177,7 +184,7 @@ namespace MaGeek.AppBusiness
         private void CheckNextImport()
         {
             if (state == ImporterState.Play)
-            { 
+            {
                 if (PendingImport.Count > 0) CurrentImport = PendingImport.Dequeue();
                 if (CurrentImport != null) Worker.RunWorkerAsync();
             }

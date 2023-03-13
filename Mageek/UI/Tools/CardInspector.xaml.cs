@@ -1,5 +1,5 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.Entities;
+using MaGeek.AppData.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -251,9 +251,9 @@ namespace MaGeek.UI
 
 
 
-        private List<string> GetExistingTags()
+        private List<CardTag> GetExistingTags()
         {
-            return App.Biz.DB.GetTagsDistinct(db);
+            return App.Biz.Utils.GetTagsDistinct();
         }
 
         private void addItem(string text)

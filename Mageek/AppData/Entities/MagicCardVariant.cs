@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace MaGeek.Entities
+namespace MaGeek.AppData.Entities
 {
 
     public class MagicCardVariant
@@ -30,7 +30,7 @@ namespace MaGeek.Entities
 
         #region CTOR
 
-        public MagicCardVariant(){ }
+        public MagicCardVariant() { }
 
         public MagicCardVariant(ICard selectedCard)
         {
@@ -42,7 +42,7 @@ namespace MaGeek.Entities
             Got = 0;
             MultiverseId = selectedCard.MultiverseId;
 
-            
+
             Card = App.Biz.Utils.FindCardById(selectedCard.Name);
         }
 
@@ -55,13 +55,14 @@ namespace MaGeek.Entities
             var taskCompletion = new TaskCompletionSource<BitmapImage>();
             BitmapImage img = null;
             string localFileName = "";
-            if(IsCustom==0)
+            if (IsCustom == 0)
             {
                 localFileName = Path.Combine(App.Config.Path_ImageFolder, Id + ".png");
                 if (!File.Exists(localFileName))
                 {
-                    await Task.Run(async () => { 
-                        await new WebClient().DownloadFileTaskAsync(ImageUrl, localFileName); 
+                    await Task.Run(async () =>
+                    {
+                        await new WebClient().DownloadFileTaskAsync(ImageUrl, localFileName);
                     });
                 }
             }
@@ -77,10 +78,11 @@ namespace MaGeek.Entities
         }
 
         public Brush LineColoration
-        { 
-            get { 
-                return string.IsNullOrEmpty(ImageUrl) ? Brushes.Black : Brushes.White; 
-            } 
+        {
+            get
+            {
+                return string.IsNullOrEmpty(ImageUrl) ? Brushes.Black : Brushes.White;
+            }
         }
 
         public float GetPrice

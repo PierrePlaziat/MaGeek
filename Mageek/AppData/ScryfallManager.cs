@@ -1,23 +1,29 @@
 ﻿using System;
 using Newtonsoft.Json;
 using System.Net;
-using MaGeek.Entities;
 using ScryfallApi.Client.Models;
 using System.Windows;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
+using MaGeek.AppBusiness;
+using MaGeek.AppData.Entities;
 
-namespace MaGeek.AppBusiness
+namespace MaGeek.AppData
 {
 
     public class ScryfallManager
     {
 
-        static MageekDbContext DB;
-        public ScryfallManager(MageekDbContext db)
+
+        public MageekDbContext db;
+        public MageekDbContext DB
         {
-            DB = db;
+            get
+            {
+                if (db == null) db = App.Biz.DB.GetNewContext();
+                return db;
+            }
         }
 
         // COMMON

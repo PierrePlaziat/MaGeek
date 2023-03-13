@@ -1,5 +1,4 @@
-﻿using MaGeek.Entities;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -9,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Xml;
+using MaGeek.AppData.Entities;
 
 namespace MaGeek.UI
 {

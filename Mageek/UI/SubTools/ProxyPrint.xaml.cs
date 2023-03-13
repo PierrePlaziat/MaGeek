@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using MaGeek.Entities;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using MaGeek.AppData.Entities;
 
 namespace MaGeek.UI.Windows.ImportExport
 {

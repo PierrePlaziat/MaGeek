@@ -4,6 +4,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using MaGeek.AppData.Entities;
 
 namespace MaGeek.UI.CustomControls
 {
@@ -69,12 +70,12 @@ namespace MaGeek.UI.CustomControls
             App.Events.SelectDeckEvent += STATE_SelectDeckEvent; ;
         }
 
-        private void STATE_SelectDeckEvent(Entities.MagicDeck deck)
+        private void STATE_SelectDeckEvent(MagicDeck deck)
         {
             OnPropertyChanged("SelectedString");
         }
 
-        private void STATE_CardSelectedEvent(Entities.MagicCard Card)
+        private void STATE_CardSelectedEvent(MagicCard Card)
         {
             OnPropertyChanged("SelectedString");
         }

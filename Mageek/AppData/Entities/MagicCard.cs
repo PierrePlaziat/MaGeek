@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace MaGeek.Entities
+namespace MaGeek.AppData.Entities
 {
     public class MagicCard
     {
@@ -45,7 +45,7 @@ namespace MaGeek.Entities
 
         public void AddVariant(ICard iCard)
         {
-            MagicCardVariant variant = Variants.Where(x=>x.Id == iCard.Id).FirstOrDefault();
+            MagicCardVariant variant = Variants.Where(x => x.Id == iCard.Id).FirstOrDefault();
             if (variant != null) return;
             variant = new MagicCardVariant(iCard);
             Variants.Add(variant);
@@ -56,11 +56,11 @@ namespace MaGeek.Entities
 
         private void AddNames(List<IForeignName> foreignNames)
         {
-            if (foreignNames == null) return;   
-            if (Traductions==null) Traductions = new List<CardTraduction>();
+            if (foreignNames == null) return;
+            if (Traductions == null) Traductions = new List<CardTraduction>();
             foreach (IForeignName foreignName in foreignNames)
             {
-                CardTraduction trad = Traductions.Where(x=>x.Language == foreignName.Language).FirstOrDefault();
+                CardTraduction trad = Traductions.Where(x => x.Language == foreignName.Language).FirstOrDefault();
                 if (trad != null) return;
                 Traductions.Add(
                     new CardTraduction()
@@ -82,9 +82,9 @@ namespace MaGeek.Entities
                     return await Variants[selectedVariant].RetrieveImage();
                 }
             }
-            foreach(var variant in Variants)
+            foreach (var variant in Variants)
             {
-                if(!string.IsNullOrEmpty(variant.ImageUrl))
+                if (!string.IsNullOrEmpty(variant.ImageUrl))
                 {
                     return await variant.RetrieveImage();
                 }
@@ -96,10 +96,12 @@ namespace MaGeek.Entities
 
         #region Accessors
 
-        public string CardForeignName {
-            get {
+        public string CardForeignName
+        {
+            get
+            {
                 var a = Traductions.Where(x => x.Language.ToLower() == App.Config.Settings[Setting.ForeignLangugage].ToLower()).FirstOrDefault();
-                return a!= null ?  a.TraductedName : CardId;
+                return a != null ? a.TraductedName : CardId;
             }
         }
 

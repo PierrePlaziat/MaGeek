@@ -1,4 +1,4 @@
-﻿using MaGeek.Entities;
+﻿using MaGeek.AppData.Entities;
 using System.Windows;
 
 namespace MaGeek.UI.Windows.ImportExport

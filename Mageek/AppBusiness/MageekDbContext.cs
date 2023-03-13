@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-//using MaGeek.Data.Entities;
-using MaGeek.Entities;
-using MaCore.Sqlite;
-using System.Collections.Generic;
-using System;
+using MaGeek.AppData.Entities;
+using Mageek.AppData;
 
 namespace MaGeek.AppBusiness
 {
@@ -74,7 +71,6 @@ namespace MaGeek.AppBusiness
 
         internal void DeleteAllContent()
         {
-            //TODO ensure no other acces to DB ongoing
             cards.ExecuteDeleteAsync();
             cardVariants.ExecuteDeleteAsync();
             traductions.ExecuteDeleteAsync();

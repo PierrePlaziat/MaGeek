@@ -3,14 +3,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace MaGeek.Entities
+namespace MaGeek.AppData.Entities
 {
     public class MagicDeck
     {
 
         #region Entity
 
-        [Key] 
+        [Key]
         public int DeckId { get; set; }
         public string Title { get; set; }
         public virtual ObservableCollection<CardDeckRelation> CardRelations { get; set; }
@@ -19,7 +19,7 @@ namespace MaGeek.Entities
 
         #region CTOR
 
-        public MagicDeck() {} // EF needs
+        public MagicDeck() { } // EF needs
 
         public MagicDeck(string deckTitle)
         {
@@ -29,11 +29,11 @@ namespace MaGeek.Entities
 
         public MagicDeck(MagicDeck deckToCopy)
         {
-            this.Title = deckToCopy.Title+ " - Copie";
+            Title = deckToCopy.Title + " - Copie";
             CardRelations = new ObservableCollection<CardDeckRelation>();
             foreach (CardDeckRelation relation in deckToCopy.CardRelations)
             {
-                App.Biz.Utils.AddCardToDeck(relation.Card,this,relation.Quantity,relation.RelationType);
+                App.Biz.Utils.AddCardToDeck(relation.Card, this, relation.Quantity, relation.RelationType);
             }
         }
 

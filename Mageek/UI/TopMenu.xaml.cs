@@ -1,5 +1,4 @@
 ﻿using MaGeek.AppFramework;
-using MaGeek.Events;
 using MaGeek.UI.Windows.Importers;
 using MaGeek.UI.Windows.ImportExport;
 using System.Windows;
@@ -54,17 +53,17 @@ namespace MaGeek.UI.CustomControls
 
         private void BackupDb(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.Backup();
+            App.Biz.DB.Backup();
         }
 
         private void RestoreDb(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.RestoreDb();
+            App.Biz.DB.RestoreDb();
         }
 
         private void EraseDb(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.EraseDb();
+            App.Biz.DB.EraseDb();
         }
 
         #endregion

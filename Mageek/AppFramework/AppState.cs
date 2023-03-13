@@ -1,4 +1,4 @@
-﻿using MaGeek.Entities;
+﻿using MaGeek.AppData.Entities;
 
 namespace MaGeek.AppFramework
 {

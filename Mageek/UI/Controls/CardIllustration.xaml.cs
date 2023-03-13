@@ -1,4 +1,4 @@
-﻿using MaGeek.Entities;
+﻿using MaGeek.AppData.Entities;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;

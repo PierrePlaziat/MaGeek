@@ -1,4 +1,6 @@
-﻿using MaGeek.Entities;
+﻿using MaGeek.AppData.Entities;
+using System.Windows.Input;
+using System;
 
 namespace MaGeek.AppFramework
 {
@@ -44,6 +46,27 @@ namespace MaGeek.AppFramework
         public delegate void UpdateDeckListHandler();
         public event UpdateDeckListHandler UpdateDeckListEvent;
 
+    }
+    public class ChangeCardRelationVariantCommand : ICommand
+    {
+
+        private CardDeckRelation relation;
+
+        public ChangeCardRelationVariantCommand(CardDeckRelation relation)
+        {
+            this.relation = relation;
+        }
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+        public void Execute(object parameter)
+        {
+            MagicCardVariant variant = (MagicCardVariant)parameter;
+            App.Biz.Utils.ChangeRelation(relation, variant);
+        }
+
+        public event EventHandler CanExecuteChanged;
     }
 
 }

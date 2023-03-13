@@ -1,9 +1,10 @@
-﻿using MaGeek.Entities;
+﻿using MaGeek.AppData.Entities;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using MaGeek.AppData;
 
 namespace MaGeek.AppBusiness
 {
@@ -11,18 +12,32 @@ namespace MaGeek.AppBusiness
     public class MageekUtils
     {
 
+
+        public MageekDbContext db;
+        public MageekDbContext DB
+        {
+            get
+            {
+                if (db == null) db = App.Biz.DB.GetNewContext();
+                return db;
+            }
+        }
+
         #region CTOR
 
-        private MageekDbContext DB;
-        public MageekUtils(MageekDbContext DB)
+        public MageekUtils()
         {
-            this.DB = DB;
-            ScryfallManager = new ScryfallManager(DB);
+            ScryfallManager = new ScryfallManager();
         }
         public ScryfallManager ScryfallManager;
 
         #endregion
 
+
+        public List<CardTag> GetTagsDistinct()
+        {
+            return DB.Tags.GroupBy(x => x.Tag).Select(x => x.First()).ToList();
+        }
 
         #region Deck Manips
 
@@ -553,21 +568,6 @@ namespace MaGeek.AppBusiness
         internal List<CardTag> FindTagsForCard(string cardId)
         {
             return DB.Tags.Where(x => x.CardId == cardId).ToList();
-        }
-
-        internal void Backup()
-        {
-            App.Biz.DB.BackupDb();
-        }
-
-        internal void RestoreDb()
-        {
-            App.Biz.DB.RestoreDb(DB);
-        }
-
-        internal void EraseDb()
-        {
-            App.Biz.DB.EraseDb(DB);
         }
 
         internal float GetCardPrize(MagicCardVariant selectedVariant)

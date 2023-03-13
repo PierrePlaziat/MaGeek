@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MaGeek.Entities
+namespace MaGeek.AppData.Entities
 {
 
     public class Price

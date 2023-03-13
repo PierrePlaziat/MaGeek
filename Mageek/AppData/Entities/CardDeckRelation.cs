@@ -1,9 +1,9 @@
-﻿using MaGeek.Events;
+﻿using MaGeek.AppFramework;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Input;
 
-namespace MaGeek.Entities
+namespace MaGeek.AppData.Entities
 {
 
     public class CardDeckRelation
@@ -19,12 +19,13 @@ namespace MaGeek.Entities
         /// <summary>
         /// 0== normal, 1==commandant , 2 sideDeck
         /// </summary>
-        public int RelationType{ get; set; } 
+        public int RelationType { get; set; }
 
         [NotMapped]
         public ICommand ChangeIlluCommand { get; set; }
 
-        public CardDeckRelation() {
+        public CardDeckRelation()
+        {
             ChangeIlluCommand = new ChangeCardRelationVariantCommand(this);
         }
 

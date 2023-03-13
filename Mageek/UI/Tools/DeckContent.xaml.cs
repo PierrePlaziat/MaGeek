@@ -1,11 +1,11 @@
-﻿using MaGeek.Entities;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Linq;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using System;
 using MaGeek.UI.Windows.Importers;
+using MaGeek.AppData.Entities;
 
 namespace MaGeek.UI
 {

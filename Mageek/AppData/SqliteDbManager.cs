@@ -2,56 +2,46 @@
 using System.IO;
 using Microsoft.Data.Sqlite;
 using Plaziat.CommonWpf;
-using MaCore.Sqlite;
 using System.Collections.Generic;
-using System.Linq;
+using MaGeek.AppBusiness;
+using Mageek.AppData;
 
-namespace MaGeek.AppBusiness
+namespace MaGeek.AppData
 {
 
-    public class MageekDbHandler
+    public class SqliteDbManager
     {
 
-        /// <summary>
-        /// Tables have to match the Db Context
-        /// </summary>
-        public SqliteDbInfos DbInfos = new SqliteDbInfos(App.Config.Path_Db, App.Config.GetSqliteDbCreationString());
+        SqliteDbInfos DbInfos = new SqliteDbInfos(App.Config.Path_Db, App.Config.GetSqliteDbCreationString());
 
-        /// <summary>
-        /// Use this to access database concurrently
-        /// </summary>
+        #region Context gestion
+
+        List<MageekDbContext> trackContexts = new List<MageekDbContext>();
+
         public MageekDbContext GetNewContext()
         {
-            return new MageekDbContext(DbInfos);
+            var context = new MageekDbContext(DbInfos);
+            trackContexts.Add(context);
+            return context;
         }
 
-        #region Methods
-
-        public List<string> GetTagsDistinct(MageekDbContext dbContext)
+        private void TerminateAllContexts()
         {
-            List<string> tags = new List<string>();
-            tags.Add("");
-            foreach (var tag in dbContext.Tags.GroupBy(x => x.Tag).Select(x => x.First()))
-                tags.Add(tag.Tag);
-            return tags;
+            foreach(MageekDbContext c in trackContexts) c.Dispose();
         }
 
-        public void InitDb(MageekDbContext dbContext)
+        #endregion
+
+        #region Bulk Manipulations
+
+        public SqliteDbManager()
         {
             RestorationGestion();
-            if (!File.Exists(App.Config.Path_Db)) CreateDbFromScratch(dbContext);
+            if (!File.Exists(App.Config.Path_Db)) CreateDbFromScratch();
+
         }
 
-        private void CreateDbFromScratch(MageekDbContext dbContext)
-        {
-            SqliteConnection dbCo = new SqliteConnection(DbInfos.ConnexionString);
-            dbCo.Open();
-            foreach (string instruction in DbInfos.Tables) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
-            dbContext.SaveChanges();
-            dbCo.Close();
-        }
-
-        public void BackupDb()
+        public void Backup()
         {
             string saveFolder = SelectFileHelper.SelectAFolder();
             if (saveFolder != null)
@@ -76,13 +66,13 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        public void EraseDb(MageekDbContext dbContext)
+        public void EraseDb()
         {
             if (!MessageBoxHelper.AskUser("Do you really want to erase all data?")) return;
-            dbContext.DeleteAllContent();
+            DeleteAllContent();
         }
 
-        public void RestoreDb(MageekDbContext dbContext)
+        public void RestoreDb()
         {
             if (!MessageBoxHelper.AskUser("Current data will be lost, ensure you have a backup if needed.\n Are you sure you still want to launch restoration?")) return;
             string tmpDbPath = App.Config.Path_Db + ".tmp";
@@ -92,7 +82,7 @@ namespace MaGeek.AppBusiness
                 try
                 {
                     File.Copy(loadFile, tmpDbPath);
-                    dbContext.DeleteAllContent();
+                    DeleteAllContent();
                 }
                 catch (IOException iox)
                 {
@@ -101,11 +91,20 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        private string GenerateBackupName()
+        private void CreateDbFromScratch()
         {
-            string s = "MaGeek " + DateTime.Now.ToString() + ".db";
-            s = s.Replace('/', '_').Replace(':', '_');
-            return s;
+            var dbContext = GetNewContext();
+            SqliteConnection dbCo = new SqliteConnection(DbInfos.ConnexionString);
+            dbCo.Open();
+            foreach (string instruction in DbInfos.Tables) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
+            dbContext.SaveChanges();
+            dbCo.Close();
+        }
+
+        private void DeleteAllContent()
+        {
+            TerminateAllContexts();
+            GetNewContext().DeleteAllContent();
         }
 
         private void RestorationGestion()
@@ -117,6 +116,13 @@ namespace MaGeek.AppBusiness
                 File.Copy(tmpDbPath, App.Config.Path_Db);
                 File.Delete(tmpDbPath);
             }
+        }
+
+        private string GenerateBackupName()
+        {
+            string s = System.Windows.Application.ResourceAssembly.GetName() + DateTime.Now.ToString() + ".db";
+            s = s.Replace('/', '_').Replace(':', '_');
+            return s;
         }
 
         #endregion

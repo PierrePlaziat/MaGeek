@@ -1,4 +1,5 @@
 ﻿using MaGeek.AppBusiness;
+using MaGeek.AppData;
 
 namespace MaGeek.AppFramework
 {
@@ -6,16 +7,15 @@ namespace MaGeek.AppFramework
     public class AppBiz
     {
 
-        public MageekDbHandler DB { get; }
+        public SqliteDbManager DB { get; }
         public MageekImporter Importer { get; }
         public MageekUtils Utils { get; }
 
         public AppBiz()
         {
-            DB = new MageekDbHandler();
-            DB.InitDb(DB.GetNewContext());
-            Importer = new MageekImporter(DB.GetNewContext());
-            Utils = new MageekUtils(DB.GetNewContext());
+            DB = new SqliteDbManager();
+            Importer = new MageekImporter();
+            Utils = new MageekUtils();
         }
 
     }

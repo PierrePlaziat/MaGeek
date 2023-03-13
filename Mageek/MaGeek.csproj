@@ -36,10 +36,6 @@
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MonCore\MaCore.csproj" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <Resource Include="Resources\Fonts\Magic_Symbols_2008.ttf" />

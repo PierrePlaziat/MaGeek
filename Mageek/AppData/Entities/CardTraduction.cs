@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MaGeek.Entities
+namespace MaGeek.AppData.Entities
 {
 
     public class CardTraduction
@@ -16,7 +16,7 @@ namespace MaGeek.Entities
         public string Language { get; set; }
         public string TraductedName { get; set; }
 
-        public virtual MagicCard Card{ get; set; }
+        public virtual MagicCard Card { get; set; }
     }
 
 }

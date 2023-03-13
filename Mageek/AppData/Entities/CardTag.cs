@@ -1,7 +1,6 @@
-﻿using MaGeek.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace MaGeek.Entities
+namespace MaGeek.AppData.Entities
 {
     public class CardTag
     {
@@ -12,13 +11,13 @@ namespace MaGeek.Entities
         public string CardId { get; set; }
         public virtual MagicCard Card { get; set; }
 
-        public CardTag() {}
+        public CardTag() { }
 
         public CardTag(string tag, MagicCard card)
         {
-            this.Tag = tag;
-            this.CardId = card.CardId;
-            this.Card = card;
+            Tag = tag;
+            CardId = card.CardId;
+            Card = card;
         }
 
     }

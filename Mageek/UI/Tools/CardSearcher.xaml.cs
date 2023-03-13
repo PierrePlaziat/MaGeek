@@ -1,5 +1,5 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.Entities;
+using MaGeek.AppData.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -58,11 +58,11 @@ namespace MaGeek.UI
             }
         }
 
-        public List<string> AvailableTags
+        public List<CardTag> AvailableTags
         {
             get
             {
-                return App.Biz.DB.GetTagsDistinct(db);
+                return App.Biz.Utils.GetTagsDistinct();
             }
         }
 

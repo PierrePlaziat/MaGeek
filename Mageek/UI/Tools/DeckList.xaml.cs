@@ -1,5 +1,5 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.Entities;
+using MaGeek.AppData.Entities;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.ObjectModel;
