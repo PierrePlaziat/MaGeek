@@ -12,6 +12,7 @@ namespace MaGeek.AppBusiness
     public class MageekUtils
     {
 
+        #region CTOR
 
         public MageekDbContext db;
         public MageekDbContext DB
@@ -23,23 +24,23 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        #region CTOR
+        public ScryfallManager ScryfallManager;
 
         public MageekUtils()
         {
             ScryfallManager = new ScryfallManager();
         }
-        public ScryfallManager ScryfallManager;
 
         #endregion
 
-
-        public List<CardTag> GetTagsDistinct()
-        {
-            return DB.Tags.GroupBy(x => x.Tag).Select(x => x.First()).ToList();
-        }
-
         #region Deck Manips
+
+        internal void ChangeCardDeckRelation(CardDeckRelation cardRel, int v)
+        {
+            cardRel.RelationType = 0;
+            DB.SaveChanges();
+            App.Events.RaiseUpdateDeck();
+        }
 
         public void AddDeck()
         {
@@ -105,6 +106,11 @@ namespace MaGeek.AppBusiness
         #endregion
 
         #region Card Manips
+
+        internal MagicCard FindCardById(string cardId)
+        {
+            return DB.cards.Where(x => x.CardId == cardId).FirstOrDefault();
+        }
 
         public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
         {
@@ -172,6 +178,11 @@ namespace MaGeek.AppBusiness
 
         #region Tags
 
+        public List<CardTag> GetTagsDistinct()
+        {
+            return DB.Tags.GroupBy(x => x.Tag).Select(x => x.First()).ToList();
+        }
+
         internal bool DoesCardHasTag(string cardId, string tagFilterSelected)
         {
             return FindTagsForCard(cardId).Where(x => x.Tag == tagFilterSelected).Any();
@@ -187,6 +198,11 @@ namespace MaGeek.AppBusiness
         {
             DB.Tags.Remove(cardTag);
             DB.SaveChanges();
+        }
+
+        internal List<CardTag> FindTagsForCard(string cardId)
+        {
+            return DB.Tags.Where(x => x.CardId == cardId).ToList();
         }
 
         #endregion
@@ -520,6 +536,7 @@ namespace MaGeek.AppBusiness
             ok = ok && HasMaxCardOccurence(deck, 4);
             return ok;
         }
+
         public bool validity_Commander(MagicDeck deck)
         {
             if (deck == null) return false;
@@ -541,7 +558,14 @@ namespace MaGeek.AppBusiness
             return ok;
         }
 
+        internal List<Legality> GetCardLegal(MagicCardVariant selectedVariant)
+        {
+            return ScryfallManager.GetCardLegal(selectedVariant);
+        }
+
         #endregion
+
+        #region Prices
 
         internal float EstimateDeckPrice(MagicDeck selectedDeck)
         {
@@ -553,32 +577,13 @@ namespace MaGeek.AppBusiness
             return total;
         }
 
-        internal void ChangeCardDeckRelation(CardDeckRelation cardRel, int v)
-        {
-            cardRel.RelationType = 0;
-            DB.SaveChanges();
-            App.Events.RaiseUpdateDeck();
-        }
-
-        internal MagicCard FindCardById(string cardId)
-        {
-            return DB.cards.Where(x => x.CardId == cardId).FirstOrDefault();
-        }
-
-        internal List<CardTag> FindTagsForCard(string cardId)
-        {
-            return DB.Tags.Where(x => x.CardId == cardId).ToList();
-        }
-
         internal float GetCardPrize(MagicCardVariant selectedVariant)
         {
             return ScryfallManager.GetCardPrize(selectedVariant);
         }
 
-        internal List<Legality> GetCardLegal(MagicCardVariant selectedVariant)
-        {
-            return ScryfallManager.GetCardLegal(selectedVariant);
-        }
+        #endregion
+
     }
 
 }

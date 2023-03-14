@@ -237,9 +237,9 @@ namespace MaGeek.UI
             resultStack.Children.Clear();
             foreach (var obj in data)
             {
-                if (obj.ToLower().StartsWith(query.ToLower()))
+                if (obj.Tag.ToLower().StartsWith(query.ToLower()))
                 {
-                    addItem(obj);
+                    addItem(obj.Tag);
                     found = true;
                 }
             }
