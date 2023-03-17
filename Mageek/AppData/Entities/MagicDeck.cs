@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace MaGeek.AppData.Entities
 {
@@ -13,6 +11,10 @@ namespace MaGeek.AppData.Entities
         [Key]
         public int DeckId { get; set; }
         public string Title { get; set; }
+        public string Description { get; set; }
+        public string DeckColors { get { return App.Biz.Utils.DeckColors(this); } } 
+        public int CardCount { get; set; } 
+
         public virtual ObservableCollection<CardDeckRelation> CardRelations { get; set; }
 
         #endregion
@@ -36,13 +38,6 @@ namespace MaGeek.AppData.Entities
                 App.Biz.Utils.AddCardToDeck(relation.Card, this, relation.Quantity, relation.RelationType);
             }
         }
-
-        #endregion
-
-        #region Accessors
-
-        public string DeckColors { get { return App.Biz.Utils.DeckColors(this); } }
-        public int CardCount { get { return App.Biz.Utils.count_Total(this); } }
 
         #endregion
 

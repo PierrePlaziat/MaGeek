@@ -3,6 +3,7 @@ using MaGeek.UI.Windows.ImportExport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -21,29 +22,43 @@ namespace MaGeek.UI
             set
             {
                 currentDeck = value;
-                OnPropertyChanged("CurrentDeck");
-                OnPropertyChanged("Visible");
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsActive));
+                AsyncReload();
             }
         }
 
-        public Visibility Visible { get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; } }
+        public int CreatureCount { get; private set; } 
+        public int InstantCount { get; private set; }  
+        public int SorceryCount { get; private set; }   
+        public int EnchantmentCount { get; private set; }  
+        public int ArtifactCount { get; private set; }  
+        public int BasicLandCount { get; private set; }  
+        public int SpecialLandCount { get; private set; } 
+        public int OtherCount { get; private set; }  
+        public int DevotionB { get; private set; }    
+        public int DevotionW { get; private set; }  
+        public int DevotionU { get; private set; } 
+        public int DevotionG { get; private set; }    
+        public int DevotionR { get; private set; }   
+        public string StandardOk { get; private set; }      
+        public string CommanderOk { get; private set; }   
+        public int OwnedRatio { get; private set; } 
 
-        public int CreatureCount    { get { return App.Biz.Utils.count_Creature(currentDeck); } }
-        public int InstantCount     { get { return App.Biz.Utils.count_Instant(currentDeck); } }
-        public int SorceryCount     { get { return App.Biz.Utils.count_Sorcery(currentDeck); } }
-        public int EnchantmentCount { get { return App.Biz.Utils.count_Enchantment(currentDeck); } }
-        public int ArtifactCount    { get { return App.Biz.Utils.count_Artifact(currentDeck); } }
-        public int BasicLandCount   { get { return App.Biz.Utils.count_BasicLand(currentDeck); } }
-        public int SpecialLandCount { get { return App.Biz.Utils.count_SpecialLand(currentDeck); } }
-        public int OtherCount       { get { return App.Biz.Utils.count_other(currentDeck); } }
-        public int DevotionB        { get { return App.Biz.Utils.DevotionB(currentDeck); } }
-        public int DevotionW        { get { return App.Biz.Utils.DevotionW(currentDeck); } }
-        public int DevotionU        { get { return App.Biz.Utils.DevotionU(currentDeck); } }
-        public int DevotionG        { get { return App.Biz.Utils.DevotionG(currentDeck); } }
-        public int DevotionR        { get { return App.Biz.Utils.DevotionR(currentDeck); } }
-        public string StandardOk    { get { return App.Biz.Utils.validity_Standard(currentDeck) ? "YES" : "NO"; } }
-        public string CommanderOk   { get { return App.Biz.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; } }
-        public int OwnedRatio       { get { return App.Biz.Utils.OwnedRatio(currentDeck); } }
+        #region Visibilities
+
+        private Visibility isLoading = Visibility.Collapsed;
+        public Visibility IsLoading
+        {
+            get { return isLoading; }
+            set { isLoading = value; }
+        }
+
+        public Visibility IsActive {
+            get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        #endregion
 
         #endregion
 
@@ -51,47 +66,125 @@ namespace MaGeek.UI
 
         public DeckStats()
         {
-            InitializeComponent();
             DataContext = this;
-            App.Events.SelectDeckEvent += HandleDeckSelected;
-            App.Events.UpdateDeckEvent += HandleDeckModified;
+            InitializeComponent();
+            ConfigureEvents();
         }
 
-        void HandleDeckModified()
+        #endregion
+
+        #region Events
+
+        private void ConfigureEvents()
         {
-            FullRefresh();
+            App.Events.SelectDeckEvent += HandleDeckSelected;
+            App.Events.UpdateDeckEvent += HandleDeckModified;
         }
 
         void HandleDeckSelected(MagicDeck deck)
         {
             CurrentDeck = deck;
-            FullRefresh();
         }
+
+        void HandleDeckModified()
+        {
+            AsyncReload();
+        }
+
+        #endregion
+
+        #region Async Reload
+
+        private void AsyncReload()
+        {
+            DoAsyncReload().ConfigureAwait(false);
+        }
+
+        private async Task DoAsyncReload()
+        {
+            // Resync
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+                IsLoading = Visibility.Visible;
+                OnPropertyChanged(nameof(IsLoading));
+            }));
+            // Async
+            await Task.Run(async () =>
+            {
+                GetCreatureCount();
+                GetInstantCount();
+                GetSorceryCount();
+                GetEnchantmentCount();
+                GetArtifactCount();
+                GetBasicLandCount();
+                GetSpecialLandCount();
+                GetOtherCount();
+                GetDevotionB();
+                GetDevotionW();
+                GetDevotionU();
+                GetDevotionG();
+                GetDevotionR();
+                GetStandardOk();
+                GetCommanderOk();
+                GetOwnedRatio();
+            });
+            // Resync
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+                OnPropertyChanged(nameof(CreatureCount));
+                OnPropertyChanged(nameof(InstantCount));
+                OnPropertyChanged(nameof(SorceryCount));
+                OnPropertyChanged(nameof(EnchantmentCount));
+                OnPropertyChanged(nameof(ArtifactCount));
+                OnPropertyChanged(nameof(BasicLandCount));
+                OnPropertyChanged(nameof(SpecialLandCount));
+                OnPropertyChanged(nameof(OtherCount));
+                OnPropertyChanged(nameof(StandardOk));
+                OnPropertyChanged(nameof(CommanderOk));
+                OnPropertyChanged(nameof(DevotionB));
+                OnPropertyChanged(nameof(DevotionW));
+                OnPropertyChanged(nameof(DevotionU));
+                OnPropertyChanged(nameof(DevotionG));
+                OnPropertyChanged(nameof(DevotionR));
+                OnPropertyChanged(nameof(OwnedRatio));
+                DrawManacurve(App.Biz.Utils.GetManaCurve(currentDeck));
+                DrawNewHand();
+                IsLoading = Visibility.Collapsed;
+                OnPropertyChanged(nameof(IsLoading));
+            }));
+        }
+
+        #endregion
+
+        #region Data Retrieve
+
+        private void GetCreatureCount() { CreatureCount = App.Biz.Utils.count_Creature(currentDeck); }
+        private void GetInstantCount() { InstantCount = App.Biz.Utils.count_Instant(currentDeck); }
+        private void GetSorceryCount() { SorceryCount = App.Biz.Utils.count_Sorcery(currentDeck); }
+        private void GetEnchantmentCount() { EnchantmentCount = App.Biz.Utils.count_Enchantment(currentDeck); }
+        private void GetArtifactCount() { ArtifactCount = App.Biz.Utils.count_Artifact(currentDeck); }
+        private void GetBasicLandCount() { BasicLandCount = App.Biz.Utils.count_BasicLand(currentDeck); }
+        private void GetSpecialLandCount() { SpecialLandCount = App.Biz.Utils.count_SpecialLand(currentDeck); }
+        private void GetOtherCount() { OtherCount = App.Biz.Utils.count_other(currentDeck); }
+        private void GetDevotionB() { DevotionB = App.Biz.Utils.DevotionB(currentDeck); }
+        private void GetDevotionW() { DevotionW = App.Biz.Utils.DevotionW(currentDeck); }
+        private void GetDevotionU() { DevotionU = App.Biz.Utils.DevotionU(currentDeck); }
+        private void GetDevotionG() { DevotionG = App.Biz.Utils.DevotionG(currentDeck); }
+        private void GetDevotionR() { DevotionR = App.Biz.Utils.DevotionR(currentDeck); }
+        private void GetStandardOk() { StandardOk = App.Biz.Utils.validity_Standard(currentDeck) ? "YES" : "NO"; }
+        private void GetCommanderOk() { CommanderOk = App.Biz.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; }
+        private void GetOwnedRatio() { OwnedRatio = App.Biz.Utils.OwnedRatio(currentDeck); }
 
         #endregion
 
         #region Methods
 
-        private void FullRefresh()
+        private void ListMissing(object sender, RoutedEventArgs e)
         {
-            OnPropertyChanged(nameof(CreatureCount));
-            OnPropertyChanged(nameof(InstantCount));
-            OnPropertyChanged(nameof(SorceryCount));
-            OnPropertyChanged(nameof(EnchantmentCount));
-            OnPropertyChanged(nameof(ArtifactCount));
-            OnPropertyChanged(nameof(BasicLandCount));
-            OnPropertyChanged(nameof(SpecialLandCount));
-            OnPropertyChanged(nameof(OtherCount));
-            OnPropertyChanged(nameof(StandardOk));
-            OnPropertyChanged(nameof(CommanderOk));
-            OnPropertyChanged(nameof(DevotionB));
-            OnPropertyChanged(nameof(DevotionW));
-            OnPropertyChanged(nameof(DevotionU));
-            OnPropertyChanged(nameof(DevotionG));
-            OnPropertyChanged(nameof(DevotionR));
-            OnPropertyChanged(nameof(OwnedRatio));
-            DrawManacurve(App.Biz.Utils.GetManaCurve(currentDeck));
-            DrawNewHand();
+            string missList = App.Biz.Utils.ListMissingCards(currentDeck);
+            if (!string.IsNullOrEmpty(missList))
+            {
+                var window = new DeckListExporter(missList);
+                window.Show();
+            }
         }
 
         #region ManaCurve
@@ -197,16 +290,6 @@ namespace MaGeek.UI
         #endregion
 
         #endregion
-
-        private void ListMissing(object sender, RoutedEventArgs e)
-        {
-            string missList = App.Biz.Utils.ListMissingCards(currentDeck);
-            if (!string.IsNullOrEmpty(missList))
-            {
-                var window = new DeckListExporter(missList);
-                window.Show();
-            }
-        }
     }
 
 }

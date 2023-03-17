@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using MaGeek.AppData;
+using ScryfallApi.Client.Models;
 
 namespace MaGeek.AppBusiness
 {
@@ -82,7 +83,6 @@ namespace MaGeek.AppBusiness
 
         public void DuplicateDeck(MagicDeck originalDeck)
         {
-            //if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
             if (App.State.SelectedDeck == null) return;
             var deckToCopy = originalDeck;
             var newDeck = new MagicDeck(deckToCopy);
@@ -103,13 +103,13 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        #endregion
-
-        #region Card Manips
-
-        internal MagicCard FindCardById(string cardId)
+        public void ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
         {
-            return DB.cards.Where(x => x.CardId == cardId).FirstOrDefault();
+            int qty = cardDeckRelation.Quantity;
+            var deck = cardDeckRelation.Deck;
+            int rel = cardDeckRelation.RelationType;
+            RemoveCardFromDeck(cardDeckRelation.Card.Card, cardDeckRelation.Deck, cardDeckRelation.Quantity);
+            AddCardToDeck(magicCardVariant, deck, qty, rel);
         }
 
         public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
@@ -128,17 +128,9 @@ namespace MaGeek.AppBusiness
                 deck.CardRelations.Add(cardRelation);
             }
             cardRelation.Quantity += qty;
+            deck.CardCount += qty; 
             DB.SaveChanges();
             App.Events.RaiseUpdateDeck();
-        }
-
-        public void ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
-        {
-            int qty = cardDeckRelation.Quantity;
-            var deck = cardDeckRelation.Deck;
-            int rel = cardDeckRelation.RelationType;
-            RemoveCardFromDeck(cardDeckRelation.Card.Card, cardDeckRelation.Deck, cardDeckRelation.Quantity);
-            AddCardToDeck(magicCardVariant, deck, qty, rel);
         }
 
         public void RemoveCardFromDeck(MagicCard card, MagicDeck deck, int qty = 1)
@@ -147,9 +139,19 @@ namespace MaGeek.AppBusiness
             if (cardRelation == null) return;
             cardRelation.Quantity -= qty;
             if (cardRelation.Quantity <= 0) deck.CardRelations.Remove(cardRelation);
+            deck.CardCount -= qty;
             DB.SaveChanges();
             App.Events.RaiseUpdateDeck();
 
+        }
+
+        #endregion
+
+        #region Card Manips
+
+        internal MagicCard FindCardById(string cardId)
+        {
+            return DB.cards.Where(x => x.CardId == cardId).FirstOrDefault();
         }
 
         public void GotCard_Add(MagicCardVariant selectedCard)
@@ -226,14 +228,15 @@ namespace MaGeek.AppBusiness
             return manaCurve;
         }
 
+        //SLOW
         public string DeckColors(MagicDeck deck)
         {
             string retour = "";
-            if (DevotionB(deck) > 0) retour += "b";
-            if (DevotionW(deck) > 0) retour += "w";
-            if (DevotionU(deck) > 0) retour += "u";
-            if (DevotionG(deck) > 0) retour += "g";
-            if (DevotionR(deck) > 0) retour += "r";
+            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("B")).Any()) retour += "B";
+            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("W")).Any()) retour += "W";
+            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("U")).Any()) retour += "U";
+            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("G")).Any()) retour += "G";
+            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("R")).Any()) retour += "R";
             return retour;
         }
 
@@ -311,6 +314,7 @@ namespace MaGeek.AppBusiness
 
         #endregion
 
+        //SLOW
         #region counts
 
         public int count_Total(MagicDeck deck)

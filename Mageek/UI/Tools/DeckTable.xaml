@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MaGeek.UI"
-             mc:Ignorable="d" 
+             xmlns:local="clr-namespace:MaGeek.UI" xmlns:controls="clr-namespace:MaGeek.UI.Controls"
+                            mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="myWindow" Background="Black">
 
@@ -835,7 +835,7 @@
 
         </ScrollViewer>
 
-        <Grid Visibility="{Binding Visible}" 
+        <Grid Visibility="{Binding IsActive}" 
               Background="#222"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
@@ -843,6 +843,10 @@
             <Label HorizontalAlignment="Center" 
                    VerticalAlignment="Center"
                    Content="No deck selected"/>
+        </Grid>
+
+        <Grid Background="Black" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
+            <controls:BusyIndicator></controls:BusyIndicator>
         </Grid>
 
     </Grid>

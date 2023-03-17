@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:local="clr-namespace:MaGeek.UI"
+    xmlns:local="clr-namespace:MaGeek.UI" xmlns:controls="clr-namespace:MaGeek.UI.Controls"
     mc:Ignorable="d" 
     d:DesignHeight="450" d:DesignWidth="800">
 
@@ -17,7 +17,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto" MaxHeight="100"/>
         </Grid.RowDefinitions>
-
+        
         <!-- TITLE -->
 
         <Label Grid.Row="0" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"
@@ -32,7 +32,7 @@
 
         <!-- Main -->
 
-        <ScrollViewer Grid.Row="3" Background="#222">
+        <ScrollViewer Name="ScrollViewerName" Grid.Row="3" Background="#222" MouseWheel="ScrollViewer_MouseWheel">
 
             <StackPanel Background="#222">
 
@@ -63,7 +63,7 @@
                 
                         <DataTemplate>
                     
-                            <Grid  Height="20">
+                            <Grid  Height="20" MouseWheel="ScrollViewer_MouseWheel">
                         
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -112,7 +112,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="20">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -160,7 +160,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="20">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -208,7 +208,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="20">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -256,7 +256,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="20">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -304,7 +304,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="20">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -352,7 +352,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="20">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -400,7 +400,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="20">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -448,7 +448,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="20">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -494,7 +494,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="20">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
                                     <ColumnDefinition Width="20"></ColumnDefinition>
@@ -521,7 +521,7 @@
 
         </ScrollViewer>
 
-        <StackPanel Visibility="{Binding Visible}" 
+        <StackPanel Visibility="{Binding IsActive}" 
                     Grid.RowSpan="4" Grid.ColumnSpan="2"
                     Background="#222">
             <Label HorizontalAlignment="Center" VerticalAlignment="Center">No deck selected</Label>
@@ -530,6 +530,10 @@
             <Separator Background="Transparent"/>
             <Button Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OpenDeckImport">Import a deck</Button>
         </StackPanel>
+
+        <Grid Background="Black" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
+            <controls:BusyIndicator></controls:BusyIndicator>
+        </Grid>
 
     </Grid>
 

@@ -1,11 +1,11 @@
-﻿using MaGeek.AppBusiness;
-using MaGeek.AppData.Entities;
-using Plaziat.CommonWpf;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using System.Collections.ObjectModel;
+using MaGeek.AppData.Entities;
+using System;
+using System.Threading.Tasks;
+using MaGeek.AppBusiness;
+using System.Linq;
 
 namespace MaGeek.UI
 {
@@ -14,8 +14,17 @@ namespace MaGeek.UI
     {
 
         #region Attributes
-
-        public ObservableCollection<MagicDeck> Decks { get { return new ObservableCollection<MagicDeck>( db.decks.Where(x=>x.Title.ToLower().Contains(FilterString.ToLower())).OrderBy(x=>x.Title)); } }
+        
+        public ObservableCollection<MagicDeck> Decks {
+            get
+            {
+                return new ObservableCollection<MagicDeck>(
+                    db.decks
+                    .Where(x => x.Title.ToLower().Contains(FilterString.ToLower()))
+                    .OrderBy(x => x.Title)
+                );
+            }
+        }
 
         private string filterString = "";
         public string FilterString
@@ -23,8 +32,7 @@ namespace MaGeek.UI
             get { return filterString; }
             set { 
                 filterString = value;
-                OnPropertyChanged();
-                OnPropertyChanged("Decks");
+                DoAsyncRefresh().ConfigureAwait(false);
             } 
         }
 
@@ -32,29 +40,45 @@ namespace MaGeek.UI
 
         #region CTOR
 
-        MageekDbContext db;
-
+        private MageekDbContext db;
         public DeckList()
         {
             db = App.Biz.DB.GetNewContext();
             DataContext = this;
             InitializeComponent();
-            App.Events.UpdateDeckEvent += () => { forceRefresh(); };
-            App.Events.UpdateDeckListEvent += () => { forceRefresh(); };
+            ConfigureEvents();
         }
 
         #endregion
+
+        #region Events
+
+        private void ConfigureEvents()
+        {
+            App.Events.UpdateDeckEvent += () => { DoAsyncRefresh().ConfigureAwait(false); };
+            App.Events.UpdateDeckListEvent += () => { DoAsyncRefresh().ConfigureAwait(false); };
+        }
+
+        #endregion
+
+        private async Task DoAsyncRefresh()
+        {
+            // Async
+            await Task.Run(async () =>
+            {
+                OnPropertyChanged(nameof(Decks));
+            });
+            // Resync
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+                decklistbox.ItemsSource = null;
+                decklistbox.ItemsSource = Decks;
+            }));
+        }
 
         private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var deck = decklistbox.SelectedItem as MagicDeck;
             if (deck != null) App.Events.RaiseDeckSelect(deck);
-        }
-        
-        internal void forceRefresh()
-        {
-            decklistbox.ItemsSource = null;
-            decklistbox.ItemsSource = Decks;
         }
 
         private void AddDeck(object sender, RoutedEventArgs e)
