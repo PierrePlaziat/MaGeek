@@ -42,7 +42,7 @@
                          Height="19"
                          Name="CurrentSearch" 
                          HorizontalAlignment="Stretch" 
-                         IsEnabled="{Binding isSearching, Converter={x:Static plaziat:NotConverter.Instance}}"
+                         IsEnabled="{Binding IsSearching, Converter={x:Static plaziat:NotConverter.Instance}}"
                          KeyDown="SearchTextBox_KeyDown">
             </TextBox>
             <Button Grid.Row="0"

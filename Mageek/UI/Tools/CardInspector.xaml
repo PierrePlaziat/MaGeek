@@ -4,8 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MaGeek.UI"
-      xmlns:cwpf="clr-namespace:Plaziat.CommonWpf"
-      mc:Ignorable="d" Width="255">
+      xmlns:cwpf="clr-namespace:Plaziat.CommonWpf" xmlns:controls="clr-namespace:MaGeek.UI.Controls"
+                            mc:Ignorable="d" Width="255">
 
     <Grid Width="255">
 
@@ -188,9 +188,16 @@
 
 
         <StackPanel Background="#222" Grid.ColumnSpan="2" Grid.RowSpan="5"
-                    Visibility="{Binding Visible}">
+                    Visibility="{Binding IsActive}">
             <Label HorizontalAlignment="Center" VerticalAlignment="Center">No card selected</Label>
         </StackPanel>
+
+
+        <Grid Background="Black" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
+            <controls:BusyIndicator></controls:BusyIndicator>
+        </Grid>
+        
+        
         
     </Grid>
     

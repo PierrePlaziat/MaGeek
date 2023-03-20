@@ -153,8 +153,7 @@ namespace MaGeek.UI
                 CurrentSide = GetCurrentSide();
             }).ConfigureAwait(true);
             // Hide Busy feedback
-            Application.Current.Dispatcher.Invoke(new Action(() => {
-                OnPropertyChanged(nameof(CurrentCommanders));
+            Application.Current.Dispatcher.Invoke(new Action(() => {OnPropertyChanged(nameof(CurrentCommanders));
                 OnPropertyChanged(nameof(CurrentCreatures));
                 OnPropertyChanged(nameof(CurrentInstants));
                 OnPropertyChanged(nameof(CurrentSorceries));
@@ -177,7 +176,9 @@ namespace MaGeek.UI
         private IEnumerable<CardDeckRelation> GetCurrentCommander()
         {
             if (CurrentDeck == null) return null;
-            return FilterCardEnumerator(App.Biz.Utils.GetCommanders(CurrentDeck));
+            return FilterCardEnumerator(
+                App.Biz.Utils.GetCommanders(CurrentDeck)
+            );
         }
         private IEnumerable<CardDeckRelation> GetCurrentCreatures()
         {

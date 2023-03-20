@@ -6,6 +6,8 @@ using System;
 using System.Threading.Tasks;
 using MaGeek.AppBusiness;
 using System.Linq;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace MaGeek.UI
 {
@@ -14,17 +16,11 @@ namespace MaGeek.UI
     {
 
         #region Attributes
-        
-        public ObservableCollection<MagicDeck> Decks {
-            get
-            {
-                return new ObservableCollection<MagicDeck>(
-                    db.decks
-                    .Where(x => x.Title.ToLower().Contains(FilterString.ToLower()))
-                    .OrderBy(x => x.Title)
-                );
-            }
-        }
+
+        private MageekDbContext db;
+        public IEnumerable<MagicDeck> Decks { get; private set; }
+
+        #region Filter
 
         private string filterString = "";
         public string FilterString
@@ -32,21 +28,51 @@ namespace MaGeek.UI
             get { return filterString; }
             set { 
                 filterString = value;
-                DoAsyncRefresh().ConfigureAwait(false);
-            } 
+                OnPropertyChanged(nameof(FilterString));
+                AsyncReload();
+            }
+        }
+
+        private IEnumerable<MagicDeck> FilterDeckEnumerator(IEnumerable<MagicDeck> enumerable)
+        {
+            if (enumerable == null) return null;
+            return enumerable.Where(x => x.Title.ToLower().Contains(FilterString.ToLower()))
+                             .OrderBy(x => x.Title);
         }
 
         #endregion
 
+        #region Visibilities
+
+        private Visibility isLoading = Visibility.Collapsed;
+        public Visibility IsLoading
+        {
+            get { return isLoading; }
+            set { isLoading = value; }
+        }
+
+        public Visibility IsActive
+        {
+            get 
+            { 
+                if (Decks == null) return Visibility.Visible;
+                return Decks.Any() ? Visibility.Visible : Visibility.Collapsed; 
+            }
+        }
+
+        #endregion
+        
+        #endregion
+
         #region CTOR
 
-        private MageekDbContext db;
         public DeckList()
         {
             db = App.Biz.DB.GetNewContext();
             DataContext = this;
             InitializeComponent();
             ConfigureEvents();
+            App.Events.RaiseUpdateDeckList();
         }
 
         #endregion
@@ -55,25 +81,59 @@ namespace MaGeek.UI
 
         private void ConfigureEvents()
         {
-            App.Events.UpdateDeckEvent += () => { DoAsyncRefresh().ConfigureAwait(false); };
-            App.Events.UpdateDeckListEvent += () => { DoAsyncRefresh().ConfigureAwait(false); };
+            App.Events.UpdateDeckEvent += Events_UpdateDeckEvent; ;
+            App.Events.UpdateDeckListEvent += Events_UpdateDeckListEvent; ;
+        }
+
+        private void Events_UpdateDeckEvent()
+        {
+            AsyncReload();
+        }
+
+        private void Events_UpdateDeckListEvent()
+        {
+            AsyncReload();
         }
 
         #endregion
 
-        private async Task DoAsyncRefresh()
+        #region Async Reload
+
+        private void AsyncReload()
         {
+            DoAsyncReload().ConfigureAwait(false);
+        }
+
+        private async Task DoAsyncReload()
+        {
+            // Show Busy feedback
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+                IsLoading = Visibility.Visible;
+                OnPropertyChanged(nameof(IsLoading));
+            }));
             // Async
             await Task.Run(async () =>
             {
+                Decks = GetDecks();
                 OnPropertyChanged(nameof(Decks));
             });
-            // Resync
+            // Hide Busy feedback
             Application.Current.Dispatcher.Invoke(new Action(() => {
-                decklistbox.ItemsSource = null;
-                decklistbox.ItemsSource = Decks;
+                IsLoading = Visibility.Collapsed;
+                OnPropertyChanged(nameof(IsLoading));
             }));
         }
+
+        #endregion
+
+        #region Data Retrieve
+
+        private IEnumerable<MagicDeck> GetDecks()
+        {
+            return FilterDeckEnumerator(db.decks);
+        }
+
+        #endregion
 
         private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -93,12 +153,12 @@ namespace MaGeek.UI
 
         private void DuplicateDeck(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.DuplicateDeck(Decks[decklistbox.SelectedIndex]);
+            App.Biz.Utils.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
         }
 
         private void DeleteDeck(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.DeleteDeck(Decks[decklistbox.SelectedIndex]);
+            App.Biz.Utils.DeleteDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
         }
 
         private void EstimateDeckPrice(object sender, RoutedEventArgs e)

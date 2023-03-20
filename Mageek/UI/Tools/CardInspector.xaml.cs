@@ -1,7 +1,9 @@
 ﻿using MaGeek.AppBusiness;
 using MaGeek.AppData.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -22,14 +24,193 @@ namespace MaGeek.UI
             set
             {
                 selectedCard = value;
-                OnPropertyChanged(nameof(Variants));
                 OnPropertyChanged();
-                AutoSelectVariant();
-                OnPropertyChanged(nameof(CollectedQuantity));
-                OnPropertyChanged(nameof(Visible));
-                OnPropertyChanged(nameof(Tags));
+                OnPropertyChanged(nameof(IsActive));
+                AsyncReloadCard();
             }
         }
+
+        public int CollectedQuantity
+        {
+            get
+            {
+                if (SelectedCard == null) return 0;
+                return SelectedCard.Got;
+            }
+        }
+
+        public List<MagicCardVariant> Variants { get; private set; }
+
+        private MagicCardVariant selectedVariant;
+        public MagicCardVariant SelectedVariant
+        {
+            get { return selectedVariant; }
+            set { 
+                selectedVariant = value; 
+                OnPropertyChanged();
+                AsyncReloadVariant();
+            }
+        }
+
+        public int NbVariants { get; private set; }
+        public string Price { get; private set; }
+        public List<Legality> Legalities { get; private set; }
+        public Brush PriceColor { get; private set; }
+        public List<CardTag> Tags { get; private set; }
+
+        #region Visibilities
+
+        private Visibility isLoading = Visibility.Collapsed;
+        public Visibility IsLoading
+        {
+            get { return isLoading; }
+            set { isLoading = value; }
+        }
+
+        public Visibility IsActive
+        {
+            get { return SelectedCard == null ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region CTOR
+
+        public CardInspector()
+        {
+            DataContext = this;
+            InitializeComponent();
+            ConfigureEvents();
+        }
+
+        #endregion
+
+        #region Events
+
+        private void ConfigureEvents()
+        {
+            App.Events.CardSelectedEvent += HandleCardSelected;
+        }
+
+        void HandleCardSelected(MagicCard Card)
+        {
+            if (!isPinned) SelectedCard = Card;
+        }
+
+        #endregion
+
+        #region Async Reload
+
+        private void AsyncReloadCard()
+        {
+            DoAsyncReloadCard().ConfigureAwait(false);
+        }
+
+        private void AsyncReloadVariant()
+        {
+            DoAsyncReloadVariant().ConfigureAwait(false);
+        }
+
+        private async Task DoAsyncReloadCard()
+        {
+            // Show Busy feedback
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+                IsLoading = Visibility.Visible;
+                OnPropertyChanged(nameof(IsLoading));
+            }));
+            // Async
+            await Task.Run(async () =>
+            {
+                Variants = GetVariants();
+                NbVariants= GetNbVariants();
+                Tags = GetTags();
+                OnPropertyChanged(nameof(Variants));
+                OnPropertyChanged(nameof(NbVariants));
+                OnPropertyChanged(nameof(CollectedQuantity));
+                OnPropertyChanged(nameof(Tags));
+
+            }).ConfigureAwait(true);
+            // Hide Busy feedback
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+                AutoSelectVariant();
+            }));
+        }
+
+        private async Task DoAsyncReloadVariant()
+        {
+            // Show Busy feedback
+            if (IsLoading!= Visibility.Visible)
+            {
+                Application.Current.Dispatcher.Invoke(new Action(() => {
+                    IsLoading = Visibility.Visible;
+                    OnPropertyChanged(nameof(IsLoading));
+                }));
+            }
+            // Async
+            await Task.Run(async () =>
+            {
+                Legalities = GetLegalities();
+                Price = GetPrice();
+                PriceColor = GetPriceColor();
+                OnPropertyChanged(nameof(Legalities));
+                OnPropertyChanged(nameof(Price));
+                OnPropertyChanged(nameof(PriceColor));
+            }).ConfigureAwait(true);
+            // Hide Busy feedback
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+                IsLoading = Visibility.Collapsed;
+                OnPropertyChanged(nameof(IsLoading));
+            }));
+        }
+
+        #endregion
+
+        #region Data Retrieve
+
+        private List<MagicCardVariant> GetVariants()
+        {
+            if (selectedCard != null && selectedCard.Variants != null && selectedCard.Variants.Count > 0)
+                return selectedCard.Variants;
+            else 
+                return new List<MagicCardVariant>();
+        }
+        private int GetNbVariants()
+        {
+            if (selectedCard != null && selectedCard.Variants != null)
+                return selectedCard.Variants.Count;
+            else 
+                return 0;
+        }
+        private string GetPrice()
+        {
+                if (SelectedVariant == null) return "/";
+                return App.Biz.Utils.GetCardPrize(SelectedVariant).ToString(); 
+        }
+        private List<Legality> GetLegalities()
+        {
+            if (SelectedVariant == null) return new List<Legality>();
+            return App.Biz.Utils.GetCardLegal(SelectedVariant);
+        }
+        private Brush GetPriceColor()
+        {
+            var p = App.Biz.Utils.GetCardPrize(SelectedVariant);
+            if (p>=10) return Brushes.White;
+            else if (p>=5) return Brushes.Orange;
+            else if (p>=2) return Brushes.Yellow;
+            else if (p>=1) return Brushes.Green;
+            else if (p>=0.2) return Brushes.LightGray;
+            else if (p>=0) return Brushes.DarkGray;
+            else return Brushes.Black;
+        }
+        private List<CardTag> GetTags()
+        {
+            if(selectedCard==null) return null;
+            return App.Biz.Utils.FindTagsForCard(selectedCard.CardId);
+        }
+
+        #endregion
 
         private void AutoSelectVariant()
         {
@@ -43,113 +224,8 @@ namespace MaGeek.UI
             {
                 SelectedVariant = selectedCard.Variants.Where(x => !string.IsNullOrEmpty(x.ImageUrl)).FirstOrDefault();
             }
-            if(selectedVariant != null) VariantListBox.SelectedItem = selectedVariant;
+            if (selectedVariant != null) VariantListBox.SelectedItem = selectedVariant;
         }
-
-        private MagicCardVariant selectedVariant;
-        public MagicCardVariant SelectedVariant
-        {
-            get { return selectedVariant; }
-            set { 
-                selectedVariant = value; 
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Legalities));
-                OnPropertyChanged(nameof(Price));
-                OnPropertyChanged(nameof(PriceColor));
-            }
-        }
-
-        void HandleCardSelected(MagicCard Card)
-        {
-            if (!isPinned) SelectedCard = Card;
-        }
-
-        public int CollectedQuantity {
-            get
-            {
-                if (SelectedCard == null) return 0;
-                return SelectedCard.Got;
-            }
-        }
-
-        public List<MagicCardVariant> Variants
-        {
-            get
-            {
-                if (selectedCard != null && selectedCard.Variants != null && selectedCard.Variants.Count > 0)
-                    return selectedCard.Variants;
-                else 
-                    return new List<MagicCardVariant>();
-            }
-        }
-
-        public int nbVariants
-        {
-            get
-            {
-                if (selectedCard != null && selectedCard.Variants != null)
-                    return selectedCard.Variants.Count;
-                else 
-                    return 0;
-            }
-        }
-
-        public Visibility Visible { get { return selectedCard == null ? Visibility.Visible : Visibility.Collapsed; } }
-
-
-        public string Price
-        {
-            get
-            {
-                if (SelectedVariant == null) return "/";
-                return App.Biz.Utils.GetCardPrize(SelectedVariant).ToString(); 
-            }
-        }
-        public List<Legality> Legalities
-        {
-            get
-            {
-                if (SelectedVariant == null) return new List<Legality>();
-                return App.Biz.Utils.GetCardLegal(SelectedVariant);
-            }
-        }
-
-        public Brush PriceColor { 
-            get {
-                var p = App.Biz.Utils.GetCardPrize(SelectedVariant);
-                if (p>=10) return Brushes.White;
-                else if (p>=5) return Brushes.Orange;
-                else if (p>=2) return Brushes.Yellow;
-                else if (p>=1) return Brushes.Green;
-                else if (p>=0.2) return Brushes.LightGray;
-                else if (p>=0) return Brushes.DarkGray;
-                else return Brushes.Black;
-            } 
-        }
-
-        public List<CardTag> Tags
-        {
-            get
-            {
-                if(selectedCard==null) return null;
-                return App.Biz.Utils.FindTagsForCard(selectedCard.CardId);
-            }
-        }
-
-        #endregion
-
-        #region CTOR
-
-        MageekDbContext db;
-        public CardInspector()
-        {
-            db = App.Biz.DB.GetNewContext();
-            InitializeComponent();
-            DataContext = this;
-            App.Events.CardSelectedEvent += HandleCardSelected;
-        }
-
-        #endregion
 
         #region Buttons
 

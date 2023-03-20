@@ -129,6 +129,8 @@ namespace MaGeek.UI
             });
             // Resync
             Application.Current.Dispatcher.Invoke(new Action(() => {
+                DrawManacurve(App.Biz.Utils.GetManaCurve(currentDeck));
+                DrawNewHand();
                 OnPropertyChanged(nameof(CreatureCount));
                 OnPropertyChanged(nameof(InstantCount));
                 OnPropertyChanged(nameof(SorceryCount));
@@ -145,8 +147,6 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(DevotionG));
                 OnPropertyChanged(nameof(DevotionR));
                 OnPropertyChanged(nameof(OwnedRatio));
-                DrawManacurve(App.Biz.Utils.GetManaCurve(currentDeck));
-                DrawNewHand();
                 IsLoading = Visibility.Collapsed;
                 OnPropertyChanged(nameof(IsLoading));
             }));

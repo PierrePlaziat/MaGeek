@@ -35,9 +35,10 @@ namespace MaGeek
             App.Events.LayoutActionEvent += HandleLayoutAction;
             App.Events.PreventUIActionEvent += STATE_PreventUIActionEvent;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
-
             InitializeComponent();
         }
+
+        
 
         private void STATE_PreventUIActionEvent(bool on)
         {
