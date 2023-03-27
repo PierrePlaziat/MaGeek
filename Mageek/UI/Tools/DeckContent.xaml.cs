@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Collections.Generic;
 using MaGeek.UI.Windows.Importers;
 using MaGeek.AppData.Entities;
-using System;
 using System.Threading.Tasks;
 
 namespace MaGeek.UI
@@ -69,7 +68,7 @@ namespace MaGeek.UI
         public Visibility IsLoading
         {
             get { return isLoading; }
-            set { isLoading = value; }
+            set { isLoading = value; OnPropertyChanged(); }
         }
 
         public Visibility IsActive 
@@ -123,7 +122,7 @@ namespace MaGeek.UI
         }
 
         #endregion
-
+        
         #region Async Reload
 
         private void AsyncReload()
@@ -133,27 +132,19 @@ namespace MaGeek.UI
 
         private async Task DoAsyncReload()
         {
-            // Show Busy feedback
-            Application.Current.Dispatcher.Invoke(new Action(() => {
-                IsLoading = Visibility.Visible;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
-            // Async
-            await Task.Run(async () =>
+            IsLoading = Visibility.Visible;
+            await Task.Run(() => { CurrentCommanders = GetCurrentCommander(); });
+            await Task.Run(() => { CurrentCreatures = GetCurrentCreatures(); });
+            await Task.Run(() => { CurrentInstants = GetCurrentInstants(); });
+            await Task.Run(() => { CurrentSorceries = GetCurrentSorceries(); });
+            await Task.Run(() => { CurrentEnchantments = GetCurrentEnchantments(); });
+            await Task.Run(() => { CurrentArtifacts = GetCurrentArtifacts(); });
+            await Task.Run(() => { CurrentNonBasicLands = GetCurrentNonBasicLands(); });
+            await Task.Run(() => { CurrentOthers = GetCurrentOthers(); });
+            await Task.Run(() => { CurrentBasicLands = GetCurrentBasicLands(); });
+            await Task.Run(() => { CurrentSide = GetCurrentSide(); });
+            await Task.Run(() =>
             {
-                CurrentCommanders = GetCurrentCommander();
-                CurrentCreatures = GetCurrentCreatures();
-                CurrentInstants = GetCurrentInstants();
-                CurrentSorceries = GetCurrentSorceries();
-                CurrentEnchantments = GetCurrentEnchantments();
-                CurrentArtifacts = GetCurrentArtifacts();
-                CurrentNonBasicLands = GetCurrentNonBasicLands();
-                CurrentOthers = GetCurrentOthers();
-                CurrentBasicLands = GetCurrentBasicLands();
-                CurrentSide = GetCurrentSide();
-            }).ConfigureAwait(true);
-            // Hide Busy feedback
-            Application.Current.Dispatcher.Invoke(new Action(() => {OnPropertyChanged(nameof(CurrentCommanders));
                 OnPropertyChanged(nameof(CurrentCreatures));
                 OnPropertyChanged(nameof(CurrentInstants));
                 OnPropertyChanged(nameof(CurrentSorceries));
@@ -164,9 +155,11 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(CurrentBasicLands));
                 OnPropertyChanged(nameof(CurrentSide));
                 OnPropertyChanged(nameof(HasCommander));
+            });
+            await Task.Run(() =>
+            {
                 IsLoading = Visibility.Collapsed;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
+            });
         }
 
         #endregion
@@ -205,6 +198,7 @@ namespace MaGeek.UI
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
             return CurrentDeck.CardRelations.Where(
                 x => x.RelationType == 0
+                && x.Card != null
                 && x.Card.Card.Type.ToLower().Contains("artifact")
                 && (x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
                 .OrderBy(x => x.Card.Card.Cmc.Value)
@@ -215,6 +209,7 @@ namespace MaGeek.UI
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
             return CurrentDeck.CardRelations.Where(
                 x => x.RelationType == 0
+                && x.Card != null
                 && x.Card.Card.Type.ToLower().Contains("land")
                 && !x.Card.Card.Type.ToLower().Contains("basic")
                 && (x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
@@ -224,20 +219,21 @@ namespace MaGeek.UI
         private IEnumerable<CardDeckRelation> GetCurrentBasicLands()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            return new ObservableCollection<CardDeckRelation>(CurrentDeck.CardRelations.Where(
+            return  CurrentDeck.CardRelations.Where(
                 x => x.RelationType == 0
+                && x.Card != null
                 && x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.Type.ToLower().Contains("basic")
                 && (x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
                 .OrderBy(x => x.Card.Card.Cmc.Value)
-                .ThenBy(x => x.Card.Card.CardForeignName)
-            );
+                .ThenBy(x => x.Card.Card.CardForeignName);
         }
         private IEnumerable<CardDeckRelation> GetCurrentOthers()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
             return CurrentDeck.CardRelations.Where(
                 x => x.RelationType == 0
+                && x.Card != null
                 && !x.Card.Card.Type.ToLower().Contains("artifact")
                 && !x.Card.Card.Type.ToLower().Contains("creature")
                 && !x.Card.Card.Type.ToLower().Contains("instant")
@@ -253,6 +249,7 @@ namespace MaGeek.UI
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
             return CurrentDeck.CardRelations.Where(
                 x => x.RelationType == 2
+                && x.Card != null
                 && (x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
                 .OrderBy(x => x.Card.Card.Cmc.Value)
                 .ThenBy(x => x.Card.Card.CardForeignName);
@@ -267,7 +264,7 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.Biz.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
+            App.Biz.Utils.RemoveCardFromDeck(c.Card, CurrentDeck).ConfigureAwait(true);
         }
 
         private void MoreCard(object sender, RoutedEventArgs e)
@@ -275,31 +272,31 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.Biz.Utils.AddCardToDeck(c, CurrentDeck,1);
+            App.Biz.Utils.AddCardToDeck(c, CurrentDeck,1).ConfigureAwait(true);
         }
 
         private void SetCommandant(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
-            App.Biz.Utils.ChangeCardDeckRelation(cardRel, 1);
+            App.Biz.Utils.ChangeCardDeckRelation(cardRel, 1).ConfigureAwait(true);
         }
 
         private void UnsetCommandant(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
-            App.Biz.Utils.ChangeCardDeckRelation(cardRel,0);
+            App.Biz.Utils.ChangeCardDeckRelation(cardRel,0).ConfigureAwait(true);
         }
 
         private void ToSide(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
-            App.Biz.Utils.ChangeCardDeckRelation(cardRel, 2);
+            App.Biz.Utils.ChangeCardDeckRelation(cardRel, 2).ConfigureAwait(true);
         }
 
         private void ToDeck(object sender, RoutedEventArgs e)
         {
             CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
-            App.Biz.Utils.ChangeCardDeckRelation(cardRel, 0);
+            App.Biz.Utils.ChangeCardDeckRelation(cardRel, 0).ConfigureAwait(true);
         }
 
         #region UI LINK

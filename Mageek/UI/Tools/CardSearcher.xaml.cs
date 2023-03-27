@@ -1,11 +1,11 @@
-﻿using MaGeek.AppBusiness;
-using MaGeek.AppData.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using MaGeek.AppData.Entities;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+//using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using Microsoft.EntityFrameworkCore;
 
 namespace MaGeek.UI
 {
@@ -13,60 +13,12 @@ namespace MaGeek.UI
     public partial class CardSearcher : TemplatedUserControl
     {
 
-
         #region Attributes
 
-        private bool filterActive = false;
+        public List<MagicCard> CardList { get; private set; }
+        public List<CardTag> AvailableTags { get { return App.Biz.Utils.GetTagsDistinct(); } }
 
-        public bool FilterActive
-        {
-            get { return filterActive; }
-            set { filterActive = value; }
-        }
-
-
-        public bool IsSearching { get { return isSearching; } set { isSearching = value; OnPropertyChanged(); OnPropertyChanged("IsNotSearching"); } }
-        private bool isSearching = false;
-
-        public ObservableCollection<MagicCard> CardsBind { 
-            get {
-                if (!filterActive) return new ObservableCollection<MagicCard>(db.cards);
-                var filtered = db.cards
-                    .Where(x => x.Cmc >= FilterMinCmc)
-                    .Where(x => x.Cmc <= FilterMaxCmc)
-                    .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower()) || x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
-                    .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()));
-                if (!filterColorB) filtered = filtered.Where(x => !x.ManaCost.Contains('B'));
-                if (!filterColorW) filtered = filtered.Where(x => !x.ManaCost.Contains('W'));
-                if (!filterColorU) filtered = filtered.Where(x => !x.ManaCost.Contains('U'));
-                if (!filterColorG) filtered = filtered.Where(x => !x.ManaCost.Contains('G'));
-                if (!filterColorR) filtered = filtered.Where(x => !x.ManaCost.Contains('R'));
-
-                if (!string.IsNullOrEmpty(TagFilterSelected))
-                {
-                    var tagged = new List<MagicCard>();
-                    foreach (var card in filtered)
-                    {
-                        if(App.Biz.Utils.DoesCardHasTag(card.CardId, TagFilterSelected))
-                        {
-                            tagged.Add(card);
-                        }
-                    }
-                    return new ObservableCollection<MagicCard>(tagged);
-                }
-                return new ObservableCollection<MagicCard>(filtered); 
-            }
-        }
-
-        public List<CardTag> AvailableTags
-        {
-            get
-            {
-                return App.Biz.Utils.GetTagsDistinct();
-            }
-        }
-
-        #region Filter
+        #region Filters
 
         private string tagFilterSelected = "";
         public string TagFilterSelected
@@ -76,7 +28,7 @@ namespace MaGeek.UI
             {
                 tagFilterSelected = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -88,7 +40,7 @@ namespace MaGeek.UI
             {
                 filterName = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -96,9 +48,9 @@ namespace MaGeek.UI
         public string FilterType
         {
             get { return filterType; }
-            set { filterType = value; 
+            set { filterType = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -106,9 +58,9 @@ namespace MaGeek.UI
         public int FilterMinCmc
         {
             get { return filterMinCmc; }
-            set { filterMinCmc = value; 
+            set { filterMinCmc = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -116,9 +68,9 @@ namespace MaGeek.UI
         public int FilterMaxCmc
         {
             get { return filterMaxCmc; }
-            set { filterMaxCmc = value; 
+            set { filterMaxCmc = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -128,9 +80,9 @@ namespace MaGeek.UI
             get { return filterColorB; }
             set
             {
-                filterColorB = value; 
+                filterColorB = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -140,9 +92,9 @@ namespace MaGeek.UI
             get { return filterColorW; }
             set
             {
-                filterColorW = value; 
+                filterColorW = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -152,9 +104,9 @@ namespace MaGeek.UI
             get { return filterColorU; }
             set
             {
-                filterColorU = value; 
+                filterColorU = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -164,9 +116,9 @@ namespace MaGeek.UI
             get { return filterColorG; }
             set
             {
-                filterColorG = value; 
+                filterColorG = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -178,7 +130,7 @@ namespace MaGeek.UI
             {
                 filterColorR = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
         }
 
@@ -190,8 +142,19 @@ namespace MaGeek.UI
             {
                 filterColorI = value;
                 OnPropertyChanged();
-                OnPropertyChanged("CardsBind");
+                OnPropertyChanged(nameof(CardList));
             }
+        }
+
+        #endregion
+
+        #region Visibilities
+
+        private Visibility isLoading = Visibility.Visible;
+        public Visibility IsLoading
+        {
+            get { return isLoading; }
+            set { isLoading = value; OnPropertyChanged(); }
         }
 
         #endregion
@@ -200,13 +163,71 @@ namespace MaGeek.UI
 
         #region CTOR
 
-        MageekDbContext db;
         public CardSearcher()
-        { 
-            db = App.Biz.DB.GetNewContext();
+        {
             DataContext = this;
             InitializeComponent();
-            App.Events.UpdateCardCollecEvent += () => { OnPropertyChanged("CardsBind"); };
+            App.Events.UpdateCardCollecEvent += async () => { await ReloadData(); };
+            DelayLoad().ConfigureAwait(false);
+        }
+
+        private async Task DelayLoad()
+        {
+            await Task.Delay(1);
+            App.Events.RaiseUpdateCardCollec();
+        }
+
+        #endregion
+
+        #region Async data reload
+
+        private async Task ReloadData()
+        {
+            IsLoading = Visibility.Visible;
+            await Task.Run(() => { CardList = LoadCards(); });
+            await Task.Run(() =>
+            {
+                OnPropertyChanged(nameof(CardList));
+                IsLoading = Visibility.Collapsed;
+            });
+        }
+
+        private List<MagicCard> LoadCards()
+        {
+            IEnumerable<MagicCard> retour = new List<MagicCard>();
+
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                retour = DB.cards.Where(x => x.Cmc >= FilterMinCmc)
+                                 .Where(x => x.Cmc <= FilterMaxCmc)
+                                 .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower())
+                                          )//|| x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
+                                 .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()))
+                                 .Include(card=>card.Traductions)
+                                 .Include(card=>card.Variants)
+                                    //.ThenInclude(card=>card.Card)
+                                 .ToArray();
+            }
+
+            if (!filterColorB) retour = retour.Where(x => !x.ManaCost.Contains('B'));
+            if (!filterColorW) retour = retour.Where(x => !x.ManaCost.Contains('W'));
+            if (!filterColorU) retour = retour.Where(x => !x.ManaCost.Contains('U'));
+            if (!filterColorG) retour = retour.Where(x => !x.ManaCost.Contains('G'));
+            if (!filterColorR) retour = retour.Where(x => !x.ManaCost.Contains('R'));
+
+            if (!string.IsNullOrEmpty(TagFilterSelected))
+            {
+                var tagged = new List<MagicCard>();
+                foreach (var card in retour)
+                {
+                    if (App.Biz.Utils.DoesCardHasTag(card.CardId, TagFilterSelected))
+                    {
+                        tagged.Add(card);
+                    }
+                }
+                return new List<MagicCard>(tagged);
+            }
+            return retour.ToList();
         }
 
         #endregion
@@ -216,33 +237,6 @@ namespace MaGeek.UI
         private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (CardGrid.SelectedItem is MagicCard card) App.Events.RaiseCardSelected(card);
-        }
-
-        private void SearchButton_Pressed(object sender, System.Windows.RoutedEventArgs e)
-        {
-            DoSearch();
-        }
-
-        private void SearchTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter) DoSearch();
-        }
-
-        private void DoSearch()
-        {
-            if (string.IsNullOrEmpty(CurrentSearch.Text)) return;
-            IsSearching = true;
-            App.Biz.Importer.AddImportToQueue(
-                new PendingImport 
-                { 
-                    mode = ImportMode.Search, 
-                    content = CurrentSearch.Text 
-                }
-            );
-            ResetFilters();
-            FilterName = CurrentSearch.Text;
-            CurrentSearch.Text = "";
-            IsSearching = false;
         }
 
         private void ResetFilters()
@@ -260,7 +254,7 @@ namespace MaGeek.UI
 
         #endregion
 
-        private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (MagicCard c in CardGrid.SelectedItems)
             {
@@ -270,13 +264,12 @@ namespace MaGeek.UI
 
         private void FilterTag_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            FilterActive = true;
-            OnPropertyChanged("CardsBind");
+            OnPropertyChanged(nameof(CardList));
         }
 
         private void FilterTag_DropDownOpened(object sender, System.EventArgs e)
         {
-            OnPropertyChanged("AvailableTags");
+            OnPropertyChanged(nameof(AvailableTags));
         }
 
     }

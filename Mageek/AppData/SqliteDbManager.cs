@@ -16,18 +16,9 @@ namespace MaGeek.AppData
 
         #region Context gestion
 
-        List<MageekDbContext> trackContexts = new List<MageekDbContext>();
-
-        public MageekDbContext GetNewContext()
+        internal MageekDbContext GetNewContext()
         {
-            var context = new MageekDbContext(DbInfos);
-            trackContexts.Add(context);
-            return context;
-        }
-
-        private void TerminateAllContexts()
-        {
-            foreach(MageekDbContext c in trackContexts) c.Dispose();
+            return new MageekDbContext(DbInfos);
         }
 
         #endregion
@@ -93,18 +84,23 @@ namespace MaGeek.AppData
 
         private void CreateDbFromScratch()
         {
-            var dbContext = GetNewContext();
             SqliteConnection dbCo = new SqliteConnection(DbInfos.ConnexionString);
             dbCo.Open();
             foreach (string instruction in DbInfos.Tables) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
-            dbContext.SaveChanges();
+
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                DB.SaveChanges();
+            }
             dbCo.Close();
         }
 
         private void DeleteAllContent()
         {
-            TerminateAllContexts();
-            GetNewContext().DeleteAllContent();
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                DB.DeleteAllContent();
+            }
         }
 
         private void RestorationGestion()

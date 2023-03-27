@@ -26,7 +26,7 @@ namespace MaGeek.UI
                 selectedCard = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsActive));
-                AsyncReloadCard();
+                Reload();
             }
         }
 
@@ -64,7 +64,7 @@ namespace MaGeek.UI
         public Visibility IsLoading
         {
             get { return isLoading; }
-            set { isLoading = value; }
+            set { isLoading = value; OnPropertyChanged(); }
         }
 
         public Visibility IsActive
@@ -103,7 +103,7 @@ namespace MaGeek.UI
 
         #region Async Reload
 
-        private void AsyncReloadCard()
+        private void Reload()
         {
             DoAsyncReloadCard().ConfigureAwait(false);
         }
@@ -115,54 +115,33 @@ namespace MaGeek.UI
 
         private async Task DoAsyncReloadCard()
         {
-            // Show Busy feedback
-            Application.Current.Dispatcher.Invoke(new Action(() => {
-                IsLoading = Visibility.Visible;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
-            // Async
-            await Task.Run(async () =>
+            IsLoading = Visibility.Visible; 
+            await Task.Run(() => { Variants = GetVariants(); });
+            await Task.Run(() => { NbVariants = GetNbVariants(); });
+            await Task.Run(() => { Tags = GetTags(); });
+            await Task.Run(() =>
             {
-                Variants = GetVariants();
-                NbVariants= GetNbVariants();
-                Tags = GetTags();
                 OnPropertyChanged(nameof(Variants));
                 OnPropertyChanged(nameof(NbVariants));
                 OnPropertyChanged(nameof(CollectedQuantity));
                 OnPropertyChanged(nameof(Tags));
-
-            }).ConfigureAwait(true);
-            // Hide Busy feedback
-            Application.Current.Dispatcher.Invoke(new Action(() => {
-                AutoSelectVariant();
-            }));
+            });
+            AutoSelectVariant();
         }
 
         private async Task DoAsyncReloadVariant()
         {
-            // Show Busy feedback
-            if (IsLoading!= Visibility.Visible)
+            IsLoading = Visibility.Visible;
+            await Task.Run(() => { Legalities = GetLegalities(); });
+            await Task.Run(() => { Price = GetPrice(); });
+            await Task.Run(() => { PriceColor = GetPriceColor(); });
+            await Task.Run(() =>
             {
-                Application.Current.Dispatcher.Invoke(new Action(() => {
-                    IsLoading = Visibility.Visible;
-                    OnPropertyChanged(nameof(IsLoading));
-                }));
-            }
-            // Async
-            await Task.Run(async () =>
-            {
-                Legalities = GetLegalities();
-                Price = GetPrice();
-                PriceColor = GetPriceColor();
                 OnPropertyChanged(nameof(Legalities));
                 OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceColor));
-            }).ConfigureAwait(true);
-            // Hide Busy feedback
-            Application.Current.Dispatcher.Invoke(new Action(() => {
                 IsLoading = Visibility.Collapsed;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
+            });
         }
 
         #endregion

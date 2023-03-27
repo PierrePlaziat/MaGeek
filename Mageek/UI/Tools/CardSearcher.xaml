@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:cwpf="clr-namespace:MaGeek.Utils.CommonWpf"
              xmlns:local="clr-namespace:MaGeek.UI"
-             xmlns:plaziat="clr-namespace:Plaziat.CommonWpf"
-             mc:Ignorable="d" 
+             xmlns:plaziat="clr-namespace:Plaziat.CommonWpf" xmlns:controls="clr-namespace:MaGeek.UI.Controls"
+                            mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="750">
 
     <UserControl.Resources>
@@ -18,7 +18,7 @@
     <Grid Background="#222">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="26"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="1"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
@@ -26,7 +26,7 @@
 
         <!-- WebSearch Not Searching -->
 
-        <Grid Grid.Row="0">
+        <!--<Grid Grid.Row="0">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>
@@ -51,11 +51,11 @@
                     Click="SearchButton_Pressed"
                     Content="Search"/>
             
-        </Grid>
+        </Grid>-->
         
         <!-- WebSearch Searching -->
         
-        <Grid Visibility="{Binding IsSearching,Converter={StaticResource BoolToVisibilityConverter}}"
+        <!--<Grid Visibility="{Binding IsSearching,Converter={StaticResource BoolToVisibilityConverter}}"
               Background="#222">
             
 
@@ -71,14 +71,14 @@
                     <TextBlock Text="{Binding ElementName=pbStatus, Path=Value, StringFormat={}{0:0}%}" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center" />
-            </Grid>
+            </Grid>-->
 
             <!--<Button Grid.Column="2"
                     Margin="3"
                     Click="SearchButton_Pressed"
                     Content="Cancel"/>-->
             
-        </Grid>
+        <!--</Grid>-->
 
         <!-- Separator -->
 
@@ -141,7 +141,7 @@
 
             <DockPanel>
                 <Label>Tags</Label>
-                <ComboBox Name="FilterTag" DropDownOpened="FilterTag_DropDownOpened" ItemsSource="{Binding AvailableTags}" SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"></ComboBox>
+                <ComboBox Name="FilterTag" DropDownOpened="FilterTag_DropDownOpened" ItemsSource="{Binding AvailableTags}" DisplayMemberPath="Tag" SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"></ComboBox>
             </DockPanel>
 
         </WrapPanel>
@@ -165,8 +165,8 @@
         <Grid Grid.Row="3"
               ScrollViewer.VerticalScrollBarVisibility="Visible"
               ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-            <DataGrid x:Name="CardGrid"
-                      ItemsSource="{Binding CardsBind}"
+            <DataGrid x:Name="CardGrid"  
+                      ItemsSource="{Binding CardList}"
                       CanUserAddRows="False"
                       CanUserResizeRows="False"
                       CanUserResizeColumns="True"
@@ -179,7 +179,7 @@
                       AutoGenerateColumns="False"
                       SelectionChanged="CardGrid_SelectionChanged">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />
+                    <!--<DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />-->
                     <DataGridTextColumn Header="| Name   " Binding="{Binding CardId}" />
                     <DataGridTextColumn Header="| Foreign Name   " Binding="{Binding CardForeignName}" />
 
@@ -210,6 +210,11 @@
 
             </DataGrid>
 
+        </Grid>
+
+
+        <Grid Background="Black" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
+            <controls:BusyIndicator></controls:BusyIndicator>
         </Grid>
 
     </Grid>

@@ -32,7 +32,10 @@ namespace MaGeek.UI
 
         public List<CardDeckRelation> CardRelations
         {
-            get { return CurrentDeck == null ? null : CurrentDeck.CardRelations.ToList(); }
+            get {
+                if (CurrentDeck == null || CurrentDeck.CardRelations == null) return new List<CardDeckRelation>();
+                else return CurrentDeck.CardRelations.ToList(); 
+            }
         }
 
         public List<CardDeckRelation> CardRelations_Commandant { get; private set; }
@@ -98,7 +101,7 @@ namespace MaGeek.UI
         public Visibility IsLoading
         {
             get { return isLoading; }
-            set { isLoading = value; }
+            set { isLoading = value; OnPropertyChanged(); }
         }
 
         public Visibility IsActive
@@ -136,7 +139,7 @@ namespace MaGeek.UI
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
             List<CardDeckRelation> cardRelations_Lands = new List<CardDeckRelation>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
-                    x.Card.Card.Type.ToLower().Contains("land")
+                    x.Card != null && x.Card.Card.Type.ToLower().Contains("land")
             ))
             {
                 for (int i = 0; i < card.Quantity; i++)
@@ -475,13 +478,8 @@ namespace MaGeek.UI
 
         private async Task DoAsyncReload()
         {
-            // Resync
-            Application.Current.Dispatcher.Invoke(new Action(() => {
-                IsLoading = Visibility.Visible;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
-            // Async
-            await Task.Run(async () =>
+            IsLoading = Visibility.Visible;
+            await Task.Run(() =>
             {
                 CardRelations_Commandant = GetCardRelations_Commandant();
                 CardRelations_Lands = GetCardRelations_Lands();
@@ -511,9 +509,6 @@ namespace MaGeek.UI
                 HasCmc5 = GetHasCmc5();
                 HasCmc6 = GetHasCmc6();
                 HasCmc7 = GetHasCmc7();
-            });
-            // Resync
-            Application.Current.Dispatcher.Invoke(new Action(() => {
                 OnPropertyChanged(nameof(IsActive));
                 OnPropertyChanged(nameof(CardRelations));
                 OnPropertyChanged(nameof(CardRelations_Commandant));
@@ -543,9 +538,8 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(HasCmc5));
                 OnPropertyChanged(nameof(HasCmc6));
                 OnPropertyChanged(nameof(HasCmc7));
-                IsLoading = Visibility.Collapsed;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
+            });
+            IsLoading = Visibility.Collapsed;
         }
 
         #region methods

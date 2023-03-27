@@ -51,7 +51,7 @@ namespace MaGeek.UI
         public Visibility IsLoading
         {
             get { return isLoading; }
-            set { isLoading = value; }
+            set { isLoading = value; OnPropertyChanged(); }
         }
 
         public Visibility IsActive {
@@ -102,35 +102,24 @@ namespace MaGeek.UI
 
         private async Task DoAsyncReload()
         {
-            // Resync
-            Application.Current.Dispatcher.Invoke(new Action(() => {
-                IsLoading = Visibility.Visible;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
-            // Async
-            await Task.Run(async () =>
-            {
-                GetCreatureCount();
-                GetInstantCount();
-                GetSorceryCount();
-                GetEnchantmentCount();
-                GetArtifactCount();
-                GetBasicLandCount();
-                GetSpecialLandCount();
-                GetOtherCount();
-                GetDevotionB();
-                GetDevotionW();
-                GetDevotionU();
-                GetDevotionG();
-                GetDevotionR();
-                GetStandardOk();
-                GetCommanderOk();
-                GetOwnedRatio();
-            });
-            // Resync
-            Application.Current.Dispatcher.Invoke(new Action(() => {
-                DrawManacurve(App.Biz.Utils.GetManaCurve(currentDeck));
-                DrawNewHand();
+            IsLoading = Visibility.Visible;
+            await Task.Run(() => { CreatureCount = GetCreatureCount(); });
+            await Task.Run(() => { InstantCount = GetInstantCount(); });
+            await Task.Run(() => { SorceryCount = GetSorceryCount(); });
+            await Task.Run(() => { EnchantmentCount = GetEnchantmentCount(); });
+            await Task.Run(() => { ArtifactCount = GetArtifactCount(); });
+            await Task.Run(() => { BasicLandCount = GetBasicLandCount(); });
+            await Task.Run(() => { SpecialLandCount = GetSpecialLandCount(); });
+            await Task.Run(() => { OtherCount = GetOtherCount(); });
+            await Task.Run(() => { DevotionB = GetDevotionB(); });
+            await Task.Run(() => { DevotionW = GetDevotionW(); });
+            await Task.Run(() => { DevotionU = GetDevotionU(); });
+            await Task.Run(() => { DevotionG = GetDevotionG(); });
+            await Task.Run(() => { DevotionR = GetDevotionR(); });
+            await Task.Run(() => { StandardOk = GetStandardOk(); });
+            await Task.Run(() => { CommanderOk = GetCommanderOk(); });
+            await Task.Run(() => { OwnedRatio = GetOwnedRatio(); });
+            await Task.Run(() => {
                 OnPropertyChanged(nameof(CreatureCount));
                 OnPropertyChanged(nameof(InstantCount));
                 OnPropertyChanged(nameof(SorceryCount));
@@ -147,31 +136,35 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(DevotionG));
                 OnPropertyChanged(nameof(DevotionR));
                 OnPropertyChanged(nameof(OwnedRatio));
+            });
+            //DrawManacurve(App.Biz.Utils.GetManaCurve(currentDeck));
+            //DrawNewHand();
+            await Task.Run(() =>
+            {
                 IsLoading = Visibility.Collapsed;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
+            });
         }
 
         #endregion
 
         #region Data Retrieve
 
-        private void GetCreatureCount() { CreatureCount = App.Biz.Utils.count_Creature(currentDeck); }
-        private void GetInstantCount() { InstantCount = App.Biz.Utils.count_Instant(currentDeck); }
-        private void GetSorceryCount() { SorceryCount = App.Biz.Utils.count_Sorcery(currentDeck); }
-        private void GetEnchantmentCount() { EnchantmentCount = App.Biz.Utils.count_Enchantment(currentDeck); }
-        private void GetArtifactCount() { ArtifactCount = App.Biz.Utils.count_Artifact(currentDeck); }
-        private void GetBasicLandCount() { BasicLandCount = App.Biz.Utils.count_BasicLand(currentDeck); }
-        private void GetSpecialLandCount() { SpecialLandCount = App.Biz.Utils.count_SpecialLand(currentDeck); }
-        private void GetOtherCount() { OtherCount = App.Biz.Utils.count_other(currentDeck); }
-        private void GetDevotionB() { DevotionB = App.Biz.Utils.DevotionB(currentDeck); }
-        private void GetDevotionW() { DevotionW = App.Biz.Utils.DevotionW(currentDeck); }
-        private void GetDevotionU() { DevotionU = App.Biz.Utils.DevotionU(currentDeck); }
-        private void GetDevotionG() { DevotionG = App.Biz.Utils.DevotionG(currentDeck); }
-        private void GetDevotionR() { DevotionR = App.Biz.Utils.DevotionR(currentDeck); }
-        private void GetStandardOk() { StandardOk = App.Biz.Utils.validity_Standard(currentDeck) ? "YES" : "NO"; }
-        private void GetCommanderOk() { CommanderOk = App.Biz.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; }
-        private void GetOwnedRatio() { OwnedRatio = App.Biz.Utils.OwnedRatio(currentDeck); }
+        private int GetCreatureCount() { return App.Biz.Utils.count_Creature(currentDeck); }
+        private int GetInstantCount() { return App.Biz.Utils.count_Instant(currentDeck); }
+        private int GetSorceryCount() { return App.Biz.Utils.count_Sorcery(currentDeck); }
+        private int GetEnchantmentCount() { return App.Biz.Utils.count_Enchantment(currentDeck); }
+        private int GetArtifactCount() { return App.Biz.Utils.count_Artifact(currentDeck); }
+        private int GetBasicLandCount() { return App.Biz.Utils.count_BasicLand(currentDeck); }
+        private int GetSpecialLandCount() { return App.Biz.Utils.count_SpecialLand(currentDeck); }
+        private int GetOtherCount() { return App.Biz.Utils.count_other(currentDeck); }
+        private int GetDevotionB() { return App.Biz.Utils.DevotionB(currentDeck); }
+        private int GetDevotionW() { return App.Biz.Utils.DevotionW(currentDeck); }
+        private int GetDevotionU() { return App.Biz.Utils.DevotionU(currentDeck); }
+        private int GetDevotionG() { return App.Biz.Utils.DevotionG(currentDeck); }
+        private int GetDevotionR() { return App.Biz.Utils.DevotionR(currentDeck); }
+        private string GetStandardOk() { return App.Biz.Utils.validity_Standard(currentDeck) ? "YES" : "NO"; }
+        private string GetCommanderOk() { return App.Biz.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; }
+        private int GetOwnedRatio() { return App.Biz.Utils.OwnedRatio(currentDeck); }
 
         #endregion
 

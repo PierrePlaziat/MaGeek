@@ -1,13 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Collections.ObjectModel;
 using MaGeek.AppData.Entities;
-using System;
 using System.Threading.Tasks;
-using MaGeek.AppBusiness;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
+using Microsoft.EntityFrameworkCore;
 
 namespace MaGeek.UI
 {
@@ -17,7 +14,6 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        private MageekDbContext db;
         public IEnumerable<MagicDeck> Decks { get; private set; }
 
         #region Filter
@@ -48,7 +44,7 @@ namespace MaGeek.UI
         public Visibility IsLoading
         {
             get { return isLoading; }
-            set { isLoading = value; }
+            set { isLoading = value; OnPropertyChanged(); }
         }
 
         public Visibility IsActive
@@ -68,10 +64,15 @@ namespace MaGeek.UI
 
         public DeckList()
         {
-            db = App.Biz.DB.GetNewContext();
             DataContext = this;
             InitializeComponent();
             ConfigureEvents();
+            DelayLoad().ConfigureAwait(false);
+        }
+
+        private async Task DelayLoad()
+        {
+            await Task.Delay(1);
             App.Events.RaiseUpdateDeckList();
         }
 
@@ -82,7 +83,7 @@ namespace MaGeek.UI
         private void ConfigureEvents()
         {
             App.Events.UpdateDeckEvent += Events_UpdateDeckEvent; ;
-            App.Events.UpdateDeckListEvent += Events_UpdateDeckListEvent; ;
+            App.Events.UpdateDeckListEvent += Events_UpdateDeckListEvent;
         }
 
         private void Events_UpdateDeckEvent()
@@ -106,22 +107,13 @@ namespace MaGeek.UI
 
         private async Task DoAsyncReload()
         {
-            // Show Busy feedback
-            Application.Current.Dispatcher.Invoke(new Action(() => {
-                IsLoading = Visibility.Visible;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
-            // Async
-            await Task.Run(async () =>
+            IsLoading = Visibility.Visible;
+            await Task.Run(() => { Decks = GetDecks(); });
+            await Task.Run(() =>
             {
-                Decks = GetDecks();
                 OnPropertyChanged(nameof(Decks));
-            });
-            // Hide Busy feedback
-            Application.Current.Dispatcher.Invoke(new Action(() => {
                 IsLoading = Visibility.Collapsed;
-                OnPropertyChanged(nameof(IsLoading));
-            }));
+            });
         }
 
         #endregion
@@ -130,7 +122,19 @@ namespace MaGeek.UI
 
         private IEnumerable<MagicDeck> GetDecks()
         {
-            return FilterDeckEnumerator(db.decks);
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                return FilterDeckEnumerator(
+                    DB.decks
+                    .Include(deck => deck.CardRelations)
+                        .ThenInclude(cardrel => cardrel.Card)
+                            .ThenInclude(card => card.Card)
+                    .Include(deck => deck.CardRelations)
+                        .ThenInclude(cardrel => cardrel.Card)
+                            .ThenInclude(card => card.DeckRelations)
+                    .ToArray()
+                ); 
+            }
         }
 
         #endregion

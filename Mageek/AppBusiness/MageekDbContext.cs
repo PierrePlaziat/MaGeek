@@ -32,7 +32,6 @@ namespace MaGeek.AppBusiness
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(dbData.ConnexionString);
-            optionsBuilder.UseLazyLoadingProxies();
             optionsBuilder.EnableSensitiveDataLogging();
         }
 

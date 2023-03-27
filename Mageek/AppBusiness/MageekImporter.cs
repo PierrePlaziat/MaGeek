@@ -26,17 +26,6 @@ namespace MaGeek.AppBusiness
 
         #region Attributes
 
-        public MageekDbContext db;
-        public MageekDbContext DB
-        {
-            get
-            {
-                if (db == null) db = App.Biz.DB.GetNewContext();
-                return db;
-            }
-        }
-
-
         IMtgServiceProvider MtgApi = new MtgServiceProvider();
         BackgroundWorker Worker = new BackgroundWorker();
 
@@ -348,11 +337,15 @@ namespace MaGeek.AppBusiness
 
         private async Task<List<ICard>> ImportCard(string cardName, bool onlyTheOne, bool skipIfExists, bool foreignIncluded)
         {
-            Message = "Retrieve Card : " + cardName;
-            if (skipIfExists && DB.cards.Where(x => x.CardId == cardName).Any()) return new List<ICard>();
-            List<ICard> cards = await RequestCard(cardName, foreignIncluded);
-            if (onlyTheOne) cards = await FilterExactName(cards, cardName, foreignIncluded);
-            return cards;
+                Message = "Retrieve Card : " + cardName;
+
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                if (skipIfExists && DB.cards.Where(x => x.CardId == cardName).Any()) return new List<ICard>();
+            }
+                List<ICard> cards = await RequestCard(cardName, foreignIncluded);
+                if (onlyTheOne) cards = await FilterExactName(cards, cardName, foreignIncluded);
+                return cards;
         }
 
         #endregion
@@ -456,49 +449,55 @@ namespace MaGeek.AppBusiness
 
         private void RecordCard(ICard cardData, bool Owned)
         {
-            // Card
-            var localCard = DB.cards.Where(x => x.CardId == cardData.Name).FirstOrDefault();
-            if (localCard == null)
+            using (var DB = App.Biz.DB.GetNewContext())
             {
-                localCard = new MagicCard(cardData);
-                DB.cards.Add(localCard);
-                DB.SaveChanges();
+                // Card
+                var localCard = DB.cards.Where(x => x.CardId == cardData.Name).FirstOrDefault();
+                if (localCard == null)
+                {
+                    localCard = new MagicCard(cardData);
+                    DB.cards.Add(localCard);
+                    DB.SaveChanges();
+                }
+                // Variant
+                var localVariant = localCard.Variants.Where(x => x.Id == cardData.Id).FirstOrDefault();
+                if (localVariant == null)
+                {
+                    localCard.AddVariant(cardData);
+                    DB.SaveChanges();
+                }
+                // Owned Quantity
+                //if (localCard != null && Owned) localCard.CollectedQuantity ++;
             }
-            // Variant
-            var localVariant = localCard.Variants.Where(x => x.Id == cardData.Id).FirstOrDefault();
-            if (localVariant == null)
-            {
-                localCard.AddVariant(cardData);
-                DB.SaveChanges();
-            }
-            // Owned Quantity
-            //if (localCard != null && Owned) localCard.CollectedQuantity ++;
         }
 
         private void MakeDeck(List<ImportLine> importLines)
         {
-            var title = CurrentImport.Value.title == null ? DateTime.Now.ToString() : CurrentImport.Value.title;
-            var deck = new MagicDeck(title);
-            foreach (var cardOccurence in importLines)
+            using (var DB = App.Biz.DB.GetNewContext())
             {
-                MagicCard card = DB.cards.Where(x => x.CardId == cardOccurence.Name).FirstOrDefault();
-                if (card != null)
+                var title = CurrentImport.Value.title == null ? DateTime.Now.ToString() : CurrentImport.Value.title;
+                var deck = new MagicDeck(title);
+                foreach (var cardOccurence in importLines)
                 {
-                    MagicCardVariant variant = card.Variants[0];
-                    AddCardToDeck(variant, deck, cardOccurence.Quantity, cardOccurence.Side ? 2 : 0);
+                    MagicCard card = DB.cards.Where(x => x.CardId == cardOccurence.Name).FirstOrDefault();
+                    if (card != null)
+                    {
+                        MagicCardVariant variant = card.Variants[0];
+                        AddCardToDeck(variant, deck, cardOccurence.Quantity, cardOccurence.Side ? 2 : 0);
+                    }
                 }
-            }
-            if (deck.CardRelations.Count > 0)
-            {
-                deck.CardRelations[0].RelationType = 1;
-                DB.decks.Add(deck);
-                DB.SaveChanges();
-            }
+                if (deck.CardRelations.Count > 0)
+                {
+                    deck.CardRelations[0].RelationType = 1;
+                    DB.decks.Add(deck);
+                    DB.SaveChanges();
+                }
 
-            if (CurrentImport.Value.mode == ImportMode.Set) foreach (var v in deck.CardRelations)
-                {
-                    v.Quantity = 1;
-                }
+                if (CurrentImport.Value.mode == ImportMode.Set) foreach (var v in deck.CardRelations)
+                    {
+                        v.Quantity = 1;
+                    }
+            }
         }
 
         public void AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)

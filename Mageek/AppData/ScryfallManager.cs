@@ -15,17 +15,6 @@ namespace MaGeek.AppData
     public class ScryfallManager
     {
 
-
-        public MageekDbContext db;
-        public MageekDbContext DB
-        {
-            get
-            {
-                if (db == null) db = App.Biz.DB.GetNewContext();
-                return db;
-            }
-        }
-
         // COMMON
 
         private bool IsOutDated(string lastUpdate, int dayLimit)
@@ -39,96 +28,113 @@ namespace MaGeek.AppData
 
         public float GetCardPrize(string variantId)
         {
-            MagicCardVariant variant = DB.cardVariants.Where(x => x.Id == variantId).FirstOrDefault();
-            if (variant == null) return 0;
-            return GetCardPrize(variant);
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                MagicCardVariant variant = DB.cardVariants.Where(x => x.Id == variantId).FirstOrDefault();
+                if (variant == null) return 0;
+                return GetCardPrize(variant);
+            }
         }
+
         public float GetCardPrize(MagicCardVariant variant)
         {
-            if (variant == null) return -1;
-            float price = 0;
-            var v = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
-
-            // NO DATA
-            if (v == null)
+            using (var DB = App.Biz.DB.GetNewContext())
             {
-                price = RetrieveCardPrize(variant);
-            }
-            // OUTDATED
-            else if (IsOutDated(v.LastUpdate, 1))
-            {
-                DB.Prices.Remove(v);
-                price = RetrieveCardPrize(variant);
-            }
-            // DATA OK 
-            else price = float.Parse(v.Value);
+                if (variant == null) return -1;
+                float price = 0;
+                var v = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
 
-            return price;
+                // NO DATA
+                if (v == null)
+                {
+                    price = RetrieveCardPrize(variant);
+                }
+                // OUTDATED
+                else if (IsOutDated(v.LastUpdate, 1))
+                {
+                    DB.Prices.Remove(v);
+                    price = RetrieveCardPrize(variant);
+                }
+                // DATA OK 
+                else price = float.Parse(v.Value);
+
+                return price;
+            }
         }
         private float RetrieveCardPrize(MagicCardVariant variant)
         {
-            if (string.IsNullOrEmpty(variant.MultiverseId)) return -1;
-            float price = -1;
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                if (string.IsNullOrEmpty(variant.MultiverseId)) return -1;
+                float price = -1;
 
-            // ASK API
-            Thread.Sleep(150);
-            var json_data = string.Empty;
-            using (var w = new WebClient())
-            {
-                try { json_data = w.DownloadString("https://api.scryfall.com/cards/multiverse/" + variant.MultiverseId); }
-                catch (Exception e) { MessageBox.Show("Couldnt retrieve price : " + e.Message); }
-            }
-            try
-            {
-                var scryCard = JsonConvert.DeserializeObject<Card>(json_data);
-                price = scryCard.Prices.Eur.HasValue ? float.Parse(scryCard.Prices.Eur.Value.ToString()) : -1;
-            }
-            catch (Exception e) { MessageBox.Show("Couldnt parse price : " + e.Message); }
+                // ASK API
+                Thread.Sleep(150);
+                var json_data = string.Empty;
+                using (var w = new WebClient())
+                {
+                    try { json_data = w.DownloadString("https://api.scryfall.com/cards/multiverse/" + variant.MultiverseId); }
+                    catch (Exception e) { MessageBox.Show("Couldnt retrieve price : " + e.Message); }
+                }
+                try
+                {
+                    var scryCard = JsonConvert.DeserializeObject<Card>(json_data);
+                    price = scryCard.Prices.Eur.HasValue ? float.Parse(scryCard.Prices.Eur.Value.ToString()) : -1;
+                }
+                catch (Exception e) { MessageBox.Show("Couldnt parse price : " + e.Message); }
 
-            // SAVE
-            if (price != -1)
-            {
-                DB.Prices.Add(
-                    new Entities.Price()
-                    {
-                        MultiverseId = variant.MultiverseId,
-                        LastUpdate = DateTime.Now.ToString(),
-                        Value = price.ToString(),
-                    }
-                );
-                DB.SaveChanges();
+                // SAVE
+                if (price != -1)
+                {
+                    DB.Prices.Add(
+                        new Entities.Price()
+                        {
+                            MultiverseId = variant.MultiverseId,
+                            LastUpdate = DateTime.Now.ToString(),
+                            Value = price.ToString(),
+                        }
+                    );
+                    DB.SaveChanges();
+                }
+                return price;
             }
-            return price;
         }
 
         // LEGAL
 
         public List<Legality> GetCardLegal(string variantId)
         {
-            MagicCardVariant variant = DB.cardVariants.Where(x => x.Id == variantId).FirstOrDefault();
-            if (variant == null) return new List<Legality>();
-            return GetCardLegal(variant);
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                MagicCardVariant variant = DB.cardVariants.Where(x => x.Id == variantId).FirstOrDefault();
+                if (variant == null) return new List<Legality>();
+                return GetCardLegal(variant);
+            }
         }
         public List<Legality> GetCardLegal(MagicCardVariant variant)
         {
-            if (variant == null) return new List<Legality>();
-            List<Legality> legal = new List<Legality>();
-            List<Legality> previous = DB.Legalities.Where(x => x.MultiverseId == variant.MultiverseId).ToList();
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                if (variant == null) return new List<Legality>();
+                List<Legality> legal = new List<Legality>();
+                List<Legality> previous = DB.Legalities
+                    .Where(x => x.MultiverseId == variant.MultiverseId).ToList();
 
-            // NO DATA
-            if (previous == null || previous.FirstOrDefault() == null)
-            {
-                legal = RetrieveCardLegal(variant);
+                // NO DATA
+                if (previous == null || previous.FirstOrDefault() == null)
+                {
+                    legal = RetrieveCardLegal(variant);
+                }
+                // OUTDATED
+                else if (IsOutDated(previous.FirstOrDefault().LastUpdate, 30))
+                {
+                    DB.Legalities.RemoveRange(previous);
+                    legal = RetrieveCardLegal(variant);
+                }
+                // DATA OK 
+                else legal = previous;
+                return legal;
             }
-            // OUTDATED
-            else if (IsOutDated(previous.FirstOrDefault().LastUpdate, 30))
-            {
-                DB.Legalities.RemoveRange(previous);
-                legal = RetrieveCardLegal(variant);
-            }
-            // DATA OK 
-            else legal = previous;
-            return legal;
         }
         private List<Legality> RetrieveCardLegal(MagicCardVariant variant)
         {
@@ -161,8 +167,11 @@ namespace MaGeek.AppData
 
             // SAVE
 
-            DB.Legalities.AddRange(legal);
-            DB.SaveChanges();
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                DB.Legalities.AddRange(legal);
+                DB.SaveChanges();
+            }
             return legal;
         }
 
