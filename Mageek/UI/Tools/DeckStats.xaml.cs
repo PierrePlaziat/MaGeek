@@ -137,8 +137,12 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(DevotionR));
                 OnPropertyChanged(nameof(OwnedRatio));
             });
-            //DrawManacurve(App.Biz.Utils.GetManaCurve(currentDeck));
-            //DrawNewHand();
+            int[] manacurve = new int[0];
+            await Task.Run(() => { 
+                manacurve = App.Biz.Utils.GetManaCurve(currentDeck);
+            });
+            DrawNewHand();
+            DrawManacurve(manacurve);
             await Task.Run(() =>
             {
                 IsLoading = Visibility.Collapsed;

@@ -509,6 +509,9 @@ namespace MaGeek.UI
                 HasCmc5 = GetHasCmc5();
                 HasCmc6 = GetHasCmc6();
                 HasCmc7 = GetHasCmc7();
+            });
+            await Task.Run(() =>
+            {
                 OnPropertyChanged(nameof(IsActive));
                 OnPropertyChanged(nameof(CardRelations));
                 OnPropertyChanged(nameof(CardRelations_Commandant));
@@ -538,8 +541,8 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(HasCmc5));
                 OnPropertyChanged(nameof(HasCmc6));
                 OnPropertyChanged(nameof(HasCmc7));
+                IsLoading = Visibility.Collapsed;
             });
-            IsLoading = Visibility.Collapsed;
         }
 
         #region methods
