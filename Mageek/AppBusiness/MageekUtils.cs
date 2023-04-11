@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MaGeek.AppData;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace MaGeek.AppBusiness
 {
@@ -35,7 +36,7 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        public void AddDeck()
+        public async Task AddDeck()
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
@@ -50,7 +51,7 @@ namespace MaGeek.AppBusiness
                     }
                     MagicDeck deck = new MagicDeck(deckTitle);
                     DB.decks.Add(deck);
-                    DB.SaveChanges();
+                    await DB.SaveChangesAsync();
                     App.Events.RaiseUpdateDeckList();
                     App.Events.RaiseDeckSelect(deck);
                 }
@@ -61,7 +62,7 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        public void RenameDeck(MagicDeck deckToRename)
+        public async Task RenameDeck(MagicDeck deckToRename)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
@@ -74,7 +75,7 @@ namespace MaGeek.AppBusiness
                     return;
                 }
                 deckToRename.Title = newTitle;
-                DB.SaveChanges();
+                await DB.SaveChangesAsync();
                 App.Events.RaiseUpdateDeck();
             }
         }
@@ -107,36 +108,46 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        public void ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
+        public async Task ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
         {
             int qty = cardDeckRelation.Quantity;
             var deck = cardDeckRelation.Deck;
             int rel = cardDeckRelation.RelationType;
-            RemoveCardFromDeck(cardDeckRelation.Card.Card, cardDeckRelation.Deck, cardDeckRelation.Quantity);
-            AddCardToDeck(magicCardVariant, deck, qty, rel);
+            await RemoveCardFromDeck(cardDeckRelation.Card.Card, cardDeckRelation.Deck, cardDeckRelation.Quantity);
+            await AddCardToDeck(magicCardVariant, deck, qty, rel);
         }
 
         public async Task AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
         {
-            using (var DB = App.Biz.DB.GetNewContext())
+            try
             {
-                if (card == null || deck == null) return;
-                var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
-                if (cardRelation == null)
+                using (var DB = App.Biz.DB.GetNewContext())
                 {
-                    cardRelation = new CardDeckRelation()
-                    {
-                        Card = card,
-                        Deck = deck,
-                        Quantity = 0,
-                        RelationType = relation
-                    };
-                    deck.CardRelations.Add(cardRelation);
+                    if (card == null || deck == null) return;
+                    //DB.Attach(deck);
+                    var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
+                    if (cardRelation == null)
+                    {                    
+                        cardRelation = new CardDeckRelation()
+                        {
+                            Card = card,
+                            Deck = deck,
+                            Quantity = 0,
+                            RelationType = relation
+                        };
+                        DB.Entry(cardRelation).State = EntityState.Added;
+                        deck.CardRelations.Add(cardRelation);
+                    }
+                    cardRelation.Quantity += qty;
+                    deck.CardCount += qty;
+                    bool a = DB.ChangeTracker.HasChanges();
+                    await DB.SaveChangesAsync();
                 }
-                cardRelation.Quantity += qty;
-                deck.CardCount += qty;
-                await DB.SaveChangesAsync();
                 App.Events.RaiseUpdateDeck();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowMsg(ex.Message);
             }
         }
 

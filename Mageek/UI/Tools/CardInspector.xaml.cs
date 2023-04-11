@@ -225,7 +225,8 @@ namespace MaGeek.UI
 
         private void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1);
+            App.Biz.Utils.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1)
+                .ConfigureAwait(true);
         }
 
         #endregion

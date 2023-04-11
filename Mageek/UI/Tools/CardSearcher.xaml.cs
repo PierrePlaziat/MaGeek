@@ -257,7 +257,8 @@ namespace MaGeek.UI
         {
             foreach (MagicCard c in CardGrid.SelectedItems)
             {
-                App.Biz.Utils.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1);
+                App.Biz.Utils.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1)
+                    .ConfigureAwait(true);
             }
         }
 
