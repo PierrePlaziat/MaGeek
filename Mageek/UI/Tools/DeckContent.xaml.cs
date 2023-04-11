@@ -144,6 +144,7 @@ namespace MaGeek.UI
             await Task.Run(() => { CurrentSide = GetCurrentSide(); });
             await Task.Run(() =>
             {
+                OnPropertyChanged(nameof(CurrentCommanders));
                 OnPropertyChanged(nameof(CurrentCreatures));
                 OnPropertyChanged(nameof(CurrentInstants));
                 OnPropertyChanged(nameof(CurrentSorceries));

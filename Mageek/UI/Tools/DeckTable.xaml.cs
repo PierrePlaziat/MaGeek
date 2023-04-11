@@ -121,18 +121,8 @@ namespace MaGeek.UI
 
         private List<CardDeckRelation> GetCardRelations_Commandant()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations_Lands = new List<CardDeckRelation>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
-                    x.RelationType == 1
-            ))
-            {
-                for (int i = 0; i < card.Quantity; i++)
-                {
-                    cardRelations_Lands.Add(card);
-                }
-            }
-            return cardRelations_Lands;
+            if (CurrentDeck == null) return null;
+            return App.Biz.Utils.GetCommanders(CurrentDeck).ToList();
         }
         private List<CardDeckRelation> GetCardRelations_Lands()
         {
