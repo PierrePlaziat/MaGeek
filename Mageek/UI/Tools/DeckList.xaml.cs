@@ -157,11 +157,13 @@ namespace MaGeek.UI
 
         private void DuplicateDeck(object sender, RoutedEventArgs e)
         {
+            if (decklistbox.SelectedIndex == -1) return;
             App.Biz.Utils.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
         }
 
         private void DeleteDeck(object sender, RoutedEventArgs e)
         {
+            if (decklistbox.SelectedIndex == -1) return;
             App.Biz.Utils.DeleteDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
         }
 

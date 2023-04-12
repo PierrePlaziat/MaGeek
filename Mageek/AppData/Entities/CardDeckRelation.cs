@@ -17,7 +17,7 @@ namespace MaGeek.AppData.Entities
         public virtual MagicCardVariant Card { get; set; }
         public int Quantity { get; set; }
         /// <summary>
-        /// 0== normal, 1==commandant , 2 sideDeck
+        /// 0:normal, 1:commandant , 2:sideDeck
         /// </summary>
         public int RelationType { get; set; }
 

@@ -63,7 +63,7 @@ namespace MaGeek.AppFramework
         public void Execute(object parameter)
         {
             MagicCardVariant variant = (MagicCardVariant)parameter;
-            App.Biz.Utils.ChangeRelation(relation, variant);
+            App.Biz.Utils.ChangeVariant(relation, variant);
         }
 
         public event EventHandler CanExecuteChanged;

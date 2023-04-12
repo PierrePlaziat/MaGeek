@@ -3,8 +3,9 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:MaGeek.UI" xmlns:controls="clr-namespace:MaGeek.UI.Controls"
-                            mc:Ignorable="d" 
+      xmlns:local="clr-namespace:MaGeek.UI" 
+      xmlns:controls="clr-namespace:MaGeek.UI.Controls"
+      mc:Ignorable="d" 
       d:DesignHeight="500" d:DesignWidth="500">
 
     <Grid >
@@ -15,9 +16,9 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0">
-            <Button Click="AddDeck" FontWeight="Black" Padding="4,-2,4,0" Background="DarkOliveGreen" ToolTip="Create">+</Button>
-            <Button Click="DeleteDeck" FontWeight="Black" Padding="6,-4,6,0" Background="IndianRed" ToolTip="Delete">-</Button>
-            <Button Click="DuplicateDeck" FontWeight="Black" Padding="6,-4,6,0" Background="CadetBlue" ToolTip="Duplicate">II</Button>
+            <Button Click="AddDeck" FontWeight="Black" Padding="4,-3,4,0" Background="DarkOliveGreen" ToolTip="Create">+</Button>
+            <Button Click="DeleteDeck" FontWeight="Black" Padding="6,-5,6,0" Background="IndianRed" ToolTip="Delete">-</Button>
+            <Button Click="DuplicateDeck" FontWeight="Black" Padding="6,-1,6,0" Background="CadetBlue" ToolTip="Duplicate">II</Button>
             <Button Click="RenameDeck" FontWeight="Bold" Padding="7,-1,7,0" Background="Gray" ToolTip="Rename">I</Button>
             <Label>Filter:</Label>
             <TextBox Text="{Binding FilterString}" Margin="0,0,3,0"></TextBox>

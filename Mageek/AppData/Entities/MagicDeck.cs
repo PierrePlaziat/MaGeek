@@ -29,16 +29,6 @@ namespace MaGeek.AppData.Entities
             CardRelations = new ObservableCollection<CardDeckRelation>();
         }
 
-        public MagicDeck(MagicDeck deckToCopy)
-        {
-            Title = deckToCopy.Title + " - Copie";
-            CardRelations = new ObservableCollection<CardDeckRelation>();
-            foreach (CardDeckRelation relation in deckToCopy.CardRelations)
-            {
-                App.Biz.Utils.AddCardToDeck(relation.Card, this, relation.Quantity, relation.RelationType);
-            }
-        }
-
         #endregion
 
     }

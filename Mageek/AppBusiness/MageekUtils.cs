@@ -6,6 +6,7 @@ using System.Linq;
 using MaGeek.AppData;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 
 namespace MaGeek.AppBusiness
 {
@@ -26,14 +27,15 @@ namespace MaGeek.AppBusiness
 
         #region Deck Manips
 
-        internal async Task ChangeCardDeckRelation(CardDeckRelation cardRel, int v)
+        public async Task ChangeCardDeckRelation(CardDeckRelation relation, int type)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
-                cardRel.RelationType = 0;
+                relation.RelationType = type;
+                DB.Entry(relation).State = EntityState.Modified;
                 await DB.SaveChangesAsync();
-                App.Events.RaiseUpdateDeck();
             }
+            App.Events.RaiseUpdateDeck();
         }
 
         public async Task AddDeck()
@@ -62,69 +64,73 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        public async Task RenameDeck(MagicDeck deckToRename)
+        public async Task RenameDeck(MagicDeck deck)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
-                if (deckToRename == null) return;
-                string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \"" + deckToRename.Title + "\"", deckToRename.Title);
+                if (deck == null) return;
+                string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \"" + deck.Title + "\"", deck.Title);
                 if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
                 if (DB.decks.Where(x => x.Title == newTitle).Any())
                 {
                     MessageBoxHelper.ShowMsg("There is already a deck with that name.");
                     return;
                 }
-                deckToRename.Title = newTitle;
+                deck.Title = newTitle;
+                DB.Entry(deck).State = EntityState.Modified;
                 await DB.SaveChangesAsync();
                 App.Events.RaiseUpdateDeck();
             }
         }
 
-        public void DuplicateDeck(MagicDeck originalDeck)
+        // TODO : This is too slow and blocks ui, Also multiple event fired unnecessary
+        public async Task DuplicateDeck(MagicDeck originalDeck)
         {
+            if (App.State.SelectedDeck == null) return;
+            var deckToCopy = originalDeck;
+            var newDeck = new MagicDeck(deckToCopy.Title + " - Copie");
             using (var DB = App.Biz.DB.GetNewContext())
             {
-                if (App.State.SelectedDeck == null) return;
-                var deckToCopy = originalDeck;
-                var newDeck = new MagicDeck(deckToCopy);
+                newDeck.CardRelations = new ObservableCollection<CardDeckRelation>();
                 DB.decks.Add(newDeck);
-                DB.SaveChanges();
-                App.Events.RaiseUpdateDeckList();
+                await DB.SaveChangesAsync();
             }
+            foreach (CardDeckRelation relation in deckToCopy.CardRelations)
+            {
+                await App.Biz.Utils.AddCardToDeck(relation.Card, newDeck, relation.Quantity, relation.RelationType);
+            }
+            App.Events.RaiseUpdateDeckList();
         }
 
-        public void DeleteDeck(MagicDeck deckToDelete)
+        public async Task DeleteDeck(MagicDeck deckToDelete)
         {
-            using (var DB = App.Biz.DB.GetNewContext())
+            if (MessageBoxHelper.AskUser("Are you sure to delete this deck ? (" + deckToDelete.Title + ")"))
             {
-                //if (decklistbox.SelectedIndex >= 0 && decklistbox.SelectedIndex < Decks.Count)
-                if (MessageBoxHelper.AskUser("Are you sure to delete this deck ? (" + deckToDelete.Title + ")"))
+                using (var DB = App.Biz.DB.GetNewContext())
                 {
                     var deck = deckToDelete;
                     DB.decks.Remove(deck);
-                    DB.SaveChanges();
+                    await DB.SaveChangesAsync();
                     App.Events.RaiseUpdateDeckList();
                 }
             }
         }
 
-        public async Task ChangeRelation(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
+        public async Task ChangeVariant(CardDeckRelation cardDeckRelation, MagicCardVariant magicCardVariant)
         {
             int qty = cardDeckRelation.Quantity;
             var deck = cardDeckRelation.Deck;
             int rel = cardDeckRelation.RelationType;
-            await RemoveCardFromDeck(cardDeckRelation.Card.Card, cardDeckRelation.Deck, cardDeckRelation.Quantity);
+            await RemoveCardFromDeck(cardDeckRelation.Card.Card, deck, qty);
             await AddCardToDeck(magicCardVariant, deck, qty, rel);
         }
 
         public async Task AddCardToDeck(MagicCardVariant card, MagicDeck deck, int qty, int relation = 0)
         {
-            try
-            {
+            if (card == null || deck == null) return;
+            try {
                 using (var DB = App.Biz.DB.GetNewContext())
                 {
-                    if (card == null || deck == null) return;
-                    //DB.Attach(deck);
                     var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
                     if (cardRelation == null)
                     {                    
@@ -132,15 +138,19 @@ namespace MaGeek.AppBusiness
                         {
                             Card = card,
                             Deck = deck,
-                            Quantity = 0,
+                            Quantity = qty,
                             RelationType = relation
                         };
                         DB.Entry(cardRelation).State = EntityState.Added;
                         deck.CardRelations.Add(cardRelation);
                     }
-                    cardRelation.Quantity += qty;
+                    else
+                    {
+                        cardRelation.Quantity += qty;
+                        DB.Entry(cardRelation).State = EntityState.Modified;
+                    }
                     deck.CardCount += qty;
-                    bool a = DB.ChangeTracker.HasChanges();
+                    DB.Entry(deck).State = EntityState.Modified;
                     await DB.SaveChangesAsync();
                 }
                 App.Events.RaiseUpdateDeck();
@@ -153,24 +163,39 @@ namespace MaGeek.AppBusiness
 
         public async Task RemoveCardFromDeck(MagicCard card, MagicDeck deck, int qty = 1)
         {
-            using (var DB = App.Biz.DB.GetNewContext())
-            {
-                var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
-                if (cardRelation == null) return;
-                cardRelation.Quantity -= qty;
-                if (cardRelation.Quantity <= 0) deck.CardRelations.Remove(cardRelation);
-                deck.CardCount -= qty;
-                await DB.SaveChangesAsync();
+            if (card == null || deck == null) return;
+            try {
+                using (var DB = App.Biz.DB.GetNewContext())
+                {
+                    var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
+                    if (cardRelation == null) return;
+                    cardRelation.Quantity -= qty;
+                    if (cardRelation.Quantity <= 0)
+                    {
+                        deck.CardRelations.Remove(cardRelation);
+                        DB.Entry(cardRelation).State = EntityState.Deleted;
+                    }
+                    else
+                    {
+                        DB.Entry(cardRelation).State = EntityState.Modified;
+                    }
+                    deck.CardCount -= qty;
+                    DB.Entry(deck).State = EntityState.Modified;
+                    await DB.SaveChangesAsync();
+                }
                 App.Events.RaiseUpdateDeck();
             }
-
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowMsg(ex.Message);
+            }
         }
 
         #endregion
 
         #region Card Manips
 
-        internal MagicCard FindCardById(string cardId)
+        public MagicCard FindCardById(string cardId)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
@@ -183,7 +208,10 @@ namespace MaGeek.AppBusiness
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 if (selectedCard == null) return;
-                DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault().Got++;
+                
+                var c = DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
+                c.Got++;
+                DB.Entry(c).State = EntityState.Modified;
                 DB.SaveChanges();
             }
         }
@@ -196,6 +224,7 @@ namespace MaGeek.AppBusiness
                 var c = DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
                 c.Got--;
                 if (c.Got < 0) c.Got = 0;
+                DB.Entry(c).State = EntityState.Modified;
                 DB.SaveChanges();
             }
         }
@@ -205,6 +234,7 @@ namespace MaGeek.AppBusiness
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 card.FavouriteVariant = variantId;
+                DB.Entry(card).State = EntityState.Modified;
                 DB.SaveChanges();
             }
         }
@@ -221,12 +251,12 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        internal bool DoesCardHasTag(string cardId, string tagFilterSelected)
+        public bool DoesCardHasTag(string cardId, string tagFilterSelected)
         {
             return FindTagsForCard(cardId).Where(x => x.Tag == tagFilterSelected).Any();
         }
 
-        internal void TagCard(MagicCard selectedCard, string text)
+        public void TagCard(MagicCard selectedCard, string text)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
@@ -235,7 +265,7 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        internal void UnTagCard(CardTag cardTag)
+        public void UnTagCard(CardTag cardTag)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
@@ -244,7 +274,7 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        internal List<CardTag> FindTagsForCard(string cardId)
+        public List<CardTag> FindTagsForCard(string cardId)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
@@ -359,7 +389,7 @@ namespace MaGeek.AppBusiness
 
         #endregion
 
-        //SLOW
+        // TODO : This is too slow
         #region counts
 
         public int count_Total(MagicDeck deck)
@@ -485,13 +515,13 @@ namespace MaGeek.AppBusiness
 
         #region Types
 
-        internal IEnumerable<CardDeckRelation> GetCommanders(MagicDeck deck)
+        public IEnumerable<CardDeckRelation> GetCommanders(MagicDeck deck)
         {
             if (deck == null || deck.CardRelations == null) return null;
             return deck.CardRelations.Where(x => x.RelationType == 1);
         }
 
-        internal IEnumerable<CardDeckRelation> GetCreatures(MagicDeck currentDeck)
+        public IEnumerable<CardDeckRelation> GetCreatures(MagicDeck currentDeck)
         {
             if (currentDeck == null || currentDeck.CardRelations == null) return null;
             return currentDeck.CardRelations.Where(
@@ -501,7 +531,7 @@ namespace MaGeek.AppBusiness
                 .ThenBy(x => x.Card.Card.CardForeignName);
         }
 
-        internal IEnumerable<CardDeckRelation> GetInstants(MagicDeck currentDeck)
+        public IEnumerable<CardDeckRelation> GetInstants(MagicDeck currentDeck)
         {
             if (currentDeck == null || currentDeck.CardRelations == null) return null;
             return currentDeck.CardRelations.Where(
@@ -511,7 +541,7 @@ namespace MaGeek.AppBusiness
                 .ThenBy(x => x.Card.Card.CardForeignName);
         }
 
-        internal IEnumerable<CardDeckRelation> GetSorceries(MagicDeck currentDeck)
+        public IEnumerable<CardDeckRelation> GetSorceries(MagicDeck currentDeck)
         {
             if (currentDeck == null || currentDeck.CardRelations == null) return null;
             return currentDeck.CardRelations.Where(
@@ -521,7 +551,7 @@ namespace MaGeek.AppBusiness
                 .ThenBy(x => x.Card.Card.CardForeignName);
         }
 
-        internal IEnumerable<CardDeckRelation> GetEnchantments(MagicDeck currentDeck)
+        public IEnumerable<CardDeckRelation> GetEnchantments(MagicDeck currentDeck)
         {
             if (currentDeck == null || currentDeck.CardRelations == null) return null;
             return currentDeck.CardRelations.Where(
@@ -535,7 +565,7 @@ namespace MaGeek.AppBusiness
 
         #region Owned / Missing
 
-        internal int OwnedRatio(MagicDeck currentDeck)
+        public int OwnedRatio(MagicDeck currentDeck)
         {
             if (currentDeck == null) return 0;
             if (currentDeck.CardRelations == null) return 0;
@@ -554,7 +584,7 @@ namespace MaGeek.AppBusiness
             return 100 - miss * 100 / total;
         }
 
-        internal string ListMissingCards(MagicDeck currentDeck)
+        public string ListMissingCards(MagicDeck currentDeck)
         {
             if (currentDeck == null) return null;
             if (currentDeck.CardRelations == null) return null;
@@ -603,7 +633,7 @@ namespace MaGeek.AppBusiness
             return ok;
         }
 
-        internal List<Legality> GetCardLegal(MagicCardVariant selectedVariant)
+        public List<Legality> GetCardLegal(MagicCardVariant selectedVariant)
         {
             return ScryfallManager.GetCardLegal(selectedVariant);
         }
@@ -612,7 +642,7 @@ namespace MaGeek.AppBusiness
 
         #region Prices
 
-        internal float EstimateDeckPrice(MagicDeck selectedDeck)
+        public float EstimateDeckPrice(MagicDeck selectedDeck)
         {
             float total = 0;
             foreach (var v in selectedDeck.CardRelations)
@@ -622,7 +652,7 @@ namespace MaGeek.AppBusiness
             return total;
         }
 
-        internal float GetCardPrize(MagicCardVariant selectedVariant)
+        public float GetCardPrize(MagicCardVariant selectedVariant)
         {
             return ScryfallManager.GetCardPrize(selectedVariant);
         }
