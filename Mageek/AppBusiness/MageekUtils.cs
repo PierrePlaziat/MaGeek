@@ -83,21 +83,29 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        // TODO : This is too slow and blocks ui, Also multiple event fired unnecessary
-        public async Task DuplicateDeck(MagicDeck originalDeck)
+        public async Task DuplicateDeck(MagicDeck deckToCopy)
         {
-            if (App.State.SelectedDeck == null) return;
-            var deckToCopy = originalDeck;
+            if (deckToCopy == null) return;
             var newDeck = new MagicDeck(deckToCopy.Title + " - Copie");
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 newDeck.CardRelations = new ObservableCollection<CardDeckRelation>();
                 DB.decks.Add(newDeck);
+                DB.Entry(newDeck).State = EntityState.Added;
+                foreach (CardDeckRelation relation in deckToCopy.CardRelations)
+                {
+                    var cardRelation = new CardDeckRelation()
+                    {
+                        Card = relation.Card,
+                        Deck = newDeck,
+                        Quantity = relation.Quantity,
+                        RelationType = relation.RelationType
+                    };
+                    newDeck.CardRelations.Add(cardRelation);
+                    newDeck.CardCount += relation.Quantity;
+                    DB.Entry(cardRelation).State = EntityState.Added;
+                }
                 await DB.SaveChangesAsync();
-            }
-            foreach (CardDeckRelation relation in deckToCopy.CardRelations)
-            {
-                await App.Biz.Utils.AddCardToDeck(relation.Card, newDeck, relation.Quantity, relation.RelationType);
             }
             App.Events.RaiseUpdateDeckList();
         }
@@ -303,7 +311,7 @@ namespace MaGeek.AppBusiness
             return manaCurve;
         }
 
-        //SLOW
+        // TODO : Too Slow, maybe directly store in deck like card quantity
         public string DeckColors(MagicDeck deck)
         {
             string retour = "";
@@ -389,7 +397,6 @@ namespace MaGeek.AppBusiness
 
         #endregion
 
-        // TODO : This is too slow
         #region counts
 
         public int count_Total(MagicDeck deck)
@@ -496,14 +503,20 @@ namespace MaGeek.AppBusiness
             return count;
         }
 
-        //TODO
         public int count_other(MagicDeck deck)
         {
 
             int count = 0;
             if (deck != null && deck.CardRelations != null)
             {
-                foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("enchantment")))
+                foreach (var v in deck.CardRelations.Where(x => 
+                    ! x.Card.Card.Type.ToLower().Contains("creature") &&
+                    ! x.Card.Card.Type.ToLower().Contains("instant") &&
+                    ! x.Card.Card.Type.ToLower().Contains("sorcery") &&
+                    ! x.Card.Card.Type.ToLower().Contains("enchantment") &&
+                    ! x.Card.Card.Type.ToLower().Contains("artifact") &&
+                    ! x.Card.Card.Type.ToLower().Contains("land")
+                ))
                 {
                     count += v.Quantity;
                 };
@@ -601,14 +614,15 @@ namespace MaGeek.AppBusiness
 
         #endregion
 
+        // TODO : all formats, check card validity
         #region Validities
 
         public bool validity_Standard(MagicDeck deck)
         {
             if (deck == null) return false;
             bool ok = true;
-            ok = ok && count_Total(deck) >= 60;
-            ok = ok && HasMaxCardOccurence(deck, 4);
+            ok = ok && deck.CardCount >= 60;
+            ok = ok && RespectsMaxCardOccurence(deck, 4);
             return ok;
         }
 
@@ -616,13 +630,13 @@ namespace MaGeek.AppBusiness
         {
             if (deck == null) return false;
             bool ok = true;
-            ok = ok && count_Total(deck) == 100;
-            ok = ok && HasMaxCardOccurence(deck, 1);
+            ok = ok && deck.CardCount == 100;
+            ok = ok && RespectsMaxCardOccurence(deck, 1);
             ok = ok && deck.CardRelations.Where(x => x.RelationType == 1).Any();
             return ok;
         }
 
-        private bool HasMaxCardOccurence(MagicDeck deck, int limit)
+        private bool RespectsMaxCardOccurence(MagicDeck deck, int limit)
         {
             if (deck == null) return false;
             bool ok = true;
