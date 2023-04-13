@@ -1,5 +1,6 @@
 ﻿using MaGeek.AppBusiness;
 using MaGeek.AppData.Entities;
+using ScryfallApi.Client.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace MaGeek.UI
         }
 
         public int NbVariants { get; private set; }
-        public string Price { get; private set; }
+        public float Price { get; private set; }
         public List<Legality> Legalities { get; private set; }
         public Brush PriceColor { get; private set; }
         public List<CardTag> Tags { get; private set; }
@@ -131,9 +132,9 @@ namespace MaGeek.UI
         private async Task DoAsyncReloadVariant()
         {
             IsLoading = Visibility.Visible;
-            await Task.Run(() => { Legalities = GetLegalities(); });
-            await Task.Run(() => { Price = GetPrice(); });
-            await Task.Run(() => { PriceColor = GetPriceColor(); });
+            Legalities = await MageekUtils.GetCardLegal(SelectedVariant);
+            Price = await MageekUtils.GetPrice(SelectedVariant);
+            PriceColor = GetPriceColor(Price);
             await Task.Run(() =>
             {
                 OnPropertyChanged(nameof(Legalities));
@@ -161,26 +162,16 @@ namespace MaGeek.UI
             else 
                 return 0;
         }
-        private string GetPrice()
+
+        private Brush GetPriceColor(float p)
         {
-                if (SelectedVariant == null) return "/";
-                return App.Biz.Utils.GetCardPrize(SelectedVariant).ToString(); 
-        }
-        private List<Legality> GetLegalities()
-        {
-            if (SelectedVariant == null) return new List<Legality>();
-            return App.Biz.Utils.GetCardLegal(SelectedVariant);
-        }
-        private Brush GetPriceColor()
-        {
-            var p = App.Biz.Utils.GetCardPrize(SelectedVariant);
-            if (p>=10) return Brushes.White;
-            else if (p>=5) return Brushes.Orange;
-            else if (p>=2) return Brushes.Yellow;
-            else if (p>=1) return Brushes.Green;
+                 if (p>=10)  return Brushes.White;
+            else if (p>=5)   return Brushes.Orange;
+            else if (p>=2)   return Brushes.Yellow;
+            else if (p>=1)   return Brushes.Green;
             else if (p>=0.2) return Brushes.LightGray;
-            else if (p>=0) return Brushes.DarkGray;
-            else return Brushes.Black;
+            else if (p>=0)   return Brushes.DarkGray;
+            else             return Brushes.Black;
         }
         private List<CardTag> GetTags()
         {

@@ -145,32 +145,32 @@ namespace MaGeek.UI
             if (deck != null) App.Events.RaiseDeckSelect(deck);
         }
 
-        private void AddDeck(object sender, RoutedEventArgs e)
+        private async void AddDeck(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.AddDeck();
+            await App.Biz.Utils.AddDeck();
         }
         
-        private void RenameDeck(object sender, RoutedEventArgs e)
+        private async void RenameDeck(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.RenameDeck(App.State.SelectedDeck);
+            await App.Biz.Utils.RenameDeck(App.State.SelectedDeck);
         }
 
-        private void DuplicateDeck(object sender, RoutedEventArgs e)
-        {
-            if (decklistbox.SelectedIndex == -1) return;
-            App.Biz.Utils.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
-        }
-
-        private void DeleteDeck(object sender, RoutedEventArgs e)
+        private async void DuplicateDeck(object sender, RoutedEventArgs e)
         {
             if (decklistbox.SelectedIndex == -1) return;
-            App.Biz.Utils.DeleteDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
+            await App.Biz.Utils.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
         }
 
-        private void EstimateDeckPrice(object sender, RoutedEventArgs e)
+        private async void DeleteDeck(object sender, RoutedEventArgs e)
+        {
+            if (decklistbox.SelectedIndex == -1) return;
+            await App.Biz.Utils.DeleteDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
+        }
+
+        private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
         {
             if (App.State.SelectedDeck == null) return;
-            float totalPrice = App.Biz.Utils.EstimateDeckPrice(App.State.SelectedDeck);
+            float totalPrice = await App.Biz.Utils.EstimateDeckPrice(App.State.SelectedDeck);
             MessageBox.Show("Estimation : " + totalPrice + " €");
         }
     }

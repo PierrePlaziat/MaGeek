@@ -1,4 +1,5 @@
-﻿using MtgApiManager.Lib.Model;
+﻿using MaGeek.AppBusiness;
+using MtgApiManager.Lib.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -41,8 +42,6 @@ namespace MaGeek.AppData.Entities
             IsCustom = 0;
             Got = 0;
             MultiverseId = selectedCard.MultiverseId;
-
-
             Card = App.Biz.Utils.FindCardById(selectedCard.Name);
         }
 
@@ -52,29 +51,7 @@ namespace MaGeek.AppData.Entities
 
         public async Task<BitmapImage> RetrieveImage()
         {
-            var taskCompletion = new TaskCompletionSource<BitmapImage>();
-            BitmapImage img = null;
-            string localFileName = "";
-            if (IsCustom == 0)
-            {
-                localFileName = Path.Combine(App.Config.Path_ImageFolder, Id + ".png");
-                if (!File.Exists(localFileName))
-                {
-                    await Task.Run(async () =>
-                    {
-                        await new WebClient().DownloadFileTaskAsync(ImageUrl, localFileName);
-                    });
-                }
-            }
-            //else
-            //{
-            //    localFileName = @"./CardsIllus/Custom/" + ImageUrl;
-            //}
-            var path = Path.GetFullPath(localFileName);
-            Uri imgUri = new Uri("file://" + path, UriKind.Absolute);
-            img = new BitmapImage(imgUri);
-            taskCompletion.SetResult(img);
-            return img;
+            return await MageekUtils.RetrieveImage(this);
         }
 
         public Brush LineColoration
@@ -82,14 +59,6 @@ namespace MaGeek.AppData.Entities
             get
             {
                 return string.IsNullOrEmpty(ImageUrl) ? Brushes.Black : Brushes.White;
-            }
-        }
-
-        public float GetPrice
-        {
-            get
-            {
-                return App.Biz.Utils.GetCardPrize(this);
             }
         }
 

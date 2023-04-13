@@ -7,23 +7,20 @@ using MaGeek.AppData;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
+using System.Windows.Media.Imaging;
+using System.Net;
+using System.IO;
+using MtgApiManager.Lib.Model;
+using Newtonsoft.Json;
+using ScryfallApi.Client.Models;
+using System.Threading;
+using Price = MaGeek.AppData.Entities.Price;
 
 namespace MaGeek.AppBusiness
 {
 
     public class MageekUtils
     {
-
-        #region CTOR
-
-        public ScryfallManager ScryfallManager;
-
-        public MageekUtils()
-        {
-           ScryfallManager = new ScryfallManager();
-        }
-
-        #endregion
 
         #region Deck Manips
 
@@ -646,33 +643,167 @@ namespace MaGeek.AppBusiness
             }
             return ok;
         }
+        #endregion
 
-        public List<Legality> GetCardLegal(MagicCardVariant selectedVariant)
+        public static async Task RetrieveTimeVariingInfos(MagicCardVariant variant)
         {
-            return ScryfallManager.GetCardLegal(selectedVariant);
+            // Guard
+            if (string.IsNullOrEmpty(variant.MultiverseId)) return;
+            Thread.Sleep(150);
+            // Ask
+            var json_data = await HttpUtils.Get("https://api.scryfall.com/cards/multiverse/" + variant.MultiverseId);
+            if (json_data == string.Empty) return;
+            // Parse
+            var scryCard = JsonConvert.DeserializeObject<Card>(json_data);
+            float priceEur = scryCard.Prices.Eur.HasValue ? float.Parse(scryCard.Prices.Eur.Value.ToString()) : -1;
+            float priceUsd = scryCard.Prices.Usd.HasValue ? float.Parse(scryCard.Prices.Eur.Value.ToString()) : -1;
+            // Done
+            await SavePrice(variant.MultiverseId, priceEur, priceUsd, scryCard.EdhrecRank);
+            await SaveLegality(variant.MultiverseId, scryCard.Legalities);
+            await SaveRelated(variant.MultiverseId, scryCard.RelatedUris);
         }
 
-        #endregion
+        public static async Task<List<Legality>> GetCardLegal(MagicCardVariant variant)
+        {
+            if (variant == null) return new List<Legality>();
+            List<Legality> legal = new();
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                List<Legality> previous = DB.Legalities.Where(x => x.MultiverseId == variant.MultiverseId).ToList();
+
+                // NO DATA
+                if (previous == null || previous.FirstOrDefault() == null)
+                {
+                    await RetrieveTimeVariingInfos(variant);
+                    legal = DB.Legalities.Where(x => x.MultiverseId == variant.MultiverseId).ToList();
+                }
+                // OUTDATED
+                else if (IsOutDated(previous.FirstOrDefault().LastUpdate, 30))
+                {
+                    DB.Legalities.RemoveRange(previous);
+                    await RetrieveTimeVariingInfos(variant);
+                    legal = DB.Legalities.Where(x => x.MultiverseId == variant.MultiverseId).ToList();
+                }
+                // DATA OK 
+                else legal = previous;
+            }
+            return legal;
+        }
+
 
         #region Prices
 
-        public float EstimateDeckPrice(MagicDeck selectedDeck)
+        public async Task<float> EstimateDeckPrice(MagicDeck selectedDeck)
         {
             float total = 0;
             foreach (var v in selectedDeck.CardRelations)
             {
-                total += v.Quantity * ScryfallManager.GetCardPrize(v.CardId);
+                total += v.Quantity * (await GetPrice(v.Card)).ValueEur;
             }
             return total;
         }
 
-        public float GetCardPrize(MagicCardVariant selectedVariant)
+        public static async Task<Price> GetPrice(MagicCardVariant variant)
         {
-            return ScryfallManager.GetCardPrize(selectedVariant);
+            if (variant == null) return null;
+            Price price;
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                price = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
+                // NO DATA
+                if (price == null)
+                {
+                    await RetrieveTimeVariingInfos(variant); 
+                    price = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
+                }
+                // OUTDATED
+                else if (IsOutDated(price.LastUpdate, 1))
+                {
+                    DB.Prices.Remove(price);
+                    await RetrieveTimeVariingInfos(variant); 
+                    price = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
+                }
+                // DATA OK 
+            }
+            return price;
+        }
+
+        public static async Task<BitmapImage> RetrieveImage(MagicCardVariant magicCardVariant)
+        {
+            var taskCompletion = new TaskCompletionSource<BitmapImage>();
+            BitmapImage img = null;
+            string localFileName = "";
+            if (magicCardVariant.IsCustom == 0)
+            {
+                localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + ".png");
+                if (!File.Exists(localFileName))
+                {
+                    await Task.Run(async () =>
+                    {
+                        await new WebClient().DownloadFileTaskAsync(magicCardVariant.ImageUrl, localFileName);
+                    });
+                }
+            }
+            //else
+            //{
+            //    localFileName = @"./CardsIllus/Custom/" + ImageUrl;
+            //}
+            var path = Path.GetFullPath(localFileName);
+            Uri imgUri = new Uri("file://" + path, UriKind.Absolute);
+            img = new BitmapImage(imgUri);
+            taskCompletion.SetResult(img);
+            return img;
+        }
+
+        public static async Task SavePrice(string multiverseId, float priceEur, float priceUsd, int edhRank)
+        {
+            using var DB = App.Biz.DB.GetNewContext();
+            DB.Prices.Add(
+                new Price()
+                {
+                    MultiverseId = multiverseId,
+                    LastUpdate = DateTime.Now.ToString(),
+                    ValueEur = priceEur,
+                    ValueUsd= priceUsd,
+                    EdhScore = edhRank,
+                }
+            );
+            await DB.SaveChangesAsync();
         }
 
         #endregion
 
+        private static bool IsOutDated(string lastUpdate, int dayLimit)
+        {
+            DateTime lastUp = DateTime.Parse(lastUpdate);
+            if (lastUp < DateTime.Now.AddDays(-dayLimit)) return true;
+            else return false;
+        }
+
+        internal static async Task SaveRelated(string multiverseId, Dictionary<string, Uri> related)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static async Task SaveLegality(string multiverseId, Dictionary<string, string> legalityDico)
+        {
+            List<Legality> legal = new();
+            foreach (var l in legalityDico)
+            {
+                legal.Add(new Legality()
+                {
+                    Format = l.Key,
+                    IsLegal = l.Value,
+                    LastUpdate = DateTime.Now.ToString(),
+                    MultiverseId = multiverseId,
+                });
+            }
+            using var DB = App.Biz.DB.GetNewContext();
+            {
+                DB.Legalities.AddRange(legal);
+                await DB.SaveChangesAsync();
+            }
+        }
     }
 
 }

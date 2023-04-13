@@ -8,7 +8,9 @@ namespace MaGeek.AppData.Entities
         [Key]
         public string MultiverseId { get; set; }
         public string LastUpdate { get; set; }
-        public string Value { get; set; }
+        public float ValueEur { get; set; }
+        public float ValueUsd { get; set; }
+        public int EdhScore { get; set; }
     }
 
 }

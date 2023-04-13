@@ -301,9 +301,9 @@ namespace MaGeek.UI
 
         #region UI LINK
 
-        private void CreateDeck(object sender, RoutedEventArgs e)
+        private async void CreateDeck(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.AddDeck();
+            await App.Biz.Utils.AddDeck();
         }
 
         private void OpenDeckImport(object sender, RoutedEventArgs e)
@@ -316,7 +316,6 @@ namespace MaGeek.UI
         {
             ListView sendedBy = (sender as ListView);
             if (sendedBy.SelectedItem is CardDeckRelation cardRel) App.Events.RaiseCardSelected(cardRel.Card.Card);
-            //sendedBy.UnselectAll(); // TODO (implies some refactor)
         }
 
         private ListView GetListView(object sender)

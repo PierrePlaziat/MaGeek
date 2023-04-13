@@ -557,41 +557,41 @@ namespace MaGeek.UI
 
         #endregion
 
-        private void SetCommandant_Click(object sender, RoutedEventArgs e)
+        private async void SetCommandant_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
-            App.Biz.Utils.ChangeCardDeckRelation(cr, 1);
+            await App.Biz.Utils.ChangeCardDeckRelation(cr, 1);
         }
 
-        private void UnsetCommandant_Click(object sender, RoutedEventArgs e)
+        private async void UnsetCommandant_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
-            App.Biz.Utils.ChangeCardDeckRelation(cr, 0);
+            await App.Biz.Utils.ChangeCardDeckRelation(cr, 0);
         }
 
-        private void ToSide_Click(object sender, RoutedEventArgs e)
+        private async void ToSide_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
-            App.Biz.Utils.ChangeCardDeckRelation(cr, 2);
+            await App.Biz.Utils.ChangeCardDeckRelation(cr, 2);
         }
 
-        private void AddOne_Click(object sender, RoutedEventArgs e)
+        private async void AddOne_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.Biz.Utils.AddCardToDeck(c, CurrentDeck,1);
+            await App.Biz.Utils.AddCardToDeck(c, CurrentDeck,1);
         }
 
-        private void RemoveOne_Click(object sender, RoutedEventArgs e)
+        private async void RemoveOne_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            App.Biz.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
+            await App.Biz.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
     }

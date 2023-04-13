@@ -92,7 +92,7 @@ namespace MaGeek.UI.Windows.ImportExport
         public MagicCardVariant Card8
         {
             get { return card8; }
-            set { card1 = value; OnPropertyChanged(); }
+            set { card8 = value; OnPropertyChanged(); }
         }
 
 
