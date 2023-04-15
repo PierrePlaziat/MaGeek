@@ -816,22 +816,29 @@ namespace MaGeek.AppBusiness
         public static async Task<CardValue> GetPrice(MagicCardVariant variant)
         {
             if (variant == null) return null;
-            CardValue price;
+            CardValue price = null;
             using (var DB = App.Biz.DB.GetNewContext())
             {
-                price = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
+                try
+                {
+                    price = DB.CardValues.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
                 // NO DATA
                 if (price == null)
                 {
                     await RetrieveTimeVariingInfos(variant); 
-                    price = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
+                    price = DB.CardValues.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
                 }
                 // OUTDATED
                 else if (IsOutDated(price.LastUpdate, 1))
                 {
-                    DB.Prices.Remove(price);
+                    DB.CardValues.Remove(price);
                     await RetrieveTimeVariingInfos(variant); 
-                    price = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
+                    price = DB.CardValues.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
                 }
                 // DATA OK 
             }
@@ -859,14 +866,14 @@ namespace MaGeek.AppBusiness
         private static async Task SavePrice(string multiverseId, float priceEur, float priceUsd, int edhRank)
         {
             using var DB = App.Biz.DB.GetNewContext();
-            DB.Prices.Add(
+            DB.CardValues.Add(
                 new CardValue()
                 {
                     MultiverseId = multiverseId,
                     LastUpdate = DateTime.Now.ToString(),
                     ValueEur = priceEur,
                     ValueUsd= priceUsd,
-                    EdhScore = edhRank,
+                    EdhRank = edhRank,
                 }
             );
             await DB.SaveChangesAsync();
@@ -874,7 +881,7 @@ namespace MaGeek.AppBusiness
 
         private static async Task SaveRelated(string multiverseId, Dictionary<string, Uri> related) //TODO
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private static async Task SaveLegality(string multiverseId, Dictionary<string, string> legalityDico)

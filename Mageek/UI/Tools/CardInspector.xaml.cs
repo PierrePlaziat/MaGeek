@@ -141,6 +141,9 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(Legalities));
                 OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceColor));
+            });
+            await Task.Run(() =>
+            {
                 IsLoading = Visibility.Collapsed;
             });
         }

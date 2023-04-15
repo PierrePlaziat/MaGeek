@@ -70,7 +70,7 @@ namespace MaGeek.AppFramework
         {
             return new string[] {
                 "CREATE TABLE \"Params\" (\r\n\t\"ParamName\"\tTEXT,\r\n\t\"ParamValue\"\tTEXT\r\n)",
-                "CREATE TABLE \"Prices\" (\r\n\t\"MultiverseId\"\tTEXT,\r\n\t\"LastUpdate\"\tTEXT,\r\n\t\"Value\"\tTEXT,\r\n\tPRIMARY KEY(\"MultiverseId\")\r\n)",
+                "CREATE TABLE \"CardValues\" (\r\n\t\"MultiverseId\"\tTEXT,\r\n\t\"LastUpdate\"\tTEXT,\r\n\t\"ValueEur\"\tREAL,\r\n\t\"ValueUsd\"\tREAL,\r\n\t\"EdhRank\"\tINTEGER,\r\n\tPRIMARY KEY(\"MultiverseId\")\r\n);",
                 "CREATE TABLE \"Legalities\" (\r\n\t\"Id\"\tINTEGER,\r\n\t\"MultiverseId\"\tTEXT,\r\n\t\"LastUpdate\"\tTEXT,\r\n\t\"Format\"\tTEXT,\r\n\t\"IsLegal\"\tTEXT,\r\n\tPRIMARY KEY(\"Id\")\r\n)",
                 "CREATE TABLE \"Tags\" (\r\n\t\"Id\"\tINTEGER,\r\n\t\"Tag\"\tTEXT,\r\n\t\"CardId\"\tINTEGER,\r\n\tPRIMARY KEY(\"Id\")\r\n)",
                 "CREATE TABLE \"cardVariants\" (\r\n\t\"Id\"\tTEXT,\r\n\t\"MultiverseId\"\tTEXT,\r\n\t\"ImageUrl\"\tTEXT,\r\n\t\"Rarity\"\tTEXT,\r\n\t\"SetName\"\tINTEGER,\r\n\t\"CardId\"\tTEXT,\r\n\t\"IsCustom\"\tINTEGER,\r\n\t\"CustomName\"\tTEXT,\r\n\t\"Got\"\tINTEGER\r\n)",

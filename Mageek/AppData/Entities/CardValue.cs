@@ -10,7 +10,7 @@ namespace MaGeek.AppData.Entities
         public string LastUpdate { get; set; }
         public float ValueEur { get; set; }
         public float ValueUsd { get; set; }
-        public int EdhScore { get; set; }
+        public int EdhRank { get; set; }
     }
 
 }
