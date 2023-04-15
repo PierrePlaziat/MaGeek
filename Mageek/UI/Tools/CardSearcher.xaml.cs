@@ -15,7 +15,7 @@ namespace MaGeek.UI
         #region Attributes
 
         public List<MagicCard> CardList { get; private set; }
-        public List<CardTag> AvailableTags { get { return App.Biz.Utils.GetTagsDistinct(); } }
+        public List<CardTag> AvailableTags { get { return App.Biz.Utils.GetTagsDistinct().Result; } }
 
         #region Filters
 
@@ -183,7 +183,7 @@ namespace MaGeek.UI
         private async Task ReloadData()
         {
             IsLoading = Visibility.Visible;
-            await Task.Run(() => { CardList = LoadCards(); });
+            CardList = await LoadCards();
             await Task.Run(() =>
             {
                 OnPropertyChanged(nameof(CardList));
@@ -191,13 +191,13 @@ namespace MaGeek.UI
             });
         }
 
-        private List<MagicCard> LoadCards()
+        private async Task<List<MagicCard>> LoadCards()
         {
             IEnumerable<MagicCard> retour = new List<MagicCard>();
 
             using (var DB = App.Biz.DB.GetNewContext())
             {
-                retour = DB.cards.Where(x => x.Cmc >= FilterMinCmc)
+                retour = await DB.cards.Where(x => x.Cmc >= FilterMinCmc)
                                  .Where(x => x.Cmc <= FilterMaxCmc)
                                  .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower())
                                           )//|| x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
@@ -205,7 +205,7 @@ namespace MaGeek.UI
                                  .Include(card=>card.Traductions)
                                  .Include(card=>card.Variants)
                                     //.ThenInclude(card=>card.Card)
-                                 .ToArray();
+                                 .ToArrayAsync();
             }
 
             if (!filterColorB) retour = retour.Where(x => !x.ManaCost.Contains('B'));
@@ -219,7 +219,7 @@ namespace MaGeek.UI
                 var tagged = new List<MagicCard>();
                 foreach (var card in retour)
                 {
-                    if (App.Biz.Utils.DoesCardHasTag(card.CardId, TagFilterSelected))
+                    if (await App.Biz.Utils.DoesCardHasTag(card.CardId, TagFilterSelected))
                     {
                         tagged.Add(card);
                     }

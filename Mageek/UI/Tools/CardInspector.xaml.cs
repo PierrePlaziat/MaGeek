@@ -118,7 +118,7 @@ namespace MaGeek.UI
             IsLoading = Visibility.Visible; 
             await Task.Run(() => { Variants = GetVariants(); });
             await Task.Run(() => { NbVariants = GetNbVariants(); });
-            await Task.Run(() => { Tags = GetTags(); });
+            Tags = await GetTags();
             await Task.Run(() =>
             {
                 OnPropertyChanged(nameof(Variants));
@@ -133,7 +133,8 @@ namespace MaGeek.UI
         {
             IsLoading = Visibility.Visible;
             Legalities = await MageekUtils.GetCardLegal(SelectedVariant);
-            Price = await MageekUtils.GetPrice(SelectedVariant);
+            var p = await MageekUtils.GetPrice(SelectedVariant);
+            Price = p.ValueEur; // TODO configure currency
             PriceColor = GetPriceColor(Price);
             await Task.Run(() =>
             {
@@ -173,10 +174,10 @@ namespace MaGeek.UI
             else if (p>=0)   return Brushes.DarkGray;
             else             return Brushes.Black;
         }
-        private List<CardTag> GetTags()
+        private async Task<List<CardTag>> GetTags()
         {
             if(selectedCard==null) return null;
-            return App.Biz.Utils.FindTagsForCard(selectedCard.CardId);
+            return await App.Biz.Utils.FindTagsForCard(selectedCard.CardId);
         }
 
         #endregion
@@ -230,10 +231,10 @@ namespace MaGeek.UI
             SelectedVariant = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;
         }
 
-        private void SetFav(object sender, RoutedEventArgs e)
+        private async void SetFav(object sender, RoutedEventArgs e)
         {
             var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;  
-            App.Biz.Utils.SetFav(cardvar.Card, cardvar.Id);
+            await App.Biz.Utils.SetFav(cardvar.Card, cardvar.Id);
         }
 
         private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)
@@ -253,7 +254,7 @@ namespace MaGeek.UI
                 App.Biz.Utils.TagCard(selectedCard,NewTag.Text);
                 OnPropertyChanged("Tags");
                 NewTag.Text = "";
-                sugestions.Visibility = System.Windows.Visibility.Collapsed;
+                sugestions.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -262,23 +263,23 @@ namespace MaGeek.UI
             CardTag cardTag = (CardTag)((Button)sender).DataContext;
             App.Biz.Utils.UnTagCard(cardTag);
             OnPropertyChanged("Tags");
-            sugestions.Visibility = System.Windows.Visibility.Collapsed;
+            sugestions.Visibility = Visibility.Collapsed;
         }
 
-        private void NewTag_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private async void NewTag_KeyUp(object sender, KeyEventArgs e)
         {
             bool found = false;
             var border = (resultStack.Parent as ScrollViewer).Parent as Border;
-            var data = GetExistingTags();
+            var data = await App.Biz.Utils.GetTagsDistinct();
             string query = (sender as TextBox).Text;
             if (query.Length == 0)
             {
                 resultStack.Children.Clear();
-                border.Visibility = System.Windows.Visibility.Collapsed;
+                border.Visibility = Visibility.Collapsed;
             }
             else
             {
-                border.Visibility = System.Windows.Visibility.Visible;
+                border.Visibility = Visibility.Visible;
             }
             resultStack.Children.Clear();
             foreach (var obj in data)
@@ -293,13 +294,6 @@ namespace MaGeek.UI
             {
                 resultStack.Children.Add(new TextBlock() { Text = "No results found." });
             }
-        }
-
-
-
-        private List<CardTag> GetExistingTags()
-        {
-            return App.Biz.Utils.GetTagsDistinct();
         }
 
         private void addItem(string text)

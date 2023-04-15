@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using MaGeek.UI.Windows.Importers;
 using MaGeek.AppData.Entities;
 using System.Threading.Tasks;
+using System;
 
 namespace MaGeek.UI
 {
@@ -14,7 +15,7 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        private MagicDeck currentDeck;
+        private MagicDeck currentDeck = null;
         public MagicDeck CurrentDeck
         {
             get { return currentDeck; }
@@ -23,7 +24,17 @@ namespace MaGeek.UI
                 currentDeck = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsActive));
-                AsyncReload();
+                Reload();
+            }
+        }
+
+        private string filterString = string.Empty;
+        public string FilterString {
+            get { return filterString; }
+            set { 
+                filterString = value;
+                OnPropertyChanged(nameof(FilterString));
+                Reload();
             }
         }
 
@@ -37,29 +48,6 @@ namespace MaGeek.UI
         public IEnumerable<CardDeckRelation> CurrentBasicLands      { get; private set; }
         public IEnumerable<CardDeckRelation> CurrentOthers          { get; private set; }
         public IEnumerable<CardDeckRelation> CurrentSide            { get; private set; }
-
-        #region Filter
-
-        private string filterString = "";
-        public string FilterString {
-            get { return filterString; }
-            set { 
-                filterString = value;
-                OnPropertyChanged(nameof(FilterString));
-                AsyncReload();
-            }
-        }
-
-        private IEnumerable<CardDeckRelation> FilterCardEnumerator(IEnumerable<CardDeckRelation> enumerable)
-        {
-            if (enumerable == null) return null;
-            return enumerable.Where(x =>
-                    x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
-                 || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())
-            );
-        }
-
-        #endregion
 
         #region Visibilities
 
@@ -122,26 +110,32 @@ namespace MaGeek.UI
 
         #endregion
         
-        #region Async Reload
+        #region Reload
 
-        private void AsyncReload()
+        private void Reload()
         {
-            DoAsyncReload().ConfigureAwait(false);
+            ReloadAsync().ConfigureAwait(false);
         }
 
-        private async Task DoAsyncReload()
+        private async Task ReloadAsync()
         {
             IsLoading = Visibility.Visible;
-            await Task.Run(() => { CurrentCommanders = GetCurrentCommander(); });
-            await Task.Run(() => { CurrentCreatures = GetCurrentCreatures(); });
-            await Task.Run(() => { CurrentInstants = GetCurrentInstants(); });
-            await Task.Run(() => { CurrentSorceries = GetCurrentSorceries(); });
-            await Task.Run(() => { CurrentEnchantments = GetCurrentEnchantments(); });
-            await Task.Run(() => { CurrentArtifacts = GetCurrentArtifacts(); });
-            await Task.Run(() => { CurrentNonBasicLands = GetCurrentNonBasicLands(); });
-            await Task.Run(() => { CurrentOthers = GetCurrentOthers(); });
-            await Task.Run(() => { CurrentBasicLands = GetCurrentBasicLands(); });
-            await Task.Run(() => { CurrentSide = GetCurrentSide(); });
+            CurrentCommanders =     await ApplyFilter(await App.Biz.Utils.GetCommanders(CurrentDeck));
+            CurrentCreatures =      await ApplyFilter(await App.Biz.Utils.GetCreatures(CurrentDeck));
+            CurrentInstants =       await ApplyFilter(await App.Biz.Utils.GetInstants(CurrentDeck));
+            CurrentSorceries =      await ApplyFilter(await App.Biz.Utils.GetSorceries(CurrentDeck));
+            CurrentEnchantments =   await ApplyFilter(await App.Biz.Utils.GetEnchantments(CurrentDeck));
+            CurrentArtifacts =      await ApplyFilter(await App.Biz.Utils.GetCurrentArtifacts(CurrentDeck));
+            CurrentNonBasicLands =  await ApplyFilter(await App.Biz.Utils.GetCurrentNonBasicLands(CurrentDeck));
+            CurrentOthers =         await ApplyFilter(await App.Biz.Utils.GetCurrentOthers(CurrentDeck));
+            CurrentBasicLands =     await ApplyFilter(await App.Biz.Utils.GetCurrentBasicLands(CurrentDeck));
+            CurrentSide =           await ApplyFilter(await App.Biz.Utils.GetCurrentSide(CurrentDeck));
+            await RaiseChanges();
+            await Task.Run(() => { IsLoading = Visibility.Collapsed; });
+        }
+
+        private async Task RaiseChanges()
+        {
             await Task.Run(() =>
             {
                 OnPropertyChanged(nameof(CurrentCommanders));
@@ -156,108 +150,22 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(CurrentSide));
                 OnPropertyChanged(nameof(HasCommander));
             });
-            await Task.Run(() =>
-            {
-                IsLoading = Visibility.Collapsed;
-            });
-        }
-
-        #endregion
-
-        #region Data Retrieve
-
-        private IEnumerable<CardDeckRelation> GetCurrentCommander()
-        {
-            if (CurrentDeck == null) return null;
-            return FilterCardEnumerator(
-                App.Biz.Utils.GetCommanders(CurrentDeck)
-            );
-        }
-        private IEnumerable<CardDeckRelation> GetCurrentCreatures()
-        {
-            if (CurrentDeck == null) return null;
-            return FilterCardEnumerator(App.Biz.Utils.GetCreatures(CurrentDeck));
-        }
-        private IEnumerable<CardDeckRelation> GetCurrentInstants()
-        {
-            if (CurrentDeck == null) return null;
-            return FilterCardEnumerator(App.Biz.Utils.GetInstants(CurrentDeck));
-        }
-        private IEnumerable<CardDeckRelation> GetCurrentSorceries()
-        {
-            if (CurrentDeck == null) return null;
-            return FilterCardEnumerator(App.Biz.Utils.GetSorceries(CurrentDeck));
-        }
-        private IEnumerable<CardDeckRelation> GetCurrentEnchantments()
-        {
-            if (CurrentDeck == null) return null;
-            return FilterCardEnumerator(App.Biz.Utils.GetEnchantments(CurrentDeck));
-        }
-        private IEnumerable<CardDeckRelation> GetCurrentArtifacts()
-        {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            return CurrentDeck.CardRelations.Where(
-                x => x.RelationType == 0
-                && x.Card != null
-                && x.Card.Card.Type.ToLower().Contains("artifact")
-                && (x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
-                .OrderBy(x => x.Card.Card.Cmc.Value)
-                .ThenBy(x => x.Card.Card.CardForeignName);
-        }
-        private IEnumerable<CardDeckRelation> GetCurrentNonBasicLands()
-        {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            return CurrentDeck.CardRelations.Where(
-                x => x.RelationType == 0
-                && x.Card != null
-                && x.Card.Card.Type.ToLower().Contains("land")
-                && !x.Card.Card.Type.ToLower().Contains("basic")
-                && (x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
-                .OrderBy(x => x.Card.Card.Cmc.Value)
-                .ThenBy(x => x.Card.Card.CardForeignName);
-        }
-        private IEnumerable<CardDeckRelation> GetCurrentBasicLands()
-        {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            return  CurrentDeck.CardRelations.Where(
-                x => x.RelationType == 0
-                && x.Card != null
-                && x.Card.Card.Type.ToLower().Contains("land")
-                && x.Card.Card.Type.ToLower().Contains("basic")
-                && (x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
-                .OrderBy(x => x.Card.Card.Cmc.Value)
-                .ThenBy(x => x.Card.Card.CardForeignName);
-        }
-        private IEnumerable<CardDeckRelation> GetCurrentOthers()
-        {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            return CurrentDeck.CardRelations.Where(
-                x => x.RelationType == 0
-                && x.Card != null
-                && !x.Card.Card.Type.ToLower().Contains("artifact")
-                && !x.Card.Card.Type.ToLower().Contains("creature")
-                && !x.Card.Card.Type.ToLower().Contains("instant")
-                && !x.Card.Card.Type.ToLower().Contains("sorcery")
-                && !x.Card.Card.Type.ToLower().Contains("enchantment")
-                && !x.Card.Card.Type.ToLower().Contains("land")
-                && (x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
-                .OrderBy(x => x.Card.Card.Cmc.Value)
-                .ThenBy(x => x.Card.Card.CardForeignName);
-        }
-        private IEnumerable<CardDeckRelation> GetCurrentSide()
-        {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            return CurrentDeck.CardRelations.Where(
-                x => x.RelationType == 2
-                && x.Card != null
-                && (x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower()) || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())))
-                .OrderBy(x => x.Card.Card.Cmc.Value)
-                .ThenBy(x => x.Card.Card.CardForeignName);
         }
 
         #endregion
 
         #region Methods
+
+        private async Task<IEnumerable<CardDeckRelation>> ApplyFilter(IEnumerable<CardDeckRelation> enumerable)
+        {
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            await Task.Run(() => {
+                rels = enumerable.Where(x =>
+                    x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
+                 || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower()));
+            });
+            return rels;
+        }
 
         private void LessCard(object sender, RoutedEventArgs e)
         {

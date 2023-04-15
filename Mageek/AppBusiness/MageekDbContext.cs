@@ -26,7 +26,7 @@ namespace MaGeek.AppBusiness
         public DbSet<CardDeckRelation> cardsInDecks { get; set; }
         public DbSet<CardTag> Tags { get; set; }
         public DbSet<Param> Params { get; set; }
-        public DbSet<Price> Prices { get; set; }
+        public DbSet<CardValue> Prices { get; set; }
         public DbSet<Legality> Legalities { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

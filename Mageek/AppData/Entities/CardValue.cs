@@ -3,7 +3,7 @@
 namespace MaGeek.AppData.Entities
 {
 
-    public class Price
+    public class CardValue
     {
         [Key]
         public string MultiverseId { get; set; }

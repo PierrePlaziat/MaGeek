@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using MaGeek.AppBusiness;
 
 namespace MaGeek.UI
 {
@@ -170,7 +171,7 @@ namespace MaGeek.UI
         private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
         {
             if (App.State.SelectedDeck == null) return;
-            float totalPrice = await App.Biz.Utils.EstimateDeckPrice(App.State.SelectedDeck);
+            float totalPrice = await MageekUtils.EstimateDeckPrice(App.State.SelectedDeck);
             MessageBox.Show("Estimation : " + totalPrice + " €");
         }
     }

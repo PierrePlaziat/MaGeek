@@ -10,11 +10,11 @@ using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 using System.Net;
 using System.IO;
-using MtgApiManager.Lib.Model;
 using Newtonsoft.Json;
 using ScryfallApi.Client.Models;
 using System.Threading;
-using Price = MaGeek.AppData.Entities.Price;
+using CardValue = MaGeek.AppData.Entities.CardValue;
+using System.Windows.Controls;
 
 namespace MaGeek.AppBusiness
 {
@@ -200,15 +200,15 @@ namespace MaGeek.AppBusiness
 
         #region Card Manips
 
-        public MagicCard FindCardById(string cardId)
+        public async Task<MagicCard> FindCardById(string cardId)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
-                return DB.cards.Where(x => x.CardId == cardId).FirstOrDefault();
+                return await DB.cards.Where(x => x.CardId == cardId).FirstOrDefaultAsync();
             }
         }
 
-        public void GotCard_Add(MagicCardVariant selectedCard)
+        public async Task GotCard_Add(MagicCardVariant selectedCard)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
@@ -217,11 +217,11 @@ namespace MaGeek.AppBusiness
                 var c = DB.cardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
                 c.Got++;
                 DB.Entry(c).State = EntityState.Modified;
-                DB.SaveChanges();
+                await DB.SaveChangesAsync();
             }
         }
 
-        public void GotCard_Remove(MagicCardVariant selectedCard)
+        public async Task GotCard_Remove(MagicCardVariant selectedCard)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
@@ -230,17 +230,17 @@ namespace MaGeek.AppBusiness
                 c.Got--;
                 if (c.Got < 0) c.Got = 0;
                 DB.Entry(c).State = EntityState.Modified;
-                DB.SaveChanges();
+                await DB.SaveChangesAsync();
             }
         }
 
-        public void SetFav(MagicCard card, string variantId)
+        public async Task SetFav(MagicCard card, string variantId)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 card.FavouriteVariant = variantId;
                 DB.Entry(card).State = EntityState.Modified;
-                DB.SaveChanges();
+                await DB.SaveChangesAsync();
             }
         }
 
@@ -248,276 +248,285 @@ namespace MaGeek.AppBusiness
 
         #region Tags
 
-        public List<CardTag> GetTagsDistinct()
+        public async Task<List<CardTag>> GetTagsDistinct()
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
-                return DB.Tags.GroupBy(x => x.Tag).Select(x => x.First()).ToList();
+                return await DB.Tags.GroupBy(x => x.Tag).Select(x => x.First()).ToListAsync();
             }
         }
 
-        public bool DoesCardHasTag(string cardId, string tagFilterSelected)
+        public async Task<bool> DoesCardHasTag(string cardId, string tagFilterSelected)
         {
-            return FindTagsForCard(cardId).Where(x => x.Tag == tagFilterSelected).Any();
+            return (await FindTagsForCard(cardId)).Where(x => x.Tag == tagFilterSelected).Any();
         }
 
-        public void TagCard(MagicCard selectedCard, string text)
+        public async Task TagCard(MagicCard selectedCard, string text)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 DB.Tags.Add(new CardTag(text, selectedCard));
-                DB.SaveChanges();
+                await DB.SaveChangesAsync();
             }
         }
 
-        public void UnTagCard(CardTag cardTag)
+        public async Task UnTagCard(CardTag cardTag)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 DB.Tags.Remove(cardTag);
-                DB.SaveChanges();
+                await DB.SaveChangesAsync();
             }
         }
 
-        public List<CardTag> FindTagsForCard(string cardId)
+        public async Task<List<CardTag>> FindTagsForCard(string cardId)
         {
             using (var DB = App.Biz.DB.GetNewContext())
             {
-                return DB.Tags.Where(x => x.CardId == cardId).ToList();
+                return await DB.Tags.Where(x => x.CardId == cardId).ToListAsync();
             }
         }
 
         #endregion
 
-        #region Mana
+        #region Devotions
 
-        public int[] GetManaCurve(MagicDeck deck)
-        {
-            var manaCurve = new int[11];
-            manaCurve[0] = deck.CardRelations.Where(x => !x.Card.Card.Type.ToLower().Contains("land") && x.Card.Card.Cmc == 0).Count();
-            manaCurve[1] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 1).Count();
-            manaCurve[2] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 2).Count();
-            manaCurve[3] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 3).Count();
-            manaCurve[4] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 4).Count();
-            manaCurve[5] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 5).Count();
-            manaCurve[6] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 6).Count();
-            manaCurve[7] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 7).Count();
-            manaCurve[8] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 8).Count();
-            manaCurve[9] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 9).Count();
-            manaCurve[10] = deck.CardRelations.Where(x => x.Card.Card.Cmc >= 10).Count();
-            return manaCurve;
-        }
-
-        // TODO : Too Slow, maybe directly store in deck like card quantity
-        public string DeckColors(MagicDeck deck)
-        {
-            string retour = "";
-            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("B")).Any()) retour += "B";
-            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("W")).Any()) retour += "W";
-            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("U")).Any()) retour += "U";
-            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("G")).Any()) retour += "G";
-            if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("R")).Any()) retour += "R";
-            return retour;
-        }
-
-        public int DevotionB(MagicDeck deck)
+        public async Task<int> DevotionB(MagicDeck deck)
         {
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += DevotionB(c.Card.Card) * c.Quantity;
+            foreach (var c in deck.CardRelations) devotion += await DevotionB(c.Card.Card) * c.Quantity;
             return devotion;
         }
-        public int DevotionW(MagicDeck deck)
+        public async Task<int> DevotionW(MagicDeck deck)
         {
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += DevotionW(c.Card.Card) * c.Quantity;
+            foreach (var c in deck.CardRelations) devotion += await DevotionW(c.Card.Card) * c.Quantity;
             return devotion;
         }
-        public int DevotionU(MagicDeck deck)
+        public async Task<int> DevotionU(MagicDeck deck)
         {
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += DevotionU(c.Card.Card) * c.Quantity;
+            foreach (var c in deck.CardRelations) devotion += await DevotionU(c.Card.Card) * c.Quantity;
             return devotion;
         }
-        public int DevotionG(MagicDeck deck)
+        public async Task<int> DevotionG(MagicDeck deck)
         {
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += DevotionG(c.Card.Card) * c.Quantity;
+            foreach (var c in deck.CardRelations) devotion += await DevotionG(c.Card.Card) * c.Quantity;
             return devotion;
         }
-        public int DevotionR(MagicDeck deck)
+        public async Task<int> DevotionR(MagicDeck deck)
         {
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += DevotionR(c.Card.Card) * c.Quantity;
+            foreach (var c in deck.CardRelations) devotion += await DevotionR(c.Card.Card) * c.Quantity;
             return devotion;
         }
 
-        private int DevotionB(MagicCard card)
+        private async Task<int> DevotionB(MagicCard card)
         {
-            return card.ManaCost != null ?
+            int devotion = 0;
+            await Task.Run(() => {
+                devotion = card.ManaCost != null ?
                 card.ManaCost.Length - card.ManaCost.Replace("B", "").Length
                 : 0;
+            });
+            return devotion;
         }
-        private int DevotionW(MagicCard card)
+        private async Task<int> DevotionW(MagicCard card)
         {
-            return card.ManaCost != null ?
+            int devotion = 0;
+            await Task.Run(() => {
+                devotion = card.ManaCost != null ?
                 card.ManaCost.Length - card.ManaCost.Replace("W", "").Length
                 : 0;
+            });
+            return devotion;
         }
-        private int DevotionU(MagicCard card)
+        private async Task<int> DevotionU(MagicCard card)
         {
-            return card.ManaCost != null ?
+            int devotion = 0;
+            await Task.Run(() => {
+                devotion = card.ManaCost != null ?
                 card.ManaCost.Length - card.ManaCost.Replace("U", "").Length
                 : 0;
+            });
+            return devotion;
         }
-        private int DevotionG(MagicCard card)
+        private async Task<int> DevotionG(MagicCard card)
         {
-            return card.ManaCost != null ?
+            int devotion = 0;
+            await Task.Run(() => {
+                devotion = card.ManaCost != null ?
                 card.ManaCost.Length - card.ManaCost.Replace("G", "").Length
                 : 0;
+            });
+            return devotion;
         }
-        private int DevotionR(MagicCard card)
+        private async Task<int> DevotionR(MagicCard card)
         {
-            return card.ManaCost != null ?
+            int devotion = 0;
+            await Task.Run(() => {
+                devotion = card.ManaCost != null ?
                 card.ManaCost.Length - card.ManaCost.Replace("R", "").Length
                 : 0;
+            });
+            return devotion;
         }
 
         #endregion
 
         #region counts
 
-        public int count_Total(MagicDeck deck)
+        public async Task<int> count_Total(MagicDeck deck)
         {
             int count = 0;
-            if (deck != null && deck.CardRelations != null)
-            {
-                foreach (var card in deck.CardRelations.Where(x => x.RelationType < 2))
+            await Task.Run(() => {
+                if (deck != null && deck.CardRelations != null)
                 {
-                    count += card.Quantity;
+                    foreach (var card in deck.CardRelations.Where(x => x.RelationType < 2))
+                    {
+                        count += card.Quantity;
+                    }
                 }
-            }
+            });
             return count;
         }
 
-        public int count_Creature(MagicDeck deck)
+        public async Task<int> count_Creature(MagicDeck deck)
         {
             int count = 0;
-            if (deck != null && deck.CardRelations!=null)
-            {
-                foreach (var v in deck.CardRelations.Where(x => x.Card!=null && x.Card.Card.Type.ToLower().Contains("creature")))
+            await Task.Run(() => {
+                if (deck != null && deck.CardRelations!=null)
                 {
-                    count += v.Quantity;
-                };
-            }
+                    foreach (var v in deck.CardRelations.Where(x => x.Card!=null && x.Card.Card.Type.ToLower().Contains("creature")))
+                    {
+                        count += v.Quantity;
+                    };
+                }
+            });
             return count;
         }
 
-        public int count_Instant(MagicDeck deck)
+        public async Task<int> count_Instant(MagicDeck deck)
         {
             int count = 0;
-            if (deck != null && deck.CardRelations != null)
-            {
-                foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("instant")))
+            await Task.Run(() => {
+                if (deck != null && deck.CardRelations != null)
                 {
-                    count += v.Quantity;
-                };
-            }
+                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("instant")))
+                    {
+                        count += v.Quantity;
+                    };
+                }
+            });
             return count;
         }
 
-        public int count_Sorcery(MagicDeck deck)
+        public async Task<int> count_Sorcery(MagicDeck deck)
         {
             int count = 0;
-            if (deck != null && deck.CardRelations != null)
-            {
-                foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("sorcery")))
+            await Task.Run(() => {
+                if (deck != null && deck.CardRelations != null)
                 {
-                    count += v.Quantity;
-                };
-            }
+                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("sorcery")))
+                    {
+                        count += v.Quantity;
+                    };
+                }
+            });
             return count;
         }
 
-        public int count_Enchantment(MagicDeck deck)
+        public async Task<int> count_Enchantment(MagicDeck deck)
         {
             int count = 0;
-            if (deck != null && deck.CardRelations != null)
-            {
-                foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("enchantment")))
+            await Task.Run(() => {
+                if (deck != null && deck.CardRelations != null)
                 {
-                    count += v.Quantity;
-                };
-            }
+                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("enchantment")))
+                    {
+                        count += v.Quantity;
+                    };
+                }
+            });
             return count;
         }
 
-        public int count_Artifact(MagicDeck deck)
+        public async Task<int> count_Artifact(MagicDeck deck)
         {
             int count = 0;
-            if (deck != null && deck.CardRelations != null)
-            {
-                foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("artifact")))
+            await Task.Run(() => {
+                if (deck != null && deck.CardRelations != null)
                 {
-                    count += v.Quantity;
-                };
-            }
+                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("artifact")))
+                    {
+                        count += v.Quantity;
+                    };
+                }
+            });
             return count;
         }
 
-        public int count_BasicLand(MagicDeck deck)
+        public async Task<int> count_BasicLand(MagicDeck deck)
         {
             int count = 0;
-            if (deck != null && deck.CardRelations != null)
-            {
-                foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("basic land")))
+            await Task.Run(() => {
+                if (deck != null && deck.CardRelations != null)
                 {
-                    count += v.Quantity;
-                };
-            }
+                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("basic land")))
+                    {
+                        count += v.Quantity;
+                    };
+                }
+            });
             return count;
         }
 
-        public int count_SpecialLand(MagicDeck deck)
+        public async Task<int> count_SpecialLand(MagicDeck deck)
         {
             int count = 0;
-            if (deck != null && deck.CardRelations != null)
-            {
-                foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("land") && !x.Card.Card.Type.ToLower().Contains("basic")))
+            await Task.Run(() => {
+                if (deck != null && deck.CardRelations != null)
                 {
-                    count += v.Quantity;
-                };
-            }
+                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("land") && !x.Card.Card.Type.ToLower().Contains("basic")))
+                    {
+                        count += v.Quantity;
+                    };
+                }
+            });
             return count;
         }
 
-        public int count_other(MagicDeck deck)
+        public async Task<int> count_other(MagicDeck deck)
         {
 
             int count = 0;
-            if (deck != null && deck.CardRelations != null)
-            {
-                foreach (var v in deck.CardRelations.Where(x => 
-                    ! x.Card.Card.Type.ToLower().Contains("creature") &&
-                    ! x.Card.Card.Type.ToLower().Contains("instant") &&
-                    ! x.Card.Card.Type.ToLower().Contains("sorcery") &&
-                    ! x.Card.Card.Type.ToLower().Contains("enchantment") &&
-                    ! x.Card.Card.Type.ToLower().Contains("artifact") &&
-                    ! x.Card.Card.Type.ToLower().Contains("land")
-                ))
+            await Task.Run(() => {
+                if (deck != null && deck.CardRelations != null)
                 {
-                    count += v.Quantity;
-                };
-            }
+                    foreach (var v in deck.CardRelations.Where(x => 
+                        ! x.Card.Card.Type.ToLower().Contains("creature") &&
+                        ! x.Card.Card.Type.ToLower().Contains("instant") &&
+                        ! x.Card.Card.Type.ToLower().Contains("sorcery") &&
+                        ! x.Card.Card.Type.ToLower().Contains("enchantment") &&
+                        ! x.Card.Card.Type.ToLower().Contains("artifact") &&
+                        ! x.Card.Card.Type.ToLower().Contains("land")
+                    ))
+                    {
+                        count += v.Quantity;
+                    };
+                }
+            });
             return count;
         }
 
@@ -525,87 +534,202 @@ namespace MaGeek.AppBusiness
 
         #region Types
 
-        public IEnumerable<CardDeckRelation> GetCommanders(MagicDeck deck)
+        public async Task<IEnumerable<CardDeckRelation>> GetCommanders(MagicDeck deck)
         {
-            if (deck == null || deck.CardRelations == null) return null;
-            return deck.CardRelations.Where(x => x.RelationType == 1);
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(x => x.RelationType == 1);
+            });
+            return rels;
         }
-
-        public IEnumerable<CardDeckRelation> GetCreatures(MagicDeck currentDeck)
+        public async Task<IEnumerable<CardDeckRelation>> GetCreatures(MagicDeck deck)
         {
-            if (currentDeck == null || currentDeck.CardRelations == null) return null;
-            return currentDeck.CardRelations.Where(
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(
                 x => x.RelationType == 0
-                && x.Card!=null && x.Card.Card.Type.ToLower().Contains("creature"))
+                && x.Card != null && x.Card.Card.Type.ToLower().Contains("creature"))
                 .OrderBy(x => x.Card.Card.Cmc.Value)
                 .ThenBy(x => x.Card.Card.CardForeignName);
+            });
+            return rels;
         }
-
-        public IEnumerable<CardDeckRelation> GetInstants(MagicDeck currentDeck)
+        public async Task<IEnumerable<CardDeckRelation>> GetInstants(MagicDeck deck)
         {
-            if (currentDeck == null || currentDeck.CardRelations == null) return null;
-            return currentDeck.CardRelations.Where(
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(
                 x => x.RelationType == 0
                 && x.Card != null && x.Card.Card.Type.ToLower().Contains("instant"))
                 .OrderBy(x => x.Card.Card.Cmc.Value)
                 .ThenBy(x => x.Card.Card.CardForeignName);
+            });
+            return rels;
         }
-
-        public IEnumerable<CardDeckRelation> GetSorceries(MagicDeck currentDeck)
+        public async Task<IEnumerable<CardDeckRelation>> GetSorceries(MagicDeck deck)
         {
-            if (currentDeck == null || currentDeck.CardRelations == null) return null;
-            return currentDeck.CardRelations.Where(
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(
                 x => x.RelationType == 0
                 && x.Card != null && x.Card.Card.Type.ToLower().Contains("sorcery"))
                 .OrderBy(x => x.Card.Card.Cmc.Value)
                 .ThenBy(x => x.Card.Card.CardForeignName);
+            });
+            return rels;
         }
-
-        public IEnumerable<CardDeckRelation> GetEnchantments(MagicDeck currentDeck)
+        public async Task<IEnumerable<CardDeckRelation>> GetEnchantments(MagicDeck deck)
         {
-            if (currentDeck == null || currentDeck.CardRelations == null) return null;
-            return currentDeck.CardRelations.Where(
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(
                 x => x.RelationType == 0
-                && x.Card!=null && x.Card.Card.Type.ToLower().Contains("enchantment"))
+                && x.Card != null && x.Card.Card.Type.ToLower().Contains("enchantment"))
                 .OrderBy(x => x.Card.Card.Cmc.Value)
                 .ThenBy(x => x.Card.Card.CardForeignName);
+            });
+            return rels;
+        }
+        public async Task<IEnumerable<CardDeckRelation>> GetCurrentArtifacts(MagicDeck deck)
+        {
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(
+                x => x.RelationType == 0
+                && x.Card != null
+                && x.Card.Card.Type.ToLower().Contains("artifact"))
+                .OrderBy(x => x.Card.Card.Cmc.Value)
+                .ThenBy(x => x.Card.Card.CardForeignName);
+            });
+            return rels;
+        }
+        public async Task<IEnumerable<CardDeckRelation>> GetCurrentNonBasicLands(MagicDeck deck)
+        {
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(
+                x => x.RelationType == 0
+                && x.Card != null
+                && x.Card.Card.Type.ToLower().Contains("land")
+                && !x.Card.Card.Type.ToLower().Contains("basic"))
+                .OrderBy(x => x.Card.Card.Cmc.Value)
+                .ThenBy(x => x.Card.Card.CardForeignName);
+            });
+            return rels;
+        }
+        public async Task<IEnumerable<CardDeckRelation>> GetCurrentBasicLands(MagicDeck deck)
+        {
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(
+                x => x.RelationType == 0
+                && x.Card != null
+                && x.Card.Card.Type.ToLower().Contains("land")
+                && x.Card.Card.Type.ToLower().Contains("basic"))
+                .OrderBy(x => x.Card.Card.Cmc.Value)
+                .ThenBy(x => x.Card.Card.CardForeignName);
+            });
+            return rels;
+        }
+        public async Task<IEnumerable<CardDeckRelation>> GetCurrentOthers(MagicDeck deck)
+        {
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(
+                x => x.RelationType == 0
+                && x.Card != null
+                && !x.Card.Card.Type.ToLower().Contains("artifact")
+                && !x.Card.Card.Type.ToLower().Contains("creature")
+                && !x.Card.Card.Type.ToLower().Contains("instant")
+                && !x.Card.Card.Type.ToLower().Contains("sorcery")
+                && !x.Card.Card.Type.ToLower().Contains("enchantment")
+                && !x.Card.Card.Type.ToLower().Contains("land"))
+                .OrderBy(x => x.Card.Card.Cmc.Value)
+                .ThenBy(x => x.Card.Card.CardForeignName);
+            });
+            return rels;
+        }
+        public async Task<IEnumerable<CardDeckRelation>> GetCurrentSide(MagicDeck deck)
+        {
+            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            if (deck == null || deck.CardRelations == null) return rels;
+            await Task.Run(() => {
+                rels = deck.CardRelations.Where(
+                x => x.RelationType == 2
+                && x.Card != null)
+                .OrderBy(x => x.Card.Card.Cmc.Value)
+                .ThenBy(x => x.Card.Card.CardForeignName);
+            });
+            return rels;
         }
 
         #endregion
 
-        #region Owned / Missing
+        #region Stats
 
-        public int OwnedRatio(MagicDeck currentDeck)
+        public async Task<int[]> GetManaCurve(MagicDeck deck)
+        {
+            var manaCurve = new int[11];
+            await Task.Run(() => {
+                manaCurve[0] = deck.CardRelations.Where(x => !x.Card.Card.Type.ToLower().Contains("land") && x.Card.Card.Cmc == 0).Count();
+                manaCurve[1] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 1).Count();
+                manaCurve[2] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 2).Count();
+                manaCurve[3] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 3).Count();
+                manaCurve[4] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 4).Count();
+                manaCurve[5] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 5).Count();
+                manaCurve[6] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 6).Count();
+                manaCurve[7] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 7).Count();
+                manaCurve[8] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 8).Count();
+                manaCurve[9] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 9).Count();
+                manaCurve[10] = deck.CardRelations.Where(x => x.Card.Card.Cmc >= 10).Count();
+            });
+            return manaCurve;
+        }
+
+        public async Task<int> OwnedRatio(MagicDeck currentDeck)
         {
             if (currentDeck == null) return 0;
             if (currentDeck.CardRelations == null) return 0;
             int total = 0;
             int miss = 0;
-            foreach (var v in currentDeck.CardRelations)
-            {
-                total += v.Quantity;
+            await Task.Run(() => {
+                foreach (var v in currentDeck.CardRelations)
+                {
+                    total += v.Quantity;
 
-                int got = v.Card.Got;
-                int need = v.Quantity;
-                int diff = need - got;
-                if (diff > 0) miss += diff;
-            }
+                    int got = v.Card.Got;
+                    int need = v.Quantity;
+                    int diff = need - got;
+                    if (diff > 0) miss += diff;
+                }
+            });
             if (total == 0) return 100;
             return 100 - miss * 100 / total;
         }
 
-        public string ListMissingCards(MagicDeck currentDeck)
+        public async Task<string> ListMissingCards(MagicDeck currentDeck)
         {
             if (currentDeck == null) return null;
             if (currentDeck.CardRelations == null) return null;
             string missList = "";
-            foreach (var v in currentDeck.CardRelations)
-            {
-                int got = v.Card.Got;
-                int need = v.Quantity;
-                int diff = need - got;
-                if (diff > 0) missList += diff + " " + v.Card.Card.CardId + "\n";
-            }
+            await Task.Run(() => {
+                foreach (var v in currentDeck.CardRelations)
+                {
+                    int got = v.Card.Got;
+                    int need = v.Quantity;
+                    int diff = need - got;
+                    if (diff > 0) missList += diff + " " + v.Card.Card.CardId + "\n";
+                }
+            });
             return missList;
         }
 
@@ -614,54 +738,43 @@ namespace MaGeek.AppBusiness
         // TODO : all formats, check card validity
         #region Validities
 
-        public bool validity_Standard(MagicDeck deck)
+        public async Task<bool> validity_Standard(MagicDeck deck)
         {
             if (deck == null) return false;
             bool ok = true;
+
             ok = ok && deck.CardCount >= 60;
-            ok = ok && RespectsMaxCardOccurence(deck, 4);
+            ok = ok && await RespectsMaxCardOccurence(deck, 4);
+
             return ok;
         }
 
-        public bool validity_Commander(MagicDeck deck)
+        public async Task<bool> validity_Commander(MagicDeck deck)
         {
             if (deck == null) return false;
             bool ok = true;
             ok = ok && deck.CardCount == 100;
-            ok = ok && RespectsMaxCardOccurence(deck, 1);
+            ok = ok && await RespectsMaxCardOccurence(deck, 1);
             ok = ok && deck.CardRelations.Where(x => x.RelationType == 1).Any();
             return ok;
         }
 
-        private bool RespectsMaxCardOccurence(MagicDeck deck, int limit)
+        private async Task<bool> RespectsMaxCardOccurence(MagicDeck deck, int limit)
         {
             if (deck == null) return false;
             bool ok = true;
-            foreach (var v in deck.CardRelations.Where(x => !x.Card.Card.Type.ToString().ToLower().Contains("land")))
-            {
-                if (v.Quantity > limit) ok = false;
-            }
+            await Task.Run(() => {
+                foreach (var v in deck.CardRelations.Where(x => !x.Card.Card.Type.ToString().ToLower().Contains("land")))
+                {
+                    if (v.Quantity > limit) ok = false;
+                }
+            });
             return ok;
         }
+
         #endregion
 
-        public static async Task RetrieveTimeVariingInfos(MagicCardVariant variant)
-        {
-            // Guard
-            if (string.IsNullOrEmpty(variant.MultiverseId)) return;
-            Thread.Sleep(150);
-            // Ask
-            var json_data = await HttpUtils.Get("https://api.scryfall.com/cards/multiverse/" + variant.MultiverseId);
-            if (json_data == string.Empty) return;
-            // Parse
-            var scryCard = JsonConvert.DeserializeObject<Card>(json_data);
-            float priceEur = scryCard.Prices.Eur.HasValue ? float.Parse(scryCard.Prices.Eur.Value.ToString()) : -1;
-            float priceUsd = scryCard.Prices.Usd.HasValue ? float.Parse(scryCard.Prices.Eur.Value.ToString()) : -1;
-            // Done
-            await SavePrice(variant.MultiverseId, priceEur, priceUsd, scryCard.EdhrecRank);
-            await SaveLegality(variant.MultiverseId, scryCard.Legalities);
-            await SaveRelated(variant.MultiverseId, scryCard.RelatedUris);
-        }
+        #region TimeVariingInfos
 
         public static async Task<List<Legality>> GetCardLegal(MagicCardVariant variant)
         {
@@ -690,10 +803,7 @@ namespace MaGeek.AppBusiness
             return legal;
         }
 
-
-        #region Prices
-
-        public async Task<float> EstimateDeckPrice(MagicDeck selectedDeck)
+        public static async Task<float> EstimateDeckPrice(MagicDeck selectedDeck)
         {
             float total = 0;
             foreach (var v in selectedDeck.CardRelations)
@@ -703,10 +813,10 @@ namespace MaGeek.AppBusiness
             return total;
         }
 
-        public static async Task<Price> GetPrice(MagicCardVariant variant)
+        public static async Task<CardValue> GetPrice(MagicCardVariant variant)
         {
             if (variant == null) return null;
-            Price price;
+            CardValue price;
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 price = DB.Prices.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefault();
@@ -728,6 +838,89 @@ namespace MaGeek.AppBusiness
             return price;
         }
 
+        private static async Task RetrieveTimeVariingInfos(MagicCardVariant variant)
+        {
+            // Guard
+            if (string.IsNullOrEmpty(variant.MultiverseId)) return;
+            Thread.Sleep(150);
+            // Ask
+            var json_data = await HttpUtils.Get("https://api.scryfall.com/cards/multiverse/" + variant.MultiverseId);
+            if (json_data == string.Empty) return;
+            // Parse
+            var scryCard = JsonConvert.DeserializeObject<Card>(json_data);
+            float priceEur = scryCard.Prices.Eur.HasValue ? float.Parse(scryCard.Prices.Eur.Value.ToString()) : -1;
+            float priceUsd = scryCard.Prices.Usd.HasValue ? float.Parse(scryCard.Prices.Eur.Value.ToString()) : -1;
+            // Done
+            await SavePrice(variant.MultiverseId, priceEur, priceUsd, scryCard.EdhrecRank);
+            await SaveLegality(variant.MultiverseId, scryCard.Legalities);
+            await SaveRelated(variant.MultiverseId, scryCard.RelatedUris);
+        }
+
+        private static async Task SavePrice(string multiverseId, float priceEur, float priceUsd, int edhRank)
+        {
+            using var DB = App.Biz.DB.GetNewContext();
+            DB.Prices.Add(
+                new CardValue()
+                {
+                    MultiverseId = multiverseId,
+                    LastUpdate = DateTime.Now.ToString(),
+                    ValueEur = priceEur,
+                    ValueUsd= priceUsd,
+                    EdhScore = edhRank,
+                }
+            );
+            await DB.SaveChangesAsync();
+        }
+
+        private static async Task SaveRelated(string multiverseId, Dictionary<string, Uri> related) //TODO
+        {
+            throw new NotImplementedException();
+        }
+
+        private static async Task SaveLegality(string multiverseId, Dictionary<string, string> legalityDico)
+        {
+            List<Legality> legal = new();
+            foreach (var l in legalityDico)
+            {
+                legal.Add(new Legality()
+                {
+                    Format = l.Key,
+                    IsLegal = l.Value,
+                    LastUpdate = DateTime.Now.ToString(),
+                    MultiverseId = multiverseId,
+                });
+            }
+            using var DB = App.Biz.DB.GetNewContext();
+            {
+                DB.Legalities.AddRange(legal);
+                await DB.SaveChangesAsync();
+            }
+        }
+
+        private static bool IsOutDated(string lastUpdate, int dayLimit)
+        {
+            DateTime lastUp = DateTime.Parse(lastUpdate);
+            if (lastUp < DateTime.Now.AddDays(-dayLimit)) return true;
+            else return false;
+        }
+
+        #endregion
+
+        // TODO : Too Slow, maybe directly store in deck like card quantity
+        public async Task<string> DeckColors(MagicDeck deck)
+        {
+            string retour = "";
+            await Task.Run(() => {
+                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("B")).Any()) retour += "B";
+                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("W")).Any()) retour += "W";
+                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("U")).Any()) retour += "U";
+                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("G")).Any()) retour += "G";
+                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains("R")).Any()) retour += "R";
+            });
+            return retour;
+        }
+
+        // TODO : WebClient is obsolete
         public static async Task<BitmapImage> RetrieveImage(MagicCardVariant magicCardVariant)
         {
             var taskCompletion = new TaskCompletionSource<BitmapImage>();
@@ -755,55 +948,6 @@ namespace MaGeek.AppBusiness
             return img;
         }
 
-        public static async Task SavePrice(string multiverseId, float priceEur, float priceUsd, int edhRank)
-        {
-            using var DB = App.Biz.DB.GetNewContext();
-            DB.Prices.Add(
-                new Price()
-                {
-                    MultiverseId = multiverseId,
-                    LastUpdate = DateTime.Now.ToString(),
-                    ValueEur = priceEur,
-                    ValueUsd= priceUsd,
-                    EdhScore = edhRank,
-                }
-            );
-            await DB.SaveChangesAsync();
-        }
-
-        #endregion
-
-        private static bool IsOutDated(string lastUpdate, int dayLimit)
-        {
-            DateTime lastUp = DateTime.Parse(lastUpdate);
-            if (lastUp < DateTime.Now.AddDays(-dayLimit)) return true;
-            else return false;
-        }
-
-        internal static async Task SaveRelated(string multiverseId, Dictionary<string, Uri> related)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal static async Task SaveLegality(string multiverseId, Dictionary<string, string> legalityDico)
-        {
-            List<Legality> legal = new();
-            foreach (var l in legalityDico)
-            {
-                legal.Add(new Legality()
-                {
-                    Format = l.Key,
-                    IsLegal = l.Value,
-                    LastUpdate = DateTime.Now.ToString(),
-                    MultiverseId = multiverseId,
-                });
-            }
-            using var DB = App.Biz.DB.GetNewContext();
-            {
-                DB.Legalities.AddRange(legal);
-                await DB.SaveChangesAsync();
-            }
-        }
     }
 
 }

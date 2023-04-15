@@ -103,22 +103,22 @@ namespace MaGeek.UI
         private async Task DoAsyncReload()
         {
             IsLoading = Visibility.Visible;
-            await Task.Run(() => { CreatureCount = GetCreatureCount(); });
-            await Task.Run(() => { InstantCount = GetInstantCount(); });
-            await Task.Run(() => { SorceryCount = GetSorceryCount(); });
-            await Task.Run(() => { EnchantmentCount = GetEnchantmentCount(); });
-            await Task.Run(() => { ArtifactCount = GetArtifactCount(); });
-            await Task.Run(() => { BasicLandCount = GetBasicLandCount(); });
-            await Task.Run(() => { SpecialLandCount = GetSpecialLandCount(); });
-            await Task.Run(() => { OtherCount = GetOtherCount(); });
-            await Task.Run(() => { DevotionB = GetDevotionB(); });
-            await Task.Run(() => { DevotionW = GetDevotionW(); });
-            await Task.Run(() => { DevotionU = GetDevotionU(); });
-            await Task.Run(() => { DevotionG = GetDevotionG(); });
-            await Task.Run(() => { DevotionR = GetDevotionR(); });
-            await Task.Run(() => { StandardOk = GetStandardOk(); });
-            await Task.Run(() => { CommanderOk = GetCommanderOk(); });
-            await Task.Run(() => { OwnedRatio = GetOwnedRatio(); });
+            CreatureCount = await App.Biz.Utils.count_Creature(currentDeck);
+            InstantCount = await App.Biz.Utils.count_Instant(currentDeck);
+            SorceryCount = await App.Biz.Utils.count_Sorcery(currentDeck);
+            EnchantmentCount = await App.Biz.Utils.count_Enchantment(currentDeck); 
+            ArtifactCount = await App.Biz.Utils.count_Artifact(currentDeck);
+            BasicLandCount = await App.Biz.Utils.count_BasicLand(currentDeck);
+            SpecialLandCount = await App.Biz.Utils.count_SpecialLand(currentDeck);
+            OtherCount = await App.Biz.Utils.count_other(currentDeck);
+            DevotionB = await App.Biz.Utils.DevotionB(currentDeck);
+            DevotionW = await App.Biz.Utils.DevotionW(currentDeck);
+            DevotionU = await App.Biz.Utils.DevotionU(currentDeck);
+            DevotionG = await App.Biz.Utils.DevotionG(currentDeck);
+            DevotionR = await App.Biz.Utils.DevotionR(currentDeck);
+            StandardOk = await App.Biz.Utils.validity_Standard(currentDeck) ? "YES" : "NO";
+            CommanderOk = await App.Biz.Utils.validity_Commander(currentDeck) ? "YES" : "NO";
+            OwnedRatio = await App.Biz.Utils.OwnedRatio(currentDeck);
             await Task.Run(() => {
                 OnPropertyChanged(nameof(CreatureCount));
                 OnPropertyChanged(nameof(InstantCount));
@@ -137,10 +137,7 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(DevotionR));
                 OnPropertyChanged(nameof(OwnedRatio));
             });
-            int[] manacurve = new int[0];
-            await Task.Run(() => { 
-                manacurve = App.Biz.Utils.GetManaCurve(currentDeck);
-            });
+            int[] manacurve = await App.Biz.Utils.GetManaCurve(currentDeck);
             DrawNewHand();
             DrawManacurve(manacurve);
             await Task.Run(() =>
@@ -151,32 +148,11 @@ namespace MaGeek.UI
 
         #endregion
 
-        #region Data Retrieve
-
-        private int GetCreatureCount() { return App.Biz.Utils.count_Creature(currentDeck); }
-        private int GetInstantCount() { return App.Biz.Utils.count_Instant(currentDeck); }
-        private int GetSorceryCount() { return App.Biz.Utils.count_Sorcery(currentDeck); }
-        private int GetEnchantmentCount() { return App.Biz.Utils.count_Enchantment(currentDeck); }
-        private int GetArtifactCount() { return App.Biz.Utils.count_Artifact(currentDeck); }
-        private int GetBasicLandCount() { return App.Biz.Utils.count_BasicLand(currentDeck); }
-        private int GetSpecialLandCount() { return App.Biz.Utils.count_SpecialLand(currentDeck); }
-        private int GetOtherCount() { return App.Biz.Utils.count_other(currentDeck); }
-        private int GetDevotionB() { return App.Biz.Utils.DevotionB(currentDeck); }
-        private int GetDevotionW() { return App.Biz.Utils.DevotionW(currentDeck); }
-        private int GetDevotionU() { return App.Biz.Utils.DevotionU(currentDeck); }
-        private int GetDevotionG() { return App.Biz.Utils.DevotionG(currentDeck); }
-        private int GetDevotionR() { return App.Biz.Utils.DevotionR(currentDeck); }
-        private string GetStandardOk() { return App.Biz.Utils.validity_Standard(currentDeck) ? "YES" : "NO"; }
-        private string GetCommanderOk() { return App.Biz.Utils.validity_Commander(currentDeck) ? "YES" : "NO"; }
-        private int GetOwnedRatio() { return App.Biz.Utils.OwnedRatio(currentDeck); }
-
-        #endregion
-
         #region Methods
 
-        private void ListMissing(object sender, RoutedEventArgs e)
+        private async void ListMissing(object sender, RoutedEventArgs e)
         {
-            string missList = App.Biz.Utils.ListMissingCards(currentDeck);
+            string missList = await App.Biz.Utils.ListMissingCards(currentDeck);
             if (!string.IsNullOrEmpty(missList))
             {
                 var window = new DeckListExporter(missList);

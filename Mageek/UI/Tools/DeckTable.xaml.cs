@@ -1,5 +1,4 @@
 ﻿using MaGeek.AppData.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -119,11 +118,6 @@ namespace MaGeek.UI
 
         #region Data Retrieve
 
-        private List<CardDeckRelation> GetCardRelations_Commandant()
-        {
-            if (CurrentDeck == null) return null;
-            return App.Biz.Utils.GetCommanders(CurrentDeck).ToList();
-        }
         private List<CardDeckRelation> GetCardRelations_Lands()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
@@ -469,9 +463,9 @@ namespace MaGeek.UI
         private async Task DoAsyncReload()
         {
             IsLoading = Visibility.Visible;
+            CardRelations_Commandant = (await App.Biz.Utils.GetCommanders(CurrentDeck)).ToList();
             await Task.Run(() =>
             {
-                CardRelations_Commandant = GetCardRelations_Commandant();
                 CardRelations_Lands = GetCardRelations_Lands();
                 CardRelations_Lands_B = GetCardRelations_Lands_B();
                 CardRelations_Lands_W = GetCardRelations_Lands_W();

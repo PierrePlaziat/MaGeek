@@ -42,7 +42,7 @@ namespace MaGeek.AppData.Entities
             IsCustom = 0;
             Got = 0;
             MultiverseId = selectedCard.MultiverseId;
-            Card = App.Biz.Utils.FindCardById(selectedCard.Name);
+            Card = App.Biz.Utils.FindCardById(selectedCard.Name).Result;
         }
 
         #endregion
