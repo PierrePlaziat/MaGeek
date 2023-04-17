@@ -1,4 +1,5 @@
 ﻿using MaGeek.Utils.CommonWpf;
+using System;
 using System.Windows;
 
 namespace Plaziat.CommonWpf
@@ -38,6 +39,15 @@ namespace Plaziat.CommonWpf
             else return null;
         }
 
+        internal static void ShowError(string errorTitle, Exception e)
+        {
+            string msg = "ERROR : "+ errorTitle + " \n\n>>> " + e.Message;
+            if (e.InnerException != null)
+            {
+                msg += " \n\n>>> " + e.InnerException.Message;
+            }
+            ShowMsg(msg);
+        }
     }
 
 }

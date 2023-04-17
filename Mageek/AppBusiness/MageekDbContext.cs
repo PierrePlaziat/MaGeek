@@ -28,6 +28,7 @@ namespace MaGeek.AppBusiness
         public DbSet<Param> Params { get; set; }
         public DbSet<CardValue> CardValues { get; set; }
         public DbSet<Legality> Legalities { get; set; }
+        public DbSet<CardCardRelation> CardRelations { get; set; } // check model creation, add to db
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -66,6 +67,10 @@ namespace MaGeek.AppBusiness
 
             modelBuilder.Entity<Legality>()
                 .Property(e => e.Id).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<CardCardRelation>()
+                //.HasMany(e => e.Card2).WithMany(e => e.Variants) //TODO
+                .Property(e => e.RelationId).ValueGeneratedOnAdd();
         }
 
         internal void DeleteAllContent()

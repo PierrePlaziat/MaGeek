@@ -116,8 +116,8 @@ namespace MaGeek.UI
             DevotionU = await App.Biz.Utils.DevotionU(currentDeck);
             DevotionG = await App.Biz.Utils.DevotionG(currentDeck);
             DevotionR = await App.Biz.Utils.DevotionR(currentDeck);
-            StandardOk = await App.Biz.Utils.validity_Standard(currentDeck) ? "YES" : "NO";
-            CommanderOk = await App.Biz.Utils.validity_Commander(currentDeck) ? "YES" : "NO";
+            StandardOk = await App.Biz.Utils.Validity_Standard(currentDeck) ? "YES" : "NO";
+            CommanderOk = await App.Biz.Utils.Validity_Commander(currentDeck) ? "YES" : "NO";
             OwnedRatio = await App.Biz.Utils.OwnedRatio(currentDeck);
             await Task.Run(() => {
                 OnPropertyChanged(nameof(CreatureCount));

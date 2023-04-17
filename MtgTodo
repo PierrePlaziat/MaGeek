@@ -1,21 +1,25 @@
 
 TODO
 
-	.	proxy support
-			Testing
-	.	legality integration int deckstats
-	.	advanced card search
+Bug with "-" in card name
+
+DB price table
+
+	! 	check all db access (need to test importation now)
+	.	advanced card search with scryfall
+	.	better legality deck check
+	.	proxy support (currently got Blank pdf)
+	.	speed up deck duplication
+	
 	
 LATER
-	
-	.	custom cards support	>	how to generate image ?
-	.	profiles				>	Folders in Appdata containing db and importer state
-	.	tags sort and stats for deck
-	.	auto deck
-	.	pie charts
-	
-BUGS
 
-	! 	various crashes relative to db access
-	-	different variant in deck (/!\ difficulties with EF)
+	.	tags sort and stats for deck
+	.	profiles				>	Folders in Appdata containing db and importer state
+
+MAYBE
 	
+	-	differentes variant in deck (/!\ difficulties with EF)
+	.	pie charts
+	.	auto deck
+	.	custom cards support	>	how to generate image ?

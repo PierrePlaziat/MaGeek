@@ -134,7 +134,7 @@ namespace MaGeek.UI
             IsLoading = Visibility.Visible;
             Legalities = await MageekUtils.GetCardLegal(SelectedVariant);
             var p = await MageekUtils.GetPrice(SelectedVariant);
-            Price = p.ValueEur; // TODO configure currency
+            Price = float.Parse(p.ValueEur); // TODO configure currency
             PriceColor = GetPriceColor(Price);
             await Task.Run(() =>
             {
@@ -237,7 +237,7 @@ namespace MaGeek.UI
         private async void SetFav(object sender, RoutedEventArgs e)
         {
             var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;  
-            await App.Biz.Utils.SetFav(cardvar.Card, cardvar.Id);
+            await App.Biz.Utils.SetFav(cardvar.Card, cardvar);
         }
 
         private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)

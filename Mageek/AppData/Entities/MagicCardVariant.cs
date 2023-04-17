@@ -26,6 +26,9 @@ namespace MaGeek.AppData.Entities
         public string CustomName { get; set; }
         public int Got { get; set; }
 
+        public string LastUpdate { get; set; }
+
+
         public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
         public virtual MagicCard Card { get; set; }
 
@@ -64,6 +67,13 @@ namespace MaGeek.AppData.Entities
 
         #endregion
 
+    }
+
+    internal class CardEphemeralInfos
+    {
+        public CardValue values = new CardValue();
+        public Dictionary<string, string> legals = new Dictionary<string, string>();
+        public List<MagicCard> relateds = new List<MagicCard>();
     }
 
 }

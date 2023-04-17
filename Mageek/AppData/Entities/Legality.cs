@@ -10,7 +10,6 @@ namespace MaGeek.AppData.Entities
         [Key]
         public int Id { get; set; }
         public string MultiverseId { get; set; }
-        public string LastUpdate { get; set; }
         public string Format { get; set; }
         public string IsLegal { get; set; }
 
