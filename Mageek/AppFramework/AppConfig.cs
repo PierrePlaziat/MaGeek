@@ -16,8 +16,8 @@ namespace MaGeek.AppFramework
     public class AppConfig
     {
 
-        private static string Path_RoamingFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
-        private static string Path_Settings = Path.Combine(Path_RoamingFolder, "Settings.json");
+        private static readonly string Path_RoamingFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
+        private static readonly string Path_Settings = Path.Combine(Path_RoamingFolder, "Settings.json");
 
         public string Path_ImageFolder { get; } = Path.Combine(Path_RoamingFolder, "CardsIllus");
         public string Path_Db { get; } = Path.Combine(Path_RoamingFolder, "MaGeek.db");
@@ -69,7 +69,7 @@ namespace MaGeek.AppFramework
             Settings = JsonSerializer.Deserialize<Dictionary<Setting, string>>(jsonString);
         }
 
-        internal string[] GetSqliteDbCreationString()
+        internal static string[] GetSqliteDbCreationString()
         {
             return new string[] {
                 "CREATE TABLE \"Params\" (\r\n\t\"ParamName\"\tTEXT,\r\n\t\"ParamValue\"\tTEXT\r\n)",

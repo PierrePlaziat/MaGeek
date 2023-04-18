@@ -2,7 +2,9 @@
 using MtgApiManager.Lib.Model;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -40,16 +42,15 @@ namespace MaGeek.UI.Windows.Importers
         {
             DataContext = this;
             InitializeComponent();
-            LoadSets();
+            LoadSets().ConfigureAwait(false);
         }
 
-        private void LoadSets()
+        private async Task LoadSets()
         {
-            foreach (var set in App.Biz.Importer.GetExistingSets())
-            {
-                SetList.Add(set);
-            }
-            OnPropertyChanged("SetList");
+            List<ISet> sets = (await MageekUtils.GetExistingSets()).ToList();
+            foreach (var set in sets) SetList.Add(set);
+            SetList = null;
+            SetList = sets;
         }
 
         private void ImportSet(string title, string date, string type, bool asOwned)
@@ -57,10 +58,10 @@ namespace MaGeek.UI.Windows.Importers
             App.Biz.Importer.AddImportToQueue(
                 new PendingImport
                 {
-                    mode = ImportMode.Set,
-                    title = "["+date+"] "+type+" set] "+title,
-                    content = title,
-                    asOwned = asOwned,
+                    Mode = ImportMode.Set,
+                    Title = "["+date+"] "+type+" set] "+title,
+                    Content = title,
+                    AsOwned = asOwned,
                 }
             );
         }

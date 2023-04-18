@@ -148,24 +148,24 @@ namespace MaGeek.UI
 
         private async void AddDeck(object sender, RoutedEventArgs e)
         {
-            await App.Biz.Utils.AddDeck();
+            await MageekUtils.AddDeck();
         }
         
         private async void RenameDeck(object sender, RoutedEventArgs e)
         {
-            await App.Biz.Utils.RenameDeck(App.State.SelectedDeck);
+            await MageekUtils.RenameDeck(App.State.SelectedDeck);
         }
 
         private async void DuplicateDeck(object sender, RoutedEventArgs e)
         {
             if (decklistbox.SelectedIndex == -1) return;
-            await App.Biz.Utils.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
+            await MageekUtils.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
         }
 
         private async void DeleteDeck(object sender, RoutedEventArgs e)
         {
             if (decklistbox.SelectedIndex == -1) return;
-            await App.Biz.Utils.DeleteDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
+            await MageekUtils.DeleteDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
         }
 
         private async void EstimateDeckPrice(object sender, RoutedEventArgs e)

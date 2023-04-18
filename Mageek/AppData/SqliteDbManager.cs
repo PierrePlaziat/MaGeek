@@ -12,7 +12,7 @@ namespace MaGeek.AppData
     public class SqliteDbManager
     {
 
-        SqliteDbInfos DbInfos = new SqliteDbInfos(App.Config.Path_Db, App.Config.GetSqliteDbCreationString());
+        SqliteDbInfos DbInfos = new SqliteDbInfos(App.Config.Path_Db, AppFramework.AppConfig.GetSqliteDbCreationString());
 
         #region Context gestion
 

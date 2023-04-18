@@ -1,4 +1,5 @@
-﻿using MaGeek.AppData.Entities;
+﻿using MaGeek.AppBusiness;
+using MaGeek.AppData.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -463,7 +464,7 @@ namespace MaGeek.UI
         private async Task DoAsyncReload()
         {
             IsLoading = Visibility.Visible;
-            CardRelations_Commandant = (await App.Biz.Utils.GetCommanders(CurrentDeck)).ToList();
+            CardRelations_Commandant = (await MageekUtils.GetCommanders(CurrentDeck)).ToList();
             await Task.Run(() =>
             {
                 CardRelations_Lands = GetCardRelations_Lands();
@@ -555,21 +556,21 @@ namespace MaGeek.UI
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
-            await App.Biz.Utils.ChangeCardDeckRelation(cr, 1);
+            await MageekUtils.ChangeCardDeckRelation(cr, 1);
         }
 
         private async void UnsetCommandant_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
-            await App.Biz.Utils.ChangeCardDeckRelation(cr, 0);
+            await MageekUtils.ChangeCardDeckRelation(cr, 0);
         }
 
         private async void ToSide_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
-            await App.Biz.Utils.ChangeCardDeckRelation(cr, 2);
+            await MageekUtils.ChangeCardDeckRelation(cr, 2);
         }
 
         private async void AddOne_Click(object sender, RoutedEventArgs e)
@@ -577,7 +578,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            await App.Biz.Utils.AddCardToDeck(c, CurrentDeck,1);
+            await MageekUtils.AddCardToDeck(c, CurrentDeck,1);
         }
 
         private async void RemoveOne_Click(object sender, RoutedEventArgs e)
@@ -585,7 +586,7 @@ namespace MaGeek.UI
             var b = (MenuItem)sender;
             var cr = b.DataContext as CardDeckRelation;
             var c = cr.Card;
-            await App.Biz.Utils.RemoveCardFromDeck(c.Card, CurrentDeck);
+            await MageekUtils.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
     }

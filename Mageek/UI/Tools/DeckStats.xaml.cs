@@ -1,4 +1,5 @@
-﻿using MaGeek.AppData.Entities;
+﻿using MaGeek.AppBusiness;
+using MaGeek.AppData.Entities;
 using MaGeek.UI.Windows.ImportExport;
 using System;
 using System.Collections.Generic;
@@ -103,22 +104,22 @@ namespace MaGeek.UI
         private async Task DoAsyncReload()
         {
             IsLoading = Visibility.Visible;
-            CreatureCount = await App.Biz.Utils.count_Creature(currentDeck);
-            InstantCount = await App.Biz.Utils.count_Instant(currentDeck);
-            SorceryCount = await App.Biz.Utils.count_Sorcery(currentDeck);
-            EnchantmentCount = await App.Biz.Utils.count_Enchantment(currentDeck); 
-            ArtifactCount = await App.Biz.Utils.count_Artifact(currentDeck);
-            BasicLandCount = await App.Biz.Utils.count_BasicLand(currentDeck);
-            SpecialLandCount = await App.Biz.Utils.count_SpecialLand(currentDeck);
-            OtherCount = await App.Biz.Utils.count_other(currentDeck);
-            DevotionB = await App.Biz.Utils.DevotionB(currentDeck);
-            DevotionW = await App.Biz.Utils.DevotionW(currentDeck);
-            DevotionU = await App.Biz.Utils.DevotionU(currentDeck);
-            DevotionG = await App.Biz.Utils.DevotionG(currentDeck);
-            DevotionR = await App.Biz.Utils.DevotionR(currentDeck);
-            StandardOk = await App.Biz.Utils.Validity_Standard(currentDeck) ? "YES" : "NO";
-            CommanderOk = await App.Biz.Utils.Validity_Commander(currentDeck) ? "YES" : "NO";
-            OwnedRatio = await App.Biz.Utils.OwnedRatio(currentDeck);
+            CreatureCount = await MageekUtils.Count_Creature(currentDeck);
+            InstantCount = await MageekUtils.Count_Instant(currentDeck);
+            SorceryCount = await MageekUtils.Count_Sorcery(currentDeck);
+            EnchantmentCount = await MageekUtils.Count_Enchantment(currentDeck); 
+            ArtifactCount = await MageekUtils.Count_Artifact(currentDeck);
+            BasicLandCount = await MageekUtils.Count_BasicLand(currentDeck);
+            SpecialLandCount = await MageekUtils.Count_SpecialLand(currentDeck);
+            OtherCount = await MageekUtils.Count_other(currentDeck);
+            DevotionB = await MageekUtils.DevotionB(currentDeck);
+            DevotionW = await MageekUtils.DevotionW(currentDeck);
+            DevotionU = await MageekUtils.DevotionU(currentDeck);
+            DevotionG = await MageekUtils.DevotionG(currentDeck);
+            DevotionR = await MageekUtils.DevotionR(currentDeck);
+            StandardOk = await MageekUtils.Validity_Standard(currentDeck) ? "YES" : "NO";
+            CommanderOk = await MageekUtils.Validity_Commander(currentDeck) ? "YES" : "NO";
+            OwnedRatio = await MageekUtils.OwnedRatio(currentDeck);
             await Task.Run(() => {
                 OnPropertyChanged(nameof(CreatureCount));
                 OnPropertyChanged(nameof(InstantCount));
@@ -137,7 +138,7 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(DevotionR));
                 OnPropertyChanged(nameof(OwnedRatio));
             });
-            int[] manacurve = await App.Biz.Utils.GetManaCurve(currentDeck);
+            int[] manacurve = await MageekUtils.GetManaCurve(currentDeck);
             DrawNewHand();
             DrawManacurve(manacurve);
             await Task.Run(() =>
@@ -152,7 +153,7 @@ namespace MaGeek.UI
 
         private async void ListMissing(object sender, RoutedEventArgs e)
         {
-            string missList = await App.Biz.Utils.ListMissingCards(currentDeck);
+            string missList = await MageekUtils.ListMissingCards(currentDeck);
             if (!string.IsNullOrEmpty(missList))
             {
                 var window = new DeckListExporter(missList);

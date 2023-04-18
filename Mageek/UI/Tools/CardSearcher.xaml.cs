@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
+using MaGeek.AppBusiness;
 
 namespace MaGeek.UI
 {
@@ -15,7 +16,7 @@ namespace MaGeek.UI
         #region Attributes
 
         public List<MagicCard> CardList { get; private set; }
-        public List<CardTag> AvailableTags { get { return App.Biz.Utils.GetTagsDistinct().Result; } }
+        public List<CardTag> AvailableTags { get { return MageekUtils.GetTagsDistinct().Result; } }
 
         #region Filters
 
@@ -219,7 +220,7 @@ namespace MaGeek.UI
                 var tagged = new List<MagicCard>();
                 foreach (var card in retour)
                 {
-                    if (await App.Biz.Utils.DoesCardHasTag(card.CardId, TagFilterSelected))
+                    if (await MageekUtils.DoesCardHasTag(card.CardId, TagFilterSelected))
                     {
                         tagged.Add(card);
                     }
@@ -257,7 +258,7 @@ namespace MaGeek.UI
         {
             foreach (MagicCard c in CardGrid.SelectedItems)
             {
-                App.Biz.Utils.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1)
+                MageekUtils.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1)
                     .ConfigureAwait(true);
             }
         }

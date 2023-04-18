@@ -180,7 +180,7 @@ namespace MaGeek.UI
         private async Task<List<CardTag>> GetTags()
         {
             if(selectedCard==null) return null;
-            return await App.Biz.Utils.FindTagsForCard(selectedCard.CardId);
+            return await MageekUtils.FindTagsForCard(selectedCard.CardId);
         }
 
         #endregion
@@ -202,25 +202,25 @@ namespace MaGeek.UI
 
         #region Buttons
 
-        private void AddCardToCollection(object sender, RoutedEventArgs e)
+        private async void AddCardToCollection(object sender, RoutedEventArgs e)
         {
             MagicCardVariant variant = (MagicCardVariant) ((Button)sender).DataContext;
-            App.Biz.Utils.GotCard_Add(variant);
+            await MageekUtils.GotCard_Add(variant);
             OnPropertyChanged(nameof(CollectedQuantity));
             OnPropertyChanged(nameof(Variants));
         }
 
-        private void SubstractCardFromCollection(object sender, RoutedEventArgs e)
+        private async void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
             MagicCardVariant variant = (MagicCardVariant)((Button)sender).DataContext;
-            App.Biz.Utils.GotCard_Remove(variant);
+            await MageekUtils.GotCard_Remove(variant);
             OnPropertyChanged(nameof(CollectedQuantity));
             OnPropertyChanged(nameof(Variants));
         }
 
-        private void AddToCurrentDeck(object sender, RoutedEventArgs e)
+        private async void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            App.Biz.Utils.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1)
+            await MageekUtils.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1)
                 .ConfigureAwait(true);
         }
 
@@ -237,7 +237,7 @@ namespace MaGeek.UI
         private async void SetFav(object sender, RoutedEventArgs e)
         {
             var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;  
-            await App.Biz.Utils.SetFav(cardvar.Card, cardvar);
+            await MageekUtils.SetFav(cardvar.Card, cardvar);
         }
 
         private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)
@@ -250,21 +250,21 @@ namespace MaGeek.UI
 
         #region Tags
 
-        private void AddTag(object sender, RoutedEventArgs e)
+        private async void AddTag(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(NewTag.Text))
             {
-                App.Biz.Utils.TagCard(selectedCard,NewTag.Text);
+                await MageekUtils.TagCard(selectedCard,NewTag.Text);
                 OnPropertyChanged("Tags");
                 NewTag.Text = "";
                 sugestions.Visibility = Visibility.Collapsed;
             }
         }
 
-        private void DeleteTag(object sender, RoutedEventArgs e)
+        private async void DeleteTag(object sender, RoutedEventArgs e)
         {
             CardTag cardTag = (CardTag)((Button)sender).DataContext;
-            App.Biz.Utils.UnTagCard(cardTag);
+            await MageekUtils.UnTagCard(cardTag);
             OnPropertyChanged("Tags");
             sugestions.Visibility = Visibility.Collapsed;
         }
@@ -273,7 +273,7 @@ namespace MaGeek.UI
         {
             bool found = false;
             var border = (resultStack.Parent as ScrollViewer).Parent as Border;
-            var data = await App.Biz.Utils.GetTagsDistinct();
+            var data = await MageekUtils.GetTagsDistinct();
             string query = (sender as TextBox).Text;
             if (query.Length == 0)
             {
@@ -334,8 +334,8 @@ namespace MaGeek.UI
             App.Biz.Importer.AddImportToQueue(
                 new PendingImport
                 {
-                    mode = ImportMode.Update,
-                    content = SelectedCard.CardId
+                    Mode = ImportMode.Update,
+                    Content = SelectedCard.CardId
                 }
             );
         }

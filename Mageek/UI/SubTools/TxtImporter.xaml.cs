@@ -27,10 +27,10 @@ namespace MaGeek.UI
             App.Biz.Importer.AddImportToQueue(
                 new PendingImport
                 {
-                    mode = ImportMode.List,
-                    content = RichTextBoxHelper.GetContent(ImportTxt),
-                    title = title,
-                    asOwned = asOwned
+                    Mode = ImportMode.List,
+                    Content = RichTextBoxHelper.GetContent(ImportTxt),
+                    Title = title,
+                    AsOwned = asOwned
                 }
             );
             ImportTxt.Document.Blocks.Clear();

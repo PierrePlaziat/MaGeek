@@ -1,6 +1,7 @@
 ﻿using MaGeek.AppData.Entities;
 using System.Windows.Input;
 using System;
+using MaGeek.AppBusiness;
 
 namespace MaGeek.AppFramework
 {
@@ -60,10 +61,10 @@ namespace MaGeek.AppFramework
         {
             return true;
         }
-        public void Execute(object parameter)
+        public async void Execute(object parameter)
         {
             MagicCardVariant variant = (MagicCardVariant)parameter;
-            App.Biz.Utils.ChangeVariant(relation, variant);
+            await MageekUtils.ChangeVariant(relation, variant);
         }
 
         public event EventHandler CanExecuteChanged;

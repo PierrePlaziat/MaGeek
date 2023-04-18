@@ -74,10 +74,10 @@ namespace MaGeek.UI.Windows.Importers
             App.Biz.Importer.AddImportToQueue(
                 new PendingImport
                 {
-                    title = "[Preco] " + title,
-                    mode = ImportMode.List,
-                    content = File.ReadAllText(path + "\\" + title + ".txt"),
-                    asOwned = asOwned
+                    Title = "[Preco] " + title,
+                    Mode = ImportMode.List,
+                    Content = File.ReadAllText(path + "\\" + title + ".txt"),
+                    AsOwned = asOwned
                 }
             );
         }
