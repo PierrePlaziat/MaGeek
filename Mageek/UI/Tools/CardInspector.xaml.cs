@@ -1,6 +1,5 @@
 ﻿using MaGeek.AppBusiness;
 using MaGeek.AppData.Entities;
-using ScryfallApi.Client.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -96,7 +95,7 @@ namespace MaGeek.UI
 
         void HandleCardSelected(MagicCard Card)
         {
-            if (!isPinned) SelectedCard = Card;
+            if (!isPinned) SelectedCard = MageekUtils.FindCardById(Card.CardId).Result;
         }
 
         #endregion
@@ -134,8 +133,8 @@ namespace MaGeek.UI
             IsLoading = Visibility.Visible;
             Legalities = await MageekUtils.GetCardLegal(SelectedVariant);
             var p = await MageekUtils.GetPrice(SelectedVariant);
-            Price = float.Parse(p.ValueEur); // TODO configure currency
-            PriceColor = GetPriceColor(Price);
+            //Price = float.Parse(p.ValueEur); // TODO configure currency
+            //PriceColor = GetPriceColor(Price);
             await Task.Run(() =>
             {
                 OnPropertyChanged(nameof(Legalities));

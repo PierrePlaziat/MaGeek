@@ -103,6 +103,7 @@ namespace MaGeek.UI
 
         private async Task DoAsyncReload()
         {
+            if (CurrentDeck == null) return;
             IsLoading = Visibility.Visible;
             CreatureCount = await MageekUtils.Count_Creature(currentDeck);
             InstantCount = await MageekUtils.Count_Instant(currentDeck);
@@ -264,6 +265,7 @@ namespace MaGeek.UI
         #endregion
 
         #endregion
+
     }
 
 }

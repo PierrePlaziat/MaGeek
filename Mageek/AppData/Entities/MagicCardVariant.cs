@@ -1,11 +1,8 @@
 ﻿using MaGeek.AppBusiness;
-using MtgApiManager.Lib.Model;
-using System;
+using ScryfallApi.Client.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -21,12 +18,12 @@ namespace MaGeek.AppData.Entities
         public string MultiverseId { get; set; }
         public string ImageUrl { get; set; }
         public string Rarity { get; set; }
-        public string SetName { get; set; }
+        public string SetName { get; set; } = "";
         public int IsCustom { get; set; }
         public string CustomName { get; set; }
         public int Got { get; set; }
 
-        public string LastUpdate { get; set; }
+        public string LastUpdate { get; set; } = "";
 
 
         public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
@@ -36,15 +33,15 @@ namespace MaGeek.AppData.Entities
 
         public MagicCardVariant() { }
 
-        public MagicCardVariant(ICard selectedCard)
+        public MagicCardVariant(Card selectedCard)
         {
-            Id = selectedCard.Id;
-            ImageUrl = selectedCard.ImageUrl != null ? selectedCard.ImageUrl.ToString() : "";
+            Id = selectedCard.Id.ToString();
+            ImageUrl = selectedCard.ImageUris != null ? selectedCard.ImageUris.Values.LastOrDefault().ToString() : "";
             Rarity = selectedCard.Rarity;
-            SetName = selectedCard.SetName;
+            SetName = selectedCard.SetName != null ? selectedCard.SetName : "???";
             IsCustom = 0;
             Got = 0;
-            MultiverseId = selectedCard.MultiverseId;
+            MultiverseId = selectedCard.MultiverseIds != null ? selectedCard.MultiverseIds.FirstOrDefault().ToString() : "";
             Card = MageekUtils.FindCardById(selectedCard.Name).Result;
         }
 

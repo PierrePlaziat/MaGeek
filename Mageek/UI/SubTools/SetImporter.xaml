@@ -3,9 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MaGeek.UI.Windows.Importers"
+             xmlns:local="clr-namespace:MaGeek.UI.Windows.Importers" 
+             xmlns:converter="clr-namespace:MaGeek.Utils.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Background="#333">
+
+    <Window.Resources>
+        <converter:NullableDateToStringConverter x:Key="DateConverter" />
+    </Window.Resources>
+
+
     <Grid>
 
         <Grid.RowDefinitions>
@@ -24,6 +31,9 @@
                   CanUserResizeRows="False"
                   CanUserSortColumns="True"
                   SelectionMode="Extended">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Path= ReleaseDate,StringFormat={}{0:dd-MM-yyyy},Converter={StaticResource DateConverter}}" Header="  Date  " Width="Auto" IsReadOnly="True"  />
+            </DataGrid.Columns>
         </DataGrid>
 
         <DockPanel Grid.Row="1">

@@ -1,9 +1,4 @@
-﻿using MaGeek.AppData.Entities;
-using MaGeek.AppFramework;
-using MtgApiManager.Lib.Core;
-using MtgApiManager.Lib.Model;
-using MtgApiManager.Lib.Service;
-using Plaziat.CommonWpf;
+﻿using Plaziat.CommonWpf;
 using ScryfallApi.Client.Models;
 using System;
 using System.Collections.Generic;
@@ -11,7 +6,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -27,8 +21,6 @@ namespace MaGeek.AppBusiness
 
         #region Attributes
 
-        readonly BackgroundWorker Worker = new();
-
         Queue<PendingImport> PendingImport = new();
         PendingImport? CurrentImport = null;
 
@@ -36,6 +28,7 @@ namespace MaGeek.AppBusiness
         ImporterState state = ImporterState.Init;
 
         Timer timer;
+        private bool isWorking;
 
         #region UI
 
@@ -49,6 +42,7 @@ namespace MaGeek.AppBusiness
             }
         }
         private string infoText = "";
+
         public string InfoText
         {
             get { return infoText; }
@@ -64,7 +58,6 @@ namespace MaGeek.AppBusiness
         public MageekImporter()
         {
             LoadState();
-            ConfigureWorker();
             ConfigureTimer();
             state = ImporterState.Pause;
             Message = "Init done";
@@ -75,13 +68,6 @@ namespace MaGeek.AppBusiness
             timer = new Timer(1000) { AutoReset = true };
             timer.Elapsed += MainLoop;
             timer.Start();
-        }
-
-        private void ConfigureWorker()
-        {
-            Worker.DoWork += WorkerTask;
-            Worker.ProgressChanged += ReportImportProgress;
-            Worker.WorkerReportsProgress = true;
         }
 
         #endregion
@@ -121,64 +107,73 @@ namespace MaGeek.AppBusiness
 
         private void MainLoop(object sender, ElapsedEventArgs e)
         {
-            if (state == ImporterState.Init) return;
-            if (!Worker.IsBusy && state == ImporterState.Play) CheckNextImport();
+            if (!isWorking && state == ImporterState.Play) CheckNextImport().ConfigureAwait(false);
         }
-        private void CheckNextImport()
+        private async Task CheckNextImport()
         {
             if (state == ImporterState.Play)
             {
                 if (PendingImport.Count > 0) CurrentImport = PendingImport.Dequeue();
-                if (CurrentImport != null) Worker.RunWorkerAsync();
+                if (CurrentImport != null)
+                {
+                    await WorkerTask();
+                }
             }
             SaveState();
             UpdateInfoText();
         }
-        private async void WorkerTask(object sender, DoWorkEventArgs e)
+
+
+        private async Task WorkerTask()
         {
+            isWorking = true;
             if (state == ImporterState.Init) return;
-            List<ICard> importResult = new();
+            List<Card> importResult = new();
             while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
             if (state != ImporterState.Canceling)
             {
                 Message = "Calling MtgApi";
-                Worker.ReportProgress(0);
+                WorkerProgress=(0);
                 importResult = await Import(CurrentImport);
             }
             while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
             if (state != ImporterState.Canceling)  //App.Events.RaisePreventUIAction(true);
             { 
                 Message = "Recording cards localy";
-                Worker.ReportProgress(50);
-                await RecordCards(importResult);
+                WorkerProgress=(50);
+                await RecordCards(importResult).ConfigureAwait(true);
             }
             while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
             if (state != ImporterState.Canceling)
             {
                 Message = "Making Deck";
-                Worker.ReportProgress(75);
-                await MakeItADeck(importResult);
+                WorkerProgress=(75);
+                await MakeItADeck(importResult).ConfigureAwait(true);
             }
             while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
             if (state != ImporterState.Canceling)
             {
-                Worker.ReportProgress(99);
+                WorkerProgress=(99);
                 Message = "Finalize";
-                await FinalizeImportation();
+                await FinalizeImportation().ConfigureAwait(true);
             }
+            isWorking = false;
         }
 
         #region Work
 
-        private async Task<List<ICard>> Import(PendingImport? currentImport)
+        private async Task<List<Card>> Import(PendingImport? currentImport)
         {
-            List<ICard> list = new();
+            List<Card> list = new();
             switch (currentImport.Value.Mode)
             {
-                case ImportMode.Set : list = await MageekUtils.ImportSet(CurrentImport.Value.Content); break;
-                case ImportMode.Search : list = await MageekUtils.ImportCard(CurrentImport.Value.Content, false, false, true); break;
-                case ImportMode.Update : list = await MageekUtils.ImportCard(CurrentImport.Value.Content, true, false, false); break;
-                case ImportMode.List : list = await ImportCardList(await ParseCardList(CurrentImport.Value.Content)); break;
+                case ImportMode.Set:
+                    list = await MageekUtils.ImportSet(CurrentImport.Value.Content, "French"); 
+                    list.AddRange(await MageekUtils.ImportSet(CurrentImport.Value.Content, "English")); 
+                    break;
+                case ImportMode.Search: list = await MageekUtils.ImportCard(CurrentImport.Value.Content, false, false, true); break;
+                case ImportMode.Update: list = await MageekUtils.ImportCard(CurrentImport.Value.Content, true, false, false); break;
+                case ImportMode.List: list = await ImportCardList(await ParseCardList(CurrentImport.Value.Content)); break;
             };
             return list;
         }
@@ -218,9 +213,9 @@ namespace MaGeek.AppBusiness
             return tuples;
         }
 
-        private async Task<List<ICard>> ImportCardList(List<ImportLine> deckList)
+        private async Task<List<Card>> ImportCardList(List<ImportLine> deckList)
         {
-            List<ICard> cards = new();
+            List<Card> cards = new();
             try
             {
                 for (int i = 0; i < deckList.Count; i++)
@@ -228,24 +223,24 @@ namespace MaGeek.AppBusiness
                     Message = "Retrieve Card : " + deckList[i].Name;
                     var foundCards = await MageekUtils.ImportCard(deckList[i].Name, true, true, false);
                     cards.AddRange(foundCards);
-                    Worker.ReportProgress(i * 100 / deckList.Count / 2);
+                    WorkerProgress=i * 100 / deckList.Count / 2;
                 }
             }
             catch (Exception e) { MessageBoxHelper.ShowError("ImportList", e); }
             return cards;
         }
 
-        private async Task RecordCards(List<ICard> results)
+        private async Task RecordCards(List<Card> results)
         {
             bool owned = CurrentImport.HasValue && CurrentImport.Value.AsOwned;
             for (int i = 0; i < results.Count; i++)
             {
                 await MageekUtils.RecordCard(results[i], owned);
-                Worker.ReportProgress(i * 100 / results.Count / 2 + 50);
+                WorkerProgress=i * 100 / results.Count / 2 + 50;
             }
         }
 
-        private async Task MakeItADeck(List<ICard> importResult)
+        private async Task MakeItADeck(List<Card> importResult)
         {
             List<ImportLine> importLines = new();
             if (CurrentImport.Value.Mode == ImportMode.List)
@@ -260,7 +255,7 @@ namespace MaGeek.AppBusiness
                 importLines,
                 CurrentImport.Value.Title ?? DateTime.Now.ToString()
             );
-         }
+        }
 
         private async Task FinalizeImportation()
         {
@@ -289,7 +284,7 @@ namespace MaGeek.AppBusiness
                 });
             }
             CurrentImport = null;
-            Worker.ReportProgress(100);
+            WorkerProgress=100;
             Message = "Done";
         }
 

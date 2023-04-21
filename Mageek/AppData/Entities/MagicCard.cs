@@ -1,5 +1,6 @@
 ﻿using MaGeek.AppFramework;
-using MtgApiManager.Lib.Model;
+using ScryfallApi.Client.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,62 +17,66 @@ namespace MaGeek.AppData.Entities
         [Key]
         public string CardId { get; set; }
         public string Type { get; set; }
+
         public string ManaCost { get; set; }
-        public float? Cmc { get; set; }
+        public float Cmc { get; set; }
+        public string ColorIdentity { get; set; }
+
         public string Text { get; set; }
+
         public string Power { get; set; }
         public string Toughness { get; set; }
-        public virtual List<MagicCardVariant> Variants { get; set; } = new List<MagicCardVariant>();
-        public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
-        public string FavouriteVariant { get; set; } = "";
 
+        public string FavouriteVariant { get; set; } = "";
+        public virtual List<MagicCardVariant> Variants { get; set; } = new List<MagicCardVariant>();
+
+        public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
+        
         #endregion
 
         #region CTOR
 
         public MagicCard() { }
 
-        public MagicCard(ICard selectedCard)
+        public MagicCard(Card scryCard)
         {
-            CardId = selectedCard.Name;
-            Type = selectedCard.Type;
-            ManaCost = selectedCard.ManaCost ?? "";
-            Cmc = selectedCard.Cmc;
-            Text = selectedCard.Text;
-            Power = selectedCard.Power;
-            Toughness = selectedCard.Toughness;
-            AddNames(selectedCard.ForeignNames);
+            CardId = scryCard.Name;
+            Type = scryCard.TypeLine;
+            ManaCost = scryCard.ManaCost ?? "";
+            Cmc = Convert.ToSingle(scryCard.Cmc);
+            Text = scryCard.OracleText;
+            Power = scryCard.Power;
+            Toughness = scryCard.Toughness;
+            SetColorIdentity(scryCard.ColorIdentity);
         }
 
-        public void AddVariant(ICard iCard)
+        private void SetColorIdentity(string[] colorIdentity)
         {
-            MagicCardVariant variant = Variants.Where(x => x.Id == iCard.Id).FirstOrDefault();
-            if (variant != null) return;
-            variant = new MagicCardVariant(iCard);
-            Variants.Add(variant);
-            AddNames(iCard.ForeignNames);
-            // 
-            if (string.IsNullOrEmpty(FavouriteVariant) && !string.IsNullOrEmpty(variant.ImageUrl)) FavouriteVariant = variant.Id;
-        }
-
-        private void AddNames(List<IForeignName> foreignNames)
-        {
-            if (foreignNames == null) return;
-            if (Traductions == null) Traductions = new List<CardTraduction>();
-            foreach (IForeignName foreignName in foreignNames)
+            ColorIdentity = "";
+            foreach (string color in colorIdentity)
             {
-                CardTraduction trad = Traductions.Where(x => x.Language == foreignName.Language).FirstOrDefault();
-                if (trad != null) return;
-                Traductions.Add(
-                    new CardTraduction()
-                    {
-                        CardId = CardId,
-                        Language = foreignName.Language,
-                        TraductedName = foreignName.Name
-                    }
-                );
+                ColorIdentity += color;
             }
         }
+
+        //private void AddNames(List<IForeignName> foreignNames)
+        //{
+        //    if (foreignNames == null) return;
+        //    if (Traductions == null) Traductions = new List<CardTraduction>();
+        //    foreach (IForeignName foreignName in foreignNames)
+        //    {
+        //        CardTraduction trad = Traductions.Where(x => x.Language == foreignName.Language).FirstOrDefault();
+        //        if (trad != null) return;
+        //        Traductions.Add(
+        //            new CardTraduction()
+        //            {
+        //                CardId = CardId,
+        //                Language = foreignName.Language,
+        //                TraductedName = foreignName.Name
+        //            }
+        //        );
+        //    }
+        //}
 
         public async Task<BitmapImage> RetrieveImage(int selectedVariant = -1)
         {

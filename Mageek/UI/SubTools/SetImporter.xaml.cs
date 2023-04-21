@@ -1,5 +1,5 @@
 ﻿using MaGeek.AppBusiness;
-using MtgApiManager.Lib.Model;
+using ScryfallApi.Client.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -31,8 +31,8 @@ namespace MaGeek.UI.Windows.Importers
 
         #endregion
 
-        List<ISet> setList = new List<ISet>();
-        public List<ISet> SetList
+        List<Set> setList = new();
+        public List<Set> SetList
         {
             get { return setList; }
             set { setList = value; OnPropertyChanged(); }
@@ -47,20 +47,20 @@ namespace MaGeek.UI.Windows.Importers
 
         private async Task LoadSets()
         {
-            List<ISet> sets = (await MageekUtils.GetExistingSets()).ToList();
+            List<Set> sets = (await MageekUtils.RetrieveSets()).ToList();
             foreach (var set in sets) SetList.Add(set);
             SetList = null;
             SetList = sets;
         }
 
-        private void ImportSet(string title, string date, string type, bool asOwned)
+        private void ImportSet(string code, string date, string type, bool asOwned)
         {
             App.Biz.Importer.AddImportToQueue(
                 new PendingImport
                 {
                     Mode = ImportMode.Set,
-                    Title = "["+date+"] "+type+" set] "+title,
-                    Content = title,
+                    Title = "["+date+"] "+type+" set] "+code,
+                    Content = code,
                     AsOwned = asOwned,
                 }
             );
@@ -68,10 +68,10 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var title = ((ISet)SetListView.SelectedItem).Name;
-            var date = ((ISet)SetListView.SelectedItem).ReleaseDate;
-            var type = ((ISet)SetListView.SelectedItem).Type;
-            ImportSet(title,date,type,asOwned);
+            var code = ((Set)SetListView.SelectedItem).Code;
+            var date = ((Set)SetListView.SelectedItem).ReleaseDate;
+            var type = ((Set)SetListView.SelectedItem).SetType;
+            ImportSet(code,date.ToString(),type,asOwned);
             Close();
         }
 
@@ -79,10 +79,10 @@ namespace MaGeek.UI.Windows.Importers
         {
             foreach (var v in SetListView.SelectedItems)
             {
-                var title = ((ISet)v).Name;
-                var date = ((ISet)v).ReleaseDate;
-                var type = ((ISet)v).Type;
-                ImportSet(title, date, type,AsOwned);
+                var code = ((Set)v).Code;
+                var date = ((Set)v).ReleaseDate;
+                var type = ((Set)v).SetType;
+                ImportSet(code, date.ToString(), type,AsOwned);
             }
             Close();
         }

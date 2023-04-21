@@ -203,8 +203,8 @@ namespace MaGeek.UI
                                  .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower())
                                           )//|| x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
                                  .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()))
-                                 .Include(card=>card.Traductions)
-                                 .Include(card=>card.Variants)
+                                 //.Include(card=>card.Traductions)
+                                 //.Include(card=>card.Variants)
                                     //.ThenInclude(card=>card.Card)
                                  .ToArrayAsync();
             }
