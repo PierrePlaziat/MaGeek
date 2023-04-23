@@ -59,25 +59,6 @@ namespace MaGeek.AppData.Entities
             }
         }
 
-        //private void AddNames(List<IForeignName> foreignNames)
-        //{
-        //    if (foreignNames == null) return;
-        //    if (Traductions == null) Traductions = new List<CardTraduction>();
-        //    foreach (IForeignName foreignName in foreignNames)
-        //    {
-        //        CardTraduction trad = Traductions.Where(x => x.Language == foreignName.Language).FirstOrDefault();
-        //        if (trad != null) return;
-        //        Traductions.Add(
-        //            new CardTraduction()
-        //            {
-        //                CardId = CardId,
-        //                Language = foreignName.Language,
-        //                TraductedName = foreignName.Name
-        //            }
-        //        );
-        //    }
-        //}
-
         public async Task<BitmapImage> RetrieveImage(int selectedVariant = -1)
         {
             if (selectedVariant != -1)

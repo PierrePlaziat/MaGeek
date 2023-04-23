@@ -21,25 +21,53 @@
         </Grid.RowDefinitions>
 
         <DataGrid Name="SetListView" 
-                  AutoGenerateColumns="True"
-                  ItemsSource="{Binding SetList}"
-                  MouseDoubleClick="ListView_MouseDoubleClick"
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False"
-                  CanUserReorderColumns="True"
-                  CanUserResizeColumns="True"
-                  CanUserResizeRows="False"
-                  CanUserSortColumns="True"
-                  SelectionMode="Extended">
+                AutoGenerateColumns="False"
+                ItemsSource="{Binding SetList}"
+                MouseDoubleClick="ListView_MouseDoubleClick"
+                CanUserAddRows="False"
+                CanUserDeleteRows="False"
+                CanUserReorderColumns="True"
+                CanUserResizeColumns="True"
+                CanUserResizeRows="False"
+                CanUserSortColumns="True"
+                SelectionMode="Extended"
+                RowHeaderWidth="0">
+            
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path= ReleaseDate,StringFormat={}{0:dd-MM-yyyy},Converter={StaticResource DateConverter}}" Header="  Date  " Width="Auto" IsReadOnly="True"  />
+                <DataGridTextColumn Binding="{Binding Path=ReleaseDate,StringFormat={}{0:dd-MM-yyyy},Converter={StaticResource DateConverter}}" Header="| Date   " Width="Auto" IsReadOnly="True"  />
+                <DataGridTemplateColumn Header="| Icon   " IsReadOnly="True" Width="40">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <UserControl xmlns:svgc="http://sharpvectors.codeplex.com/svgc/">
+                                <svgc:SvgViewbox Source="{Binding Path=IconSvgUri}" Width="18" Height="18"/>
+                            </UserControl>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding Path=Name}" Header="| Name   " Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=SetType}" Header="| Type   " Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=Block}" Header="| Block   " Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Path=card_count}" Header="| nb cards   " Width="Auto" IsReadOnly="True"/>
             </DataGrid.Columns>
-        </DataGrid>
 
+            <DataGrid.Resources>
+                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="#555" />
+                </Style>
+            </DataGrid.Resources>
+            
+        </DataGrid>
+        
         <DockPanel Grid.Row="1">
             <Button Click="ImportSelectedDecks">Import Selected Sets</Button>
             <CheckBox IsChecked="{Binding AsOwned}" Foreground="White" Margin="1.5">As Owned</CheckBox>
         </DockPanel>
+
+        <Grid Visibility="{Binding IsLoading}" Grid.RowSpan="2" Background="Black" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+             
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center">Loading</Label>
+            
+        </Grid>
         
             
     </Grid>

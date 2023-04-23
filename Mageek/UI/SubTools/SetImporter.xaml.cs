@@ -31,6 +31,12 @@ namespace MaGeek.UI.Windows.Importers
 
         #endregion
 
+        Visibility isLoading = Visibility.Visible; 
+        public Visibility IsLoading { 
+            get { return isLoading; }
+            set { isLoading = value; OnPropertyChanged(); } 
+        }
+
         List<Set> setList = new();
         public List<Set> SetList
         {
@@ -51,16 +57,17 @@ namespace MaGeek.UI.Windows.Importers
             foreach (var set in sets) SetList.Add(set);
             SetList = null;
             SetList = sets;
+            IsLoading = Visibility.Collapsed;
         }
 
-        private void ImportSet(string code, string date, string type, bool asOwned)
+        private void ImportSet(Set set)
         {
             App.Biz.Importer.AddImportToQueue(
                 new PendingImport
                 {
                     Mode = ImportMode.Set,
-                    Title = "["+date+"] "+type+" set] "+code,
-                    Content = code,
+                    Title = "[Set] "+set.ReleaseDate.Value.ToShortDateString()+" "+set.Name,
+                    Content = set.Code,
                     AsOwned = asOwned,
                 }
             );
@@ -68,10 +75,8 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var code = ((Set)SetListView.SelectedItem).Code;
-            var date = ((Set)SetListView.SelectedItem).ReleaseDate;
-            var type = ((Set)SetListView.SelectedItem).SetType;
-            ImportSet(code,date.ToString(),type,asOwned);
+            var set = ((Set)SetListView.SelectedItem);
+            if(set!=null) ImportSet(set);
             Close();
         }
 
@@ -79,10 +84,9 @@ namespace MaGeek.UI.Windows.Importers
         {
             foreach (var v in SetListView.SelectedItems)
             {
-                var code = ((Set)v).Code;
-                var date = ((Set)v).ReleaseDate;
-                var type = ((Set)v).SetType;
-                ImportSet(code, date.ToString(), type,AsOwned);
+                var set = (Set)v;
+                if (set == null) return;
+                ImportSet(set);
             }
             Close();
         }

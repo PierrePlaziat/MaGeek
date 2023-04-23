@@ -26,7 +26,6 @@ namespace MaGeek.AppBusiness
         public DbSet<CardDeckRelation> cardsInDecks { get; set; }
         public DbSet<CardTag> Tags { get; set; }
         public DbSet<Param> Params { get; set; }
-        public DbSet<CardValue> CardValues { get; set; }
         public DbSet<Legality> Legalities { get; set; }
         public DbSet<CardCardRelation> CardRelations { get; set; } // check model creation, add to db
 

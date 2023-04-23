@@ -1,5 +1,6 @@
 ﻿using MaGeek.AppBusiness;
 using MaGeek.AppData.Entities;
+using ScryfallApi.Client.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,9 +53,7 @@ namespace MaGeek.UI
         }
 
         public int NbVariants { get; private set; }
-        public float Price { get; private set; }
         public List<Legality> Legalities { get; private set; }
-        public Brush PriceColor { get; private set; }
         public List<CardTag> Tags { get; private set; }
 
         #region Visibilities
@@ -132,14 +131,9 @@ namespace MaGeek.UI
         {
             IsLoading = Visibility.Visible;
             Legalities = await MageekUtils.GetCardLegal(SelectedVariant);
-            var p = await MageekUtils.GetPrice(SelectedVariant);
-            //Price = float.Parse(p.ValueEur); // TODO configure currency
-            //PriceColor = GetPriceColor(Price);
             await Task.Run(() =>
             {
                 OnPropertyChanged(nameof(Legalities));
-                OnPropertyChanged(nameof(Price));
-                OnPropertyChanged(nameof(PriceColor));
             });
             await Task.Run(() =>
             {
@@ -166,16 +160,6 @@ namespace MaGeek.UI
                 return 0;
         }
 
-        private Brush GetPriceColor(float p)
-        {
-                 if (p>=10)  return Brushes.White;
-            else if (p>=5)   return Brushes.Orange;
-            else if (p>=2)   return Brushes.Yellow;
-            else if (p>=1)   return Brushes.Green;
-            else if (p>=0.2) return Brushes.LightGray;
-            else if (p>=0)   return Brushes.DarkGray;
-            else             return Brushes.Black;
-        }
         private async Task<List<CardTag>> GetTags()
         {
             if(selectedCard==null) return null;
@@ -205,22 +189,19 @@ namespace MaGeek.UI
         {
             MagicCardVariant variant = (MagicCardVariant) ((Button)sender).DataContext;
             await MageekUtils.GotCard_Add(variant);
-            OnPropertyChanged(nameof(CollectedQuantity));
-            OnPropertyChanged(nameof(Variants));
+            HandleCardSelected(selectedCard);
         }
 
         private async void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
             MagicCardVariant variant = (MagicCardVariant)((Button)sender).DataContext;
             await MageekUtils.GotCard_Remove(variant);
-            OnPropertyChanged(nameof(CollectedQuantity));
-            OnPropertyChanged(nameof(Variants));
+            HandleCardSelected(selectedCard);
         }
 
         private async void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            await MageekUtils.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1)
-                .ConfigureAwait(true);
+            await MageekUtils.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1);
         }
 
         #endregion

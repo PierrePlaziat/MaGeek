@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:cwpf="clr-namespace:MaGeek.Utils.CommonWpf"
              xmlns:local="clr-namespace:MaGeek.UI"
-             xmlns:plaziat="clr-namespace:Plaziat.CommonWpf" xmlns:controls="clr-namespace:MaGeek.UI.Controls"
-                            mc:Ignorable="d" 
+             xmlns:plaziat="clr-namespace:Plaziat.CommonWpf" 
+             xmlns:controls="clr-namespace:MaGeek.UI.Controls"
+             mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="750">
 
     <UserControl.Resources>
@@ -165,7 +166,7 @@
         <Grid Grid.Row="3"
               ScrollViewer.VerticalScrollBarVisibility="Visible"
               ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-            <DataGrid x:Name="CardGrid"  
+            <DataGrid x:Name="CardGrid" 
                       ItemsSource="{Binding CardList}"
                       CanUserAddRows="False"
                       CanUserResizeRows="False"
@@ -178,8 +179,9 @@
                       RowHeaderWidth="0"
                       AutoGenerateColumns="False"
                       SelectionChanged="CardGrid_SelectionChanged">
+                
                 <DataGrid.Columns>
-                    <!--<DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />-->
+                    <DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />
                     <DataGridTextColumn Header="| Name   " Binding="{Binding CardId}" />
                     <DataGridTextColumn Header="| Foreign Name   " Binding="{Binding CardForeignName}" />
 

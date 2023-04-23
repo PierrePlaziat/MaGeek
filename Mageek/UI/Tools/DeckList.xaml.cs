@@ -148,7 +148,7 @@ namespace MaGeek.UI
 
         private async void AddDeck(object sender, RoutedEventArgs e)
         {
-            await MageekUtils.AddDeck();
+            await MageekUtils.AddEmptyDeck();
         }
         
         private async void RenameDeck(object sender, RoutedEventArgs e)

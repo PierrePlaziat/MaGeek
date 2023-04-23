@@ -141,21 +141,21 @@ namespace MaGeek.AppBusiness
             { 
                 Message = "Recording cards localy";
                 WorkerProgress=(50);
-                await RecordCards(importResult).ConfigureAwait(true);
+                await RecordCards(importResult);
             }
             while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
             if (state != ImporterState.Canceling)
             {
                 Message = "Making Deck";
                 WorkerProgress=(75);
-                await MakeItADeck(importResult).ConfigureAwait(true);
+                await MakeItADeck(importResult);
             }
             while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
             if (state != ImporterState.Canceling)
             {
                 WorkerProgress=(99);
                 Message = "Finalize";
-                await FinalizeImportation().ConfigureAwait(true);
+                await FinalizeImportation();
             }
             isWorking = false;
         }
@@ -167,10 +167,7 @@ namespace MaGeek.AppBusiness
             List<Card> list = new();
             switch (currentImport.Value.Mode)
             {
-                case ImportMode.Set:
-                    list = await MageekUtils.ImportSet(CurrentImport.Value.Content, "French"); 
-                    list.AddRange(await MageekUtils.ImportSet(CurrentImport.Value.Content, "English")); 
-                    break;
+                case ImportMode.Set: list = await MageekUtils.ImportSet(CurrentImport.Value.Content); break;
                 case ImportMode.Search: list = await MageekUtils.ImportCard(CurrentImport.Value.Content, false, false, true); break;
                 case ImportMode.Update: list = await MageekUtils.ImportCard(CurrentImport.Value.Content, true, false, false); break;
                 case ImportMode.List: list = await ImportCardList(await ParseCardList(CurrentImport.Value.Content)); break;
@@ -242,6 +239,7 @@ namespace MaGeek.AppBusiness
 
         private async Task MakeItADeck(List<Card> importResult)
         {
+            if (importResult.Count == 0) return;
             List<ImportLine> importLines = new();
             if (CurrentImport.Value.Mode == ImportMode.List)
             {
@@ -275,13 +273,9 @@ namespace MaGeek.AppBusiness
             }
             if (CurrentImport.Value.Mode == ImportMode.Update)
             {
-                await Task.Run(() => {
-                    System.Windows.Application.Current.Dispatcher.Invoke(new Action(() => {
-                        var c = App.State.SelectedCard;
-                        App.Events.RaiseCardSelected(null);
-                        App.Events.RaiseCardSelected(c);
-                    }));
-                });
+                var c = App.State.SelectedCard;
+                App.Events.RaiseCardSelected(null);
+                App.Events.RaiseCardSelected(c);
             }
             CurrentImport = null;
             WorkerProgress=100;

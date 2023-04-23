@@ -37,27 +37,7 @@
                         Content="Add to Deck"/>
             </DockPanel>
 
-
-            <DockPanel Background="Black">
-
-                <Label  Width="35" 
-                        HorizontalAlignment="Center" 
-                        Foreground="White" 
-                        Padding="5,2" 
-                        Content="x "/>
-
-                <Label  Width="35" 
-                        HorizontalAlignment="Center" 
-                        Foreground="White" 
-                        Padding="5,2" 
-                        Content="{Binding CollectedQuantity}"/>
-                <Label>Price Estimation : </Label>
-                <Label Content="{Binding Price}" Background="Black" Foreground="{Binding PriceColor}" FontWeight="Black"/>
-                <Label Foreground="{Binding PriceColor}">€</Label>
-
-            </DockPanel>
-
-            <ScrollViewer Height="150">            
+            <ScrollViewer >            
             <ListView BorderThickness="0" 
                       x:Name="VariantListBox"  
                       ItemsSource="{Binding Variants}" 
@@ -118,6 +98,9 @@
                                     </Style>
                                 </Border.Style>
                             </Border>
+                                <Label Content="{Binding ValueEur}" Foreground="{Binding GetPriceColor}" Margin="0" Padding="5,1"></Label>
+                                <Label Content="€" Foreground="{Binding GetPriceColor}" Margin="0" Padding="5,1"></Label>
+                            <Label Content="{Binding Lang}" Foreground="{Binding LineColoration}" Margin="0" Padding="5,1"></Label>
                             <Label Content="{Binding SetName}" Foreground="{Binding LineColoration}" Margin="0" Padding="5,1"></Label>
 
                         </DockPanel>

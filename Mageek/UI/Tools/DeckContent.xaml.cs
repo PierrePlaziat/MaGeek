@@ -211,7 +211,7 @@ namespace MaGeek.UI
 
         private async void CreateDeck(object sender, RoutedEventArgs e)
         {
-            await MageekUtils.AddDeck();
+            await MageekUtils.AddEmptyDeck();
         }
 
         private void OpenDeckImport(object sender, RoutedEventArgs e)
@@ -224,6 +224,7 @@ namespace MaGeek.UI
         {
             ListView sendedBy = (sender as ListView);
             if (sendedBy.SelectedItem is CardDeckRelation cardRel) App.Events.RaiseCardSelected(cardRel.Card.Card);
+            sendedBy.UnselectAll();
         }
 
         private static ListView GetListView(object sender)

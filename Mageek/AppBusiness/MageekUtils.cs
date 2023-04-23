@@ -13,8 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using MaGeek.AppData;
 using System.Text.Json;
 using ScryfallApi.Client.Models;
-using CardValue = MaGeek.AppData.Entities.CardValue;
-using ScryfallApi.Client;
 
 namespace MaGeek.AppBusiness
 {
@@ -32,14 +30,13 @@ namespace MaGeek.AppBusiness
                 Thread.Sleep(200);
                 string json_data = await HttpUtils.Get("https://api.scryfall.com/sets/");
                 var result = JsonSerializer.Deserialize<ResultList<Set>>(json_data);
-                //var result = await _scryfallApi.Sets.Get();
                 sets.AddRange(result.Data);
             }
             catch (Exception e) { MessageBoxHelper.ShowError("RetrieveSets", e); }
             return sets;
         }
 
-        public static async Task<List<Card>> ImportSet(string setName,string lang)
+        public static async Task<List<Card>> ImportSet(string setName)
         {
             List<Card> cards = new();
             try
@@ -50,10 +47,9 @@ namespace MaGeek.AppBusiness
                 {
                     Thread.Sleep(200);
                     string json_data = "";
-                    if (result==null) json_data = await HttpUtils.Get("https://api.scryfall.com/cards/search?order=cmc&q=e:" + setName+ " lang:any");
+                    if (result==null) json_data = await HttpUtils.Get("https://api.scryfall.com/cards/search?order=cmc&q=e:" + setName);
                     else json_data = await HttpUtils.Get(result.NextPage.ToString());
                     result = JsonSerializer.Deserialize<ResultList<Card>>(json_data);
-                    //result = await _scryfallApi.Cards.Search("e:"+setName, i, SearchOptions.CardSort.Name);
                     cards.AddRange(result.Data);
                     i++;
                 }
@@ -149,8 +145,6 @@ namespace MaGeek.AppBusiness
                 {
                     if (IsExactCardName(cardName.ToLower(), card.Name.ToLower()))
                         filteredCards.Add(card);
-                    //if (foreignIncluded && card.ForeignNames != null && IsExactCardName(cardName, card.ForeignNames.Where(x => x.Language == App.Config.Settings[Setting.ForeignLangugage]).FirstOrDefault().Name))
-                    //    filteredCards.Add(card);
                 }
             });
             return filteredCards;
@@ -167,14 +161,14 @@ namespace MaGeek.AppBusiness
 
         private static async Task RetrieveRealtimeInfos(MagicCardVariant variant)
         {
-            //if (variant == null) return;
-            //if (!IsOutDated(variant)) return;
-            //await DestroyValuesRecords(variant);
-            //await DestroyLegalitiesRecords(variant);
-            //await DestroyRelatedsRecords(variant);
-            //CardEphemeralInfos infos = await AskScryfallLastInfos(variant.Id);
-            //await SaveRealtimeCardInfos(variant, infos);
+            if (variant == null) return;
+            if (!IsOutDated(variant)) return;
+            await DestroyLegalitiesRecords(variant);
+            await DestroyRelatedsRecords(variant);
+            CardEphemeralInfos infos = await AskScryfallLastInfos(variant.Id);
+            await SaveRealtimeCardInfos(variant, infos);
         }
+
         private static bool IsOutDated(MagicCardVariant cardVariant)
         {
             if (string.IsNullOrEmpty(cardVariant.LastUpdate)) return true;
@@ -183,20 +177,6 @@ namespace MaGeek.AppBusiness
             else return false;
         }
 
-        private static async Task DestroyValuesRecords(MagicCardVariant localCard)
-        {
-            try
-            {
-                using var DB = App.Biz.DB.GetNewContext();
-                IEnumerable<CardValue> existingValues = DB.CardValues.Where(x => x.MultiverseId == localCard.MultiverseId);
-                if (existingValues.Any())
-                {
-                    DB.CardValues.RemoveRange(existingValues);
-                    await DB.SaveChangesAsync();
-                }
-            }
-            catch (Exception e) { MessageBoxHelper.ShowError("DestroyValuesRecords", e); }
-        }
         private static async Task DestroyLegalitiesRecords(MagicCardVariant localCard)
         {
             try
@@ -229,7 +209,7 @@ namespace MaGeek.AppBusiness
             Thread.Sleep(150);
             try
             {
-                string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/search?order=cmc&q=guid:" + cardId);
+                string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + cardId);
                 CardEphemeralInfos infos = ParseScryfallCardInfos(json_data);
                 return infos;
             }
@@ -295,24 +275,19 @@ namespace MaGeek.AppBusiness
         private static async Task SaveRealtimeCardInfos(MagicCardVariant cardVariant, CardEphemeralInfos infos)
         {
             if (infos == null) return;
-            await SavePrice(cardVariant.MultiverseId, infos.values.ValueEur, infos.values.ValueUsd, infos.values.EdhRecRank);
+            await SavePrice(cardVariant, infos.values.ValueEur, infos.values.ValueUsd, infos.values.EdhRecRank);
             await SaveLegality(cardVariant.MultiverseId, infos.legals);
             await SaveRelated(cardVariant.Card, infos.relateds);
         }
-        private static async Task SavePrice(string multiverseId, string priceEur, string priceUsd, int edhRank)
+        private static async Task SavePrice(MagicCardVariant cardVariant, string priceEur, string priceUsd, int edhRank)
         {
             try
             {
                 using var DB = App.Biz.DB.GetNewContext();
-                DB.CardValues.Add(
-                    new CardValue()
-                    {
-                        MultiverseId = multiverseId,
-                        ValueEur = priceEur.ToString(),
-                        ValueUsd = priceUsd.ToString(),
-                        EdhRecRank = edhRank,
-                    }
-                );
+                cardVariant.ValueEur = priceEur;
+                cardVariant.ValueUsd = priceUsd;
+                cardVariant.EdhRecRank = edhRank;
+                DB.Entry(cardVariant).State=EntityState.Modified;
                 await DB.SaveChangesAsync();
             }
             catch (Exception e) { MessageBoxHelper.ShowError("SavePrice", e); }
@@ -372,19 +347,6 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception e) { MessageBoxHelper.ShowError("GetCardLegal", e); }
             return legal;
-        }
-        public static async Task<CardValue> GetPrice(MagicCardVariant variant)
-        {
-            CardValue price = null;
-            try
-            {
-                if (variant == null) return price;
-                await RetrieveRealtimeInfos(variant);
-                using var DB = App.Biz.DB.GetNewContext();
-                price = await DB.CardValues.Where(x => x.MultiverseId == variant.MultiverseId).FirstOrDefaultAsync();
-            }
-            catch (Exception e) { MessageBoxHelper.ShowError("GetPrice", e); }
-            return price;
         }
         public static async Task<List<MagicCard>> GetRelated(MagicCardVariant variant)
         {
@@ -535,11 +497,11 @@ namespace MaGeek.AppBusiness
 
         #region Decks
 
-        public static async Task AddDeck()
+        public static async Task AddEmptyDeck()
         {
-            using var DB = App.Biz.DB.GetNewContext();
             try
             {
+                using var DB = App.Biz.DB.GetNewContext();
                 string deckTitle = MessageBoxHelper.UserInputString("Please enter a title for this new deck", "");
                 if (deckTitle == null) return;
                 if (DB.decks.Where(x => x.Title == deckTitle).Any())
@@ -553,44 +515,36 @@ namespace MaGeek.AppBusiness
                 App.Events.RaiseUpdateDeckList();
                 App.Events.RaiseDeckSelect(deck);
             }
-            catch (Exception ex)
-            {
-                MessageBoxHelper.ShowMsg(ex.Message);
-            }
+            catch (Exception e) { MessageBoxHelper.ShowError("AddEmptyDeck", e); }
         }
 
         public static async Task AddDeck(List<ImportLine> importLines, string title)
         {
-            var deck = new MagicDeck(title);
-            using (var DB = App.Biz.DB.GetNewContext())
+            try
             {
-                DB.decks.Add(deck);
-                await DB.SaveChangesAsync();
-            }
-            MagicCard card;
-            foreach (var cardOccurence in importLines)
-            {
-                using var DB = App.Biz.DB.GetNewContext();
+                var deck = new MagicDeck(title);
+                using (var DB = App.Biz.DB.GetNewContext())
                 {
-                    card = DB.cards.Where(x => x.CardId.ToLower() == cardOccurence.Name)
-                                             .Include(x => x.Variants)
-                                             .FirstOrDefault();
+                    DB.decks.Add(deck);
+                    await DB.SaveChangesAsync();
                 }
-                if (card != null)
+                MagicCard card;
+                foreach (var cardOccurence in importLines)
                 {
-                    MagicCardVariant variant = card.Variants[0];
-                    await AddCardToDeck(variant, deck, cardOccurence.Quantity, cardOccurence.Side ? 2 : 0);
+                    using var DB = App.Biz.DB.GetNewContext();
+                    {
+                        card = DB.cards.Where(x => x.CardId == cardOccurence.Name)
+                                                 .Include(x => x.Variants)
+                                                 .FirstOrDefault();
+                    }
+                    if (card != null)
+                    {
+                        MagicCardVariant variant = card.Variants[0];
+                        await AddCardToDeck(variant, deck, cardOccurence.Quantity, cardOccurence.Side ? 2 : 0);
+                    }
                 }
             }
-            //if (deck.CardRelations.Count > 0)
-            //{
-            //    using var DB = App.Biz.DB.GetNewContext();
-            //    {
-            //        deck.CardRelations[0].RelationType = 1;
-            //        DB.decks.Add(deck);
-            //        await DB.SaveChangesAsync();
-            //    }
-            //}
+            catch (Exception e) { MessageBoxHelper.ShowError("AddDeck", e); }
         }
 
         public static async Task RenameDeck(MagicDeck deck)
@@ -791,11 +745,13 @@ namespace MaGeek.AppBusiness
         public static async Task<float> EstimateDeckPrice(MagicDeck selectedDeck)
         {
             float total = 0;
-            foreach (var v in selectedDeck.CardRelations)
-            {
-                float price = float.Parse((await GetPrice(v.Card)).ValueEur);
-                total += v.Quantity * price;
-            }
+            await Task.Run(() => {
+                foreach (var v in selectedDeck.CardRelations)
+                {
+                    float price = float.Parse(v.Card.ValueEur);
+                    total += v.Quantity * price;
+                }
+            });
             return total;
         }
 

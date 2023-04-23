@@ -18,11 +18,21 @@ namespace MaGeek.AppData.Entities
         public string MultiverseId { get; set; }
         public string ImageUrl { get; set; }
         public string Rarity { get; set; }
-        public string SetName { get; set; } = "";
+        public string SetName { get; set; }
+
+        public string Lang { get; set; }
+        public string TraductedTitle { get; set; }
+        public string TraductedText { get; set; }
+        public string Traductedype { get; set; }
+
+        public string ValueEur { get; set; }
+        public string ValueUsd { get; set; }
+        public int EdhRecRank { get; set; }
+
         public int IsCustom { get; set; }
         public string CustomName { get; set; }
-        public int Got { get; set; }
 
+        public int Got { get; set; }
         public string LastUpdate { get; set; } = "";
 
 
@@ -33,16 +43,23 @@ namespace MaGeek.AppData.Entities
 
         public MagicCardVariant() { }
 
-        public MagicCardVariant(Card selectedCard)
+        public MagicCardVariant(Card scryCard)
         {
-            Id = selectedCard.Id.ToString();
-            ImageUrl = selectedCard.ImageUris != null ? selectedCard.ImageUris.Values.LastOrDefault().ToString() : "";
-            Rarity = selectedCard.Rarity;
-            SetName = selectedCard.SetName != null ? selectedCard.SetName : "???";
+            Id = scryCard.Id.ToString();
+            MultiverseId = scryCard.MultiverseIds != null ? scryCard.MultiverseIds.FirstOrDefault().ToString() : "";
+            ImageUrl = scryCard.ImageUris != null ? scryCard.ImageUris.Values.LastOrDefault().ToString() : "";
+            Rarity = scryCard.Rarity;
+            SetName = scryCard.SetName != null ? scryCard.SetName : "";
+
+
+            Lang = scryCard.Language;
+            TraductedTitle = scryCard.PrintedName;
+            TraductedText = scryCard.PrintedText;
+            Traductedype = scryCard.PrintedTypeLine;
+
             IsCustom = 0;
             Got = 0;
-            MultiverseId = selectedCard.MultiverseIds != null ? selectedCard.MultiverseIds.FirstOrDefault().ToString() : "";
-            Card = MageekUtils.FindCardById(selectedCard.Name).Result;
+            Card = MageekUtils.FindCardById(scryCard.Name).Result;
         }
 
         #endregion
@@ -59,6 +76,19 @@ namespace MaGeek.AppData.Entities
             get
             {
                 return string.IsNullOrEmpty(ImageUrl) ? Brushes.Black : Brushes.White;
+            }
+        }
+        public Brush GetPriceColor {
+            get
+            {
+                float p = float.Parse(ValueEur);
+                if (p >= 10) return Brushes.White;
+                else if (p >= 5) return Brushes.Orange;
+                else if (p >= 2) return Brushes.Yellow;
+                else if (p >= 1) return Brushes.Green;
+                else if (p >= 0.2) return Brushes.LightGray;
+                else if (p >= 0) return Brushes.DarkGray;
+                else return Brushes.Black;
             }
         }
 
