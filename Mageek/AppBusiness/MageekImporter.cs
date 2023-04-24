@@ -24,11 +24,13 @@ namespace MaGeek.AppBusiness
         Queue<PendingImport> PendingImport = new();
         PendingImport? CurrentImport = null;
 
-        enum ImporterState { Init, Play, Pause, Canceling }
-        ImporterState state = ImporterState.Init;
+        enum ImporterState { Init, Play, Pause, Canceled }
+        ImporterState state { get; set; } = ImporterState.Init;
+        bool importing { get; set; }
 
         Timer timer;
-        private bool isWorking;
+
+        static string SaveStatePath { get { return App.Config.Path_ImporterState; } }
 
         #region UI
 
@@ -41,8 +43,8 @@ namespace MaGeek.AppBusiness
                 return PendingImport.Count + (CurrentImport != null ? 1 : 0);
             }
         }
-        private string infoText = "";
 
+        private string infoText = "";
         public string InfoText
         {
             get { return infoText; }
@@ -59,9 +61,19 @@ namespace MaGeek.AppBusiness
         {
             LoadState();
             ConfigureTimer();
-            state = ImporterState.Pause;
-            Message = "Init done";
+            if (PendingCount > 0)
+            {
+                state = ImporterState.Pause;
+                Message = "Paused, "+ PendingCount + " imports waiting";
+            }
+            else
+            {
+                state = ImporterState.Play;
+                Message = "";
+            }
         }
+
+
 
         private void ConfigureTimer()
         {
@@ -78,6 +90,7 @@ namespace MaGeek.AppBusiness
         {
             PendingImport.Enqueue(importation);
         }
+
         public void Play()
         {
             if (state == ImporterState.Pause)
@@ -86,6 +99,7 @@ namespace MaGeek.AppBusiness
                 Message = "Play";
             }
         }
+
         public void Pause()
         {
             if (state == ImporterState.Play)
@@ -94,10 +108,11 @@ namespace MaGeek.AppBusiness
                 Message = "Pause";
             }
         }
+
         public void CancelAll()
         {
             Message = "Canceling";
-            state = ImporterState.Canceling;
+            state = ImporterState.Canceled;
             PendingImport = new();
             CurrentImport = null;
             Message = "Canceled";
@@ -107,70 +122,74 @@ namespace MaGeek.AppBusiness
 
         private void MainLoop(object sender, ElapsedEventArgs e)
         {
-            if (!isWorking && state == ImporterState.Play) CheckNextImport().ConfigureAwait(false);
+            if (!importing && state == ImporterState.Play) CheckNextImport().ConfigureAwait(false);
         }
+
         private async Task CheckNextImport()
         {
+            SaveState();
             if (state == ImporterState.Play)
             {
                 if (PendingImport.Count > 0) CurrentImport = PendingImport.Dequeue();
+                UpdateInfoText();
                 if (CurrentImport != null)
                 {
-                    await WorkerTask();
+                    importing = true;
+                    await DoImport();
+                    importing = false;
                 }
             }
-            SaveState();
-            UpdateInfoText();
         }
 
-
-        private async Task WorkerTask()
+        private async Task DoImport()
         {
-            isWorking = true;
-            if (state == ImporterState.Init) return;
             List<Card> importResult = new();
-            while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
-            if (state != ImporterState.Canceling)
+
+            while (state != ImporterState.Canceled && state == ImporterState.Pause) { };
+            if (state != ImporterState.Canceled)
             {
-                Message = "Calling MtgApi";
+                Message = "Retrieving cards";
                 WorkerProgress=(0);
-                importResult = await Import(CurrentImport);
+                importResult = await RetrieveCards(CurrentImport);
             }
-            while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
-            if (state != ImporterState.Canceling)  //App.Events.RaisePreventUIAction(true);
+
+            while (state != ImporterState.Canceled && state == ImporterState.Pause) { };
+            if (state != ImporterState.Canceled)  //App.Events.RaisePreventUIAction(true);
             { 
-                Message = "Recording cards localy";
+                Message = "Recording cards";
                 WorkerProgress=(50);
                 await RecordCards(importResult);
             }
-            while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
-            if (state != ImporterState.Canceling)
+
+            while (state != ImporterState.Canceled && state == ImporterState.Pause) { };
+            if (state != ImporterState.Canceled)
             {
-                Message = "Making Deck";
+                Message = "Making a deck";
                 WorkerProgress=(75);
-                await MakeItADeck(importResult);
+                await MakeADeck(importResult);
             }
-            while (state != ImporterState.Canceling && state == ImporterState.Pause) { };
-            if (state != ImporterState.Canceling)
+
+            while (state != ImporterState.Canceled && state == ImporterState.Pause) { };
+            if (state != ImporterState.Canceled)
             {
                 WorkerProgress=(99);
-                Message = "Finalize";
-                await FinalizeImportation();
+                Message = "Finalizing";
+                FinalizeImport();
             }
-            isWorking = false;
+
         }
 
         #region Work
 
-        private async Task<List<Card>> Import(PendingImport? currentImport)
+        private async Task<List<Card>> RetrieveCards(PendingImport? currentImport)
         {
             List<Card> list = new();
             switch (currentImport.Value.Mode)
             {
-                case ImportMode.Set: list = await MageekUtils.ImportSet(CurrentImport.Value.Content); break;
-                case ImportMode.Search: list = await MageekUtils.ImportCard(CurrentImport.Value.Content, false, false, true); break;
-                case ImportMode.Update: list = await MageekUtils.ImportCard(CurrentImport.Value.Content, true, false, false); break;
-                case ImportMode.List: list = await ImportCardList(await ParseCardList(CurrentImport.Value.Content)); break;
+                case ImportMode.Set: list = await MageekUtils.RetrieveSetCards(CurrentImport.Value.Content); break;
+                case ImportMode.Search: list = await MageekUtils.RetrieveCard(CurrentImport.Value.Content, false, false); break;
+                case ImportMode.Update: list = await MageekUtils.RetrieveCard(CurrentImport.Value.Content, true, false); break;
+                case ImportMode.List: list = await RetrieveCardList(await ParseCardList(CurrentImport.Value.Content)); break;
             };
             return list;
         }
@@ -210,7 +229,7 @@ namespace MaGeek.AppBusiness
             return tuples;
         }
 
-        private async Task<List<Card>> ImportCardList(List<ImportLine> deckList)
+        private async Task<List<Card>> RetrieveCardList(List<ImportLine> deckList)
         {
             List<Card> cards = new();
             try
@@ -218,7 +237,7 @@ namespace MaGeek.AppBusiness
                 for (int i = 0; i < deckList.Count; i++)
                 {
                     Message = "Retrieve Card : " + deckList[i].Name;
-                    var foundCards = await MageekUtils.ImportCard(deckList[i].Name, true, true, false);
+                    var foundCards = await MageekUtils.RetrieveCard(deckList[i].Name, true, true);
                     cards.AddRange(foundCards);
                     WorkerProgress=i * 100 / deckList.Count / 2;
                 }
@@ -237,7 +256,7 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        private async Task MakeItADeck(List<Card> importResult)
+        private async Task MakeADeck(List<Card> importResult)
         {
             if (importResult.Count == 0) return;
             List<ImportLine> importLines = new();
@@ -255,36 +274,31 @@ namespace MaGeek.AppBusiness
             );
         }
 
-        private async Task FinalizeImportation()
+        private void FinalizeImport()
         {
-            if (CurrentImport.Value.Mode == ImportMode.Search)
-            {
-                App.Events.RaiseUpdateCardCollec();
-            }
-            if (CurrentImport.Value.Mode == ImportMode.Set)
-            {
-                App.Events.RaiseUpdateCardCollec();
-                App.Events.RaiseUpdateDeckList();
-            }
-            if (CurrentImport.Value.Mode == ImportMode.List)
-            {
-                App.Events.RaiseUpdateCardCollec();
-                App.Events.RaiseUpdateDeckList();
-            }
-            if (CurrentImport.Value.Mode == ImportMode.Update)
-            {
-                var c = App.State.SelectedCard;
-                App.Events.RaiseCardSelected(null);
-                App.Events.RaiseCardSelected(c);
-            }
-            CurrentImport = null;
-            WorkerProgress=100;
-            Message = "Done";
+                if (CurrentImport.Value.Mode == ImportMode.Search)
+                {
+                    App.Events.RaiseUpdateCardCollec();
+                }
+                if (CurrentImport.Value.Mode == ImportMode.Set)
+                {
+                    App.Events.RaiseUpdateCardCollec();
+                    App.Events.RaiseUpdateDeckList();
+                }
+                if (CurrentImport.Value.Mode == ImportMode.List)
+                {
+                    App.Events.RaiseUpdateCardCollec();
+                    App.Events.RaiseUpdateDeckList();
+                }
+                if (CurrentImport.Value.Mode == ImportMode.Update)
+                {
+                    var c = App.State.SelectedCard;
+                    if (c!=null) App.Events.RaiseCardSelected(c);
+                }
+                CurrentImport = null;
+                WorkerProgress = 100;
+                Message = "Done";
         }
-
-        #endregion
-
-        #region Report Progress
 
         private void UpdateInfoText()
         {
@@ -305,24 +319,22 @@ namespace MaGeek.AppBusiness
 
         #region SaveState
 
-        static string StatePath { get { return App.Config.Path_ImporterState; } }
-
         public void SaveState()
         {
             string jsonString = "";
             var x = PendingImport.ToList();
             if (CurrentImport != null) x.Add(CurrentImport.Value);
             jsonString += JsonSerializer.Serialize(x);
-            File.WriteAllText(StatePath, jsonString);
+            File.WriteAllText(SaveStatePath, jsonString);
         }
 
         public void LoadState()
         {
             try
             {
-                if (!File.Exists(StatePath)) return;
-                string jsonString = File.ReadAllText(StatePath);
-                File.WriteAllText(StatePath, "");
+                if (!File.Exists(SaveStatePath)) return;
+                string jsonString = File.ReadAllText(SaveStatePath);
+                File.WriteAllText(SaveStatePath, "");
                 if (string.IsNullOrEmpty(jsonString)) return;
                 List<PendingImport> loadedImports = JsonSerializer.Deserialize<List<PendingImport>>(jsonString);
                 PendingImport = new Queue<PendingImport>();
@@ -330,7 +342,7 @@ namespace MaGeek.AppBusiness
             }
             catch
             {
-                File.WriteAllText(StatePath, "");
+                File.WriteAllText(SaveStatePath, "");
             }
         }
 

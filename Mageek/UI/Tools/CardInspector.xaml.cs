@@ -116,6 +116,12 @@ namespace MaGeek.UI
             IsLoading = Visibility.Visible; 
             await Task.Run(() => { Variants = GetVariants(); });
             await Task.Run(() => { NbVariants = GetNbVariants(); });
+            Legalities = await MageekUtils.GetLegalities(SelectedCard);
+            foreach(var v in selectedCard.Variants)
+            {
+                await MageekUtils.RetrieveCardValues(v);
+            }
+            // = await MageekUtils.GetRelatedCards(SelectedCard);
             Tags = await GetTags();
             await Task.Run(() =>
             {
@@ -130,7 +136,6 @@ namespace MaGeek.UI
         private async Task DoAsyncReloadVariant()
         {
             IsLoading = Visibility.Visible;
-            Legalities = await MageekUtils.GetCardLegal(SelectedVariant);
             await Task.Run(() =>
             {
                 OnPropertyChanged(nameof(Legalities));

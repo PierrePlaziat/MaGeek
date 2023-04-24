@@ -19,16 +19,18 @@ namespace MaGeek.AppBusiness
             this.dbData = dbData;
         }
 
-        public DbSet<MagicCard> cards { get; set; }
-        public DbSet<MagicCardVariant> cardVariants { get; set; }
-        public DbSet<CardTraduction> traductions { get; set; }
-        public DbSet<MagicDeck> decks { get; set; }
-        public DbSet<CardDeckRelation> cardsInDecks { get; set; }
-        public DbSet<CardTag> Tags { get; set; }
-        public DbSet<Param> Params { get; set; }
-        public DbSet<Legality> Legalities { get; set; }
-        public DbSet<CardCardRelation> CardRelations { get; set; } // check model creation, add to db
+        public DbSet<MagicCard> Cards { get; set; }
+        public DbSet<MagicCardVariant> CardVariants { get; set; }
+        public DbSet<CardTraduction> CardTraductions { get; set; } // TODO get foreign names from another source with more complete data
+        public DbSet<Legality> Legalities { get; set; } // TODO check and do not use multiverse ID
+        public DbSet<CardCardRelation> CardRelations { get; set; } // TODO check model creation, add to db
 
+        public DbSet<MagicDeck> Decks { get; set; }
+        public DbSet<CardDeckRelation> CardsInDecks { get; set; }
+        
+        public DbSet<CardTag> Tags { get; set; }
+        public DbSet<Param> Params { get; set; } // TODO add currency (eur vs usd)
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(dbData.ConnexionString);
@@ -65,7 +67,7 @@ namespace MaGeek.AppBusiness
                 .Property(e => e.Id).ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Legality>()
-                .Property(e => e.Id).ValueGeneratedOnAdd();
+                .Property(e => e.LegalityId).ValueGeneratedOnAdd();
 
             modelBuilder.Entity<CardCardRelation>()
                 //.HasMany(e => e.Card2).WithMany(e => e.Variants) //TODO
@@ -74,11 +76,13 @@ namespace MaGeek.AppBusiness
 
         internal void DeleteAllContent()
         {
-            cards.ExecuteDeleteAsync();
-            cardVariants.ExecuteDeleteAsync();
-            traductions.ExecuteDeleteAsync();
-            decks.ExecuteDeleteAsync();
-            cardsInDecks.ExecuteDeleteAsync();
+            Cards.ExecuteDeleteAsync();
+            CardVariants.ExecuteDeleteAsync();
+            CardTraductions.ExecuteDeleteAsync();
+            Legalities.ExecuteDeleteAsync();
+            CardRelations.ExecuteDeleteAsync();
+            Decks.ExecuteDeleteAsync();
+            CardsInDecks.ExecuteDeleteAsync();
             Tags.ExecuteDeleteAsync();
             App.Restart();
         }

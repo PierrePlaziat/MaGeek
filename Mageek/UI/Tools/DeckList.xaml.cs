@@ -126,7 +126,7 @@ namespace MaGeek.UI
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 return FilterDeckEnumerator(
-                    DB.decks
+                    DB.Decks
                     .Include(deck => deck.CardRelations)
                         .ThenInclude(cardrel => cardrel.Card)
                             .ThenInclude(card => card.Card)

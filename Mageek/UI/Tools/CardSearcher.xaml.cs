@@ -198,7 +198,7 @@ namespace MaGeek.UI
 
             using (var DB = App.Biz.DB.GetNewContext())
             {
-                retour = await DB.cards.Where(x => x.Cmc >= FilterMinCmc)
+                retour = await DB.Cards.Where(x => x.Cmc >= FilterMinCmc)
                                  .Where(x => x.Cmc <= FilterMaxCmc)
                                  .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower())
                                           )//|| x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
