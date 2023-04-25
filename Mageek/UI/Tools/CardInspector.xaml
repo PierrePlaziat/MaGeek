@@ -201,7 +201,7 @@
         </StackPanel>
 
 
-        <Grid Background="Black" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
+        <Grid Background="Black" Grid.Row="2" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
             <controls:BusyIndicator></controls:BusyIndicator>
         </Grid>
         
