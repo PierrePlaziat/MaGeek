@@ -258,6 +258,7 @@ namespace MaGeek.AppBusiness
 
         private async Task MakeADeck(List<Card> importResult)
         {
+            if (CurrentImport.Value.Mode == ImportMode.Search || CurrentImport.Value.Mode == ImportMode.Update) return;
             if (importResult.Count == 0) return;
             List<ImportLine> importLines = new();
             if (CurrentImport.Value.Mode == ImportMode.List)

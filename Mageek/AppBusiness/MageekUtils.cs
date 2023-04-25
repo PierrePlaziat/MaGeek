@@ -182,16 +182,16 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             return legalities;
         }
-        public static async Task<List<MagicCard>> GetRelatedCards(MagicCard card)
+        public static async Task<List<CardCardRelation>> GetRelatedCards(MagicCard card)
         {
-            List<MagicCard> relatedCards = null;
+            List<CardCardRelation> relatedCards = new();
             if (card == null) return relatedCards;
             try
             {
                 await RetrieveRelatedCards(card);
                 using var DB = App.Biz.DB.GetNewContext();
-                var rels = await DB.CardRelations.Where(x => x.Card1Id == card.CardId).ToListAsync();
-                foreach (var rel in rels) relatedCards.Add(rel.Card2);
+                relatedCards = await DB.CardRelations.Where(x => x.Card1Id == card.CardId)
+                    .ToListAsync();
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             return relatedCards;
@@ -221,12 +221,57 @@ namespace MaGeek.AppBusiness
                 Thread.Sleep(DelayApi);
                 string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + card.Variants[0].Id);
                 Card scryfallCard = JsonSerializer.Deserialize<Card>(json_data);
-                List<MagicCard> cards = new();
-                foreach(var uri in scryfallCard.RelatedUris)
+                List<CardCardRelation> rels = new();
+                if(scryfallCard.AllParts != null)
                 {
+                    foreach (var part in scryfallCard.AllParts)
+                    {
+                        string cardId;
+                        string cardName;
+                        string relationType;
+                        part.TryGetValue("id", out cardId);
+                        part.TryGetValue("name", out cardName);
+                        part.TryGetValue("component", out relationType);
 
+                        if(cardName != card.CardId)
+                        {
+                            MagicCard relatedCard;
+                            using (var DB = App.Biz.DB.GetNewContext())
+                            {
+                                relatedCard = await DB.Cards.Where(x => x.CardId == cardName)
+                                        .FirstOrDefaultAsync();
+                            }
+                            if (relatedCard == null)
+                            {
+                                var retrieved = await HttpUtils.Get("https://api.scryfall.com/cards/" + cardId);
+                                Card result = JsonSerializer.Deserialize<Card>(retrieved);
+                                await RecordCard(result, false);
+                                using (var DB = App.Biz.DB.GetNewContext())
+                                {
+                                    relatedCard = await DB.Cards.Where(x => x.CardId == cardName)
+                                            .FirstOrDefaultAsync();
+                                }
+                            }
+                            if (relatedCard != null)
+                            {
+                                rels.Add(
+                                    new CardCardRelation()
+                                    {
+                                        Card1Id = card.CardId,
+                                        Card2Id = relatedCard.CardId,
+                                        RelationType = relationType,
+                                        LastUpdate = DateTime.Now.ToShortDateString()
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                MessageBoxHelper.ShowMsg("couldnt retrieve related card");
+                            }
+                        }
+                    }
+                    await SaveRelatedCards(card, rels);
                 }
-                await SaveRelatedCards(card, cards);
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
@@ -263,6 +308,7 @@ namespace MaGeek.AppBusiness
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 var relation = DB.CardRelations.Where(x => x.Card1Id == card.CardId).FirstOrDefault();
+                if (relation == null) return true;
                 if (string.IsNullOrEmpty(relation.LastUpdate)) return true;
                 lastUpdate = DateTime.Parse(relation.LastUpdate);
             }
@@ -317,21 +363,13 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception e) { MessageBoxHelper.ShowError("SaveLegality", e); }
         }
-        private static async Task SaveRelatedCards(MagicCard card, IEnumerable<MagicCard> relatedCards)
+        private static async Task SaveRelatedCards(MagicCard card, List<CardCardRelation> rels)
         {
             try
             {
                 using var DB = App.Biz.DB.GetNewContext();
-                foreach (MagicCard relatedCard in relatedCards)
-                {
-                    DB.CardRelations.Add(
-                        new CardCardRelation()
-                        {
-                            Card1Id = card.CardId,
-                            Card2Id = relatedCard.CardId,
-                        }
-                    );
-                }
+                await DB.CardRelations.AddRangeAsync(rels);
+                DB.Entry(card).State = EntityState.Unchanged;
                 await DB.SaveChangesAsync();
             }
             catch (Exception e) { MessageBoxHelper.ShowError("SaveRelated", e); }
@@ -410,7 +448,7 @@ namespace MaGeek.AppBusiness
             await DB.SaveChangesAsync();
         }
 
-        public static async Task<BitmapImage> RetrieveImage(MagicCardVariant magicCardVariant)
+        public static async Task<BitmapImage> RetrieveImage(MagicCardVariant magicCardVariant, bool back=false)
         {
             BitmapImage img = null;
             try
@@ -419,13 +457,27 @@ namespace MaGeek.AppBusiness
                 string localFileName = "";
                 if (magicCardVariant.IsCustom == 0)
                 {
-                    localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + ".png");
-                    if (!File.Exists(localFileName))
+                    if(back)
                     {
-                        var httpClient = new HttpClient();
-                        using var stream = await httpClient.GetStreamAsync(magicCardVariant.ImageUrl);
-                        using var fileStream = new FileStream(localFileName, FileMode.Create);
-                        await stream.CopyToAsync(fileStream);
+                        localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + "_back.png");
+                        if (!File.Exists(localFileName))
+                        {
+                            var httpClient = new HttpClient();
+                            using var stream = await httpClient.GetStreamAsync(magicCardVariant.ImageUrl_Back);
+                            using var fileStream = new FileStream(localFileName, FileMode.Create);
+                            await stream.CopyToAsync(fileStream);
+                        }
+                    }
+                    else
+                    {
+                        localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + ".png");
+                        if (!File.Exists(localFileName))
+                        {
+                            var httpClient = new HttpClient();
+                            using var stream = await httpClient.GetStreamAsync(magicCardVariant.ImageUrl_Front);
+                            using var fileStream = new FileStream(localFileName, FileMode.Create);
+                            await stream.CopyToAsync(fileStream);
+                        }
                     }
                 }
                 var path = Path.GetFullPath(localFileName);

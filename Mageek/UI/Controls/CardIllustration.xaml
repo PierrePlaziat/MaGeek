@@ -69,6 +69,8 @@
             <local:ManaCost Grid.Column="1" Grid.Row="0"
                             Cost="{Binding SelectedCard.ManaCost}"/>
 
+            <Button Grid.Row="1" Grid.ColumnSpan="2" Width="80" VerticalAlignment="Bottom" Visibility="{Binding HasBackFace}" Click="SwitchFaceClic">Switch Face</Button>
+            
             <Label Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" 
                    Content="{Binding SelectedCard.Type}" 
                    Foreground="White" FontSize="10" FontWeight="Black"/>

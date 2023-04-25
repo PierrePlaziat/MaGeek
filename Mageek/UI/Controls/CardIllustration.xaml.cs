@@ -51,10 +51,12 @@ namespace MaGeek.UI
                 OnPropertyChanged();
                 OnPropertyChanged("HasPower");
                 OnPropertyChanged("SelectedCard");
+                ShowBack = false;
+                OnPropertyChanged(nameof(HasBackFace));
                 SetValue(CardProperty, value);
                 if (SelectedVariant != null)
                 {
-                    CardImage = new NotifyTaskCompletion<BitmapImage>(SelectedVariant.RetrieveImage());
+                    CardImage = new NotifyTaskCompletion<BitmapImage>(SelectedVariant.RetrieveImage(ShowBack));
                 }
             }
         }
@@ -98,6 +100,26 @@ namespace MaGeek.UI
 
         #endregion
 
+        #region Back Face
+
+        bool showBack = false;
+        public bool ShowBack
+        {
+            get { return showBack; }
+            set { showBack = value; OnPropertyChanged(); }
+        }
+
+        public Visibility HasBackFace
+        {
+            get
+            {
+                if (SelectedCard == null) return Visibility.Collapsed;
+                return string.IsNullOrEmpty(SelectedCard.Variants[0].ImageUrl_Back) ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region CTOR
@@ -135,6 +157,12 @@ namespace MaGeek.UI
         }
 
         #endregion
+
+        private void SwitchFaceClic(object sender, RoutedEventArgs e)
+        {
+            ShowBack = !showBack;
+            CardImage = new NotifyTaskCompletion<BitmapImage>(SelectedVariant.RetrieveImage(ShowBack));
+        }
 
     }
 

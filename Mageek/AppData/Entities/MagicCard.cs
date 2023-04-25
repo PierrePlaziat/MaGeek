@@ -63,14 +63,14 @@ namespace MaGeek.AppData.Entities
         {
             if (selectedVariant != -1)
             {
-                if (!string.IsNullOrEmpty(Variants[selectedVariant].ImageUrl))
+                if (!string.IsNullOrEmpty(Variants[selectedVariant].ImageUrl_Front))
                 {
                     return await Variants[selectedVariant].RetrieveImage();
                 }
             }
             foreach (var variant in Variants)
             {
-                if (!string.IsNullOrEmpty(variant.ImageUrl))
+                if (!string.IsNullOrEmpty(variant.ImageUrl_Front))
                 {
                     return await variant.RetrieveImage();
                 }

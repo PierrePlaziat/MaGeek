@@ -1,25 +1,33 @@
 
 TODO
-
-Bug with "-" in card name
-
-DB price table
-
-	! 	check all db access (need to test importation now)
-	.	advanced card search with scryfall
-	.	better legality deck check
-	.	proxy support (currently got Blank pdf)
-	.	speed up deck duplication
 	
-	
-LATER
+	Bug
+		.	update card relations > refresh cardlist
+		?	"-" in card name
+		?	wont record token variants
 
-	.	tags sort and stats for deck
-	.	profiles				>	Folders in Appdata containing db and importer state
-
-MAYBE
+	Refacto
+		-	cardsearch 
+		?	lang gestion
 	
-	-	differentes variant in deck (/!\ difficulties with EF)
-	.	pie charts
-	.	auto deck
-	.	custom cards support	>	how to generate image ?
+	User experience
+		-	speed up deck duplication
+		-	speed up card with lot of infos selection
+		
+	
+	Functionalities
+		.	add keyword
+		.	add rulings
+		.	proxy support (currently got Blank pdf)
+		.	better legality deck check
+
+THEN
+
+	.	profiles	>	Folders in Appdata containing db and importer state
+	-	custom cards support	>	how to generate image ?
+
+MAYBE AFTER
+	-	tags sort and stats for deck
+	-	auto deck
+	x	differentes variant in deck (/!\ difficulties with EF)
+	x	pie charts stats

@@ -16,29 +16,41 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="348"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="250"></RowDefinition>
         </Grid.RowDefinitions>
 
         <local:CardIllustration x:Name="yo" Width="255" Height="348" Margin="0" Background="Blue"
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
                                 SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
-        <StackPanel Grid.Row="1" >
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
 
-            <DockPanel>
-                <Button Width="75" Click="UpdateCardVariants">Update</Button>
-                <!--<Button Click="LaunchCustomCardCreation">Create custom</Button>-->
-                <Button Click="PinCard" Name="PinButton">PIN</Button>
-            </DockPanel>
-            
-            <DockPanel>
+            <StackPanel>
 
-                <Button Click="AddToCurrentDeck" 
-                        Content="Add to Deck"/>
-            </DockPanel>
+                <DockPanel>
+                    <Button Width="75" Click="UpdateCardVariants">Update</Button>
+                    <!--<Button Click="LaunchCustomCardCreation">Create custom</Button>-->
+                    <Button Click="PinCard" Name="PinButton">PIN</Button>
+                </DockPanel>
 
-            <ScrollViewer >            
-            <ListView BorderThickness="0" 
+                <DockPanel>
+
+                    <Button Click="AddToCurrentDeck" 
+                            Content="Add to Deck"/>
+                </DockPanel>
+
+                <Button Click="Button_Click">Search on cardmarket</Button>
+
+            </StackPanel>
+
+            <ScrollViewer  Grid.Row="1">            
+            <ListView BorderThickness="0"
                       x:Name="VariantListBox"  
                       ItemsSource="{Binding Variants}" 
                       Background="#333" MouseUp="SelectVariant" SelectedIndex="0" HorizontalAlignment="Stretch">
@@ -109,63 +121,76 @@
             </ListView>
             </ScrollViewer>
 
-        </StackPanel>
-        
-        <StackPanel Grid.Row="2" Background="#222">
+            <StackPanel Grid.Row="2" Background="#222">
 
-            <ScrollViewer Height="150">
+                <ScrollViewer Height="150">
 
-                <ListView ItemsSource="{Binding Legalities}" >
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Columns="2"/>
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
+                    <ListView ItemsSource="{Binding Legalities}" >
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <Label Content="{Binding Format}" Foreground="{Binding IsLegalColor}"></Label>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                
+                </ScrollViewer>
+            
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="3"  Visibility="{Binding ShowRelateds}">
+                <ListView ItemsSource="{Binding RelatedCards}" HorizontalAlignment="Stretch" Visibility="{Binding ShowRelateds}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <DockPanel>
-                                <Label Content="{Binding Format}" Foreground="{Binding IsLegalColor}"></Label>
-                            </DockPanel>
+                            <Button Click="Button_Click_1" Content="{Binding Description}" HorizontalAlignment="Stretch"></Button>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                
             </ScrollViewer>
-        
-            <DockPanel>
-                <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>
-                <Button Click="AddTag">Add Tag</Button>
-            </DockPanel>
 
-            <Border Width="298" BorderBrush="Black" BorderThickness="1" Name="sugestions">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Name="resultStack"></StackPanel>
-                </ScrollViewer>
-            </Border>
+            <StackPanel Grid.Row="4">
+                <DockPanel>
+                    <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>
+                    <Button Click="AddTag">Add Tag</Button>
+                </DockPanel>
 
-            <ItemsControl ItemsSource="{Binding Tags}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderBrush="#FF000000" BorderThickness="1" CornerRadius="8" Background="#555" Margin="3">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition></ColumnDefinition>
-                                    <ColumnDefinition></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <Label Content="{Binding Tag}" Foreground="White"/>
-                                <Button Click="DeleteTag" Grid.Column="1" Content="X" Foreground="Black" BorderThickness="0" Background="Transparent"/>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            
-        </StackPanel>
+                <Border Width="298" BorderBrush="Black" BorderThickness="1" Name="sugestions">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Name="resultStack"></StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <ItemsControl ItemsSource="{Binding Tags}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#FF000000" BorderThickness="1" CornerRadius="8" Background="#555" Margin="3">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="{Binding Tag}" Foreground="White"/>
+                                    <Button Click="DeleteTag" Grid.Column="1" Content="X" Foreground="Black" BorderThickness="0" Background="Transparent"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+            </StackPanel>
+
+        </Grid>
         
 
 

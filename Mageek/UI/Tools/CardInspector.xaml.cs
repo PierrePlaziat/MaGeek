@@ -1,8 +1,12 @@
 ﻿using MaGeek.AppBusiness;
 using MaGeek.AppData.Entities;
-using ScryfallApi.Client.Models;
+using Plaziat.CommonWpf;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,7 +30,7 @@ namespace MaGeek.UI
                 selectedCard = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsActive));
-                Reload();
+                if (value != null) Reload();
             }
         }
 
@@ -54,6 +58,7 @@ namespace MaGeek.UI
 
         public int NbVariants { get; private set; }
         public List<Legality> Legalities { get; private set; }
+        public List<CardCardRelation> RelatedCards { get; private set; }
         public List<CardTag> Tags { get; private set; }
 
         #region Visibilities
@@ -68,6 +73,11 @@ namespace MaGeek.UI
         public Visibility IsActive
         {
             get { return SelectedCard == null ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public Visibility ShowRelateds
+        {
+            get { return RelatedCards == null || RelatedCards.Count>0 ? Visibility.Visible : Visibility.Collapsed; }
         }
 
         #endregion
@@ -94,7 +104,11 @@ namespace MaGeek.UI
 
         void HandleCardSelected(MagicCard Card)
         {
-            if (!isPinned) SelectedCard = MageekUtils.FindCardById(Card.CardId).Result;
+            if (!isPinned)
+            {
+                if (Card == null) SelectedCard = null;
+                else SelectedCard = MageekUtils.FindCardById(Card.CardId).Result;
+            }
         }
 
         #endregion
@@ -113,37 +127,47 @@ namespace MaGeek.UI
 
         private async Task DoAsyncReloadCard()
         {
-            IsLoading = Visibility.Visible; 
-            await Task.Run(() => { Variants = GetVariants(); });
-            await Task.Run(() => { NbVariants = GetNbVariants(); });
-            Legalities = await MageekUtils.GetLegalities(SelectedCard);
-            foreach(var v in selectedCard.Variants)
+            try
             {
-                await MageekUtils.RetrieveCardValues(v);
+                IsLoading = Visibility.Visible; 
+                await Task.Run(() => { Variants = GetVariants(); });
+                await Task.Run(() => { NbVariants = GetNbVariants(); });
+                Legalities = await MageekUtils.GetLegalities(SelectedCard);
+                foreach (var v in selectedCard.Variants)
+                {
+                    await MageekUtils.RetrieveCardValues(v);
+                }
+                RelatedCards = await MageekUtils.GetRelatedCards(SelectedCard);
+                Tags = await GetTags();
+                await Task.Run(() =>
+                {
+                    OnPropertyChanged(nameof(Variants));
+                    OnPropertyChanged(nameof(NbVariants));
+                    OnPropertyChanged(nameof(CollectedQuantity));
+                    OnPropertyChanged(nameof(Tags));
+                    OnPropertyChanged(nameof(RelatedCards));
+                    OnPropertyChanged(nameof(ShowRelateds));
+                });
+                AutoSelectVariant();
             }
-            // = await MageekUtils.GetRelatedCards(SelectedCard);
-            Tags = await GetTags();
-            await Task.Run(() =>
-            {
-                OnPropertyChanged(nameof(Variants));
-                OnPropertyChanged(nameof(NbVariants));
-                OnPropertyChanged(nameof(CollectedQuantity));
-                OnPropertyChanged(nameof(Tags));
-            });
-            AutoSelectVariant();
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
         private async Task DoAsyncReloadVariant()
         {
-            IsLoading = Visibility.Visible;
-            await Task.Run(() =>
+            try
             {
-                OnPropertyChanged(nameof(Legalities));
-            });
-            await Task.Run(() =>
-            {
-                IsLoading = Visibility.Collapsed;
-            });
+                IsLoading = Visibility.Visible;
+                await Task.Run(() =>
+                {
+                    OnPropertyChanged(nameof(Legalities));
+                });
+                await Task.Run(() =>
+                {
+                    IsLoading = Visibility.Collapsed;
+                });
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
         #endregion
@@ -175,17 +199,19 @@ namespace MaGeek.UI
 
         private void AutoSelectVariant()
         {
-            VariantListBox.UnselectAll();
-            if (selectedCard == null) return;
-            if (!string.IsNullOrEmpty(selectedCard.FavouriteVariant))
-            {
-                SelectedVariant = selectedCard.Variants.Where(x => x.Id == selectedCard.FavouriteVariant).FirstOrDefault();
-            }
-            else
-            {
-                SelectedVariant = selectedCard.Variants.Where(x => !string.IsNullOrEmpty(x.ImageUrl)).FirstOrDefault();
-            }
-            if (selectedVariant != null) VariantListBox.SelectedItem = selectedVariant;
+            Dispatcher.Invoke(() => { 
+                VariantListBox.UnselectAll();
+                if (selectedCard == null) return;
+                if (!string.IsNullOrEmpty(selectedCard.FavouriteVariant))
+                {
+                    SelectedVariant = selectedCard.Variants.Where(x => x.Id == selectedCard.FavouriteVariant).FirstOrDefault();
+                }
+                else
+                {
+                    SelectedVariant = selectedCard.Variants.Where(x => !string.IsNullOrEmpty(x.ImageUrl_Front)).FirstOrDefault();
+                }
+                if (selectedVariant != null) VariantListBox.SelectedItem = selectedVariant;
+            });
         }
 
         #region Buttons
@@ -330,7 +356,25 @@ namespace MaGeek.UI
         {
             isPinned = !isPinned;
             if (isPinned) PinButton.Background = Brushes.Gray;
-            else PinButton.Background = Brushes.Black;
+            else PinButton.Background = (Brush)(new BrushConverter().ConvertFrom("#555")); ;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.cardmarket.com/en/Magic/Products/Search?searchString=" + selectedCard.CardId) { UseShellExecute = true });
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            CardCardRelation rel = (CardCardRelation)((Button)sender).DataContext;
+            MagicCard relatedCard;
+            using (var DB = App.Biz.DB.GetNewContext())
+            {
+                relatedCard = DB.Cards.Where(x => x.CardId == rel.Card2Id)
+                    .ToList()
+                    .FirstOrDefault();
+            }
+            if (relatedCard != null) App.Events.RaiseCardSelected(relatedCard);
         }
     }
 

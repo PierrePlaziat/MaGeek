@@ -22,8 +22,14 @@ namespace MaGeek.AppFramework
             App.Events.SelectDeckEvent += DoSelectDeck;
         }
 
-        private void DoSelectDeck(MagicDeck deck) { selectedDeck = deck; }
-        private void DoSelectCard(MagicCard Card) { selectedCard = Card; }
+        private void DoSelectDeck(MagicDeck deck) 
+        { 
+            selectedDeck = deck; 
+        }
+        private void DoSelectCard(MagicCard Card) 
+        {
+            selectedCard = Card; 
+        }
 
     }
 

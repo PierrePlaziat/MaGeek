@@ -11,6 +11,9 @@ namespace MaGeek.AppData.Entities
         public virtual MagicCard Card1 { get; set; }
         public virtual MagicCard Card2 { get; set; }
         public string LastUpdate { get; set; } = "";
+        public string RelationType { get; set; } = "";
+
+        public string Description {get{return RelationType+" : "+ Card2Id; } }
 
     }
 
