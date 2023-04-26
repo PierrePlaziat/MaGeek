@@ -30,25 +30,30 @@
         <!-- Search -->
 
         <WrapPanel Grid.Row="0" Grid.Column="0">
+            
             <Button Click="Button_Reset">X</Button>
+            
             <Label HorizontalAlignment="Right" 
                     Content="Name"/>
             <TextBox Text="{Binding FilterName}"
                         Width="300"
                         Grid.Row="0" Grid.Column="1"
                         HorizontalAlignment="Stretch"/>
+            
             <Label HorizontalAlignment="Right" 
                     Content="Type"/>
             <TextBox Text="{Binding FilterType}"
                         Width="120"
                         Grid.Row="0" Grid.Column="3"
                         HorizontalAlignment="Stretch"/>
+            
             <Label Content="CMC >="
                     HorizontalAlignment="Left"/>
             <Slider Minimum="0" Maximum="20"
                     Width="40"
                     Value="{Binding FilterMinCmc}"
                     HorizontalAlignment="Left"/>
+            
             <Label Content="CMC &lt;="
                     HorizontalAlignment="Left"/>
             <Slider Minimum="0" Maximum="20"

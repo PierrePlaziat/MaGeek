@@ -164,6 +164,11 @@ namespace MaGeek.UI
             CardImage = new NotifyTaskCompletion<BitmapImage>(SelectedVariant.RetrieveImage(ShowBack));
         }
 
+        public void ReLoad(MagicCardVariant c)
+        {
+            SelectedVariant = c;
+        }
+
     }
 
 }
