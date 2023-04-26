@@ -129,6 +129,11 @@ namespace MaGeek.AppBusiness
             return false;
         }
 
+        public static async Task RecordCards(List<Card> cardlist, bool owned = false)
+        {
+            foreach (var card in cardlist) await RecordCard(card, owned);
+        }
+        
         public static async Task RecordCard(Card scryCard, bool Owned)
         {
             try

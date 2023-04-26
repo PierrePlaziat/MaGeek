@@ -20,78 +20,21 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="1"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
 
-        <!-- WebSearch Not Searching -->
+        <!-- Search -->
 
-        <!--<Grid Grid.Row="0">
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="100"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-
-            <Label Grid.Column="0"
-                   HorizontalAlignment="Right"
-                   Content="Find new cards:"></Label>
-            <TextBox Grid.Row="0"
-                         Grid.Column="1"
-                         Height="19"
-                         Name="CurrentSearch" 
-                         HorizontalAlignment="Stretch" 
-                         IsEnabled="{Binding IsSearching, Converter={x:Static plaziat:NotConverter.Instance}}"
-                         KeyDown="SearchTextBox_KeyDown">
-            </TextBox>
-            <Button Grid.Row="0"
-                    Grid.Column="2"
-                    Margin="3"
-                    Click="SearchButton_Pressed"
-                    Content="Search"/>
-            
-        </Grid>-->
-        
-        <!-- WebSearch Searching -->
-        
-        <!--<Grid Visibility="{Binding IsSearching,Converter={StaticResource BoolToVisibilityConverter}}"
-              Background="#222">
-            
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-
-            <Label Foreground="#fff" Content="Searching..."></Label>
-            
-                <Grid Grid.Column="1">
-                    <ProgressBar IsIndeterminate="true"/>
-                    <TextBlock Text="{Binding ElementName=pbStatus, Path=Value, StringFormat={}{0:0}%}" 
-                               HorizontalAlignment="Center" 
-                               VerticalAlignment="Center" />
-            </Grid>-->
-
-            <!--<Button Grid.Column="2"
-                    Margin="3"
-                    Click="SearchButton_Pressed"
-                    Content="Cancel"/>-->
-            
-        <!--</Grid>-->
-
-        <!-- Separator -->
-
-        <StackPanel Grid.Row="1" Background="#444"></StackPanel>
-        
-        <!-- Filters -->
-
-        <WrapPanel Grid.Row="2" Grid.Column="0">
+        <WrapPanel Grid.Row="0" Grid.Column="0">
+            <Button Click="Button_Reset">X</Button>
             <Label HorizontalAlignment="Right" 
                     Content="Name"/>
             <TextBox Text="{Binding FilterName}"
-                        Width="120"
+                        Width="300"
                         Grid.Row="0" Grid.Column="1"
                         HorizontalAlignment="Stretch"/>
             <Label HorizontalAlignment="Right" 
@@ -147,23 +90,14 @@
 
         </WrapPanel>
 
-        <Grid Grid.Row="2">
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-
-        </Grid>
-
+        <StackPanel Grid.Column="1">
+            <Button Height="25" Margin="1,1,1,0" Click="Button_SearchLocal" >Search local</Button>
+            <Button Height="25" Margin="1" Click="Button_SearchOnline">Search online</Button>
+        </StackPanel>
+        
         <!-- Card datagrid -->
 
-        <Grid Grid.Row="3"
+        <Grid Grid.Row="1" Grid.ColumnSpan="2"
               ScrollViewer.VerticalScrollBarVisibility="Visible"
               ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <DataGrid x:Name="CardGrid" 
@@ -215,7 +149,7 @@
         </Grid>
 
 
-        <Grid Background="Black" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
+        <Grid Background="Black" Grid.RowSpan="5" Grid.ColumnSpan="2" Visibility="{Binding IsLoading}">
             <controls:BusyIndicator></controls:BusyIndicator>
         </Grid>
 
