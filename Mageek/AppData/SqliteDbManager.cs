@@ -88,7 +88,7 @@ namespace MaGeek.AppData
             dbCo.Open();
             foreach (string instruction in DbInfos.Tables) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
 
-            using (var DB = App.Biz.DB.GetNewContext())
+            using (var DB = GetNewContext())
             {
                 DB.SaveChanges();
             }
@@ -97,7 +97,7 @@ namespace MaGeek.AppData
 
         private void DeleteAllContent()
         {
-            using (var DB = App.Biz.DB.GetNewContext())
+            using (var DB = GetNewContext())
             {
                 DB.DeleteAllContent();
             }

@@ -12,84 +12,57 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"></RowDefinition>
-                <RowDefinition Height="352"></RowDefinition>
+                <RowDefinition Height="355"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="352"></RowDefinition>
+                <RowDefinition Height="355"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="352"></RowDefinition>
+                <RowDefinition Height="355"></RowDefinition>
                 <RowDefinition Height="2*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
-                <ColumnDefinition Width="252"></ColumnDefinition>
+                <ColumnDefinition Width="250"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="252"></ColumnDefinition>
+                <ColumnDefinition Width="250"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="252"></ColumnDefinition>
+                <ColumnDefinition Width="250"></ColumnDefinition>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Grid Name="Emplacement0" Background="Black" Grid.Row="1" Grid.Column="1">
-                <Grid Background="White" Margin="1"/>
-                <ui:CardIllustration SelectedVariant="{Binding Card0}"
-                                     Margin="0" Padding="0" BorderThickness="0"
-                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid Background="Red" Grid.Row="1" Grid.Column="1">
+                <Image Source="{Binding Card0}"></Image>
             </Grid>
 
-            <Grid Name="Emplacement1" Background="Black" Grid.Row="1" Grid.Column="3">
-                <Grid Background="White" Margin="1"/>
-                <ui:CardIllustration SelectedVariant="{Binding Card1}"
-                                     Margin="0" Padding="0" BorderThickness="0"
-                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid Name="Emplacement1" Background="Red" Grid.Row="1" Grid.Column="3">
+                <Image Source="{Binding Card1}"></Image>
             </Grid>
 
-            <Grid Name="Emplacement2" Background="Black" Grid.Row="1" Grid.Column="5">
-                <Grid Background="White" Margin="1"/>
-                <ui:CardIllustration SelectedVariant="{Binding Card2}"
-                                     Margin="0" Padding="0" BorderThickness="0"
-                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid Name="Emplacement2" Background="Red" Grid.Row="1" Grid.Column="5">
+                <Image Source="{Binding Card2}"></Image>
             </Grid>
 
-            <Grid Name="Emplacement3" Background="Black" Grid.Row="3" Grid.Column="1">
-                <Grid Background="White" Margin="1"/>
-                <ui:CardIllustration SelectedVariant="{Binding Card3}"
-                                     Margin="0" Padding="0" BorderThickness="0"
-                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid Name="Emplacement3" Background="Red" Grid.Row="3" Grid.Column="1">
+                <Image Source="{Binding Card3}"></Image>
             </Grid>
 
-            <Grid Name="Emplacement4" Background="Black" Grid.Row="3" Grid.Column="3">
-                <Grid Background="White" Margin="1"/>
-                <ui:CardIllustration SelectedVariant="{Binding Card4}"
-                                     Margin="0" Padding="0" BorderThickness="0"
-                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid Name="Emplacement4" Background="Red" Grid.Row="3" Grid.Column="3">
+                <Image Source="{Binding Card4}"></Image>
             </Grid>
 
-            <Grid Name="Emplacement5" Background="Black" Grid.Row="3" Grid.Column="5">
-                <Grid Background="White" Margin="1"/>
-                <ui:CardIllustration SelectedVariant="{Binding Card5}"
-                                     Margin="0" Padding="0" BorderThickness="0"
-                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid Name="Emplacement5" Background="Red" Grid.Row="3" Grid.Column="5">
+                <Image Source="{Binding Card5}"></Image>
             </Grid>
 
-            <Grid Name="Emplacement6" Background="Black" Grid.Row="5" Grid.Column="1">
-                <Grid Background="White" Margin="1"/>
-                <ui:CardIllustration SelectedVariant="{Binding Card6}"
-                                     Margin="0" Padding="0" BorderThickness="0"
-                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid Name="Emplacement6" Background="Red" Grid.Row="5" Grid.Column="1">
+                <Image Source="{Binding Card6}"></Image>
             </Grid>
 
-            <Grid Name="Emplacement7" Background="Black" Grid.Row="5" Grid.Column="3">
-                <Grid Background="White" Margin="1"/>
-                <ui:CardIllustration SelectedVariant="{Binding Card7}"
-                                     Margin="0" Padding="0" BorderThickness="0"
-                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid Name="Emplacement7" Background="Red" Grid.Row="5" Grid.Column="3">
+                <Image Source="{Binding Card7}"></Image>
             </Grid>
 
-            <Grid Name="Emplacement8" Background="Black" Grid.Row="5" Grid.Column="5">
-                <Grid Background="White" Margin="1"/>
-                <ui:CardIllustration SelectedVariant="{Binding Card8}"
-                                     Margin="0" Padding="0" BorderThickness="0"
-                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid Name="Emplacement8" Background="Red" Grid.Row="5" Grid.Column="5">
+                <Image Source="{Binding Card8}"></Image>
             </Grid>
         
         </Grid>

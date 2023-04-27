@@ -24,7 +24,7 @@ namespace MaGeek.AppData.Entities
         public string Lang { get; set; }
         public string TraductedTitle { get; set; }
         public string TraductedText { get; set; }
-        public string Traductedype { get; set; }
+        public string TraductedType { get; set; }
 
         public string ValueEur { get; set; }
         public string ValueUsd { get; set; }
@@ -56,7 +56,7 @@ namespace MaGeek.AppData.Entities
             Lang = scryCard.Language;
             TraductedTitle = scryCard.PrintedName;
             TraductedText = scryCard.PrintedText;
-            Traductedype = scryCard.PrintedTypeLine;
+            TraductedType = scryCard.PrintedTypeLine;
             SetName = scryCard.SetName;
             if (scryCard.ImageUris!=null)
             {
@@ -97,7 +97,12 @@ namespace MaGeek.AppData.Entities
         public Brush GetPriceColor {
             get
             {
-                float p = float.Parse(ValueEur);
+                float p = 0;
+                try
+                {
+                    p = float.Parse(ValueEur);
+                }
+                catch { }
                 if (p >= 10) return Brushes.White;
                 else if (p >= 5) return Brushes.Orange;
                 else if (p >= 2) return Brushes.Yellow;

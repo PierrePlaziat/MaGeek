@@ -199,14 +199,10 @@ namespace MaGeek.UI
             using (var DB = App.Biz.DB.GetNewContext())
             {
                 retour = await DB.Cards.Where(x => x.Cmc >= FilterMinCmc)
-                                 .Where(x => x.Cmc <= FilterMaxCmc)
-                                 .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower())
-                                          )//|| x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
-                                 .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()))
-                                 //.Include(card=>card.Traductions)
-                                 //.Include(card=>card.Variants)
-                                    //.ThenInclude(card=>card.Card)
-                                 .ToArrayAsync();
+                                       .Where(x => x.Cmc <= FilterMaxCmc)
+                                       .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower())) // TODO || x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
+                                       .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()))
+                                       .ToArrayAsync();
             }
 
             if (!filterColorB) retour = retour.Where(x => !x.ManaCost.Contains('B'));
@@ -237,6 +233,25 @@ namespace MaGeek.UI
         private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (CardGrid.SelectedItem is MagicCard card) App.Events.RaiseCardSelected(card);
+        }
+
+        private void Button_SearchLocal(object sender, RoutedEventArgs e)
+        {
+            ReloadData().ConfigureAwait(false);
+        }
+
+        private async void Button_SearchOnline(object sender, RoutedEventArgs e)
+        {
+            IsLoading = Visibility.Visible;
+            var cardlist = await MageekUtils.RetrieveCard(FilterName, false, true);
+            await MageekUtils.RecordCards(cardlist);
+            await ReloadData();
+        }
+
+        private void Button_Reset(object sender, RoutedEventArgs e)
+        {
+            ResetFilters();
+            ReloadData().ConfigureAwait(false);
         }
 
         private void ResetFilters()
