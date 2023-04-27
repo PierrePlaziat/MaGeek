@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
@@ -322,11 +323,15 @@ namespace MaGeek.AppBusiness
 
         public void SaveState()
         {
-            string jsonString = "";
-            var x = PendingImport.ToList();
-            if (CurrentImport != null) x.Add(CurrentImport.Value);
-            jsonString += JsonSerializer.Serialize(x);
-            File.WriteAllText(SaveStatePath, jsonString);
+            try
+            {
+                string jsonString = "";
+                var x = PendingImport.ToList();
+                if (CurrentImport != null) x.Add(CurrentImport.Value);
+                jsonString += JsonSerializer.Serialize(x);
+                File.WriteAllText(SaveStatePath, jsonString);
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
         public void LoadState()
@@ -341,9 +346,10 @@ namespace MaGeek.AppBusiness
                 PendingImport = new Queue<PendingImport>();
                 foreach (var import in loadedImports) PendingImport.Enqueue(import);
             }
-            catch
+            catch (Exception e)
             {
                 File.WriteAllText(SaveStatePath, "");
+                MessageBoxHelper.ShowMsg("Something went wrong during importer state load, import list was emptied");
             }
         }
 

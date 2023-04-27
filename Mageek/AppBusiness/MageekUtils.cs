@@ -28,6 +28,7 @@ namespace MaGeek.AppBusiness
         #region API
 
         const int DelayApi = 150;
+        static Random rnd = new Random();
 
         #region Static data
 
@@ -271,6 +272,7 @@ namespace MaGeek.AppBusiness
                         }
                     }
                     await SaveRelatedCards(card, rels);
+                    App.Events.RaiseUpdateCardCollec();
                 }
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
@@ -448,7 +450,7 @@ namespace MaGeek.AppBusiness
             await DB.SaveChangesAsync();
         }
 
-        public static async Task<BitmapImage> RetrieveImage(MagicCardVariant magicCardVariant, bool back=false)
+        public static async Task<BitmapImage> RetrieveImage(MagicCardVariant magicCardVariant, bool back=false, int nbTry=0)
         {
             BitmapImage img = null;
             try
@@ -485,7 +487,12 @@ namespace MaGeek.AppBusiness
                 img = new BitmapImage(imgUri);
                 taskCompletion.SetResult(img);
             }
-            catch (Exception e) { MessageBoxHelper.ShowError("RetrieveImage", e); }
+            catch (Exception e) {
+                await Task.Run(() => {
+                    Thread.Sleep(rnd.Next(10)*50);
+                });
+                if (nbTry<3) return await RetrieveImage(magicCardVariant, back, nbTry++);
+            }
             return img;
         }
 

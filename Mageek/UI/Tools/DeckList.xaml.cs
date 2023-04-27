@@ -165,7 +165,8 @@ namespace MaGeek.UI
         private async void DeleteDeck(object sender, RoutedEventArgs e)
         {
             if (decklistbox.SelectedIndex == -1) return;
-            await MageekUtils.DeleteDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
+            foreach(MagicDeck d in decklistbox.SelectedItems)
+                await MageekUtils.DeleteDeck(d);
         }
 
         private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
