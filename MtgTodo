@@ -1,30 +1,21 @@
 
 TODO
-	
-	Bug
-		?	"-" in card name
-		?	wont record token variants
 
-	Refacto
-		?	lang gestion
-	
-	User experience
-		-	speed up deck duplication
-		-	speed up card with lot of infos selection
-		
-	
-	Functionalities
-		.	proxy support (currently got Blank pdf)
-		.	add keyword
-		.	add rulings
-		.	better legality deck check
+	?	foreign card names
+	.	proxy support
 
 THEN
 
-	.	profiles	>	Folders in Appdata containing db and importer state
+	.	add keyword
+	.	add rulings
+
+THEN
+	
 	-	custom cards support	>	how to generate image ?
 
 MAYBE AFTER
+
+	.	profiles	>	Folders in Appdata containing db and importer state
 	-	tags sort and stats for deck
 	-	auto deck
 	x	differentes variant in deck (/!\ difficulties with EF)

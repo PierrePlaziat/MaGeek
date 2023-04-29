@@ -47,11 +47,11 @@ namespace MaGeek.AppData.Entities
         {
             CardId = scryCard.Name;
             Type = scryCard.TypeLine;
-            ManaCost = scryCard.ManaCost ?? "";
-            Cmc = Convert.ToSingle(scryCard.Cmc);
             Text = scryCard.OracleText;
             Power = scryCard.Power;
             Toughness = scryCard.Toughness;
+            ManaCost = scryCard.ManaCost ?? "";
+            Cmc = Convert.ToSingle(scryCard.Cmc);
             SetColorIdentity(scryCard.ColorIdentity);
             DevotionB = ParseDevotion("B");
             DevotionW = ParseDevotion("W");
@@ -69,10 +69,7 @@ namespace MaGeek.AppData.Entities
         private void SetColorIdentity(string[] colorIdentity)
         {
             ColorIdentity = "";
-            foreach (string color in colorIdentity)
-            {
-                ColorIdentity += color;
-            }
+            foreach (string color in colorIdentity) ColorIdentity += color;
         }
 
         public async Task<BitmapImage> RetrieveImage(int selectedVariant = -1)

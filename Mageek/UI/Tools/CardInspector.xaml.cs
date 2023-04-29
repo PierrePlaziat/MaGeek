@@ -30,15 +30,7 @@ namespace MaGeek.UI
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsActive));
                 if (value != null) ReloadCard().ConfigureAwait(false);
-            }
-        }
-
-        public int CollectedQuantity
-        {
-            get
-            {
-                if (SelectedCard == null) return 0;
-                return SelectedCard.Got;
+                UpdateButton.Visibility = Visibility.Visible;
             }
         }
 
@@ -51,11 +43,13 @@ namespace MaGeek.UI
             set { 
                 selectedVariant = value; 
                 OnPropertyChanged();
+                Dispatcher.Invoke(() => {
+                    VariantListBox.SelectedItem = selectedVariant;
+                });
                 ReloadCardVariant().ConfigureAwait(false);
             }
         }
 
-        public int NbVariants { get; private set; }
         public List<Legality> Legalities { get; private set; }
         public List<CardCardRelation> RelatedCards { get; private set; }
         public List<CardTag> Tags { get; private set; }
@@ -118,13 +112,12 @@ namespace MaGeek.UI
         {
             try
             {
-                await Task.Run(() => { 
-                    IsLoading = Visibility.Visible; 
-                });
+                IsLoading = Visibility.Visible; 
+                await AutoSelectVariant();
                 await Task.Run(() => { 
                     Variants = GetVariants();
-                    NbVariants = Variants.Count;
                 });
+
                 Legalities = await MageekUtils.GetLegalities(SelectedCard);
                 foreach (var v in SelectedCard.Variants)
                 {
@@ -133,12 +126,13 @@ namespace MaGeek.UI
                 RelatedCards = await MageekUtils.GetRelatedCards(SelectedCard);
                 Tags = await GetTags();
                 await OnPropertyChangedAsync(nameof(Variants));
-                await OnPropertyChangedAsync(nameof(NbVariants));
-                await OnPropertyChangedAsync(nameof(CollectedQuantity));
                 await OnPropertyChangedAsync(nameof(Tags));
                 await OnPropertyChangedAsync(nameof(RelatedCards));
                 await OnPropertyChangedAsync(nameof(ShowRelateds));
-                AutoSelectVariant();
+                await Task.Run(() =>
+                {
+                    IsLoading = Visibility.Collapsed;
+                });
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
@@ -147,14 +141,9 @@ namespace MaGeek.UI
         {
             try
             {
-                IsLoading = Visibility.Visible;
                 await Task.Run(() =>
                 {
                     OnPropertyChanged(nameof(Legalities));
-                });
-                await Task.Run(() =>
-                {
-                    IsLoading = Visibility.Collapsed;
                 });
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
@@ -180,10 +169,10 @@ namespace MaGeek.UI
 
         #endregion
 
-        private void AutoSelectVariant()
+        private async Task AutoSelectVariant()
         {
-            Dispatcher.Invoke(() => { 
-                VariantListBox.UnselectAll();
+            await Task.Run(() =>
+            {
                 if (selectedCard == null) return;
                 if (!string.IsNullOrEmpty(selectedCard.FavouriteVariant))
                 {
@@ -193,7 +182,6 @@ namespace MaGeek.UI
                 {
                     SelectedVariant = selectedCard.Variants.Where(x => !string.IsNullOrEmpty(x.ImageUrl_Front)).FirstOrDefault();
                 }
-                if (selectedVariant != null) VariantListBox.SelectedItem = selectedVariant;
             });
         }
 
@@ -325,6 +313,7 @@ namespace MaGeek.UI
 
         private void UpdateCardVariants(object sender, RoutedEventArgs e)
         {
+            UpdateButton.Visibility = Visibility.Hidden;
             App.Importer.AddImportToQueue(
                 new PendingImport
                 {

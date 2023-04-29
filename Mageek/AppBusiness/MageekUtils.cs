@@ -1218,13 +1218,13 @@ namespace MaGeek.AppBusiness
         {
             if (deck == null) return "";
             if (deck.CardCount < 60) return "Min 60 cards needed.";
-            if (!await RespectsMaxCardOccurence(deck, 4)) return "No more than 4 times the same card needed.";
+            if (!await RespectsMaxCardOccurence(deck, 4)) return "No more than 4 times the same card needed";
             using (var DB = App.DB.GetNewContext())
             {
                 foreach (var v in deck.CardRelations)
                 {
                     if (!v.Card.Card.Type.Contains("Basic Land"))
-                    if (!DB.Legalities.Where(x=> x.CardId==v.CardId && x.Format== "legacy" && x.IsLegal == "legal").Any())
+                    if (DB.Legalities.Where(x=> x.CardId==v.Card.Id && x.Format== "legacy" && x.IsLegal == "legal").Any())
                     {
                         return v.Card.Card.CardId+" is not legal";
                     }
@@ -1236,14 +1236,14 @@ namespace MaGeek.AppBusiness
         public static async Task<string> Validity_Commander(MagicDeck deck)
         {
             if (deck == null) return "";
-            if (deck.CardCount == 100) return "Exctly 100 cards needed.";
+            if (deck.CardCount != 100) return "Exctly 100 cards needed";
             if (!await RespectsMaxCardOccurence(deck, 1)) return "No more than 1 times the same card needed.";
             using (var DB = App.DB.GetNewContext())
             {
                 foreach (var v in deck.CardRelations)
                 {
                     if (!v.Card.Card.Type.Contains("Basic Land"))
-                        if (!DB.Legalities.Where(x => x.CardId == v.CardId && x.Format == "commander" && x.IsLegal == "legal").Any())
+                        if (DB.Legalities.Where(x => x.CardId == v.Card.Id && x.Format == "commander" && x.IsLegal == "legal").Any())
                         {
                             return v.Card.Card.CardId + " is not legal";
                         }

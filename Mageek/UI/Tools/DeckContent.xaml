@@ -63,7 +63,7 @@
                 
                         <DataTemplate>
                     
-                            <Grid  Height="20" MouseWheel="ScrollViewer_MouseWheel">
+                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
                         
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20"></ColumnDefinition>

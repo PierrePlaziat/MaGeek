@@ -46,7 +46,7 @@
                     <Grid Background="#000">
                         
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"></ColumnDefinition>
+                            <!--<ColumnDefinition Width="100"></ColumnDefinition>-->
                             <ColumnDefinition Width="*"></ColumnDefinition>
                             <ColumnDefinition Width="65"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
@@ -61,17 +61,17 @@
                             </ContextMenu>
                         </Grid.ContextMenu>
                         
-                        <Label Margin="0" Padding="2" 
+                        <!--<Label Margin="0" Padding="2" 
                                FontSize="20" 
                                FontFamily="{StaticResource MtgSymbols}"
                                Content="{Binding DeckColors}"
-                               Foreground="#EEE"/>
+                               Foreground="#EEE"/>-->
 
-                        <Label Grid.Column="1" Foreground="White" 
+                        <Label Grid.Column="0" Foreground="White" 
                                HorizontalAlignment="Stretch" 
                                Content="{Binding Title}"/>
 
-                        <DockPanel Grid.Column="2">
+                        <DockPanel Grid.Column="1">
                             
                             <Label Content="{Binding CardCount}" 
                                    Foreground="#666"/>

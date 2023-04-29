@@ -97,6 +97,7 @@ namespace MaGeek.AppData.Entities
         public Brush GetPriceColor {
             get
             {
+                if (ValueEur == null) return Brushes.Black;
                 float p = 0;
                 try
                 {
