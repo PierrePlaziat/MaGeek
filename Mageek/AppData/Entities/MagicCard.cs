@@ -100,7 +100,7 @@ namespace MaGeek.AppData.Entities
             get
             {
                 var a = Traductions.Where(x => x.Language.ToLower() == App.Config.Settings[Setting.ForeignLangugage].ToLower()).FirstOrDefault();
-                return a != null ? a.TraductedName : CardId;
+                return a != null ? a.TraductedName : "";
             }
         }
 

@@ -1217,7 +1217,7 @@ namespace MaGeek.AppBusiness
         public static async Task<string> Validity_Standard(MagicDeck deck)
         {
             if (deck == null) return "";
-            if (deck.CardCount < 60) return "Min 60 cards needed.";
+            if (deck.CardCount < 60) return "Min 60 cards needed";
             if (!await RespectsMaxCardOccurence(deck, 4)) return "No more than 4 times the same card needed";
             using (var DB = App.DB.GetNewContext())
             {
