@@ -71,7 +71,7 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ImportPreco(string title, bool asOwned)
         {
-            App.Biz.Importer.AddImportToQueue(
+            App.Importer.AddImportToQueue(
                 new PendingImport
                 {
                     Title = "[Preco] " + title,

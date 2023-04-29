@@ -173,7 +173,7 @@
 
                     <Separator Width="20" Background="Transparent"/>
 
-                    <Label Content="Standard" Foreground="#DDD" />
+                    <Label Content="Legacy" Foreground="#DDD" />
                     <Label Content="{Binding StandardOk}" FontWeight="Bold" Foreground="White" />
 
                     <Separator Width="20" Background="Transparent"/>

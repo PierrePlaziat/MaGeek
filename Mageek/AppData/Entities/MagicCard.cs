@@ -21,6 +21,11 @@ namespace MaGeek.AppData.Entities
         public string ManaCost { get; set; }
         public float Cmc { get; set; }
         public string ColorIdentity { get; set; }
+        public int DevotionB { get; set; }
+        public int DevotionW { get; set; }
+        public int DevotionU { get; set; }
+        public int DevotionG { get; set; }
+        public int DevotionR { get; set; }
 
         public string Text { get; set; }
 
@@ -48,6 +53,17 @@ namespace MaGeek.AppData.Entities
             Power = scryCard.Power;
             Toughness = scryCard.Toughness;
             SetColorIdentity(scryCard.ColorIdentity);
+            DevotionB = ParseDevotion("B");
+            DevotionW = ParseDevotion("W");
+            DevotionU = ParseDevotion("U");
+            DevotionG = ParseDevotion("G");
+            DevotionR = ParseDevotion("R");
+        }
+
+        private int ParseDevotion(string color)
+        {
+            int devotion = ManaCost != null ? ManaCost.Length - ManaCost.Replace(color, "").Length : 0;
+            return devotion;
         }
 
         private void SetColorIdentity(string[] colorIdentity)

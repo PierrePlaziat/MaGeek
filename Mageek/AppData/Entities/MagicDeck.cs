@@ -12,7 +12,7 @@ namespace MaGeek.AppData.Entities
         public int DeckId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string DeckColors { get; set; } //  { return App.Biz.Utils.DeckColors(this); } } 
+        public string DeckColors { get; set; } = "";
         public int CardCount { get; set; } 
 
         public virtual ObservableCollection<CardDeckRelation> CardRelations { get; set; }

@@ -196,7 +196,7 @@ namespace MaGeek.UI
         {
             IEnumerable<MagicCard> retour = new List<MagicCard>();
 
-            using (var DB = App.Biz.DB.GetNewContext())
+            using (var DB = App.DB.GetNewContext())
             {
                 retour = await DB.Cards.Where(x => x.Cmc >= FilterMinCmc)
                                        .Where(x => x.Cmc <= FilterMaxCmc)

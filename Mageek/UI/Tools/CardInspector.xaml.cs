@@ -3,7 +3,6 @@ using MaGeek.AppData.Entities;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -30,7 +29,7 @@ namespace MaGeek.UI
                 selectedCard = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsActive));
-                if (value != null) Reload();
+                if (value != null) ReloadCard().ConfigureAwait(false);
             }
         }
 
@@ -52,7 +51,7 @@ namespace MaGeek.UI
             set { 
                 selectedVariant = value; 
                 OnPropertyChanged();
-                AsyncReloadVariant();
+                ReloadCardVariant().ConfigureAwait(false);
             }
         }
 
@@ -115,45 +114,36 @@ namespace MaGeek.UI
 
         #region Async Reload
 
-        private void Reload()
-        {
-            DoAsyncReloadCard().ConfigureAwait(false);
-        }
-
-        private void AsyncReloadVariant()
-        {
-            DoAsyncReloadVariant().ConfigureAwait(false);
-        }
-
-        private async Task DoAsyncReloadCard()
+        private async Task ReloadCard()
         {
             try
             {
-                IsLoading = Visibility.Visible; 
-                await Task.Run(() => { Variants = GetVariants(); });
-                await Task.Run(() => { NbVariants = GetNbVariants(); });
+                await Task.Run(() => { 
+                    IsLoading = Visibility.Visible; 
+                });
+                await Task.Run(() => { 
+                    Variants = GetVariants();
+                    NbVariants = Variants.Count;
+                });
                 Legalities = await MageekUtils.GetLegalities(SelectedCard);
-                foreach (var v in selectedCard.Variants)
+                foreach (var v in SelectedCard.Variants)
                 {
                     await MageekUtils.RetrieveCardValues(v);
                 }
                 RelatedCards = await MageekUtils.GetRelatedCards(SelectedCard);
                 Tags = await GetTags();
-                await Task.Run(() =>
-                {
-                    OnPropertyChanged(nameof(Variants));
-                    OnPropertyChanged(nameof(NbVariants));
-                    OnPropertyChanged(nameof(CollectedQuantity));
-                    OnPropertyChanged(nameof(Tags));
-                    OnPropertyChanged(nameof(RelatedCards));
-                    OnPropertyChanged(nameof(ShowRelateds));
-                });
+                await OnPropertyChangedAsync(nameof(Variants));
+                await OnPropertyChangedAsync(nameof(NbVariants));
+                await OnPropertyChangedAsync(nameof(CollectedQuantity));
+                await OnPropertyChangedAsync(nameof(Tags));
+                await OnPropertyChangedAsync(nameof(RelatedCards));
+                await OnPropertyChangedAsync(nameof(ShowRelateds));
                 AutoSelectVariant();
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
-        private async Task DoAsyncReloadVariant()
+        private async Task ReloadCardVariant()
         {
             try
             {
@@ -180,13 +170,6 @@ namespace MaGeek.UI
                 return selectedCard.Variants;
             else 
                 return new List<MagicCardVariant>();
-        }
-        private int GetNbVariants()
-        {
-            if (selectedCard != null && selectedCard.Variants != null)
-                return selectedCard.Variants.Count;
-            else 
-                return 0;
         }
 
         private async Task<List<CardTag>> GetTags()
@@ -342,7 +325,7 @@ namespace MaGeek.UI
 
         private void UpdateCardVariants(object sender, RoutedEventArgs e)
         {
-            App.Biz.Importer.AddImportToQueue(
+            App.Importer.AddImportToQueue(
                 new PendingImport
                 {
                     Mode = ImportMode.Update,
@@ -368,7 +351,7 @@ namespace MaGeek.UI
         {
             CardCardRelation rel = (CardCardRelation)((Button)sender).DataContext;
             MagicCard relatedCard;
-            using (var DB = App.Biz.DB.GetNewContext())
+            using (var DB = App.DB.GetNewContext())
             {
                 relatedCard = DB.Cards.Where(x => x.CardId == rel.Card2Id)
                     .ToList()

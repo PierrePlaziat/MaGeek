@@ -20,6 +20,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -29,23 +30,31 @@
 
         <!-- Search -->
 
-        <WrapPanel Grid.Row="0" Grid.Column="0">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="2"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Button Margin="3" Click="Button_Reset">X</Button>
             
-            <Button Click="Button_Reset">X</Button>
-            
-            <Label HorizontalAlignment="Right" 
-                    Content="Name"/>
-            <TextBox Text="{Binding FilterName}"
-                        Width="300"
-                        Grid.Row="0" Grid.Column="1"
+            <Label Grid.Column="1" Content="Name"/>
+            <TextBox Grid.Column="2" Text="{Binding FilterName}"
                         HorizontalAlignment="Stretch"/>
-            
-            <Label HorizontalAlignment="Right" 
+
+            <Label  Grid.Column="3" 
                     Content="Type"/>
-            <TextBox Text="{Binding FilterType}"
-                        Width="120"
-                        Grid.Row="0" Grid.Column="3"
+            <TextBox  Grid.Column="4" Text="{Binding FilterType}"
+                       
+                        Grid.Row="0" 
                         HorizontalAlignment="Stretch"/>
+        </Grid>
+
+        <WrapPanel Grid.Row="1" Grid.Column="0">
             
             <Label Content="CMC >="
                     HorizontalAlignment="Left"/>
@@ -95,14 +104,12 @@
 
         </WrapPanel>
 
-        <StackPanel Grid.Column="1">
-            <Button Height="25" Margin="1,1,1,0" Click="Button_SearchLocal" >Search local</Button>
-            <Button Height="25" Margin="1" Click="Button_SearchOnline">Search online</Button>
-        </StackPanel>
+        <Button Grid.Column="1" Grid.Row="0" Height="25" Margin="1,1,1,0" Click="Button_SearchLocal" >Search local</Button>
+        <Button Grid.Column="1" Grid.Row="1" Height="25" Margin="1" Click="Button_SearchOnline">Search online</Button>
         
         <!-- Card datagrid -->
 
-        <Grid Grid.Row="1" Grid.ColumnSpan="2"
+        <Grid Grid.Row="3" Grid.ColumnSpan="2"
               ScrollViewer.VerticalScrollBarVisibility="Visible"
               ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <DataGrid x:Name="CardGrid" 

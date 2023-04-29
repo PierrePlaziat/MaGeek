@@ -24,7 +24,7 @@ namespace MaGeek.UI
         {
             bool asOwned = AsOwnedCheckBox.IsChecked.Value;
             string title = string.IsNullOrEmpty(DeckTitle.Text) ? DateTime.Now.ToString() : DeckTitle.Text;
-            App.Biz.Importer.AddImportToQueue(
+            App.Importer.AddImportToQueue(
                 new PendingImport
                 {
                     Mode = ImportMode.List,

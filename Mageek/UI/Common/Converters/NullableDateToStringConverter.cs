@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace MaGeek.Utils.Converters
+namespace MaGeek.UI.Common.Converters
 {
     public class Converter
     {

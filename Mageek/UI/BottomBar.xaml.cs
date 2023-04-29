@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using MaGeek.AppData.Entities;
 
 namespace MaGeek.UI.CustomControls
@@ -56,7 +55,7 @@ namespace MaGeek.UI.CustomControls
             set { state = value; OnPropertyChanged(); }
         }
 
-        public string InfoText { get { return App.Biz.Importer.InfoText; } }
+        public string InfoText { get { return App.Importer.InfoText; } }
 
         public StateBar()
         {
@@ -90,25 +89,25 @@ namespace MaGeek.UI.CustomControls
 
         private void LoopTimer(object sender, ElapsedEventArgs e)
         {
-            ImportCount = App.Biz.Importer.PendingCount;
-            CurrentPercent = App.Biz.Importer.WorkerProgress;
-            State = App.Biz.Importer.Message;
+            ImportCount = App.Importer.PendingCount;
+            CurrentPercent = App.Importer.WorkerProgress;
+            State = App.Importer.Message;
             OnPropertyChanged("InfoText");
         }
 
         private void ButtonPlay_Click(object sender, RoutedEventArgs e)
         {
-            App.Biz.Importer.Play();
+            App.Importer.Play();
         }
 
         private void ButtonPause_Click(object sender, RoutedEventArgs e)
         {
-            App.Biz.Importer.Pause();
+            App.Importer.Pause();
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            App.Biz.Importer.CancelAll();
+            App.Importer.CancelAll();
         }
 
     }

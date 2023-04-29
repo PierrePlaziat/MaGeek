@@ -23,12 +23,6 @@ namespace MaGeek.AppData
                     using var reader = new StreamReader(response.Content.ReadAsStream());
                     retour = await reader.ReadToEndAsync();
                 }
-
-                // Old obsolete way
-                //using (var w = new WebClient())
-                //{
-                //    retour = w.DownloadString(v);
-                //}
             }
             catch (Exception e) 
             { 

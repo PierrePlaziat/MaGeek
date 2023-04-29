@@ -62,7 +62,7 @@ namespace MaGeek.UI.Windows.Importers
 
         private void ImportSet(Set set)
         {
-            App.Biz.Importer.AddImportToQueue(
+            App.Importer.AddImportToQueue(
                 new PendingImport
                 {
                     Mode = ImportMode.Set,

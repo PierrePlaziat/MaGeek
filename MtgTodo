@@ -2,12 +2,10 @@
 TODO
 	
 	Bug
-		.	update card relations > refresh cardlist
 		?	"-" in card name
 		?	wont record token variants
 
 	Refacto
-		-	cardsearch 
 		?	lang gestion
 	
 	User experience
@@ -16,9 +14,9 @@ TODO
 		
 	
 	Functionalities
+		.	proxy support (currently got Blank pdf)
 		.	add keyword
 		.	add rulings
-		.	proxy support (currently got Blank pdf)
 		.	better legality deck check
 
 THEN

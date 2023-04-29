@@ -4,7 +4,6 @@ using MaGeek.AppData.Entities;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using MaGeek.AppBusiness;
 
 namespace MaGeek.UI
@@ -26,7 +25,7 @@ namespace MaGeek.UI
             set { 
                 filterString = value;
                 OnPropertyChanged(nameof(FilterString));
-                AsyncReload();
+                Reload().ConfigureAwait(false);
             }
         }
 
@@ -71,6 +70,12 @@ namespace MaGeek.UI
             DelayLoad().ConfigureAwait(false);
         }
 
+        private void ConfigureEvents()
+        {
+            App.Events.UpdateDeckEvent += async () => { await Reload(); };
+            App.Events.UpdateDeckListEvent += async () => { await Reload(); };
+        }
+
         private async Task DelayLoad()
         {
             await Task.Delay(1);
@@ -79,66 +84,18 @@ namespace MaGeek.UI
 
         #endregion
 
-        #region Events
+        #region Methods
 
-        private void ConfigureEvents()
-        {
-            App.Events.UpdateDeckEvent += Events_UpdateDeckEvent; ;
-            App.Events.UpdateDeckListEvent += Events_UpdateDeckListEvent;
-        }
-
-        private void Events_UpdateDeckEvent()
-        {
-            AsyncReload();
-        }
-
-        private void Events_UpdateDeckListEvent()
-        {
-            AsyncReload();
-        }
-
-        #endregion
-
-        #region Async Reload
-
-        private void AsyncReload()
-        {
-            DoAsyncReload().ConfigureAwait(false);
-        }
-
-        private async Task DoAsyncReload()
+        private async Task Reload()
         {
             IsLoading = Visibility.Visible;
-            await Task.Run(() => { Decks = GetDecks(); });
+            Decks = FilterDeckEnumerator(await MageekUtils.GetDecks());
             await Task.Run(() =>
             {
                 OnPropertyChanged(nameof(Decks));
                 IsLoading = Visibility.Collapsed;
             });
         }
-
-        #endregion
-
-        #region Data Retrieve
-
-        private IEnumerable<MagicDeck> GetDecks()
-        {
-            using (var DB = App.Biz.DB.GetNewContext())
-            {
-                return FilterDeckEnumerator(
-                    DB.Decks
-                    .Include(deck => deck.CardRelations)
-                        .ThenInclude(cardrel => cardrel.Card)
-                            .ThenInclude(card => card.Card)
-                    .Include(deck => deck.CardRelations)
-                        .ThenInclude(cardrel => cardrel.Card)
-                            .ThenInclude(card => card.DeckRelations)
-                    .ToArray()
-                ); 
-            }
-        }
-
-        #endregion
 
         private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -175,6 +132,9 @@ namespace MaGeek.UI
             float totalPrice = await MageekUtils.EstimateDeckPrice(App.State.SelectedDeck);
             MessageBox.Show("Estimation : " + totalPrice + " €");
         }
+
+        #endregion
+
     }
 
 }

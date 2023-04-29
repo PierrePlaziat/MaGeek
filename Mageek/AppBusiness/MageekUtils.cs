@@ -73,7 +73,7 @@ namespace MaGeek.AppBusiness
             {
                 if (skipIfExists)
                 {
-                    using (var DB = App.Biz.DB.GetNewContext())
+                    using (var DB = App.DB.GetNewContext())
                     {
                         if (DB.Cards.Where(x => x.CardId == cardName).Any()) return new List<Card>();
                     }
@@ -141,7 +141,7 @@ namespace MaGeek.AppBusiness
             {
                 MagicCard localCard;
                 MagicCardVariant localVariant;
-                using (var DB = App.Biz.DB.GetNewContext())
+                using (var DB = App.DB.GetNewContext())
                 {
                     // Card
                     localCard = DB.Cards.Where(x => x.CardId == scryCard.Name)
@@ -182,7 +182,7 @@ namespace MaGeek.AppBusiness
             try
             {
                 await RetrieveLegalities(card);
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 legalities = await DB.Legalities.Where(x => x.CardId == card.CardId).ToListAsync();
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
@@ -195,7 +195,7 @@ namespace MaGeek.AppBusiness
             try
             {
                 await RetrieveRelatedCards(card);
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 relatedCards = await DB.CardRelations.Where(x => x.Card1Id == card.CardId)
                     .ToListAsync();
             }
@@ -242,7 +242,7 @@ namespace MaGeek.AppBusiness
                         if(cardName != card.CardId)
                         {
                             MagicCard relatedCard;
-                            using (var DB = App.Biz.DB.GetNewContext())
+                            using (var DB = App.DB.GetNewContext())
                             {
                                 relatedCard = await DB.Cards.Where(x => x.CardId == cardName)
                                         .FirstOrDefaultAsync();
@@ -252,7 +252,7 @@ namespace MaGeek.AppBusiness
                                 var retrieved = await HttpUtils.Get("https://api.scryfall.com/cards/" + cardId);
                                 Card result = JsonSerializer.Deserialize<Card>(retrieved);
                                 await RecordCard(result, false);
-                                using (var DB = App.Biz.DB.GetNewContext())
+                                using (var DB = App.DB.GetNewContext())
                                 {
                                     relatedCard = await DB.Cards.Where(x => x.CardId == cardName)
                                             .FirstOrDefaultAsync();
@@ -299,7 +299,7 @@ namespace MaGeek.AppBusiness
         private static bool IsLegalitiesOutdated(MagicCard card)
         {
             DateTime lastUpdate;
-            using (var DB = App.Biz.DB.GetNewContext())
+            using (var DB = App.DB.GetNewContext())
             {
                 var legality = DB.Legalities.Where(x => x.CardId == card.CardId).FirstOrDefault();
                 if (legality==null) return true;
@@ -312,7 +312,7 @@ namespace MaGeek.AppBusiness
         private static bool IsRelatedCardsOutdated(MagicCard card)
         {
             DateTime lastUpdate;
-            using (var DB = App.Biz.DB.GetNewContext())
+            using (var DB = App.DB.GetNewContext())
             {
                 var relation = DB.CardRelations.Where(x => x.Card1Id == card.CardId).FirstOrDefault();
                 if (relation == null) return true;
@@ -334,7 +334,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 if(price!=null)
                 {
                     if (price.Eur != null) cardVariant.ValueEur = price.Eur.ToString();
@@ -362,7 +362,7 @@ namespace MaGeek.AppBusiness
                         LastUpdate = DateTime.Now.ToShortDateString(),
                     });
                 }
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 {
                     DB.Legalities.AddRange(legal);
                     await DB.SaveChangesAsync();
@@ -374,7 +374,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 await DB.CardRelations.AddRangeAsync(rels);
                 DB.Entry(card).State = EntityState.Unchanged;
                 await DB.SaveChangesAsync();
@@ -386,7 +386,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 IEnumerable<Legality> existingValues = DB.Legalities.Where(x => x.CardId == localCard.CardId);
                 if (existingValues.Any())
                 {
@@ -400,7 +400,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 List<CardCardRelation> existingValues = await DB.CardRelations.Where(x => x.Card1Id == localCard.CardId).ToListAsync();
                 if (existingValues == null || existingValues.Count == 0) return;
                 DB.CardRelations.RemoveRange(existingValues);
@@ -419,7 +419,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task<MagicCard> FindCardById(string cardId)
         {
-            using var DB = App.Biz.DB.GetNewContext();
+            using var DB = App.DB.GetNewContext();
             return await DB.Cards.Where(x => x.CardId == cardId)
                             .Include(card => card.Traductions)
                             .Include(card => card.Variants)
@@ -429,7 +429,7 @@ namespace MaGeek.AppBusiness
         public static async Task GotCard_Add(MagicCardVariant selectedCard)
         {
             if (selectedCard == null) return;
-            using var DB = App.Biz.DB.GetNewContext();
+            using var DB = App.DB.GetNewContext();
             var c = DB.CardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
             c.Got++;
             DB.Entry(c).State = EntityState.Modified;
@@ -439,7 +439,7 @@ namespace MaGeek.AppBusiness
         public static async Task GotCard_Remove(MagicCardVariant selectedCard)
         {
             if (selectedCard == null) return;
-            using var DB = App.Biz.DB.GetNewContext();
+            using var DB = App.DB.GetNewContext();
             var c = DB.CardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
             c.Got--;
             if (c.Got < 0) c.Got = 0;
@@ -449,7 +449,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task SetFav(MagicCard card, MagicCardVariant variant)
         {
-            using var DB = App.Biz.DB.GetNewContext();
+            using var DB = App.DB.GetNewContext();
             card.FavouriteVariant = variant.Id;
             DB.Entry(card).State = EntityState.Modified;
             await DB.SaveChangesAsync();
@@ -501,71 +501,36 @@ namespace MaGeek.AppBusiness
             return img;
         }
 
-        // TODO call only once at card creation
-        #region Devotions
-
-        private static async Task<int> DevotionB(MagicCard card)
-        {
-            int devotion = 0;
-            await Task.Run(() => {
-                devotion = card.ManaCost != null ?
-                card.ManaCost.Length - card.ManaCost.Replace("B", "").Length
-                : 0;
-            });
-            return devotion;
-        }
-        private static async Task<int> DevotionW(MagicCard card)
-        {
-            int devotion = 0;
-            await Task.Run(() => {
-                devotion = card.ManaCost != null ?
-                card.ManaCost.Length - card.ManaCost.Replace("W", "").Length
-                : 0;
-            });
-            return devotion;
-        }
-        private static async Task<int> DevotionU(MagicCard card)
-        {
-            int devotion = 0;
-            await Task.Run(() => {
-                devotion = card.ManaCost != null ?
-                card.ManaCost.Length - card.ManaCost.Replace("U", "").Length
-                : 0;
-            });
-            return devotion;
-        }
-        private static async Task<int> DevotionG(MagicCard card)
-        {
-            int devotion = 0;
-            await Task.Run(() => {
-                devotion = card.ManaCost != null ?
-                card.ManaCost.Length - card.ManaCost.Replace("G", "").Length
-                : 0;
-            });
-            return devotion;
-        }
-        private static async Task<int> DevotionR(MagicCard card)
-        {
-            int devotion = 0;
-            await Task.Run(() => {
-                devotion = card.ManaCost != null ?
-                card.ManaCost.Length - card.ManaCost.Replace("R", "").Length
-                : 0;
-            });
-            return devotion;
-        }
-
-        #endregion
-
         #endregion
 
         #region Decks
+
+        public static async Task<List<MagicDeck>> GetDecks()
+        {
+            List<MagicDeck> decks = new();
+            try
+            {
+                using (var DB = App.DB.GetNewContext())
+                {
+                    decks = await DB.Decks
+                        .Include(deck => deck.CardRelations)
+                            .ThenInclude(cardrel => cardrel.Card)
+                                .ThenInclude(card => card.Card)
+                        .Include(deck => deck.CardRelations)
+                            .ThenInclude(cardrel => cardrel.Card)
+                                .ThenInclude(card => card.DeckRelations)
+                        .ToListAsync();
+                }
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            return decks;
+        }
 
         public static async Task AddEmptyDeck()
         {
             try
             {
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 string deckTitle = MessageBoxHelper.UserInputString("Please enter a title for this new deck", "");
                 if (deckTitle == null) return;
                 if (DB.Decks.Where(x => x.Title == deckTitle).Any())
@@ -586,7 +551,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 {
                     var deck = new MagicDeck(title);
                     DB.Decks.Add(deck);
@@ -631,7 +596,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task RenameDeck(MagicDeck deck)
         {
-            using var DB = App.Biz.DB.GetNewContext();
+            using var DB = App.DB.GetNewContext();
             if (deck == null) return;
             string newTitle = MessageBoxHelper.UserInputString("Please enter a title for the deck \"" + deck.Title + "\"", deck.Title);
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
@@ -650,7 +615,7 @@ namespace MaGeek.AppBusiness
         {
             if (deckToCopy == null) return;
             var newDeck = new MagicDeck(deckToCopy.Title + " - Copie");
-            using (var DB = App.Biz.DB.GetNewContext())
+            using (var DB = App.DB.GetNewContext())
             {
                 newDeck.CardRelations = new ObservableCollection<CardDeckRelation>();
                 DB.Decks.Add(newDeck);
@@ -677,7 +642,7 @@ namespace MaGeek.AppBusiness
         {
             if (MessageBoxHelper.AskUser("Are you sure to delete this deck ? (" + deckToDelete.Title + ")"))
             {
-                using var DB = App.Biz.DB.GetNewContext();
+                using var DB = App.DB.GetNewContext();
                 var deck = deckToDelete;
                 DB.Decks.Remove(deck);
                 await DB.SaveChangesAsync();
@@ -689,7 +654,7 @@ namespace MaGeek.AppBusiness
         {
             if (card == null || deck == null) return;
             try {
-                using (var DB = App.Biz.DB.GetNewContext())
+                using (var DB = App.DB.GetNewContext())
                 {
                     var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
                     if (cardRelation == null)
@@ -723,7 +688,7 @@ namespace MaGeek.AppBusiness
         {
             if (card == null || deck == null) return;
             try {
-                using (var DB = App.Biz.DB.GetNewContext())
+                using (var DB = App.DB.GetNewContext())
                 {
                     var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
                     if (cardRelation == null) return;
@@ -751,7 +716,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task ChangeCardDeckRelation(CardDeckRelation relation, int type)
         {
-            using (var DB = App.Biz.DB.GetNewContext())
+            using (var DB = App.DB.GetNewContext())
             {
                 relation.RelationType = type;
                 DB.Entry(relation).State = EntityState.Modified;
@@ -775,7 +740,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task<List<CardTag>> GetTagsDistinct()
         {
-            using var DB = App.Biz.DB.GetNewContext();
+            using var DB = App.DB.GetNewContext();
             return await DB.Tags.GroupBy(x => x.Tag).Select(x => x.First()).ToListAsync();
         }
 
@@ -786,21 +751,21 @@ namespace MaGeek.AppBusiness
 
         public static async Task TagCard(MagicCard selectedCard, string text)
         {
-            using var DB = App.Biz.DB.GetNewContext();
+            using var DB = App.DB.GetNewContext();
             DB.Tags.Add(new CardTag(text, selectedCard));
             await DB.SaveChangesAsync();
         }
 
         public static async Task UnTagCard(CardTag cardTag)
         {
-            using var DB = App.Biz.DB.GetNewContext();
+            using var DB = App.DB.GetNewContext();
             DB.Tags.Remove(cardTag);
             await DB.SaveChangesAsync();
         }
 
         public static async Task<List<CardTag>> FindTagsForCard(string cardId)
         {
-            using var DB = App.Biz.DB.GetNewContext();
+            using var DB = App.DB.GetNewContext();
             return await DB.Tags.Where(x => x.CardId == cardId).ToListAsync();
         }
 
@@ -844,7 +809,10 @@ namespace MaGeek.AppBusiness
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += await DevotionB(c.Card.Card) * c.Quantity;
+            await Task.Run(() =>
+            {
+                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionB;
+            });
             return devotion;
         }
         public static async Task<int> DevotionW(MagicDeck deck)
@@ -852,7 +820,10 @@ namespace MaGeek.AppBusiness
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += await DevotionW(c.Card.Card) * c.Quantity;
+            await Task.Run(() =>
+            {
+                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionW;
+            });
             return devotion;
         }
         public static async Task<int> DevotionU(MagicDeck deck)
@@ -860,7 +831,10 @@ namespace MaGeek.AppBusiness
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += await DevotionU(c.Card.Card) * c.Quantity;
+            await Task.Run(() =>
+            {
+                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionU;
+            });
             return devotion;
         }
         public static async Task<int> DevotionG(MagicDeck deck)
@@ -868,7 +842,10 @@ namespace MaGeek.AppBusiness
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += await DevotionG(c.Card.Card) * c.Quantity;
+            await Task.Run(() =>
+            {
+                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionG;
+            });
             return devotion;
         }
         public static async Task<int> DevotionR(MagicDeck deck)
@@ -876,7 +853,10 @@ namespace MaGeek.AppBusiness
             if (deck == null) return 0;
             if (deck.CardRelations == null) return 0;
             int devotion = 0;
-            foreach (var c in deck.CardRelations) devotion += await DevotionR(c.Card.Card) * c.Quantity;
+            await Task.Run(() =>
+            {
+                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionR;
+            });
             return devotion;
         }
 
@@ -1232,28 +1212,44 @@ namespace MaGeek.AppBusiness
 
         #endregion
 
-        // TODO : all formats, check card validity
         #region Validities
 
-        public static async Task<bool> Validity_Standard(MagicDeck deck)
+        public static async Task<string> Validity_Standard(MagicDeck deck)
         {
-            if (deck == null) return false;
-            bool ok = true;
-
-            ok = ok && deck.CardCount >= 60;
-            ok = ok && await RespectsMaxCardOccurence(deck, 4);
-
-            return ok;
+            if (deck == null) return "";
+            if (deck.CardCount < 60) return "Min 60 cards needed.";
+            if (!await RespectsMaxCardOccurence(deck, 4)) return "No more than 4 times the same card needed.";
+            using (var DB = App.DB.GetNewContext())
+            {
+                foreach (var v in deck.CardRelations)
+                {
+                    if (!v.Card.Card.Type.Contains("Basic Land"))
+                    if (!DB.Legalities.Where(x=> x.CardId==v.CardId && x.Format== "legacy" && x.IsLegal == "legal").Any())
+                    {
+                        return v.Card.Card.CardId+" is not legal";
+                    }
+                }
+            }
+            return "OK";
         }
 
-        public static async Task<bool> Validity_Commander(MagicDeck deck)
+        public static async Task<string> Validity_Commander(MagicDeck deck)
         {
-            if (deck == null) return false;
-            bool ok = true;
-            ok = ok && deck.CardCount == 100;
-            ok = ok && await RespectsMaxCardOccurence(deck, 1);
-            ok = ok && deck.CardRelations.Where(x => x.RelationType == 1).Any();
-            return ok;
+            if (deck == null) return "";
+            if (deck.CardCount == 100) return "Exctly 100 cards needed.";
+            if (!await RespectsMaxCardOccurence(deck, 1)) return "No more than 1 times the same card needed.";
+            using (var DB = App.DB.GetNewContext())
+            {
+                foreach (var v in deck.CardRelations)
+                {
+                    if (!v.Card.Card.Type.Contains("Basic Land"))
+                        if (!DB.Legalities.Where(x => x.CardId == v.CardId && x.Format == "commander" && x.IsLegal == "legal").Any())
+                        {
+                            return v.Card.Card.CardId + " is not legal";
+                        }
+                }
+            }
+            return "OK";
         }
 
         private static async Task<bool> RespectsMaxCardOccurence(MagicDeck deck, int limit)

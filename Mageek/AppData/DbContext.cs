@@ -22,14 +22,14 @@ namespace MaGeek.AppBusiness
         public DbSet<MagicCard> Cards { get; set; }
         public DbSet<MagicCardVariant> CardVariants { get; set; }
         public DbSet<CardTraduction> CardTraductions { get; set; } // TODO get foreign names from another source with more complete data
-        public DbSet<Legality> Legalities { get; set; } // TODO check and do not use multiverse ID
-        public DbSet<CardCardRelation> CardRelations { get; set; } // TODO check model creation, add to db
+        public DbSet<Legality> Legalities { get; set; }
+        public DbSet<CardCardRelation> CardRelations { get; set; }
 
         public DbSet<MagicDeck> Decks { get; set; }
         public DbSet<CardDeckRelation> CardsInDecks { get; set; }
         
         public DbSet<CardTag> Tags { get; set; }
-        public DbSet<Param> Params { get; set; } // TODO add currency (eur vs usd)
+        public DbSet<Param> Params { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -70,7 +70,6 @@ namespace MaGeek.AppBusiness
                 .Property(e => e.LegalityId).ValueGeneratedOnAdd();
 
             modelBuilder.Entity<CardCardRelation>()
-                //.HasMany(e => e.Card2).WithMany(e => e.Variants) //TODO
                 .Property(e => e.RelationId).ValueGeneratedOnAdd();
         }
 

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\Corner.png" />
+    <Resource Include="Resources\Images\Corner.png" />
     <Resource Include="Resources\Images\document.png" />
     <Resource Include="Resources\Images\property-blue.png" />
   </ItemGroup>

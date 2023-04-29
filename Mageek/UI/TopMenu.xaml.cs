@@ -53,17 +53,17 @@ namespace MaGeek.UI.CustomControls
 
         private void BackupDb(object sender, RoutedEventArgs e)
         {
-            App.Biz.DB.Backup();
+            App.DB.Backup();
         }
 
         private void RestoreDb(object sender, RoutedEventArgs e)
         {
-            App.Biz.DB.RestoreDb();
+            App.DB.RestoreDb();
         }
 
         private void EraseDb(object sender, RoutedEventArgs e)
         {
-            App.Biz.DB.EraseDb();
+            App.DB.EraseDb();
         }
 
         #endregion

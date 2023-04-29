@@ -46,6 +46,7 @@ namespace Plaziat.CommonWpf
             {
                 msg += " \n\n>>> " + e.InnerException.Message;
             }
+            Console.WriteLine(msg);
             ShowMsg(msg);
         }
     }

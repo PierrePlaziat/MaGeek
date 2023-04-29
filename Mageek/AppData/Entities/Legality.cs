@@ -14,7 +14,7 @@ namespace MaGeek.AppData.Entities
         public string IsLegal { get; set; }
         public string LastUpdate { get; set; } = "";
 
-        public Brush IsLegalColor { get { return IsLegal == "legal" ? Brushes.IndianRed : Brushes.DarkSeaGreen; } }
+        public Brush IsLegalColor { get { return IsLegal == "legal" ? Brushes.DarkSeaGreen : Brushes.IndianRed; } }
 
     }
 
