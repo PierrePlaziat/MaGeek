@@ -243,7 +243,7 @@ namespace MaGeek.UI
         private async void Button_SearchOnline(object sender, RoutedEventArgs e)
         {
             IsLoading = Visibility.Visible;
-            var cardlist = await MageekUtils.RetrieveCard(FilterName, false, true);
+            var cardlist = await MageekUtils.RetrieveCard(FilterName, false, true,true);
             await MageekUtils.RecordCards(cardlist);
             await ReloadData();
         }

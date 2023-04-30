@@ -14,6 +14,8 @@ using MaGeek.AppData;
 using System.Text.Json;
 using ScryfallApi.Client.Models;
 using System.Reflection;
+using MtgApiManager.Lib.Service;
+using MtgApiManager.Lib.Model;
 
 namespace MaGeek.AppBusiness
 {
@@ -29,6 +31,60 @@ namespace MaGeek.AppBusiness
 
         const int DelayApi = 150;
         static Random rnd = new Random();
+        static IMtgServiceProvider serviceProvider = new MtgServiceProvider();
+
+        #region Foreign
+
+        public static async Task<string> GetEnglishNameFromForeignName(string foreignName, string lang)
+        {
+            string englishName = "";
+            try
+            {
+                Thread.Sleep(DelayApi);
+                ICardService service = serviceProvider.GetCardService();
+                var result = await service.Where(x => x.Name, foreignName)
+                                          .Where(x => x.Language, "french").AllAsync();
+                if (result!=null && result.Value!=null && result.Value.Count()>0)
+                {
+                    englishName = result.Value[0].Name;
+                }
+
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            return englishName;
+        }
+
+        public static async Task<List<CardTraduction>> GetTraductions(string englishName)
+        {
+            List<CardTraduction> trads = new();
+            try
+            {
+                Thread.Sleep(DelayApi);
+
+                ICardService service = serviceProvider.GetCardService();
+                var result = await service.Where(x => x.Name, englishName).AllAsync();
+                if (result != null && result.Value != null && result.Value.Count() > 0)
+                {
+                    var zefe = result.Value.Where(x => x.ForeignNames != null).FirstOrDefault();
+                    foreach (var v in zefe.ForeignNames)
+                    {
+                        trads.Add(
+                            new CardTraduction()
+                            {
+                                CardId = englishName,
+                                Language = v.Language,
+                                TraductedName = v.Name,
+                            }
+                        );
+                    }
+                }
+
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            return trads;
+        }
+
+        #endregion
 
         #region Static data
 
@@ -66,7 +122,7 @@ namespace MaGeek.AppBusiness
             return cards;
         }
 
-        public static async Task<List<Card>> RetrieveCard(string cardName, bool exactName, bool skipIfExists)
+        public static async Task<List<Card>> RetrieveCard(string cardName, bool exactName, bool skipIfExists,bool includeForeign)
         {
             List<Card> cards = new();
             try
@@ -79,6 +135,14 @@ namespace MaGeek.AppBusiness
                     }
                 }
                 cards = await RetrieveCard(cardName);
+                if (!cards.Any()) {
+                    if (includeForeign)
+                    {
+                        string newname = await GetEnglishNameFromForeignName(cardName, "french");
+                        if (newname != null) cardName = newname;
+                        if (newname!="") cards = await RetrieveCard(cardName);
+                    }
+                }
                 if (exactName)
                 {
                     cards = await FilterExactName(cards, cardName);
@@ -100,7 +164,7 @@ namespace MaGeek.AppBusiness
                     if (result == null) data = await HttpUtils.Get("https://api.scryfall.com/cards/search?order=cmc&q=" + cardName+ "+unique:prints");
                     else data = await HttpUtils.Get(result.NextPage.ToString());
                     result = JsonSerializer.Deserialize<ResultList<Card>>(data);
-                    cards.AddRange(result.Data);
+                    if (result.Data!=null) cards.AddRange(result.Data);
                 }
                 while (result.HasMore);
             }
@@ -164,6 +228,13 @@ namespace MaGeek.AppBusiness
                         DB.CardVariants.Add(localVariant);
                         DB.Entry(localVariant).State = EntityState.Added;
                         DB.Entry(localCard).State = EntityState.Modified;
+                        await DB.SaveChangesAsync();
+                    }
+                    // Traductions
+                    if (!DB.CardTraductions.Where(x=>x.CardId== localCard.CardId).Any())
+                    {
+                        localCard.Traductions = await GetTraductions(localCard.CardId);
+                        await DB.CardTraductions.AddRangeAsync(localCard.Traductions);
                         await DB.SaveChangesAsync();
                     }
                 }
