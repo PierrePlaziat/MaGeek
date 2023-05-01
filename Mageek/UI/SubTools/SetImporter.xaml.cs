@@ -53,7 +53,7 @@ namespace MaGeek.UI.Windows.Importers
 
         private async Task LoadSets()
         {
-            List<Set> sets = (await MageekUtils.RetrieveSets()).ToList();
+            List<Set> sets = (await MageekApi.RetrieveSets()).ToList();
             foreach (var set in sets) SetList.Add(set);
             SetList = null;
             SetList = sets;

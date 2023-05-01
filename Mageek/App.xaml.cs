@@ -22,6 +22,7 @@ namespace MaGeek
             State = new();
             DB = new();
             Importer = new();
+            MageekTranslator.LoadTranslation();
         }
 
         public static void Restart()

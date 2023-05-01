@@ -187,9 +187,9 @@ namespace MaGeek.AppBusiness
             List<Card> list = new();
             switch (currentImport.Value.Mode)
             {
-                case ImportMode.Set: list = await MageekUtils.RetrieveSetCards(CurrentImport.Value.Content); break;
-                case ImportMode.Search: list = await MageekUtils.RetrieveCard(CurrentImport.Value.Content, false, false,true); break;
-                case ImportMode.Update: list = await MageekUtils.RetrieveCard(CurrentImport.Value.Content, true, false, false); break;
+                case ImportMode.Set: list = await MageekApi.RetrieveSetCards(CurrentImport.Value.Content); break;
+                case ImportMode.Search: list = await MageekApi.RetrieveCard(CurrentImport.Value.Content, false, false,true); break;
+                case ImportMode.Update: list = await MageekApi.RetrieveCard(CurrentImport.Value.Content, true, false, false); break;
                 case ImportMode.List: list = await RetrieveCardList(await ParseCardList(CurrentImport.Value.Content)); break;
             };
             return list;
@@ -238,7 +238,7 @@ namespace MaGeek.AppBusiness
                 for (int i = 0; i < deckList.Count; i++)
                 {
                     Message = "Retrieve Card : " + deckList[i].Name;
-                    var foundCards = await MageekUtils.RetrieveCard(deckList[i].Name, true, true,true);
+                    var foundCards = await MageekApi.RetrieveCard(deckList[i].Name, true, true,true);
                     cards.AddRange(foundCards);
                     WorkerProgress=i * 100 / deckList.Count / 2;
                 }
@@ -252,7 +252,7 @@ namespace MaGeek.AppBusiness
             bool owned = CurrentImport.HasValue && CurrentImport.Value.AsOwned;
             for (int i = 0; i < results.Count; i++)
             {
-                await MageekUtils.RecordCard(results[i], owned);
+                await MageekApi.RecordCard(results[i], owned);
                 WorkerProgress=i * 100 / results.Count / 2 + 50;
             }
         }

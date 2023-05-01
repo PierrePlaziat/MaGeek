@@ -118,12 +118,12 @@ namespace MaGeek.UI
                     Variants = GetVariants();
                 });
 
-                Legalities = await MageekUtils.GetLegalities(SelectedCard);
+                Legalities = await MageekApi.GetLegalities(SelectedCard);
                 foreach (var v in SelectedCard.Variants)
                 {
-                    await MageekUtils.RetrieveCardValues(v);
+                    await MageekApi.RetrieveCardValues(v);
                 }
-                RelatedCards = await MageekUtils.GetRelatedCards(SelectedCard);
+                RelatedCards = await MageekApi.GetRelatedCards(SelectedCard);
                 Tags = await GetTags();
                 await OnPropertyChangedAsync(nameof(Variants));
                 await OnPropertyChangedAsync(nameof(Tags));
