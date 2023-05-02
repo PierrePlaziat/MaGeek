@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+﻿using MaGeek.AppData.Entities;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Plaziat.CommonWpf;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,14 @@ namespace MaGeek.AppBusiness
 
         public static async Task LoadTranslation()
         {
-            await ParseTranslations();
-
+            App.Events.RaisePreventUIAction(true);
             DateTime modifyTime = File.GetLastWriteTime(App.Config.Path_MtgJsonDownload);
             if (modifyTime < DateTime.Now.AddMonths(-1))
             {
                 await DownloadTranslations();
                 await ParseTranslations();
             }
+            App.Events.RaisePreventUIAction(false);
         }
 
         private static async Task DownloadTranslations()
@@ -32,7 +33,7 @@ namespace MaGeek.AppBusiness
             try
             {
                 using var client = new HttpClient();
-                using var s = await client.GetStreamAsync("https://mtgjson.com/api/v5/AllPrintings.json");
+                using var s = await client.GetStreamAsync("https://mtgjson.com/api/v5/AllPrintings.sqlite");
                 using var fs = new FileStream(App.Config.Path_MtgJsonDownload, FileMode.Create);
                 await s.CopyToAsync(fs);
             }
@@ -43,51 +44,41 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using (StreamReader r = new StreamReader(App.Config.Path_MtgJsonDownload))
+                List<CardTraduction> trads = new();
+                using (var connection = new SqliteConnection("Data Source="+ App.Config.Path_MtgJsonDownload))
                 {
-                    string json = await r.ReadToEndAsync();
-                    var data = JsonConvert.DeserializeObject<dynamic>(json);
-                    // The keys you have to search through.
-                    string[] keysToSearchThrough = new string[] { "card", "foreignData", };
+                    connection.Open();
 
-                    string result = string.Empty;
+                    var command = connection.CreateCommand();
+                    command.CommandText = @" SELECT cards.name, foreign_data.language, foreign_data.name
+                                             FROM cards JOIN foreign_data ON cards.uuid=foreign_data.uuid
+                                             WHERE 1=1";
 
-                    // The current data it is travesing through
-                    Dictionary<string, dynamic> currTraversedData = data.ToObject<Dictionary<string, dynamic>>();
-
-                    for (int i = 0; i < keysToSearchThrough.Length; ++i)
+                    using (var reader = command.ExecuteReader())
                     {
-
-                        if (currTraversedData.ContainsKey(keysToSearchThrough[i]))
+                        while (reader.Read())
                         {
-                            // Get the value if the key current exists
-                            dynamic currTravesedDataValue = currTraversedData[keysToSearchThrough[i]];
-
-                            // Check if this 'currTravesedDataValue' can be converted to a 'Dictionary<string, dynamic>'
-                            if (IsStringDynamicDictionary(currTravesedDataValue))
+                            trads.Add(new CardTraduction()
                             {
-                                // There is still more to travese through
-                                currTraversedData = currTravesedDataValue.ToObject<Dictionary<string, dynamic>>();
-                            }
-                            else
-                            {
-                                // There is no more to travese through. (This is the result)
-                                result = currTravesedDataValue.ToString();
-
-                                // TODO: Some error checking in the event that we reached the result early, even though we still have more keys to travase through
-                                break;
-                            }
-
-                        }
-                        else
-                        {
-                            // One of the keys to search through was probably invalid.
+                                CardId = reader.GetString(0),
+                                Language = reader.GetString(1),
+                                TraductedName= reader.GetString(2),
+                            });
+                            var name = reader.GetString(0);
+                            Console.WriteLine($">>>, {name}!");
                         }
                     }
-
-                    // ...
-
-
+                }
+                using var DB = App.DB.GetNewContext();
+                {
+                    foreach (var trad in trads)
+                    {
+                        if(!await DB.CardTraductions.Where(x=>x.CardId==trad.CardId && x.Language==trad.Language).AnyAsync())
+                        {
+                            DB.CardTraductions.Add(trad);
+                        }
+                    }
+                    await DB.SaveChangesAsync();
                 }
             }
             catch (Exception e) { MessageBoxHelper.ShowError("AddDeck", e); }

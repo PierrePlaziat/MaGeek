@@ -21,7 +21,7 @@ namespace MaGeek.AppFramework
         public string Path_Db { get; } = Path.Combine(Path_RoamingFolder, "MaGeek.db");
         public string Path_ImporterState { get; } = Path.Combine(Path_RoamingFolder, "ImporterState.txt"); 
         public string Path_LayoutSave { get; } = Path.Combine(Path_RoamingFolder, "Layout.txt");
-        public string Path_MtgJsonDownload { get; } = Path.Combine(Path_RoamingFolder, "mtgjson.json");
+        public string Path_MtgJsonDownload { get; } = Path.Combine(Path_RoamingFolder, "mtgjson.sqlite");
 
         public Dictionary<Setting, string> Settings { get; private set; } = new Dictionary<Setting, string>();
 
