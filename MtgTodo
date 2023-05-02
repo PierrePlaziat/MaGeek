@@ -1,21 +1,19 @@
 
 TODO
 
-	?	foreign card names
-	.	proxy support
-
-THEN
-
-	.	add keyword
-	.	add rulings
-
-THEN
+	Better searcher
+		.	busy indicator
+		-	speed up local
+		. 	link got indicator
+		. 	search on keywords
 	
+	Proxy support
+		.	Test
+
+Potential ameliorations
+
+	-	migrate to avalonia
 	-	custom cards support	>	how to generate image ?
-
-MAYBE AFTER
-
-	.	profiles	>	Folders in Appdata containing db and importer state
 	-	tags sort and stats for deck
 	-	auto deck
 	x	differentes variant in deck (/!\ difficulties with EF)
