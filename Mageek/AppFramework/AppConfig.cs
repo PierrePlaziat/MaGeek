@@ -76,11 +76,6 @@ namespace MaGeek.AppFramework
             Settings = JsonSerializer.Deserialize<Dictionary<Setting, string>>(jsonString);
         }
 
-        internal string GetLang()
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
     }

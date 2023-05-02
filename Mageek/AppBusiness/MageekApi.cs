@@ -186,6 +186,19 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             return legalities;
         }
+        public static async Task<List<Rule>> GetRules(MagicCard card)
+        {
+            List<Rule> rules = new();
+            if (card == null) return rules;
+            try
+            {
+                await RetrieveLegalities(card);
+                using var DB = App.DB.GetNewContext();
+                rules = await DB.CardRules.Where(x => x.CardId == card.CardId).ToListAsync();
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            return rules;
+        }
         public static async Task<List<CardCardRelation>> GetRelatedCards(MagicCard card)
         {
             List<CardCardRelation> relatedCards = new();
@@ -212,9 +225,26 @@ namespace MaGeek.AppBusiness
                 string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + card.Variants[0].Id);
                 Card scryfallCard = JsonSerializer.Deserialize<Card>(json_data);
                 await SaveLegality(card, scryfallCard.Legalities);
+                await SaveRulings(card, await RetrieveRulings(card,scryfallCard.RulingsUri));
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
+        
+        private static async Task<dynamic> RetrieveRulings(MagicCard card,Uri rulingsUri)
+        {
+            if (rulingsUri==null) return null;
+            try
+            {
+                await DestroyRulings(card);
+                Thread.Sleep(DelayApi);
+                string json_data = await HttpUtils.Get(rulingsUri.ToString());
+                ResultList<Rule> rules = JsonSerializer.Deserialize<ResultList<Rule>>(json_data);
+                return rules;
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            return null;
+        }
+
         private static async Task RetrieveRelatedCards(MagicCard card)
         {
             if (card == null) return;
@@ -368,6 +398,24 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception e) { MessageBoxHelper.ShowError("SaveLegality", e); }
         }
+        private static async Task SaveRulings(MagicCard card, ResultList<Rule> rulings)
+        {
+            try
+            {
+                List<Rule> rule = new();
+                foreach (var l in rulings.Data)
+                {
+                    l.CardId = card.CardId;
+                    rule.Add(l);
+                }
+                using var DB = App.DB.GetNewContext();
+                {
+                    DB.CardRules.AddRange(rule);
+                    await DB.SaveChangesAsync();
+                }
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError("SaveLegality", e); }
+        }
         private static async Task SaveRelatedCards(MagicCard card, List<CardCardRelation> rels)
         {
             try
@@ -402,6 +450,19 @@ namespace MaGeek.AppBusiness
                 List<CardCardRelation> existingValues = await DB.CardRelations.Where(x => x.Card1Id == localCard.CardId).ToListAsync();
                 if (existingValues == null || existingValues.Count == 0) return;
                 DB.CardRelations.RemoveRange(existingValues);
+                await DB.SaveChangesAsync();
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+        }
+
+        private static async Task DestroyRulings(MagicCard localCard)
+        {
+            try
+            {
+                using var DB = App.DB.GetNewContext();
+                List<Rule> existingValues = await DB.CardRules.Where(x => x.CardId == localCard.CardId).ToListAsync();
+                if (existingValues == null || existingValues.Count == 0) return;
+                DB.CardRules.RemoveRange(existingValues);
                 await DB.SaveChangesAsync();
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }

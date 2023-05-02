@@ -31,6 +31,7 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
             <StackPanel>
@@ -127,7 +128,7 @@
 
             <ScrollViewer Grid.Row="2">
 
-                <ListView ItemsSource="{Binding Legalities}" >
+                <ListView ItemsSource="{Binding Legalities}" Width="255">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="2"/>
@@ -144,8 +145,8 @@
 
             </ScrollViewer>
 
-            <ScrollViewer Grid.Row="3"  Visibility="{Binding ShowRelateds}">
-                <ListView ItemsSource="{Binding RelatedCards}" HorizontalAlignment="Stretch" Visibility="{Binding ShowRelateds}">
+            <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Visible">
+                <ListView ItemsSource="{Binding RelatedCards}" Width="5000" HorizontalAlignment="Stretch" Background="#333">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Button Click="Button_Click_1" Content="{Binding Description}" HorizontalAlignment="Stretch"></Button>
@@ -154,13 +155,27 @@
                 </ListView>
             </ScrollViewer>
 
-            <StackPanel Grid.Row="4">
+            <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Visible">
+                <ListView ItemsSource="{Binding Rulings}" Width="5000">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <Label Content="{Binding Source}"></Label>
+                                <Label Content=":"></Label>
+                                <Label Content="{Binding Comment}"></Label>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="5" Background="#333">
                 <DockPanel>
                     <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>
                     <Button Click="AddTag">Add Tag</Button>
                 </DockPanel>
 
-                <Border Width="298" BorderBrush="Black" BorderThickness="1" Name="sugestions">
+                <Border Width="298" BorderBrush="Black" BorderThickness="1" Name="sugestions" Visibility="Collapsed">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel Name="resultStack"></StackPanel>
                     </ScrollViewer>

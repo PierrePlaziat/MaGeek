@@ -1,4 +1,5 @@
-﻿using MaGeek.AppFramework;
+﻿using MaGeek.AppBusiness;
+using MaGeek.AppFramework;
 using ScryfallApi.Client.Models;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace MaGeek.AppData.Entities
         public int DevotionR { get; set; }
 
         public string Text { get; set; }
+        public string KeyWords { get; set; }
 
         public string Power { get; set; }
         public string Toughness { get; set; }
@@ -48,6 +50,7 @@ namespace MaGeek.AppData.Entities
             CardId = scryCard.Name;
             Type = scryCard.TypeLine;
             Text = scryCard.OracleText;
+            SetKeyWords(scryCard.Keywords);
             Power = scryCard.Power;
             Toughness = scryCard.Toughness;
             ManaCost = scryCard.ManaCost ?? "";
@@ -58,6 +61,19 @@ namespace MaGeek.AppData.Entities
             DevotionU = ParseDevotion("U");
             DevotionG = ParseDevotion("G");
             DevotionR = ParseDevotion("R");
+        }
+
+        private void SetKeyWords(string[] keywords)
+        {
+            string k = "";
+            bool first = true;
+            foreach (string keyword in keywords)
+            {
+                if (!first) k += ", ";
+                k+= keyword; 
+                first = false;
+            }
+            KeyWords = k;
         }
 
         private int ParseDevotion(string color)
@@ -99,8 +115,7 @@ namespace MaGeek.AppData.Entities
         {
             get
             {
-                var a = Traductions.Where(x => x.Language.ToLower() == App.Config.Settings[Setting.ForeignLangugage].ToLower()).FirstOrDefault();
-                return a != null ? a.TraductedName : "";
+                return MageekTranslator.GetTraduction(CardId).Result;
             }
         }
 

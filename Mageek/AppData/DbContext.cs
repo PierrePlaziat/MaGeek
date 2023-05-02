@@ -23,6 +23,7 @@ namespace MaGeek.AppBusiness
         public DbSet<MagicCardVariant> CardVariants { get; set; }
         public DbSet<CardTraduction> CardTraductions { get; set; } // TODO get foreign names from another source with more complete data
         public DbSet<Legality> Legalities { get; set; }
+        public DbSet<Rule> CardRules { get; set; }
         public DbSet<CardCardRelation> CardRelations { get; set; }
 
         public DbSet<MagicDeck> Decks { get; set; }
@@ -71,6 +72,9 @@ namespace MaGeek.AppBusiness
 
             modelBuilder.Entity<CardCardRelation>()
                 .Property(e => e.RelationId).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Rule>()
+                .Property(e => e.RuleId).ValueGeneratedOnAdd();
         }
 
         internal void DeleteAllContent()

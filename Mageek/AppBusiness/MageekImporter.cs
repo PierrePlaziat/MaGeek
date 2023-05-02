@@ -294,8 +294,8 @@ namespace MaGeek.AppBusiness
                 }
                 if (CurrentImport.Value.Mode == ImportMode.Update)
                 {
-                    var c = App.State.SelectedCard;
-                    if (c!=null) App.Events.RaiseCardSelected(c);
+                    //var c = App.State.SelectedCard;
+                    //if (c!=null) App.Events.RaiseCardSelected(c);
                 }
                 CurrentImport = null;
                 WorkerProgress = 100;

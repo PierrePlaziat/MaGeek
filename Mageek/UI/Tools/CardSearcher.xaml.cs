@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
 using MaGeek.AppBusiness;
+using MaGeek.AppFramework;
 
 namespace MaGeek.UI
 {
@@ -195,12 +196,15 @@ namespace MaGeek.UI
         private async Task<List<MagicCard>> LoadCards()
         {
             IEnumerable<MagicCard> retour = new List<MagicCard>();
+            string lang = App.Config.Settings[Setting.ForeignLangugage];
 
             using (var DB = App.DB.GetNewContext())
             {
-                retour = await DB.Cards.Where(x => x.Cmc >= FilterMinCmc)
+                retour = await DB.Cards.Include(card => card.Traductions)
+                                       .Where(x => x.Cmc >= FilterMinCmc)
                                        .Where(x => x.Cmc <= FilterMaxCmc)
-                                       .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower())) // TODO || x.CardForeignName.ToLower().Contains(FilterName.ToLower()))
+                                       .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower()) 
+                                                || x.Traductions.Where(y=>y.Language==lang && y.TraductedName.ToLower().Contains(FilterName.ToLower())).Any())
                                        .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()))
                                        .ToArrayAsync();
             }

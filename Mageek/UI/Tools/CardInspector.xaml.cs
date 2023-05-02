@@ -51,6 +51,7 @@ namespace MaGeek.UI
         }
 
         public List<Legality> Legalities { get; private set; }
+        public List<Rule> Rulings { get; private set; }
         public List<CardCardRelation> RelatedCards { get; private set; }
         public List<CardTag> Tags { get; private set; }
 
@@ -119,6 +120,7 @@ namespace MaGeek.UI
                 });
 
                 Legalities = await MageekApi.GetLegalities(SelectedCard);
+                Rulings = await MageekApi.GetRules(SelectedCard);
                 foreach (var v in SelectedCard.Variants)
                 {
                     await MageekApi.RetrieveCardValues(v);
@@ -127,6 +129,7 @@ namespace MaGeek.UI
                 Tags = await GetTags();
                 await OnPropertyChangedAsync(nameof(Variants));
                 await OnPropertyChangedAsync(nameof(Tags));
+                await OnPropertyChangedAsync(nameof(Rulings));
                 await OnPropertyChangedAsync(nameof(RelatedCards));
                 await OnPropertyChangedAsync(nameof(ShowRelateds));
                 await Task.Run(() =>

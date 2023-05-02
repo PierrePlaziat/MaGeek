@@ -1,4 +1,5 @@
 ﻿using MaGeek.AppData.Entities;
+using MaGeek.AppFramework;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Plaziat.CommonWpf;
@@ -84,19 +85,6 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { MessageBoxHelper.ShowError("AddDeck", e); }
         }
 
-        static bool IsStringDynamicDictionary(dynamic input)
-        {
-            try
-            {
-                input.ToObject<Dictionary<string, dynamic>>();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         public static async Task<string> GetEnglishNameFromForeignName(string foreignName, string lang)
         {
             string englishName = "";
@@ -120,9 +108,10 @@ namespace MaGeek.AppBusiness
             string foreignName = "";
             try
             {
+                string lang = App.Config.Settings[Setting.ForeignLangugage];
                 using var DB = App.DB.GetNewContext();
                 {
-                    var t = await DB.CardTraductions.Where(x => x.CardId == englishName && x.Language==App.Config.GetLang()).FirstOrDefaultAsync();
+                    var t = await DB.CardTraductions.Where(x => x.CardId == englishName && x.Language== lang).FirstOrDefaultAsync();
                     if (t != null)
                     {
                         foreignName = t.TraductedName;
