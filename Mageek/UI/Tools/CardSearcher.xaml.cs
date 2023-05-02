@@ -185,6 +185,10 @@ namespace MaGeek.UI
         private async Task ReloadData()
         {
             IsLoading = Visibility.Visible;
+            await Task.Run(() =>
+            {
+                IsLoading = Visibility.Visible;
+            });
             CardList = await LoadCards();
             await Task.Run(() =>
             {
@@ -239,9 +243,9 @@ namespace MaGeek.UI
             if (CardGrid.SelectedItem is MagicCard card) App.Events.RaiseCardSelected(card);
         }
 
-        private void Button_SearchLocal(object sender, RoutedEventArgs e)
+        private async void Button_SearchLocal(object sender, RoutedEventArgs e)
         {
-            ReloadData().ConfigureAwait(false);
+            await ReloadData();
         }
 
         private async void Button_SearchOnline(object sender, RoutedEventArgs e)
@@ -252,10 +256,10 @@ namespace MaGeek.UI
             await ReloadData();
         }
 
-        private void Button_Reset(object sender, RoutedEventArgs e)
+        private async void Button_Reset(object sender, RoutedEventArgs e)
         {
             ResetFilters();
-            ReloadData().ConfigureAwait(false);
+            await ReloadData();
         }
 
         private void ResetFilters()

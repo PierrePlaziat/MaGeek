@@ -55,9 +55,9 @@ namespace MaGeek.AppBusiness
                                              FROM cards JOIN foreign_data ON cards.uuid=foreign_data.uuid
                                              WHERE 1=1";
 
-                    using (var reader = command.ExecuteReader())
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
                             trads.Add(new CardTraduction()
                             {

@@ -95,9 +95,11 @@
         <cc:StateBar Grid.Row="3"></cc:StateBar>
 
         <Grid Grid.RowSpan="2" Background="#000" Opacity=".8" Visibility="{Binding PreventActionVisibility}">
-            <StackPanel>
+            <StackPanel VerticalAlignment="Center">
                 <controls:BusyIndicator></controls:BusyIndicator>
-                <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="20">Please wait : updating foreign names.</Label>
+                <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="20">Please wait:</Label>
+                <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="20">Updating foreign names,</Label>
+                <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="20">This can takes a few minutes.</Label>
             </StackPanel>
         </Grid>
         

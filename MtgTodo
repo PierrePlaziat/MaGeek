@@ -1,16 +1,14 @@
 
 TODO
 
+	gestion des A-cards
+	
 	Better searcher
-		.	busy indicator
-		-	speed up local
+		-	speed up
 		. 	link got indicator
 		. 	search on keywords
-	
-	Proxy support
-		.	Test
 
-Potential ameliorations
+Potential new functionalities
 
 	-	migrate to avalonia
 	-	custom cards support	>	how to generate image ?

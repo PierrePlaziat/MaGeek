@@ -127,7 +127,7 @@
                       SelectionChanged="CardGrid_SelectionChanged">
                 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />
+                    <!--<DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />-->
                     <DataGridTextColumn Header="| Name   " Binding="{Binding CardId}" />
                     <DataGridTextColumn Header="| Foreign Name   " Binding="{Binding CardForeignName}" />
 

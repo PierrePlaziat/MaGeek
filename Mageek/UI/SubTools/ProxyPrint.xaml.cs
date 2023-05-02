@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
@@ -106,9 +105,14 @@ namespace MaGeek.UI.Windows.ImportExport
                 InitializeComponent();
                 DataContext = this;
                 DetermineListOfCardsToPrint();
-                PrintDialog printDialog = new PrintDialog();
-                if (printDialog.ShowDialog() == true) LetsGo(printDialog);
+                DelayLoad().ConfigureAwait(false);
             }
+        }
+
+        private async Task DelayLoad()
+        {
+            await Task.Delay(1);
+            await LetsGo();
         }
 
         private void DetermineListOfCardsToPrint()
@@ -120,16 +124,26 @@ namespace MaGeek.UI.Windows.ImportExport
             }
         }
 
-        private async Task LetsGo(PrintDialog printDialog)
+        private async Task LetsGo()
         {
-            //await SetCard(0, 0);
             for (int page = 0; page <= SelectedDeck.CardCount/9; page++)
             {
+                Card0 = null;
+                Card1 = null;
+                Card2 = null;
+                Card3 = null;
+                Card4 = null;
+                Card5 = null;
+                Card6 = null;
+                Card7 = null;
+                Card8 = null;
                 for(int emplacement=0;emplacement<9;emplacement++)
                 {
                     await SetCard(page, emplacement);
                 }
-                Print(printDialog,page);
+                await Task.Delay(1000);
+                Print(page);
+                await Task.Delay(1000);
             }
         }
 
@@ -152,15 +166,11 @@ namespace MaGeek.UI.Windows.ImportExport
             }
         }
 
-        private void Print(PrintDialog printDialog,int page)
+        private void Print(int page)
         {
-            VisualBrush visualBrush = new VisualBrush(this); 
-            DrawingVisual drawingVisual = new DrawingVisual();
-            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
-            {
-                drawingContext.DrawRectangle(visualBrush, null, new Rect(new Point(), new Size(ActualWidth, ActualHeight)));
-            }
-            printDialog.PrintVisual(drawingVisual, "Mageek Proxy : " + selectedDeck.Title+" - page " + page);
+            PrintDialog printDialog = new PrintDialog();
+            if (printDialog.ShowDialog() == true)
+                printDialog.PrintVisual(yo, "Mageek Proxy : " + selectedDeck.Title+" - page " + page);
         }
     }
 

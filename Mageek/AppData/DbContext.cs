@@ -81,8 +81,8 @@ namespace MaGeek.AppBusiness
         {
             Cards.ExecuteDeleteAsync();
             CardVariants.ExecuteDeleteAsync();
-            CardTraductions.ExecuteDeleteAsync();
             Legalities.ExecuteDeleteAsync();
+            CardRules.ExecuteDeleteAsync();
             CardRelations.ExecuteDeleteAsync();
             Decks.ExecuteDeleteAsync();
             CardsInDecks.ExecuteDeleteAsync();

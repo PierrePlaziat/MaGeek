@@ -121,7 +121,7 @@
                                     <ColumnDefinition Width="auto"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <Label Foreground="White" Padding="4,1,1,1" Grid.Column="3" Content="{Binding Card.Card.CardForeignName}"></Label>
+                                <Label Foreground="White" Padding="4,1,1,1" Grid.Column="3" Content="{Binding Card.Card.CardId}"></Label>
 
                                 <local:ManaCost Grid.Column="4" Cost="{Binding Card.Card.ManaCost}" HorizontalAlignment="Right"/>
 
