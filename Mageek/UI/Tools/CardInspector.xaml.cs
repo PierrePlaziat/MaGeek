@@ -31,6 +31,7 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(IsActive));
                 if (value != null) ReloadCard().ConfigureAwait(false);
                 UpdateButton.Visibility = Visibility.Visible;
+                AutoSelectVariant().ConfigureAwait(false);
             }
         }
 
@@ -183,7 +184,7 @@ namespace MaGeek.UI
                 }
                 else
                 {
-                    SelectedVariant = selectedCard.Variants.Where(x => !string.IsNullOrEmpty(x.ImageUrl_Front)).FirstOrDefault();
+                    SelectedVariant = selectedCard.Variants/*.Where(x => !string.IsNullOrEmpty(x.ImageUrl_Front))*/.FirstOrDefault();
                 }
             });
         }

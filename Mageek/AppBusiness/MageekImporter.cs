@@ -74,8 +74,6 @@ namespace MaGeek.AppBusiness
             }
         }
 
-
-
         private void ConfigureTimer()
         {
             timer = new Timer(1000) { AutoReset = true };
@@ -94,7 +92,7 @@ namespace MaGeek.AppBusiness
 
         public void Play()
         {
-            if (state == ImporterState.Pause)
+            if (state == ImporterState.Pause || state == ImporterState.Canceled)
             {
                 state = ImporterState.Play;
                 Message = "Play";

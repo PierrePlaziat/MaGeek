@@ -11,6 +11,7 @@ using MaGeek.AppData.Entities;
 using Plaziat.CommonWpf;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using ScryfallApi.Client.Models;
 
 namespace MaGeek.AppBusiness
 {
@@ -62,53 +63,6 @@ namespace MaGeek.AppBusiness
             card.FavouriteVariant = variant.Id;
             DB.Entry(card).State = EntityState.Modified;
             await DB.SaveChangesAsync();
-        }
-
-        static Random rnd = new Random();
-        public static async Task<BitmapImage> RetrieveImage(MagicCardVariant magicCardVariant, bool back=false, int nbTry=0)
-        {
-            BitmapImage img = null;
-            try
-            {
-                var taskCompletion = new TaskCompletionSource<BitmapImage>();
-                string localFileName = "";
-                if (magicCardVariant.IsCustom == 0)
-                {
-                    if(back)
-                    {
-                        localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + "_back.png");
-                        if (!File.Exists(localFileName))
-                        {
-                            var httpClient = new HttpClient();
-                            using var stream = await httpClient.GetStreamAsync(magicCardVariant.ImageUrl_Back);
-                            using var fileStream = new FileStream(localFileName, FileMode.Create);
-                            await stream.CopyToAsync(fileStream);
-                        }
-                    }
-                    else
-                    {
-                        localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + ".png");
-                        if (!File.Exists(localFileName))
-                        {
-                            var httpClient = new HttpClient();
-                            using var stream = await httpClient.GetStreamAsync(magicCardVariant.ImageUrl_Front);
-                            using var fileStream = new FileStream(localFileName, FileMode.Create);
-                            await stream.CopyToAsync(fileStream);
-                        }
-                    }
-                }
-                var path = Path.GetFullPath(localFileName);
-                Uri imgUri = new("file://" + path, UriKind.Absolute);
-                img = new BitmapImage(imgUri);
-                taskCompletion.SetResult(img);
-            }
-            catch (Exception e) {
-                await Task.Run(() => {
-                    Thread.Sleep(rnd.Next(10)*50);
-                });
-                if (nbTry<3) return await RetrieveImage(magicCardVariant, back, nbTry++);
-            }
-            return img;
         }
 
         #endregion
@@ -169,33 +123,41 @@ namespace MaGeek.AppBusiness
                     MagicCard card;
                     foreach (var cardOccurence in importLines)
                     {
-                        card = DB.Cards.Where(x => x.CardId == cardOccurence.Name)
-                                                 .Include(x => x.Variants)
-                                                 .FirstOrDefault();
-                        if (card != null)
+                        if (!string.IsNullOrEmpty(cardOccurence.Name))
                         {
-                            MagicCardVariant variant = card.Variants[0];
-                            var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
-                            if (cardRelation == null)
+                            card = DB.Cards.Where(x => x.CardId == cardOccurence.Name)
+                                                     .Include(x => x.Variants)
+                                                     .FirstOrDefault();
+                            if (card != null)
                             {
-                                cardRelation = new CardDeckRelation()
+                                MagicCardVariant variant = card.Variants[0];
+                                var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
+                                if (cardRelation == null)
                                 {
-                                    Card = variant,
-                                    CardId = variant.Id,
-                                    Deck = deck,
-                                    Quantity = cardOccurence.Quantity,
-                                    RelationType = cardOccurence.Side ? 2 : 0
-                                };
-                                DB.Entry(cardRelation).State = EntityState.Added;
-                                deck.CardRelations.Add(cardRelation);
+                                    cardRelation = new CardDeckRelation()
+                                    {
+                                        Card = variant,
+                                        CardId = variant.Id,
+                                        Deck = deck,
+                                        Quantity = cardOccurence.Quantity,
+                                        RelationType = cardOccurence.Side ? 2 : 0
+                                    };
+                                    DB.Entry(cardRelation).State = EntityState.Added;
+                                    deck.CardRelations.Add(cardRelation);
+                                }
+                                else
+                                {
+                                    cardRelation.Quantity += cardOccurence.Quantity;
+                                    DB.Entry(cardRelation).State = EntityState.Modified;
+                                }
+                                deck.CardCount += cardOccurence.Quantity;
                             }
-                            else
-                            {
-                                cardRelation.Quantity += cardOccurence.Quantity;
-                                DB.Entry(cardRelation).State = EntityState.Modified;
-                            }
-                            deck.CardCount += cardOccurence.Quantity;
                         }
+                        else
+                        {
+                            //???
+                        }
+
                     }
                     DB.Entry(deck).State = EntityState.Modified;
                     await DB.SaveChangesAsync();
@@ -385,7 +347,7 @@ namespace MaGeek.AppBusiness
 
         #region Statistics
 
-        // TODO : Too Slow, see after card devotions todo
+        // TODO : Too Slow
         public static async Task<string> DeckColors(MagicDeck deck)
         {
             string retour = "";

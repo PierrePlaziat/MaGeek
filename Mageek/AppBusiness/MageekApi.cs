@@ -10,6 +10,10 @@ using System.Threading;
 using System;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Net.Http;
+using System.Windows.Media.Imaging;
+using ScryfallApi.Client.Apis;
 
 namespace MaGeek.AppBusiness
 {
@@ -18,6 +22,8 @@ namespace MaGeek.AppBusiness
     {
 
         const int DelayApi = 150;
+        static Random rnd = new Random();
+
 
         #region Static data
 
@@ -137,6 +143,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
+                if (scryCard.Name.StartsWith("A-")) return;
                 MagicCard localCard;
                 MagicCardVariant localVariant;
                 using (var DB = App.DB.GetNewContext())
@@ -167,6 +174,91 @@ namespace MaGeek.AppBusiness
                 }
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+        }
+
+        public static async Task<BitmapImage> RetrieveImage(MagicCardVariant magicCardVariant, bool back = false, int nbTry = 0)
+        {
+            if(string.IsNullOrEmpty(magicCardVariant.ImageUrl_Front))
+            {
+                await GetImgUrls(magicCardVariant);
+            }
+            BitmapImage img = null;
+            try
+            {
+                var taskCompletion = new TaskCompletionSource<BitmapImage>();
+                string localFileName = "";
+                //if (magicCardVariant.IsCustom == 0)
+                {
+                    if (back)
+                    {
+                        localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + "_back.png");
+                        if (!File.Exists(localFileName))
+                        {
+                            var httpClient = new HttpClient();
+                            using var stream = await httpClient.GetStreamAsync(magicCardVariant.ImageUrl_Back);
+                            using var fileStream = new FileStream(localFileName, FileMode.Create);
+                            await stream.CopyToAsync(fileStream);
+                        }
+                    }
+                    else
+                    {
+                        localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + ".png");
+                        if (!File.Exists(localFileName))
+                        {
+                            var httpClient = new HttpClient();
+                            using var stream = await httpClient.GetStreamAsync(magicCardVariant.ImageUrl_Front);
+                            using var fileStream = new FileStream(localFileName, FileMode.Create);
+                            await stream.CopyToAsync(fileStream);
+                        }
+                    }
+                }
+                var path = Path.GetFullPath(localFileName);
+                Uri imgUri = new("file://" + path, UriKind.Absolute);
+                img = new BitmapImage(imgUri);
+                taskCompletion.SetResult(img);
+            }
+
+            catch (Exception e)
+            {
+                await Task.Run(() => {
+                    Thread.Sleep(rnd.Next(10) * 50);
+                });
+                if (nbTry < 3) return await RetrieveImage(magicCardVariant, back, nbTry++);
+            }
+            return img;
+        }
+
+        private static async Task GetImgUrls(MagicCardVariant card)
+        {
+            if (card == null) return;
+            try
+            {
+                Card scryCard = null;
+                Thread.Sleep(DelayApi);
+                string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + card.Id);
+                scryCard = JsonSerializer.Deserialize<Card>(json_data);
+
+                using (var DB = App.DB.GetNewContext())
+                {
+                    if (scryCard.ImageUris != null)
+                    {
+                        card.ImageUrl_Front = scryCard.ImageUris.Values.LastOrDefault().ToString();
+                        card.ImageUrl_Back = "";
+                        DB.Entry(card).State= EntityState.Modified;
+                        await DB.SaveChangesAsync();
+                    }
+                    else if (scryCard.CardFaces != null)
+                    {
+                        card.ImageUrl_Front = scryCard.CardFaces[0].ImageUris.Values.LastOrDefault().ToString();
+                        card.ImageUrl_Back = scryCard.CardFaces[1].ImageUris.Values.LastOrDefault().ToString();
+                        DB.Entry(card).State = EntityState.Modified;
+                        await DB.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+
+
         }
 
         #endregion
@@ -260,47 +352,51 @@ namespace MaGeek.AppBusiness
                 {
                     foreach (var part in scryfallCard.AllParts)
                     {
-                        string cardId;
                         string cardName;
-                        string relationType;
-                        part.TryGetValue("id", out cardId);
                         part.TryGetValue("name", out cardName);
-                        part.TryGetValue("component", out relationType);
 
-                        if (cardName != card.CardId)
+                        if (cardName.StartsWith("A-"))
                         {
-                            MagicCard relatedCard;
-                            using (var DB = App.DB.GetNewContext())
+                            string cardId;
+                            string relationType;
+                            part.TryGetValue("id", out cardId);
+                            part.TryGetValue("component", out relationType);
+
+                            if (cardName != card.CardId)
                             {
-                                relatedCard = await DB.Cards.Where(x => x.CardId == cardName)
-                                        .FirstOrDefaultAsync();
-                            }
-                            if (relatedCard == null)
-                            {
-                                var retrieved = await HttpUtils.Get("https://api.scryfall.com/cards/" + cardId);
-                                Card result = JsonSerializer.Deserialize<Card>(retrieved);
-                                await RecordCard(result, false);
+                                MagicCard relatedCard;
                                 using (var DB = App.DB.GetNewContext())
                                 {
                                     relatedCard = await DB.Cards.Where(x => x.CardId == cardName)
                                             .FirstOrDefaultAsync();
                                 }
-                            }
-                            if (relatedCard != null)
-                            {
-                                rels.Add(
-                                    new CardCardRelation()
+                                if (relatedCard == null)
+                                {
+                                    var retrieved = await HttpUtils.Get("https://api.scryfall.com/cards/" + cardId);
+                                    Card result = JsonSerializer.Deserialize<Card>(retrieved);
+                                    await RecordCard(result, false);
+                                    using (var DB = App.DB.GetNewContext())
                                     {
-                                        Card1Id = card.CardId,
-                                        Card2Id = relatedCard.CardId,
-                                        RelationType = relationType,
-                                        LastUpdate = DateTime.Now.ToShortDateString()
+                                        relatedCard = await DB.Cards.Where(x => x.CardId == cardName)
+                                                .FirstOrDefaultAsync();
                                     }
-                                );
-                            }
-                            else
-                            {
-                                MessageBoxHelper.ShowMsg("couldnt retrieve related card");
+                                }
+                                if (relatedCard != null)
+                                {
+                                    rels.Add(
+                                        new CardCardRelation()
+                                        {
+                                            Card1Id = card.CardId,
+                                            Card2Id = relatedCard.CardId,
+                                            RelationType = relationType,
+                                            LastUpdate = DateTime.Now.ToShortDateString()
+                                        }
+                                    );
+                                }
+                                else
+                                {
+                                    MessageBoxHelper.ShowMsg("couldnt retrieve related card");
+                                }
                             }
                         }
                     }

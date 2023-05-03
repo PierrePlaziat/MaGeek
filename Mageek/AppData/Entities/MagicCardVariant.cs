@@ -22,9 +22,6 @@ namespace MaGeek.AppData.Entities
         public string Rarity { get; set; }
 
         public string Lang { get; set; }
-        public string TraductedTitle { get; set; }
-        public string TraductedText { get; set; }
-        public string TraductedType { get; set; }
 
         public string ValueEur { get; set; }
         public string ValueUsd { get; set; }
@@ -54,25 +51,7 @@ namespace MaGeek.AppData.Entities
             Rarity = scryCard.Rarity;
             Artist = scryCard.Artist;
             Lang = scryCard.Language;
-            TraductedTitle = scryCard.PrintedName;
-            TraductedText = scryCard.PrintedText;
-            TraductedType = scryCard.PrintedTypeLine;
             SetName = scryCard.SetName;
-            if (scryCard.ImageUris!=null)
-            {
-                ImageUrl_Front = scryCard.ImageUris.Values.LastOrDefault().ToString();
-                ImageUrl_Back = "";
-            }
-            else if(scryCard.CardFaces != null)
-            {
-                ImageUrl_Front = scryCard.CardFaces[0].ImageUris.Values.LastOrDefault().ToString();
-                ImageUrl_Back = scryCard.CardFaces[1].ImageUris.Values.LastOrDefault().ToString();
-            }
-            else{
-                ImageUrl_Front = "";
-                ImageUrl_Back = "";
-            }
-
             IsCustom = 0;
             Got = 0;
             Card = MageekUtils.FindCardById(scryCard.Name).Result;
@@ -84,7 +63,7 @@ namespace MaGeek.AppData.Entities
 
         public async Task<BitmapImage> RetrieveImage(bool back = false)
         {
-            return await MageekUtils.RetrieveImage(this,back);
+            return await MageekApi.RetrieveImage(this,back);
         }
 
         public Brush LineColoration
@@ -94,6 +73,7 @@ namespace MaGeek.AppData.Entities
                 return string.IsNullOrEmpty(ImageUrl_Front) ? Brushes.Black : Brushes.White;
             }
         }
+
         public Brush GetPriceColor {
             get
             {
@@ -116,13 +96,6 @@ namespace MaGeek.AppData.Entities
 
         #endregion
 
-    }
-
-    internal class CardEphemeralInfos
-    {
-        public CardValue values = new CardValue();
-        public Dictionary<string, string> legals = new Dictionary<string, string>();
-        public List<MagicCard> relateds = new List<MagicCard>();
     }
 
 }

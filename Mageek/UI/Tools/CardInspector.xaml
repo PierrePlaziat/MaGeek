@@ -15,12 +15,12 @@
         </Grid.ColumnDefinitions>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="362"></RowDefinition>
+            <RowDefinition Height="355"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
         <local:CardIllustration x:Name="yo" 
-                                Width="255" Height="362" Margin="0" 
+                                Width="255" Height="355" Margin="0" 
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
                                 SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 

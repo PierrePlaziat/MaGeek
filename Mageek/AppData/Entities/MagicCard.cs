@@ -1,10 +1,8 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.AppFramework;
 using ScryfallApi.Client.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
