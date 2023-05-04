@@ -29,6 +29,13 @@ namespace MaGeek
             get {  return preventActionVisibility; }
             set { preventActionVisibility = value; OnPropertyChanged(); } 
         }
+        
+        private string reason= "";
+        public string Reason
+        { 
+            get {  return reason; }
+            set { reason = value; OnPropertyChanged(); } 
+        }
 
         public MainWindow()
         {
@@ -37,14 +44,14 @@ namespace MaGeek
             App.Events.PreventUIActionEvent += STATE_PreventUIActionEvent;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
             InitializeComponent();
-            MageekTranslator.LoadTranslation();
+            MageekInitializer.Initialize().ConfigureAwait(false);
         }
 
         
 
-        private void STATE_PreventUIActionEvent(bool on)
+        private void STATE_PreventUIActionEvent(bool on, string reason)
         {
-            if (on) { PreventActionVisibility = Visibility.Visible; }
+            if (on) { PreventActionVisibility = Visibility.Visible; Reason = reason; }
             else { PreventActionVisibility = Visibility.Collapsed; }
         }
 

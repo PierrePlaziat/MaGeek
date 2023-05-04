@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Net.Http;
 using System.Windows.Media.Imaging;
-using ScryfallApi.Client.Apis;
 
 namespace MaGeek.AppBusiness
 {
@@ -78,7 +77,7 @@ namespace MaGeek.AppBusiness
                 {
                     if (includeForeign)
                     {
-                        string newname = await MageekTranslator.GetEnglishNameFromForeignName(cardName, "french");
+                        string newname = await MageekUtils.GetEnglishNameFromForeignName(cardName, "french");
                         if (newname != null) cardName = newname;
                         if (newname != "") cards = await RetrieveCard(cardName);
                     }
@@ -137,6 +136,50 @@ namespace MaGeek.AppBusiness
         public static async Task RecordCards(List<Card> cardlist, bool owned = false)
         {
             foreach (var card in cardlist) await RecordCard(card, owned);
+        }
+        
+        public static async Task RecordCards2(List<Card> cardlist, bool owned = false)
+        {
+            try
+            {
+                using (var DB = App.DB.GetNewContext())
+                {
+                    for(int i=0;i<cardlist.Count;i++)
+                    {
+                        if(i%100==0) App.Events.RaisePreventUIAction(true, "First launch, 3/3 : Importing cards - "+i*100 / cardlist.Count + "%");
+                        var scryCard = cardlist[i];
+                        if (!scryCard.Name.StartsWith("A-"))
+                        {
+                            MagicCard localCard;
+                            MagicCardVariant localVariant;
+                            // Card
+                            localCard = DB.Cards.Where(x => x.CardId == scryCard.Name)
+                                                .Include(x => x.Variants)
+                                                .FirstOrDefault();
+                            if (localCard == null)
+                            {
+                                localCard = new MagicCard(scryCard);
+                                DB.Cards.Add(localCard);
+                                await DB.SaveChangesAsync();
+                            }
+                            // Variant
+                            localVariant = localCard.Variants.Where(x => x.Id == scryCard.Id.ToString()).FirstOrDefault();
+                            if (localVariant == null)
+                            {
+                                localVariant = new MagicCardVariant(scryCard);
+                                if (owned) localVariant.Got++;
+                                localVariant.Card = localCard;
+                                localCard.Variants.Add(localVariant);
+                                DB.CardVariants.Add(localVariant);
+                                DB.Entry(localVariant).State = EntityState.Added;
+                                DB.Entry(localCard).State = EntityState.Modified;
+                                await DB.SaveChangesAsync();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
         public static async Task RecordCard(Card scryCard, bool Owned)

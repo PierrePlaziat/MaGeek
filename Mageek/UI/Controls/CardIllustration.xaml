@@ -30,9 +30,9 @@
         </Rectangle>
 
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-            <!-- Results -->
+            <!-- Results --><!--
             <Label Content="Loading"
-                   Visibility="{Binding CardImage.IsSuccessfullyCompleted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                   Visibility="{Binding CardImage.IsSuccessfullyCompleted, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
             <!-- Error details -->
             <Label Content="Couldnt find illustration" 
                    Visibility="{Binding CardImage.IsFaulted, Converter={StaticResource BooleanToVisibilityConverter}}"/>

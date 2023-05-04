@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using System.Windows.Media.Imaging;
-using System.IO;
-using System.Threading;
-using System.Net.Http;
 using MaGeek.AppData.Entities;
 using Plaziat.CommonWpf;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using ScryfallApi.Client.Models;
+using MaGeek.AppFramework;
 
 namespace MaGeek.AppBusiness
 {
@@ -63,6 +59,43 @@ namespace MaGeek.AppBusiness
             card.FavouriteVariant = variant.Id;
             DB.Entry(card).State = EntityState.Modified;
             await DB.SaveChangesAsync();
+        }
+
+        public static async Task<string> GetEnglishNameFromForeignName(string foreignName, string lang)
+        {
+            string englishName = "";
+            try
+            {
+                using var DB = App.DB.GetNewContext();
+                {
+                    var t = await DB.CardTraductions.Where(x => x.TraductedName == foreignName).FirstOrDefaultAsync();
+                    if (t != null)
+                    {
+                        englishName = t.CardId;
+                    }
+                }
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            return englishName;
+        }
+
+        public static async Task<string> GetTraduction(string englishName)
+        {
+            string foreignName = "";
+            try
+            {
+                string lang = App.Config.Settings[Setting.ForeignLangugage];
+                using var DB = App.DB.GetNewContext();
+                {
+                    var t = await DB.CardTraductions.Where(x => x.CardId == englishName && x.Language == lang).FirstOrDefaultAsync();
+                    if (t != null)
+                    {
+                        foreignName = t.TraductedName;
+                    }
+                }
+            }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            return foreignName;
         }
 
         #endregion

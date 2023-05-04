@@ -15,7 +15,6 @@ namespace MaGeek.AppData.Entities
 
         [Key]
         public string Id { get; set; }
-        public string MultiverseId { get; set; }
         public string ImageUrl_Front { get; set; }
         public string ImageUrl_Back { get; set; }
 
@@ -47,7 +46,6 @@ namespace MaGeek.AppData.Entities
         public MagicCardVariant(Card scryCard)
         {
             Id = scryCard.Id.ToString();
-            MultiverseId = scryCard.MultiverseIds != null ? scryCard.MultiverseIds.FirstOrDefault().ToString() : "";            
             Rarity = scryCard.Rarity;
             Artist = scryCard.Artist;
             Lang = scryCard.Language;

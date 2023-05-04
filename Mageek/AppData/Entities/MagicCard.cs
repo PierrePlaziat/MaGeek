@@ -113,7 +113,7 @@ namespace MaGeek.AppData.Entities
         {
             get
             {
-                return MageekTranslator.GetTraduction(CardId).Result;
+                return MageekUtils.GetTraduction(CardId).Result;
             }
         }
 

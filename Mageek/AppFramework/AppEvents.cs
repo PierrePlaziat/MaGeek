@@ -13,8 +13,8 @@ namespace MaGeek.AppFramework
     {
 
         // Import local prevent UI Action
-        public virtual void RaisePreventUIAction(bool on) { PreventUIActionEvent?.Invoke(on); }
-        public delegate void PreventUIActionHandler(bool on);
+        public virtual void RaisePreventUIAction(bool on, string reason) { PreventUIActionEvent?.Invoke(on,reason); }
+        public delegate void PreventUIActionHandler(bool on, string reason);
         public event PreventUIActionHandler PreventUIActionEvent;
 
         // Layout Action 
