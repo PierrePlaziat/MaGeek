@@ -42,6 +42,19 @@ namespace MaGeek.AppData.Entities
         #region CTOR
 
         public MagicCardVariant() { }
+        
+        public MagicCardVariant(string Id, string Rarity, string Artist, 
+                                string Lang, string SetName, string CardId) 
+        {
+            this.Id = Id;
+            this.Rarity = Rarity;
+            this.Artist = Artist;
+            this.Lang = Lang;
+            this.SetName = SetName;
+            IsCustom = 0;
+            Got = 0;
+            Card = MageekUtils.FindCardById(CardId).Result;
+        }
 
         public MagicCardVariant(Card scryCard)
         {

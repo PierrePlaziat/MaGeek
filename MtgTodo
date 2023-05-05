@@ -1,6 +1,9 @@
 
 TODO
 
+	import all at first launch only if user accepts (takes at least one hour)
+	update db fields (remove some)
+
 	Better searcher
 		-	speed up
 		. 	link got indicator
@@ -8,9 +11,13 @@ TODO
 
 Potential new functionalities
 
-	-	migrate to avalonia
 	-	custom cards support	>	how to generate image ?
-	-	tags sort and stats for deck
 	-	auto deck
+	
+	-	tags sort and stats for deck
+	-	pie charts stats
+
+Ideas that i wont implement
+	
 	x	differentes variant in deck (/!\ difficulties with EF)
-	x	pie charts stats
+	x	Avalonia port

@@ -42,6 +42,26 @@ namespace MaGeek.AppData.Entities
         #region CTOR
 
         public MagicCard() { }
+        
+        public MagicCard(string CardId, string Type, string Text, 
+                         string KeyWords, string Power, string Toughness,
+                         string ManaCost, float Cmc, string ColorIdentity) 
+        {
+            this.CardId = CardId;
+            this.Type = Type;
+            this.Text = Text;
+            this.KeyWords = KeyWords;
+            this.Power = Power;
+            this.Toughness = Toughness;
+            this.ManaCost = ManaCost;
+            this.Cmc = Cmc;
+            this.ColorIdentity = ColorIdentity;
+            DevotionB = ParseDevotion("B");
+            DevotionW = ParseDevotion("W");
+            DevotionU = ParseDevotion("U");
+            DevotionG = ParseDevotion("G");
+            DevotionR = ParseDevotion("R");
+        }
 
         public MagicCard(Card scryCard)
         {
