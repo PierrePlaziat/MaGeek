@@ -23,6 +23,13 @@ namespace MaGeek.AppBusiness
 
         #region Cards
 
+        public static async Task<MagicCard> QuickFindCardById(string cardId)
+        {
+            using var DB = App.DB.GetNewContext();
+            return await DB.Cards.Where(x => x.CardId == cardId)
+                            .FirstOrDefaultAsync();
+        }
+        
         public static async Task<MagicCard> FindCardById(string cardId)
         {
             using var DB = App.DB.GetNewContext();

@@ -1,18 +1,13 @@
 ﻿using MaGeek.AppData.Entities;
-using MaGeek.UI;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Plaziat.CommonWpf;
-using ScryfallApi.Client.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 
 namespace MaGeek.AppBusiness
@@ -37,9 +32,9 @@ namespace MaGeek.AppBusiness
                                                     colorIdentity,
                                                     faceName
                                                  FROM cards 
-                                                 WHERE 1=1";
+                                                 WHERE availability LIKE '%paper%'";
 
-        static string SQL_Variants = @" SELECT 
+        static string SQL_Variants = @" SELECT DISTINCT
                                                     cards.scryfallId,
                                                     cards.rarity,
                                                     cards.artist,
@@ -49,30 +44,30 @@ namespace MaGeek.AppBusiness
                                                     cards.faceName,
                                                     cards.type
                                                  FROM cards JOIN sets ON cards.setCode=sets.code
-                                                 WHERE 1=1";
+                                                 WHERE availability LIKE '%paper%'";
 
-        public static async Task Initialize()
+        public static async Task FirstLaunch()
         {
             App.Events.RaisePreventUIAction(true,"");
-            //await ParseCards();
-            DateTime modifyTime = File.GetLastWriteTime(App.Config.Path_MtgJsonDownload);
-            //if (modifyTime < DateTime.Now.AddMonths(-1))
+            //var response = MessageBoxHelper.AskUser("It seems to be the first launch, would you like to import all cards? (takes beetween 1~2 hours)");
+
+            //if(response)
             {
-                App.Events.RaisePreventUIAction(true, "First launch, 1/4 : Downloading data");
-                await Task.Delay(100);
-                //await DownloadMtgJsonSqlite();
-                App.Events.RaisePreventUIAction(true, "First launch, 2/4 : Importing translations");
-                await Task.Delay(100);
-                await BulkTranslations();
-                App.Events.RaisePreventUIAction(true, "First launch, 3/4 : Importing cards");
-                await Task.Delay(100);
-                //await ParseCards();
-                await BulkCards();
+                //App.Events.RaisePreventUIAction(true, "First launch, 1/4 : Downloading data");
+                //await Task.Delay(100);
+                ////await DownloadMtgJsonSqlite();
+                //App.Events.RaisePreventUIAction(true, "First launch, 2/4 : Importing translations");
+                //await Task.Delay(100);
+                //await BulkTranslations();
+                //App.Events.RaisePreventUIAction(true, "First launch, 3/4 : Importing cards");
+                //await Task.Delay(100);
+                ////await ParseCards();
+                //await BulkCards();
                 App.Events.RaisePreventUIAction(true, "First launch, 4/4 : Importing variants");
                 await BulkVariants();
                 App.Events.RaiseUpdateCardCollec();
             }
-            App.Events.RaisePreventUIAction(false,"");
+            App.Events.RaisePreventUIAction(false, "");
         }
 
         private static async Task DownloadMtgJsonSqlite()
@@ -128,16 +123,17 @@ namespace MaGeek.AppBusiness
             await Task.Run(async () => {
                 try
                 {
-                    // counts for exceptions
-                    int ScavengerHuntDiff = 0;
-                    int TheSuperlatoriumDiff = 0;
-                    int TriviaContestDiff = 0;
-                    int IneffableBlessingDiff = 0;
-                    int EverythingamajigDiff = 0;
-                    int KnightoftheKitchenSinkDiff = 0;
-                    int VeryCrypticCommandDiff = 0;
-                    int SlySpyDiff = 0;
-                    int GarbageElementalDiff = 0;
+                    // Exceptions gestion
+                    bool preventAdd;
+                    bool alreadyAdded_ScavengerHunt = false;
+                    bool alreadyAdded_TheSuperlatorium = false;
+                    bool alreadyAdded_TriviaContest = false;
+                    bool alreadyAdded_IneffableBlessing = false;
+                    bool alreadyAdded_Everythingamajig = false;
+                    bool alreadyAdded_KnightoftheKitchenSink = false;
+                    bool alreadyAdded_VeryCrypticCommand = false;
+                    bool alreadyAdded_SlySpy = false;
+                    bool alreadyAdded_GarbageElemental = false;
 
                     List<MagicCard> cards = new();
                     using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
@@ -149,8 +145,15 @@ namespace MaGeek.AppBusiness
                         {
                             while (await reader.ReadAsync())
                             {
+                                preventAdd = false;
+
                                 var name = reader.GetString(0);
-                                if (!await reader.IsDBNullAsync(9)) name += " ("+reader.GetString(9)+")";
+
+                                //double sided
+                                if (!await reader.IsDBNullAsync(9))
+                                {
+                                    if (!name.StartsWith(reader.GetString(9))) preventAdd = true;
+                                }
 
                                 var type = reader.GetString(1);
                                 string v2tmp = "";
@@ -174,23 +177,59 @@ namespace MaGeek.AppBusiness
                                 var colorId = v8tmp;
 
                                 // Exceptionnal cards
-
                                 // Two different cards with same name...
-                                if(name== "Unquenchable Fury") name += " [" + type + "]";
-                                // One card dispatched on two
+                                if (name== "Unquenchable Fury") name += " [" + type + "]";
+                                // One card dispatched on two   
                                 if(name== "B.F.M. (Big Furry Monster)") name += manacost == "" ? " [Left]" : " [Right]";
-                                // Same Card but different effects(fun)
-                                if(name== "Scavenger Hunt") name += " ["+ ScavengerHuntDiff++ + "]";
-                                if(name== "The Superlatorium") name += " ["+ TheSuperlatoriumDiff++ + "]";
-                                if(name== "Trivia Contest") name += " ["+ TriviaContestDiff++ + "]";
-                                if(name== "Ineffable Blessing") name += " ["+ IneffableBlessingDiff++ + "]";
-                                if(name== "Everythingamajig") name += " ["+ EverythingamajigDiff++ + "]";
-                                if(name== "Knight of the Kitchen Sink") name += " ["+ KnightoftheKitchenSinkDiff++ + "]";
-                                if(name== "Very Cryptic Command") name += " ["+ VeryCrypticCommandDiff++ + "]";
-                                if(name== "Sly Spy") name += " ["+ SlySpyDiff++ + "]";
-                                if(name== "Garbage Elemental") name += " ["+ GarbageElementalDiff++ + "]";
                                 
-                                cards.Add(new MagicCard(name, type, Text, KeyWords, Power, Toughness, manacost, cmc, colorId));
+                                // Same Card but different effects(fun)
+                                if (name == "Scavenger Hunt")
+                                {
+                                    if (!alreadyAdded_ScavengerHunt) alreadyAdded_ScavengerHunt = true;
+                                    else preventAdd = true;
+                                }
+                                if (name == "The Superlatorium")
+                                {
+                                    if (!alreadyAdded_TheSuperlatorium) alreadyAdded_TheSuperlatorium = true;
+                                    else preventAdd = true;
+                                }
+                                if (name == "Trivia Contest")
+                                {
+                                    if (!alreadyAdded_TriviaContest) alreadyAdded_TriviaContest = true;
+                                    else preventAdd = true;
+                                }
+                                if (name == "Ineffable Blessing")
+                                {
+                                    if (!alreadyAdded_IneffableBlessing) alreadyAdded_IneffableBlessing = true;
+                                    else preventAdd = true;
+                                }
+                                if (name == "Everythingamajig")
+                                {
+                                    if (!alreadyAdded_Everythingamajig) alreadyAdded_Everythingamajig = true;
+                                    else preventAdd = true;
+                                }
+                                if (name == "Knight of the Kitchen Sink")
+                                {
+                                    if (!alreadyAdded_KnightoftheKitchenSink) alreadyAdded_KnightoftheKitchenSink = true;
+                                    else preventAdd = true;
+                                }
+                                if (name == "Very Cryptic Command")
+                                {
+                                    if (!alreadyAdded_VeryCrypticCommand) alreadyAdded_VeryCrypticCommand = true;
+                                    else preventAdd = true;
+                                }
+                                if (name == "Sly Spy")
+                                {
+                                    if (!alreadyAdded_SlySpy) alreadyAdded_SlySpy = true;
+                                    else preventAdd = true;
+                                }
+                                if (name == "Garbage Elemental")
+                                {
+                                    if (!alreadyAdded_GarbageElemental) alreadyAdded_GarbageElemental = true;
+                                    else preventAdd = true;
+                                }
+                                
+                                if(!preventAdd) cards.Add(new MagicCard(name, type, Text, KeyWords, Power, Toughness, manacost, cmc, colorId));
                             }
                         }
                     }
@@ -203,86 +242,62 @@ namespace MaGeek.AppBusiness
                     }
                 }
                 catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
-
             });
         }
 
         private static async Task BulkVariants()
         {
             await Task.Run(async () => {
+                DateTime startTime = DateTime.Now;
                 try
                 {
-                    // counts for exceptions
-                    bool bfmFirst = true;
-                    int ScavengerHuntDiff = 0;
-                    int TheSuperlatoriumDiff = 0;
-                    int TriviaContestDiff = 0;
-                    int IneffableBlessingDiff = 0;
-                    int EverythingamajigDiff = 0;
-                    int KnightoftheKitchenSinkDiff = 0;
-                    int VeryCrypticCommandDiff = 0;
-                    int SlySpyDiff = 0;
-                    int GarbageElementalDiff = 0;
-
-                    List<MagicCardVariant> cards = new();
-                    using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
-                    {
-                        connection.Open();
-                        var command = connection.CreateCommand();
-                        command.CommandText = SQL_Variants;
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            while (await reader.ReadAsync())
-                            {
-                                var v9 = reader.GetString(0);
-                                var v10 = reader.GetString(1);
-                                string v11tmp = "";
-                                if (!await reader.IsDBNullAsync(2)) v11tmp = reader.GetString(2);
-                                var v11 = v11tmp;
-                                var v12 = reader.GetString(3);
-                                var v13 = reader.GetString(4);
-                                var name = reader.GetString(5);
-                                if (!await reader.IsDBNullAsync(6)) name += " (" + reader.GetString(6) + ")";
-
-                                // Exceptionnal cards
-
-                                // Two different cards with same name...
-                                if (name == "Unquenchable Fury") name += " [" + reader.GetString(7) + "]";
-                                // One card dispatched on two
-                                if (name == "B.F.M. (Big Furry Monster)")
-                                {
-                                    if(!bfmFirst)
-                                    {
-                                        name += " [Left]";
-                                        bfmFirst = true;
-                                    }
-                                    else name += " [Right]";
-                                }
-                                // Same Card but different effects(fun)
-                                if (name == "Scavenger Hunt") name += " [" + ScavengerHuntDiff++ + "]";
-                                if (name == "The Superlatorium") name += " [" + TheSuperlatoriumDiff++ + "]";
-                                if (name == "Trivia Contest") name += " [" + TriviaContestDiff++ + "]";
-                                if (name == "Ineffable Blessing") name += " [" + IneffableBlessingDiff++ + "]";
-                                if (name == "Everythingamajig") name += " [" + EverythingamajigDiff++ + "]";
-                                if (name == "Knight of the Kitchen Sink") name += " [" + KnightoftheKitchenSinkDiff++ + "]";
-                                if (name == "Very Cryptic Command") name += " [" + VeryCrypticCommandDiff++ + "]";
-                                if (name == "Sly Spy") name += " [" + SlySpyDiff++ + "]";
-                                if (name == "Garbage Elemental") name += " [" + GarbageElementalDiff++ + "]";
-
-                                cards.Add(new MagicCardVariant(v9,v10,v11,v12,v13,name));
-                            }
-                        }
-                    }
+                    bool preventAdd;
                     using var DB = App.DB.GetNewContext();
                     {
+                        List<MagicCardVariant> cards = new();
+                        using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
+                        {
+                            connection.Open();
+                            var command = connection.CreateCommand();
+                            command.CommandText = SQL_Variants;
+                            using (var reader = await command.ExecuteReaderAsync())
+                            {
+                                while (await reader.ReadAsync())
+                                {
+                                    preventAdd = false;
+                                    var Id = reader.GetString(0);
+                                    var Rarity = reader.GetString(1);
+                                    string v11tmp = "";
+                                    if (!await reader.IsDBNullAsync(2)) v11tmp = reader.GetString(2);
+                                    var Artist = v11tmp;
+                                    var Lang = reader.GetString(3);
+                                    var Set = reader.GetString(4);
+                                    var name = reader.GetString(5);
+
+                                    if (!await reader.IsDBNullAsync(6)) name += " (" + reader.GetString(6) + ")";
+                                    //double sided
+                                    if (!await reader.IsDBNullAsync(6))
+                                    {
+                                        if (!name.StartsWith(reader.GetString(6))) preventAdd = true;
+                                    }
+
+                                    // Two different cards with same name...
+                                    if (name == "Unquenchable Fury") name += " [" + reader.GetString(7) + "]";
+
+                                    MagicCard CardRef = await DB.Cards.Where(x => x.CardId == name).FirstOrDefaultAsync();
+                                    if (!preventAdd) cards.Add(new MagicCardVariant(Id,Rarity,Artist,Lang,Set, CardRef));
+                                }
+                            }
+                        }
                         using var transaction = DB.Database.BeginTransaction();
                         await DB.CardVariants.AddRangeAsync(cards);
                         await DB.SaveChangesAsync();
                         transaction.Commit();
                     }
+                    DateTime endTime = DateTime.Now;
+                    MessageBoxHelper.ShowMsg("DONE!!! Took " + (endTime - startTime).TotalMinutes + " mins");
                 }
                 catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
-
             });
         }
 

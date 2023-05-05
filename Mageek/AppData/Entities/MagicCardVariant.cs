@@ -44,16 +44,16 @@ namespace MaGeek.AppData.Entities
         public MagicCardVariant() { }
         
         public MagicCardVariant(string Id, string Rarity, string Artist, 
-                                string Lang, string SetName, string CardId) 
+                                string Lang, string SetName, MagicCard Card) 
         {
             this.Id = Id;
             this.Rarity = Rarity;
             this.Artist = Artist;
             this.Lang = Lang;
             this.SetName = SetName;
+            this.Card = Card;
             IsCustom = 0;
             Got = 0;
-            Card = MageekUtils.FindCardById(CardId).Result;
         }
 
         public MagicCardVariant(Card scryCard)
@@ -65,7 +65,7 @@ namespace MaGeek.AppData.Entities
             SetName = scryCard.SetName;
             IsCustom = 0;
             Got = 0;
-            Card = MageekUtils.FindCardById(scryCard.Name).Result;
+            Card = MageekUtils.QuickFindCardById(scryCard.Name).Result;
         }
 
         #endregion
