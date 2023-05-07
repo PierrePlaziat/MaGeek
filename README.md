@@ -1,4 +1,4 @@
-![MaGeek/Graph/Title.png]
+![MaGeek](/Graph/Title.png)
 WPF MTG Library Manager 
 
 ## About
