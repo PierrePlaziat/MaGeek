@@ -26,11 +26,11 @@ You can import all cards at first run (fun cards included), or start fresh and i
 
 ### Incomming
 
-.	update db fields (remove some)
+-	update db fields (remove some)
 -	Better searcher
-	.	speed up
-	. 	link got indicator
-	. 	search on keywords	
+	-	speed up
+	- 	link got indicator
+	- 	search on keywords	
 -	better double sided gestion
 - 	fast and better card counts
 	
@@ -43,5 +43,5 @@ You can import all cards at first run (fun cards included), or start fresh and i
 
 ### Maybe after all that
 
-x	differentes variant in deck
-x	Avalonia port
+-	differentes variant in deck
+-	Avalonia port
