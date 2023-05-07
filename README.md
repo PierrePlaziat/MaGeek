@@ -15,7 +15,7 @@ You can import all cards at first run (fun cards included), or start fresh and i
 
 -	Gather all or some MTG cards on local
 -	Import/Export decks/sets/lists
--	Print cards
+-	Print proxies
 -	Foreign language suport
 -	card prices and legalities available, auto-updating
 -	IDE style movable panels
