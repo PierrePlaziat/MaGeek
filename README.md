@@ -1,27 +1,44 @@
 # MaGeek
-Magic The Gathering - Library and Deck Editor
+WPF MTG Library Manager 
 
+## About
 
-TODO
+### Description
 
-	.	update db fields (remove some)
+This application if aimed toward paper MTG game, so online only cards are not included.
+You can import all cards at first run (fun cards included), or start fresh and import cards at your will.
 
-	-	Better searcher
-		.	speed up
-		. 	link got indicator
-		. 	search on keywords
-		
-	-	better double sided gestion
+### Functionalities
+
+-	Gather all or some MTG cards on local
+-	Import/Export decks/sets/lists
+-	Print cards
+-	Foreign language suport
+-	card prices and legalities available, auto-updating
+-	IDE style movable panels
+-	Stats
+-	Tags
+
+## TODO
+
+### Incomming
+
+.	update db fields (remove some)
+-	Better searcher
+	.	speed up
+	. 	link got indicator
+	. 	search on keywords	
+-	better double sided gestion
+- fast and better card counts
 	
-	- fast and better card counts
-	
-	>>> V1 !!!
-	
-Ideas i dont plan to implement for now:
+### Maybe later
 
-	-	custom cards support	>	how to generate image ?
-	-	auto deck
-	-	tags sort and stats for deck
-	-	pie charts stats
-	x	differentes variant in deck (/!\ difficulties with EF)
-	x	Avalonia port
+-	Custom cards support (need to figure out how to generate the image)
+-	Auto deck (need to reflect on the building strategy)
+-	Tags sort and stats for deck
+-	Pie charts for stats
+
+### Maybe after all that
+
+x	differentes variant in deck
+x	Avalonia port

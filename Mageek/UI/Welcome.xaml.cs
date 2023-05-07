@@ -106,7 +106,7 @@ namespace MaGeek
         {
             Visibility_FirstLaunch = Visibility.Visible;
             MageekMessage = "First launch.";
-            await MageekInitializer.DownloadMtgJsonSqlite();
+            //await MageekInitializer.DownloadMtgJsonSqlite();
             Visibility_MtgJsonDownloaded = Visibility.Visible;
             await MageekInitializer.BulkTranslations();
             Visibility_ForeignNamesImported = Visibility.Visible;
@@ -114,14 +114,14 @@ namespace MaGeek
         
         private async Task Activate_NormalLaunch()
         {
-            //Hide();
-            //App.LaunchMainWin();
-            //Close();
-            Visibility_NormalLaunch = Visibility.Visible;
-            using (var DB = App.DB.GetNewContext())
-            {
-                MageekMessage = "I currently know " + await DB.CardVariants.CountAsync() + " cards.";
-            }
+            Hide();
+            App.LaunchMainWin();
+            Close();
+            //Visibility_NormalLaunch = Visibility.Visible;
+            //using (var DB = App.DB.GetNewContext())
+            //{
+            //    MageekMessage = "I currently know " + await DB.CardVariants.CountAsync() + " cards.";
+            //}
             //if (!DetermineIfNewUpdate()) DetermineIfNewCards();
         }
 
