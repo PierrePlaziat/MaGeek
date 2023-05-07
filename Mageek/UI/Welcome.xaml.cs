@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace MaGeek
@@ -113,34 +114,34 @@ namespace MaGeek
         
         private async Task Activate_NormalLaunch()
         {
-            Hide();
-            App.LaunchMainWin();
-            Close();
-
-            //Visibility_NormalLaunch = Visibility.Visible;
-            //using ( var DB = App.DB.GetNewContext())
-            //{
-            //    MageekMessage = "I currently know "+await DB.CardVariants.CountAsync()+" cards.";
-            //}
-            //if (!DetermineIfNewUpdate()) DetermineIfNewCards();
+            //Hide();
             //App.LaunchMainWin();
+            //Close();
+            Visibility_NormalLaunch = Visibility.Visible;
+            using (var DB = App.DB.GetNewContext())
+            {
+                MageekMessage = "I currently know " + await DB.CardVariants.CountAsync() + " cards.";
+            }
+            //if (!DetermineIfNewUpdate()) DetermineIfNewCards();
         }
 
-        private bool DetermineIfNewUpdate()
-        {
-            // TODO
-            return false;
-        }
+        //private bool DetermineIfNewUpdate()
+        //{
+        //    // TODO
+        //    return false;
+        //}
 
-        private void DetermineIfNewCards()
-        {
-            // TODO
-        }
+        //private void DetermineIfNewCards()
+        //{
+        //    // TODO
+        //}
 
         private void ImportAllCards(object sender, RoutedEventArgs e)
         {
+            bool fun = false;
             App.LaunchMainWin();
-            MageekInitializer.LaunchFirstImport().ConfigureAwait(false);
+            if (Fun.IsChecked.HasValue) fun = Fun.IsChecked.Value;
+            MageekInitializer.LaunchFirstImport(fun).ConfigureAwait(false);
             Close();
         }
 

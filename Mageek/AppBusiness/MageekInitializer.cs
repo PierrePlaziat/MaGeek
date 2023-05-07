@@ -46,12 +46,12 @@ namespace MaGeek.AppBusiness
                                                  FROM cards JOIN sets ON cards.setCode=sets.code
                                                  WHERE availability LIKE '%paper%'";
 
-        public static async Task LaunchFirstImport()
+        public static async Task LaunchFirstImport(bool includeFun)
         {
             App.Events.RaisePreventUIAction(true, "Importing archetypes...");
-            await BulkCards();
+            await BulkCards(includeFun);
             App.Events.RaisePreventUIAction(true, "Importing variants... (several minutes needed)");
-            await BulkVariants();
+            await BulkVariants(includeFun);
             App.Events.RaiseUpdateCardCollec();
             App.Events.RaisePreventUIAction(false, "");
         }
@@ -103,7 +103,7 @@ namespace MaGeek.AppBusiness
             });
         }
 
-        public static async Task BulkCards()
+        public static async Task BulkCards(bool includeFun)
         {
             await Task.Run(async () => {
                 try
@@ -126,6 +126,7 @@ namespace MaGeek.AppBusiness
                         connection.Open();
                         var command = connection.CreateCommand();
                         command.CommandText = SQL_Cards;
+                        if (includeFun) command.CommandText += " AND isFunny=0";
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
@@ -230,7 +231,7 @@ namespace MaGeek.AppBusiness
             });
         }
 
-        public static async Task BulkVariants()
+        public static async Task BulkVariants(bool includeFun)
         {
             await Task.Run(async () => {
                 DateTime startTime = DateTime.Now;
@@ -245,6 +246,7 @@ namespace MaGeek.AppBusiness
                             connection.Open();
                             var command = connection.CreateCommand();
                             command.CommandText = SQL_Variants;
+                            if (includeFun) command.CommandText += " AND isFunny=0";
                             using (var reader = await command.ExecuteReaderAsync())
                             {
                                 while (await reader.ReadAsync())

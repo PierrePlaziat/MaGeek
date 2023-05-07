@@ -155,7 +155,7 @@
                 <Grid Background="#333" 
                       Grid.Column="1" Grid.Row="2" 
                       Visibility="{Binding Visibility_ForeignNamesImported}">
-                    <CheckBox HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <CheckBox Name="Fun" HorizontalAlignment="Center" VerticalAlignment="Top">
                         Include fun cards
                     </CheckBox>
                 </Grid>
