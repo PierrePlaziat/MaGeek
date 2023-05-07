@@ -152,13 +152,13 @@
                     </CheckBox>
                 </Grid>
                 <!-- FIRST LAUNCH -->
-                <Grid Background="#333" 
+                <!--<Grid Background="#333" 
                       Grid.Column="1" Grid.Row="2" 
                       Visibility="{Binding Visibility_ForeignNamesImported}">
                     <CheckBox Name="Fun" HorizontalAlignment="Center" VerticalAlignment="Top">
                         Include fun cards
                     </CheckBox>
-                </Grid>
+                </Grid>-->
             </Grid>
         </StackPanel>
         

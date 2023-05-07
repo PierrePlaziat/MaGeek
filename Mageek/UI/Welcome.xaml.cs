@@ -138,9 +138,9 @@ namespace MaGeek
 
         private void ImportAllCards(object sender, RoutedEventArgs e)
         {
-            bool fun = false;
+            bool fun = true;
             App.LaunchMainWin();
-            if (Fun.IsChecked.HasValue) fun = Fun.IsChecked.Value;
+            //if (Fun.IsChecked.HasValue) fun = Fun.IsChecked.Value;
             MageekInitializer.LaunchFirstImport(fun).ConfigureAwait(false);
             Close();
         }

@@ -1,4 +1,4 @@
-# MaGeek
+![MaGeek/Graph/Title.png]
 WPF MTG Library Manager 
 
 ## About
@@ -29,11 +29,11 @@ You can import all cards at first run (fun cards included), or start fresh and i
 	. 	link got indicator
 	. 	search on keywords	
 -	better double sided gestion
-- fast and better card counts
+- 	fast and better card counts
 	
 ### Maybe later
 
--	Custom cards support (need to figure out how to generate the image)
+-	Custom cards print support (need to figure out how to generate the image for print (maybe Markdown??)
 -	Auto deck (need to reflect on the building strategy)
 -	Tags sort and stats for deck
 -	Pie charts for stats
