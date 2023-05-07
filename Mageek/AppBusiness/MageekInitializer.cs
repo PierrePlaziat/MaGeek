@@ -46,31 +46,16 @@ namespace MaGeek.AppBusiness
                                                  FROM cards JOIN sets ON cards.setCode=sets.code
                                                  WHERE availability LIKE '%paper%'";
 
-        public static async Task FirstLaunch()
+        public static async Task LaunchFirstImport()
         {
-            App.Events.RaisePreventUIAction(true,"");
-            //var response = MessageBoxHelper.AskUser("It seems to be the first launch, would you like to import all cards? (takes beetween 1~2 hours)");
-
-            //if(response)
-            {
-                //App.Events.RaisePreventUIAction(true, "First launch, 1/4 : Downloading data");
-                //await Task.Delay(100);
-                ////await DownloadMtgJsonSqlite();
-                //App.Events.RaisePreventUIAction(true, "First launch, 2/4 : Importing translations");
-                //await Task.Delay(100);
-                //await BulkTranslations();
-                //App.Events.RaisePreventUIAction(true, "First launch, 3/4 : Importing cards");
-                //await Task.Delay(100);
-                ////await ParseCards();
-                //await BulkCards();
-                App.Events.RaisePreventUIAction(true, "First launch, 4/4 : Importing variants");
-                await BulkVariants();
-                App.Events.RaiseUpdateCardCollec();
-            }
+            App.Events.RaisePreventUIAction(true, "Importing archetypes...");
+            await BulkCards();
+            App.Events.RaisePreventUIAction(true, "Importing variants... (several minutes needed)");
+            await BulkVariants();
+            App.Events.RaiseUpdateCardCollec();
             App.Events.RaisePreventUIAction(false, "");
         }
-
-        private static async Task DownloadMtgJsonSqlite()
+        public static async Task DownloadMtgJsonSqlite()
         {
             try
             {
@@ -82,7 +67,7 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { MessageBoxHelper.ShowError("AddDeck", e); }
         }
 
-        private static async Task BulkTranslations()
+        public static async Task BulkTranslations()
         {
             await Task.Run(async () => {
                 try
@@ -118,7 +103,7 @@ namespace MaGeek.AppBusiness
             });
         }
 
-        private static async Task BulkCards()
+        public static async Task BulkCards()
         {
             await Task.Run(async () => {
                 try
@@ -245,7 +230,7 @@ namespace MaGeek.AppBusiness
             });
         }
 
-        private static async Task BulkVariants()
+        public static async Task BulkVariants()
         {
             await Task.Run(async () => {
                 DateTime startTime = DateTime.Now;

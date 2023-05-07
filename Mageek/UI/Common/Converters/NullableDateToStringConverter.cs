@@ -3,9 +3,6 @@ using System.Windows.Data;
 
 namespace MaGeek.UI.Common.Converters
 {
-    public class Converter
-    {
-    }
 
     public class NullableDateToStringConverter : IValueConverter
     {

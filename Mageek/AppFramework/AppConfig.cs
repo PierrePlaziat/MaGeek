@@ -25,6 +25,8 @@ namespace MaGeek.AppFramework
 
         public Dictionary<Setting, string> Settings { get; private set; } = new Dictionary<Setting, string>();
 
+        public bool seemToBeFirstLaunch { get; private set; } = false;
+
         #endregion
 
         #region CTOR
@@ -42,7 +44,11 @@ namespace MaGeek.AppFramework
 
         private void InitFolders()
         {
-            if (!File.Exists(Path_RoamingFolder)) Directory.CreateDirectory(Path_RoamingFolder);
+            if (!File.Exists(Path_Db))
+            {
+                seemToBeFirstLaunch = true;
+                Directory.CreateDirectory(Path_RoamingFolder);
+            }
             if (!File.Exists(Path_ImageFolder)) Directory.CreateDirectory(Path_ImageFolder);
         }
 

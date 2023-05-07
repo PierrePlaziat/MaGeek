@@ -1,27 +1,168 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using MaGeek.AppBusiness;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace MaGeek
 {
-    /// <summary>
-    /// Logique d'interaction pour Welcome.xaml
-    /// </summary>
-    public partial class Welcome : Window
+
+    public partial class Welcome : Window, INotifyPropertyChanged
     {
+
+        #region PropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        #endregion
+
+        #region Attributes
+
+        string mageekMessage = "test msg";
+        public string MageekMessage {
+            get { return mageekMessage; }
+            set { mageekMessage = value; OnPropertyChanged(); }
+        }
+
+        #region Visibilities
+
+        private Visibility visibility_FirstLaunch = Visibility.Collapsed;
+        public Visibility Visibility_FirstLaunch
+        {
+            get { return visibility_FirstLaunch; }
+            set { visibility_FirstLaunch = value; OnPropertyChanged(); }
+        }
+        
+        private Visibility visibility_NormalLaunch = Visibility.Collapsed;
+        public Visibility Visibility_NormalLaunch
+        {
+            get { return visibility_NormalLaunch; }
+            set { visibility_NormalLaunch = value; OnPropertyChanged(); }
+        }
+
+        private Visibility visibility_MtgJsonDownloaded = Visibility.Collapsed;
+        public Visibility Visibility_MtgJsonDownloaded
+        {
+            get { return visibility_MtgJsonDownloaded; }
+            set { visibility_MtgJsonDownloaded = value; OnPropertyChanged(); }
+        }
+
+        private Visibility visibility_ForeignNamesImported = Visibility.Collapsed;
+        public Visibility Visibility_ForeignNamesImported
+        {
+            get { return visibility_ForeignNamesImported; }
+            set { visibility_ForeignNamesImported = value; OnPropertyChanged(); }
+        }
+
+
+        private Visibility visibility_NoNews = Visibility.Collapsed;
+        public Visibility Visibility_NoNews
+        {
+            get { return visibility_NoNews; }
+            set { visibility_NoNews = value; OnPropertyChanged(); }
+        }
+
+        private Visibility visibility_NewCards = Visibility.Collapsed;
+        public Visibility Visibility_NewCards
+        {
+            get { return visibility_NewCards; }
+            set { visibility_NewCards = value; OnPropertyChanged(); }
+        }
+
+        private Visibility visibility_NewUpdate = Visibility.Collapsed;
+        public Visibility Visibility_NewUpdate
+        {
+            get { return visibility_NewUpdate; }
+            set { visibility_NewUpdate = value; OnPropertyChanged(); }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region CTOR
+
         public Welcome()
         {
+            DataContext = this;
             InitializeComponent();
+            if (App.Config.seemToBeFirstLaunch) Activate_FirstLaunch().ConfigureAwait(false);
+            else Activate_NormalLaunch().ConfigureAwait(false);
         }
+
+        #endregion
+
+        #region Methods
+
+        private async Task Activate_FirstLaunch()
+        {
+            Visibility_FirstLaunch = Visibility.Visible;
+            MageekMessage = "First launch.";
+            await MageekInitializer.DownloadMtgJsonSqlite();
+            Visibility_MtgJsonDownloaded = Visibility.Visible;
+            await MageekInitializer.BulkTranslations();
+            Visibility_ForeignNamesImported = Visibility.Visible;
+        }
+        
+        private async Task Activate_NormalLaunch()
+        {
+            Hide();
+            App.LaunchMainWin();
+            Close();
+
+            //Visibility_NormalLaunch = Visibility.Visible;
+            //using ( var DB = App.DB.GetNewContext())
+            //{
+            //    MageekMessage = "I currently know "+await DB.CardVariants.CountAsync()+" cards.";
+            //}
+            //if (!DetermineIfNewUpdate()) DetermineIfNewCards();
+            //App.LaunchMainWin();
+        }
+
+        private bool DetermineIfNewUpdate()
+        {
+            // TODO
+            return false;
+        }
+
+        private void DetermineIfNewCards()
+        {
+            // TODO
+        }
+
+        private void ImportAllCards(object sender, RoutedEventArgs e)
+        {
+            App.LaunchMainWin();
+            MageekInitializer.LaunchFirstImport().ConfigureAwait(false);
+            Close();
+        }
+
+        private void DoClose(object sender, RoutedEventArgs e)
+        {
+            Hide();
+            App.LaunchMainWin();
+            Close();
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left) DragMove();
+        }
+
+        private void GoToGithub(object sender, RoutedEventArgs e)
+        {
+            App.HyperLink("https://github.com/PierrePlaziat/MaGeek");
+        }
+
+        #endregion
+
     }
+
 }

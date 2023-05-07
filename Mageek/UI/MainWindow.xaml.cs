@@ -44,7 +44,6 @@ namespace MaGeek
             App.Events.PreventUIActionEvent += STATE_PreventUIActionEvent;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
             InitializeComponent();
-            MageekInitializer.FirstLaunch().ConfigureAwait(false);
         }
 
         

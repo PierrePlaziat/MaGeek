@@ -133,7 +133,7 @@ namespace MaGeek.UI
                 await OnPropertyChangedAsync(nameof(Rulings));
                 await OnPropertyChangedAsync(nameof(RelatedCards));
                 await OnPropertyChangedAsync(nameof(ShowRelateds));
-                await Task.Run(() =>
+                await Task.Run(() => 
                 {
                     IsLoading = Visibility.Collapsed;
                 });
@@ -337,7 +337,7 @@ namespace MaGeek.UI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://www.cardmarket.com/en/Magic/Products/Search?searchString=" + selectedCard.CardId) { UseShellExecute = true });
+            App.HyperLink("https://www.cardmarket.com/en/Magic/Products/Search?searchString=" + selectedCard.CardId);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

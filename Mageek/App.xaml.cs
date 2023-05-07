@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Diagnostics;
+using System.Windows;
 using MaGeek.AppBusiness;
 using MaGeek.AppData;
 using MaGeek.AppFramework;
@@ -9,6 +11,8 @@ namespace MaGeek
 
     public partial class App : Application
     {
+
+        static MainWindow mainWin;
 
         public static AppEvents Events { get; private set; } 
         public static AppConfig Config { get; private set; }
@@ -26,12 +30,21 @@ namespace MaGeek
 
         public static void Restart()
         {
-            MessageBoxHelper.ShowMsg("App will restart now.");
-            System.Diagnostics.Process.Start(App.ResourceAssembly.Location);
-            App.Current.Shutdown();
+            MessageBoxHelper.ShowMsg("App should restart now.");
+            Process.Start(ResourceAssembly.Location);
+            Current.Shutdown();
         }
 
+        internal static void HyperLink(string v)
+        {
+            Process.Start(new ProcessStartInfo(v) { UseShellExecute = true });
+        }
 
+        internal static void LaunchMainWin()
+        {
+            mainWin = new MainWindow();
+            mainWin.Show();
+        }
     }
 
 }
