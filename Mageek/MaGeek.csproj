@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="UI\NewFolder\**" />
+    <EmbeddedResource Remove="UI\NewFolder\**" />
+    <None Remove="UI\NewFolder\**" />
+    <Page Remove="UI\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Resources\Corner.png" />
   </ItemGroup>
 
@@ -45,10 +52,6 @@
 
   <ItemGroup>
     <SplashScreen Include="Resources\Images\splash.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UI\NewFolder\" />
   </ItemGroup>
 
 </Project>

@@ -95,7 +95,7 @@ namespace MaGeek
             DataContext = this;
             InitializeComponent();
             if (App.Config.seemToBeFirstLaunch) Activate_FirstLaunch().ConfigureAwait(false);
-            else Activate_NormalLaunch().ConfigureAwait(false);
+            else Activate_NormalLaunch();
         }
 
         #endregion

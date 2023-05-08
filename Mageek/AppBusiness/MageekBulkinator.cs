@@ -142,11 +142,6 @@ namespace MaGeek.AppBusiness
 
                                 var name = reader.GetString(0);
 
-                                //double sided
-                                if (!await reader.IsDBNullAsync(9))
-                                {
-                                    if (!name.StartsWith(reader.GetString(9))) preventAdd = true;
-                                }
 
                                 var type = reader.GetString(1);
                                 string v2tmp = "";
@@ -168,6 +163,15 @@ namespace MaGeek.AppBusiness
                                 string v8tmp = "";
                                 if (!await reader.IsDBNullAsync(8)) v8tmp = reader.GetString(8);
                                 var colorId = v8tmp;
+
+                                //double sided
+                                if (!await reader.IsDBNullAsync(9))
+                                {
+                                    if (!name.StartsWith(reader.GetString(9)))
+                                    {
+                                        preventAdd = true;
+                                    }
+                                }
 
                                 // Exceptionnal cards
                                 // Two different cards with same name...
@@ -267,11 +271,13 @@ namespace MaGeek.AppBusiness
                                     var Set = reader.GetString(4);
                                     var name = reader.GetString(5);
 
-                                    if (!await reader.IsDBNullAsync(6)) name += " (" + reader.GetString(6) + ")";
                                     //double sided
                                     if (!await reader.IsDBNullAsync(6))
                                     {
-                                        if (!name.StartsWith(reader.GetString(6))) preventAdd = true;
+                                        if (!name.StartsWith(reader.GetString(6)))
+                                        {
+                                            preventAdd = true;
+                                        }
                                     }
 
                                     // Two different cards with same name...

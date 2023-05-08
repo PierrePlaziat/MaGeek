@@ -72,8 +72,7 @@ namespace MaGeek.AppData
 
         public void EraseDb()
         {
-            if (!MessageBoxHelper.AskUser("Do you really want to erase all data?")) return;
-            DeleteAllContent();
+            if (MessageBoxHelper.AskUser("Do you really want to erase all data?")) DeleteAllContent();
         }
 
         public void RestoreDb()

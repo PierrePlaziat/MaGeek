@@ -24,7 +24,6 @@ You can import all cards at first run (fun cards included), or start fresh and i
 
 ## TODO
 
--	better double sided gestion (text of second face not gathered)
 -	Better searcher 
 	-	speed up (didnt scale correctly)
 	- 	relink got count (carreful with speed)
@@ -39,5 +38,6 @@ You can import all cards at first run (fun cards included), or start fresh and i
 
 ### Maybe one day
 
+-	better double sided gestion (only data from front card are stored (except the image, that contains all infos)
 -	differentes variant in deck
 -	Avalonia port

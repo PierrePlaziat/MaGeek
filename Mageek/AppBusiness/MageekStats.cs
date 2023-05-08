@@ -38,8 +38,12 @@ namespace MaGeek.AppBusiness
 
         public static async Task<List<CardTag>> FindTagsForCard(string cardId)
         {
-            using var DB = App.DB.GetNewContext();
-            return await DB.CardTags.Where(x => x.CardId == cardId).ToListAsync();
+            List<CardTag> tags = new();
+            await Task.Run(() => {
+                using var DB = App.DB.GetNewContext();
+                tags.AddRange(DB.CardTags.Where(x => x.CardId == cardId));
+            });
+            return tags;
         }
 
         #endregion
