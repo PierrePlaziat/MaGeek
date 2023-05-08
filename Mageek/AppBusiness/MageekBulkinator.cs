@@ -103,9 +103,8 @@ namespace MaGeek.AppBusiness
 
         public static async Task Bulk_Cards(bool includeFun)
         {
-            App.Events.RaisePreventUIAction(true, "Importing Card Models...");
+            App.Events.RaisePreventUIAction(true, "Importing Cards, takes few minutes.");
             await Bulk_CardModels(includeFun);
-            App.Events.RaisePreventUIAction(true, "Importing Cards Variants...");
             await Bulk_CardVariants(includeFun);
             App.Events.RaiseUpdateCardCollec();
             App.Events.RaisePreventUIAction(false, "");
@@ -294,7 +293,7 @@ namespace MaGeek.AppBusiness
                         transaction.Commit();
                     }
                     DateTime endTime = DateTime.Now;
-                    MessageBoxHelper.ShowMsg("DONE!!! Took " + (endTime - startTime).TotalMinutes + " mins");
+                    //MessageBoxHelper.ShowMsg("DONE!!! Took " + (endTime - startTime).TotalMinutes + " mins");
                 }
                 catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             });

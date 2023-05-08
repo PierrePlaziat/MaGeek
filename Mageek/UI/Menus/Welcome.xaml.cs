@@ -138,6 +138,7 @@ namespace MaGeek
 
         private void LaunchMassImport(object sender, RoutedEventArgs e)
         {
+            Hide();
             bool fun = true;
             App.LaunchMainWin();
             //if (Fun.IsChecked.HasValue) fun = Fun.IsChecked.Value;

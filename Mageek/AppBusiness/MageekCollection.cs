@@ -37,8 +37,11 @@ namespace MaGeek.AppBusiness
         {
             if (selectedCard == null) return;
             using var DB = App.DB.GetNewContext();
-            var c = DB.CardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
+            var c = DB.CardVariants.Where(x => x.Id == selectedCard.Id)
+                .Include(x=>x.Card)
+                .FirstOrDefault();
             c.Got++;
+            c.Card.Got++;
             DB.Entry(c).State = EntityState.Modified;
             await DB.SaveChangesAsync();
         }
@@ -47,9 +50,13 @@ namespace MaGeek.AppBusiness
         {
             if (selectedCard == null) return;
             using var DB = App.DB.GetNewContext();
-            var c = DB.CardVariants.Where(x => x.Id == selectedCard.Id).FirstOrDefault();
+            var c = DB.CardVariants.Where(x => x.Id == selectedCard.Id)
+                .Include(x => x.Card)
+                .FirstOrDefault();
             c.Got--;
+            c.Card.Got--;
             if (c.Got < 0) c.Got = 0;
+            if (c.Card.Got < 0) c.Card.Got = 0;
             DB.Entry(c).State = EntityState.Modified;
             await DB.SaveChangesAsync();
         }
@@ -99,21 +106,6 @@ namespace MaGeek.AppBusiness
             return foreignName;
         }
         
-        // TODO optimize
-        public static async Task<int> GetNbCollected(CardModel card)
-        {
-            int nbCollected = 0;
-            try
-            {
-                if (card.Variants == null) return 0;
-                int q = 0;
-                foreach (var v in card.Variants) q += v.Got;
-                return q;
-            }
-            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
-            return nbCollected;
-        }
-
         #endregion
 
         #region Decks

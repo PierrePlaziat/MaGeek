@@ -27,6 +27,7 @@ namespace MaGeek.AppData.Entities
         public string Power { get; set; }
         public string Toughness { get; set; }
         public string FavouriteVariant { get; set; } = "";
+        public int Got { get; set; }
 
         public virtual List<CardVariant> Variants { get; set; } = new List<CardVariant>();
         public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
@@ -36,8 +37,7 @@ namespace MaGeek.AppData.Entities
         #region Accessors
 
         public string CardForeignName { get { return MageekCollection.GetTraduction(CardId).Result; } }
-        public int Got { get { return MageekCollection.GetNbCollected(this).Result; } }
-
+        
         #endregion
 
         #region CTOR

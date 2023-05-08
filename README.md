@@ -4,40 +4,33 @@
 
 WPF MTG Library Manager 
 
-## About
-
-### Description
+## Description
 
 This application if aimed toward paper MTG game, so online only cards are not included.
 You can import all cards at first run (fun cards included), or start fresh and import cards at your will.
 
-### Functionalities
+## Functionalities
 
--	Gather all or some MTG cards on local
--	Import/Export decks/sets/lists
--	Print proxies
+-	All paper cards support including fun
+-	Decks/sets/lists gestion
+-	Proxy print
 -	Foreign language suport
 -	Auto update card data
 -	IDE style movable panels
--	Stats
--	Tags
+-	Stats and tags
 
 ## TODO
 
--	Better searcher 
-	-	speed up (didnt scale correctly)
-	- 	relink got count (carreful with speed)
-	- 	search on keywords	
+-	Dramaticaly speed up CardSearcher 
 	
-### Later
+## Potential future ameliorations
+
+(I currently dont plan time for those)
 
 -	Custom cards print support (need to figure out how to generate the image for print (maybe Markdown??)
 -	Auto deck (need to reflect on the building strategy)
 -	Tags sort and stats for deck
 -	Pie charts for stats
-
-### Maybe one day
-
 -	better double sided gestion (only data from front card are stored (except the image, that contains all infos)
 -	differentes variant in deck
 -	Avalonia port

@@ -54,6 +54,17 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(CardList));
             }
         }
+        
+        private string filterKeyword = "";
+        public string FilterKeyword
+        {
+            get { return filterKeyword; }
+            set {
+                filterKeyword = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CardList));
+            }
+        }
 
         private int filterMinCmc = 0;
         public int FilterMinCmc
