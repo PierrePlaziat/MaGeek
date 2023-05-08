@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace MaGeek.AppData.Entities
 {
-    public class Rule : BaseItem
+    public class CardRule : BaseItem
     {
 
         [Key]

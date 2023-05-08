@@ -13,7 +13,7 @@ namespace MaGeek.UI.Windows.ImportExport
             else ExportBox.Text = preFill;
         }
 
-        private string ExportList(MagicDeck selectedDeck)
+        private string ExportList(Deck selectedDeck)
         {
             if (selectedDeck == null) return "No deck selected.";
             string result = "";

@@ -73,7 +73,7 @@ namespace MaGeek.UI.CustomControls
         private void ChangeLanguage(object sender, RoutedEventArgs e)
         {
             MenuItem item = sender as MenuItem;
-            App.Config.ChangeSetting(Setting.ForeignLangugage, item.Header.ToString());
+            App.Config.ChangeSetting(Setting.ForeignLanguage, item.Header.ToString());
         }
 
         #endregion

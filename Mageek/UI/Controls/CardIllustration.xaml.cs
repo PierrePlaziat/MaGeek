@@ -27,14 +27,14 @@ namespace MaGeek.UI
         #region Dependancy Property
 
         public static readonly DependencyProperty CardProperty = DependencyProperty.Register(
-            "SelectedVariant", typeof(MagicCardVariant), typeof(CardIllustration),
+            "SelectedVariant", typeof(CardVariant), typeof(CardIllustration),
             new FrameworkPropertyMetadata( null, OnDefectIdChanged )
         );
 
         private static void OnDefectIdChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs) 
         {
             CardIllustration control = _control as CardIllustration;
-            control.SelectedVariant = eventArgs.NewValue as MagicCardVariant;
+            control.SelectedVariant = eventArgs.NewValue as CardVariant;
         }
 
         #endregion
@@ -42,8 +42,8 @@ namespace MaGeek.UI
         #region Properties
 
 
-        private MagicCardVariant selectedVariant;
-        public MagicCardVariant SelectedVariant
+        private CardVariant selectedVariant;
+        public CardVariant SelectedVariant
         {
             get { return selectedVariant; }
             set { 
@@ -66,7 +66,7 @@ namespace MaGeek.UI
             OnPropertyChanged("CardImage.Result");
         }
 
-        public MagicCard SelectedCard { get { return SelectedVariant == null ? null:SelectedVariant.Card; } }
+        public CardModel SelectedCard { get { return SelectedVariant == null ? null:SelectedVariant.Card; } }
 
         private NotifyTaskCompletion<BitmapImage> cardImage;
         public NotifyTaskCompletion<BitmapImage> CardImage { 
@@ -124,7 +124,7 @@ namespace MaGeek.UI
 
         #region CTOR
 
-        public CardIllustration(MagicCardVariant card)
+        public CardIllustration(CardVariant card)
         {
             InitializeComponent();
             DataContext = this;
@@ -164,7 +164,7 @@ namespace MaGeek.UI
             CardImage = new NotifyTaskCompletion<BitmapImage>(SelectedVariant.RetrieveImage(ShowBack));
         }
 
-        public void ReLoad(MagicCardVariant c)
+        public void ReLoad(CardVariant c)
         {
             SelectedVariant = c;
         }

@@ -17,14 +17,17 @@ using System.Windows.Media.Imaging;
 namespace MaGeek.AppBusiness
 {
 
+    /// <summary>
+    /// ScryfallApi data to local DB
+    /// TODO : maybe move unchanging data to bulk importer completely
+    /// </summary>
     public static class MageekApi
     {
 
         const int DelayApi = 150;
         static Random rnd = new Random();
 
-
-        #region Static data
+        #region Unchanging Data
 
         public static async Task<List<Set>> RetrieveSets()
         {
@@ -69,7 +72,7 @@ namespace MaGeek.AppBusiness
                 {
                     using (var DB = App.DB.GetNewContext())
                     {
-                        if (DB.Cards.Where(x => x.CardId == cardName).Any()) return new List<Card>();
+                        if (DB.CardModels.Where(x => x.CardId == cardName).Any()) return new List<Card>();
                     }
                 }
                 cards = await RetrieveCard(cardName);
@@ -77,7 +80,7 @@ namespace MaGeek.AppBusiness
                 {
                     if (includeForeign)
                     {
-                        string newname = await MageekUtils.GetEnglishNameFromForeignName(cardName, "french");
+                        string newname = await MageekCollection.GetEnglishNameFromForeignName(cardName, "french");
                         if (newname != null) cardName = newname;
                         if (newname != "") cards = await RetrieveCard(cardName);
                     }
@@ -143,25 +146,25 @@ namespace MaGeek.AppBusiness
             try
             {
                 if (scryCard.Name.StartsWith("A-")) return;
-                MagicCard localCard;
-                MagicCardVariant localVariant;
+                CardModel localCard;
+                CardVariant localVariant;
                 using (var DB = App.DB.GetNewContext())
                 {
                     // Card
-                    localCard = DB.Cards.Where(x => x.CardId == scryCard.Name)
+                    localCard = DB.CardModels.Where(x => x.CardId == scryCard.Name)
                                         .Include(x => x.Variants)
                                         .FirstOrDefault();
                     if (localCard == null)
                     {
-                        localCard = new MagicCard(scryCard);
-                        DB.Cards.Add(localCard);
+                        localCard = new CardModel(scryCard);
+                        DB.CardModels.Add(localCard);
                         await DB.SaveChangesAsync();
                     }
                     // Variant
                     localVariant = localCard.Variants.Where(x => x.Id == scryCard.Id.ToString()).FirstOrDefault();
                     if (localVariant == null)
                     {
-                        localVariant = new MagicCardVariant(scryCard);
+                        localVariant = new CardVariant(scryCard);
                         if (Owned) localVariant.Got++;
                         localVariant.Card = localCard;
                         localCard.Variants.Add(localVariant);
@@ -175,7 +178,7 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
-        public static async Task<BitmapImage> RetrieveImage(MagicCardVariant magicCardVariant, bool back = false, int nbTry = 0)
+        public static async Task<BitmapImage> RetrieveImage(CardVariant magicCardVariant, bool back = false, int nbTry = 0)
         {
             if(string.IsNullOrEmpty(magicCardVariant.ImageUrl_Front))
             {
@@ -227,7 +230,7 @@ namespace MaGeek.AppBusiness
             return img;
         }
 
-        private static async Task GetImgUrls(MagicCardVariant card)
+        private static async Task GetImgUrls(CardVariant card)
         {
             if (card == null) return;
             try
@@ -262,24 +265,24 @@ namespace MaGeek.AppBusiness
 
         #endregion
 
-        #region Dynamic data
+        #region Fresh Data
 
-        public static async Task<List<Legality>> GetLegalities(MagicCard card)
+        public static async Task<List<CardLegality>> GetLegalities(CardModel card)
         {
-            List<Legality> legalities = new();
+            List<CardLegality> legalities = new();
             if (card == null) return legalities;
             try
             {
                 await RetrieveLegalities(card);
                 using var DB = App.DB.GetNewContext();
-                legalities = await DB.Legalities.Where(x => x.CardId == card.CardId).ToListAsync();
+                legalities = await DB.CardLegalities.Where(x => x.CardId == card.CardId).ToListAsync();
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             return legalities;
         }
-        public static async Task<List<Rule>> GetRules(MagicCard card)
+        public static async Task<List<CardRule>> GetRules(CardModel card)
         {
-            List<Rule> rules = new();
+            List<CardRule> rules = new();
             if (card == null) return rules;
             try
             {
@@ -290,9 +293,9 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             return rules;
         }
-        public static async Task<List<CardCardRelation>> GetRelatedCards(MagicCard card)
+        public static async Task<List<CardRelation>> GetRelatedCards(CardModel card)
         {
-            List<CardCardRelation> relatedCards = new();
+            List<CardRelation> relatedCards = new();
             if (card == null) return relatedCards;
             try
             {
@@ -305,7 +308,7 @@ namespace MaGeek.AppBusiness
             return relatedCards;
         }
 
-        private static async Task RetrieveLegalities(MagicCard card)
+        private static async Task RetrieveLegalities(CardModel card)
         {
             if (card == null) return;
             if (!IsLegalitiesOutdated(card)) return;
@@ -320,8 +323,7 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
-        
-        private static async Task<dynamic> RetrieveRulings(MagicCard card,Uri rulingsUri)
+        private static async Task<dynamic> RetrieveRulings(CardModel card,Uri rulingsUri)
         {
             if (rulingsUri==null) return null;
             try
@@ -329,14 +331,13 @@ namespace MaGeek.AppBusiness
                 await DestroyRulings(card);
                 Thread.Sleep(DelayApi);
                 string json_data = await HttpUtils.Get(rulingsUri.ToString());
-                ResultList<Rule> rules = JsonSerializer.Deserialize<ResultList<Rule>>(json_data);
+                ResultList<CardRule> rules = JsonSerializer.Deserialize<ResultList<CardRule>>(json_data);
                 return rules;
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             return null;
         }
-
-        private static async Task RetrieveRelatedCards(MagicCard card)
+        private static async Task RetrieveRelatedCards(CardModel card)
         {
             if (card == null) return;
             if (!IsRelatedCardsOutdated(card)) return;
@@ -346,7 +347,7 @@ namespace MaGeek.AppBusiness
                 Thread.Sleep(DelayApi);
                 string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + card.Variants[0].Id);
                 Card scryfallCard = JsonSerializer.Deserialize<Card>(json_data);
-                List<CardCardRelation> rels = new();
+                List<CardRelation> rels = new();
                 if (scryfallCard.AllParts != null)
                 {
                     foreach (var part in scryfallCard.AllParts)
@@ -363,10 +364,10 @@ namespace MaGeek.AppBusiness
 
                             if (cardName != card.CardId)
                             {
-                                MagicCard relatedCard;
+                                CardModel relatedCard;
                                 using (var DB = App.DB.GetNewContext())
                                 {
-                                    relatedCard = await DB.Cards.Where(x => x.CardId == cardName)
+                                    relatedCard = await DB.CardModels.Where(x => x.CardId == cardName)
                                             .FirstOrDefaultAsync();
                                 }
                                 if (relatedCard == null)
@@ -376,14 +377,14 @@ namespace MaGeek.AppBusiness
                                     await RecordCard(result, false);
                                     using (var DB = App.DB.GetNewContext())
                                     {
-                                        relatedCard = await DB.Cards.Where(x => x.CardId == cardName)
+                                        relatedCard = await DB.CardModels.Where(x => x.CardId == cardName)
                                                 .FirstOrDefaultAsync();
                                     }
                                 }
                                 if (relatedCard != null)
                                 {
                                     rels.Add(
-                                        new CardCardRelation()
+                                        new CardRelation()
                                         {
                                             Card1Id = card.CardId,
                                             Card2Id = relatedCard.CardId,
@@ -405,7 +406,7 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
-        public static async Task RetrieveCardValues(MagicCardVariant card)
+        public static async Task RetrieveCardValues(CardVariant card)
         {
             if (card == null) return;
             if (!IsCardValuesOutdated(card)) return;
@@ -419,12 +420,12 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
-        private static bool IsLegalitiesOutdated(MagicCard card)
+        private static bool IsLegalitiesOutdated(CardModel card)
         {
             DateTime lastUpdate;
             using (var DB = App.DB.GetNewContext())
             {
-                var legality = DB.Legalities.Where(x => x.CardId == card.CardId).FirstOrDefault();
+                var legality = DB.CardLegalities.Where(x => x.CardId == card.CardId).FirstOrDefault();
                 if (legality == null) return true;
                 if (string.IsNullOrEmpty(legality.LastUpdate)) return true;
                 lastUpdate = DateTime.Parse(legality.LastUpdate);
@@ -432,7 +433,7 @@ namespace MaGeek.AppBusiness
             if (lastUpdate < DateTime.Now.AddDays(-7)) return true;
             else return false;
         }
-        private static bool IsRelatedCardsOutdated(MagicCard card)
+        private static bool IsRelatedCardsOutdated(CardModel card)
         {
             DateTime lastUpdate;
             using (var DB = App.DB.GetNewContext())
@@ -445,7 +446,7 @@ namespace MaGeek.AppBusiness
             if (lastUpdate < DateTime.Now.AddMonths(-1)) return true;
             else return false;
         }
-        private static bool IsCardValuesOutdated(MagicCardVariant card)
+        private static bool IsCardValuesOutdated(CardVariant card)
         {
             if (string.IsNullOrEmpty(card.LastUpdate)) return true;
             DateTime lastUpdate = DateTime.Parse(card.LastUpdate);
@@ -453,7 +454,7 @@ namespace MaGeek.AppBusiness
             else return false;
         }
 
-        private static async Task SavePrice(MagicCardVariant cardVariant, Price price, int edhRank)
+        private static async Task SavePrice(CardVariant cardVariant, Price price, int edhRank)
         {
             try
             {
@@ -470,14 +471,14 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception e) { MessageBoxHelper.ShowError("SavePrice", e); }
         }
-        private static async Task SaveLegality(MagicCard card, Dictionary<string, string> legalityDico)
+        private static async Task SaveLegality(CardModel card, Dictionary<string, string> legalityDico)
         {
             try
             {
-                List<Legality> legal = new();
+                List<CardLegality> legal = new();
                 foreach (var l in legalityDico)
                 {
-                    legal.Add(new Legality()
+                    legal.Add(new CardLegality()
                     {
                         Format = l.Key,
                         IsLegal = l.Value,
@@ -487,17 +488,17 @@ namespace MaGeek.AppBusiness
                 }
                 using var DB = App.DB.GetNewContext();
                 {
-                    DB.Legalities.AddRange(legal);
+                    DB.CardLegalities.AddRange(legal);
                     await DB.SaveChangesAsync();
                 }
             }
             catch (Exception e) { MessageBoxHelper.ShowError("SaveLegality", e); }
         }
-        private static async Task SaveRulings(MagicCard card, ResultList<Rule> rulings)
+        private static async Task SaveRulings(CardModel card, ResultList<CardRule> rulings)
         {
             try
             {
-                List<Rule> rule = new();
+                List<CardRule> rule = new();
                 foreach (var l in rulings.Data)
                 {
                     l.CardId = card.CardId;
@@ -511,7 +512,7 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception e) { MessageBoxHelper.ShowError("SaveLegality", e); }
         }
-        private static async Task SaveRelatedCards(MagicCard card, List<CardCardRelation> rels)
+        private static async Task SaveRelatedCards(CardModel card, List<CardRelation> rels)
         {
             try
             {
@@ -523,39 +524,38 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { MessageBoxHelper.ShowError("SaveRelated", e); }
         }
 
-        private static async Task DestroyLegalitiesRecords(MagicCard localCard)
+        private static async Task DestroyLegalitiesRecords(CardModel localCard)
         {
             try
             {
                 using var DB = App.DB.GetNewContext();
-                IEnumerable<Legality> existingValues = DB.Legalities.Where(x => x.CardId == localCard.CardId);
+                IEnumerable<CardLegality> existingValues = DB.CardLegalities.Where(x => x.CardId == localCard.CardId);
                 if (existingValues.Any())
                 {
-                    DB.Legalities.RemoveRange(existingValues);
+                    DB.CardLegalities.RemoveRange(existingValues);
                     await DB.SaveChangesAsync();
                 }
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
-        private static async Task DestroyRelatedsRecords(MagicCard localCard)
+        private static async Task DestroyRelatedsRecords(CardModel localCard)
         {
             try
             {
                 using var DB = App.DB.GetNewContext();
-                List<CardCardRelation> existingValues = await DB.CardRelations.Where(x => x.Card1Id == localCard.CardId).ToListAsync();
+                List<CardRelation> existingValues = await DB.CardRelations.Where(x => x.Card1Id == localCard.CardId).ToListAsync();
                 if (existingValues == null || existingValues.Count == 0) return;
                 DB.CardRelations.RemoveRange(existingValues);
                 await DB.SaveChangesAsync();
             }
             catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
-
-        private static async Task DestroyRulings(MagicCard localCard)
+        private static async Task DestroyRulings(CardModel localCard)
         {
             try
             {
                 using var DB = App.DB.GetNewContext();
-                List<Rule> existingValues = await DB.CardRules.Where(x => x.CardId == localCard.CardId).ToListAsync();
+                List<CardRule> existingValues = await DB.CardRules.Where(x => x.CardId == localCard.CardId).ToListAsync();
                 if (existingValues == null || existingValues.Count == 0) return;
                 DB.CardRules.RemoveRange(existingValues);
                 await DB.SaveChangesAsync();

@@ -4,7 +4,7 @@ using System.Windows.Media;
 namespace MaGeek.AppData.Entities
 {
 
-    public class Legality
+    public class CardLegality
     {
 
         [Key]

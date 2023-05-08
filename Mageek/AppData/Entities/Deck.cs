@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MaGeek.AppData.Entities
 {
-    public class MagicDeck
+    public class Deck
     {
 
         #region Entity
@@ -15,18 +15,18 @@ namespace MaGeek.AppData.Entities
         public string DeckColors { get; set; } = "";
         public int CardCount { get; set; } 
 
-        public virtual ObservableCollection<CardDeckRelation> CardRelations { get; set; }
+        public virtual ObservableCollection<DeckCard> CardRelations { get; set; }
 
         #endregion
 
         #region CTOR
 
-        public MagicDeck() { } // EF needs
+        public Deck() { } // EF needs
 
-        public MagicDeck(string deckTitle)
+        public Deck(string deckTitle)
         {
             Title = deckTitle;
-            CardRelations = new ObservableCollection<CardDeckRelation>();
+            CardRelations = new ObservableCollection<DeckCard>();
         }
 
         #endregion

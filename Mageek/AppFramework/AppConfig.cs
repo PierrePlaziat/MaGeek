@@ -54,7 +54,7 @@ namespace MaGeek.AppFramework
 
         private void DefaultSettings()
         {
-            Settings.Add(Setting.ForeignLangugage, "French");
+            Settings.Add(Setting.ForeignLanguage, "French");
             Settings.Add(Setting.Currency, "Eur");
         }
 
@@ -88,7 +88,7 @@ namespace MaGeek.AppFramework
 
     public enum Setting
     {
-        ForeignLangugage,
+        ForeignLanguage,
         Currency,
     };
 

@@ -10,62 +10,50 @@ using System.Windows.Media.Imaging;
 namespace MaGeek.AppData.Entities
 {
 
-    public class MagicCardVariant
+    public class CardVariant
     {
 
         [Key]
         public string Id { get; set; }
+        public string Rarity { get; set; }
+        public string SetName { get; set; }
         public string ImageUrl_Front { get; set; }
         public string ImageUrl_Back { get; set; }
-
-        public string Rarity { get; set; }
-
-        public string Lang { get; set; }
-
         public string ValueEur { get; set; }
         public string ValueUsd { get; set; }
         public int EdhRecRank { get; set; }
-
-        public string Artist { get; set; }
-        public string SetName { get; set; }
-
         public int IsCustom { get; set; }
         public string CustomName { get; set; }
-
         public int Got { get; set; }
         public string LastUpdate { get; set; } = "";
 
 
-        public virtual ICollection<CardDeckRelation> DeckRelations { get; set; }
-        public virtual MagicCard Card { get; set; }
+        public virtual ICollection<DeckCard> DeckRelations { get; set; }
+        public virtual CardModel Card { get; set; }
 
         #region CTOR
 
-        public MagicCardVariant() { }
+        public CardVariant() { }
         
-        public MagicCardVariant(string Id, string Rarity, string Artist, 
-                                string Lang, string SetName, MagicCard Card) 
+        public CardVariant(string Id, string Rarity, string Artist, 
+                                string Lang, string SetName, CardModel Card) 
         {
             this.Id = Id;
             this.Rarity = Rarity;
-            this.Artist = Artist;
-            this.Lang = Lang;
             this.SetName = SetName;
             this.Card = Card;
             IsCustom = 0;
             Got = 0;
         }
 
-        public MagicCardVariant(Card scryCard)
+        public CardVariant(Card scryCard)
         {
             Id = scryCard.Id.ToString();
             Rarity = scryCard.Rarity;
-            Artist = scryCard.Artist;
-            Lang = scryCard.Language;
             SetName = scryCard.SetName;
             IsCustom = 0;
             Got = 0;
-            Card = MageekUtils.QuickFindCardById(scryCard.Name).Result;
+            Card = MageekCollection.QuickFindCardById(scryCard.Name).Result;
         }
 
         #endregion

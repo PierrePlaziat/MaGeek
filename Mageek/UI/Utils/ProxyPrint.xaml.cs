@@ -24,14 +24,14 @@ namespace MaGeek.UI.Windows.ImportExport
 
         #endregion
 
-        MagicDeck selectedDeck;
-        public  MagicDeck SelectedDeck
+        Deck selectedDeck;
+        public  Deck SelectedDeck
         {
             get { return selectedDeck; }
             set { selectedDeck = value; OnPropertyChanged(); }
         }
 
-        List<MagicCardVariant> ListOfCardsToPrint;
+        List<CardVariant> ListOfCardsToPrint;
 
         private BitmapImage card0;
         public BitmapImage Card0
@@ -97,7 +97,7 @@ namespace MaGeek.UI.Windows.ImportExport
         }
 
 
-        public ProxyPrint(MagicDeck _selectedDeck)
+        public ProxyPrint(Deck _selectedDeck)
         {
             if (_selectedDeck != null) 
             {
@@ -117,7 +117,7 @@ namespace MaGeek.UI.Windows.ImportExport
 
         private void DetermineListOfCardsToPrint()
         {
-            ListOfCardsToPrint= new List<MagicCardVariant>();
+            ListOfCardsToPrint= new List<CardVariant>();
             foreach(var v in selectedDeck.CardRelations)
             {
                 for(int i=0;i<v.Quantity;i++) ListOfCardsToPrint.Add(v.Card);
@@ -149,7 +149,7 @@ namespace MaGeek.UI.Windows.ImportExport
 
         private async Task SetCard(int page,int emplacement)
         {
-            MagicCardVariant c = null;
+            CardVariant c = null;
             if (9 * page + emplacement < selectedDeck.CardCount) c = ListOfCardsToPrint[9 * page + emplacement];
             if (c == null) return;
             switch(emplacement)

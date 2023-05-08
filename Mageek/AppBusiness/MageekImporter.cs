@@ -15,7 +15,8 @@ namespace MaGeek.AppBusiness
 {
 
     /// <summary>
-    /// API helper
+    /// Interacts with API, called regularly to get fresh data
+    /// TODO : replace BackgroundWorker by a Task list 
     /// </summary>
     public class MageekImporter
     {
@@ -268,7 +269,7 @@ namespace MaGeek.AppBusiness
             {
                 foreach (var v in importResult) importLines.Add(new ImportLine() { Name = v.Name, Quantity = 1 });
             }
-            await MageekUtils.AddDeck(
+            await MageekCollection.AddDeck(
                 importLines,
                 CurrentImport.Value.Title ?? DateTime.Now.ToString()
             );

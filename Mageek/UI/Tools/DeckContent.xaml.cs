@@ -15,8 +15,8 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        private MagicDeck currentDeck = null;
-        public MagicDeck CurrentDeck
+        private Deck currentDeck = null;
+        public Deck CurrentDeck
         {
             get { return currentDeck; }
             set
@@ -38,16 +38,16 @@ namespace MaGeek.UI
             }
         }
 
-        public IEnumerable<CardDeckRelation> CurrentCommanders      { get; private set; }
-        public IEnumerable<CardDeckRelation> CurrentCreatures       { get; private set; }
-        public IEnumerable<CardDeckRelation> CurrentInstants        { get; private set; }
-        public IEnumerable<CardDeckRelation> CurrentSorceries       { get; private set; }
-        public IEnumerable<CardDeckRelation> CurrentEnchantments    { get; private set; }
-        public IEnumerable<CardDeckRelation> CurrentArtifacts       { get; private set; }
-        public IEnumerable<CardDeckRelation> CurrentNonBasicLands   { get; private set; }
-        public IEnumerable<CardDeckRelation> CurrentBasicLands      { get; private set; }
-        public IEnumerable<CardDeckRelation> CurrentOthers          { get; private set; }
-        public IEnumerable<CardDeckRelation> CurrentSide            { get; private set; }
+        public IEnumerable<DeckCard> CurrentCommanders      { get; private set; }
+        public IEnumerable<DeckCard> CurrentCreatures       { get; private set; }
+        public IEnumerable<DeckCard> CurrentInstants        { get; private set; }
+        public IEnumerable<DeckCard> CurrentSorceries       { get; private set; }
+        public IEnumerable<DeckCard> CurrentEnchantments    { get; private set; }
+        public IEnumerable<DeckCard> CurrentArtifacts       { get; private set; }
+        public IEnumerable<DeckCard> CurrentNonBasicLands   { get; private set; }
+        public IEnumerable<DeckCard> CurrentBasicLands      { get; private set; }
+        public IEnumerable<DeckCard> CurrentOthers          { get; private set; }
+        public IEnumerable<DeckCard> CurrentSide            { get; private set; }
 
         #region Visibilities
 
@@ -96,14 +96,14 @@ namespace MaGeek.UI
             App.Events.UpdateDeckEvent += HandleDeckModif;
         }
 
-        void HandleDeckSelected(MagicDeck deck)
+        void HandleDeckSelected(Deck deck)
         {
             CurrentDeck = deck;
         }
 
         void HandleDeckModif()
         {
-            MagicDeck tmp = CurrentDeck;
+            Deck tmp = CurrentDeck;
             CurrentDeck = null;
             CurrentDeck = tmp;
         }
@@ -120,16 +120,16 @@ namespace MaGeek.UI
         private async Task ReloadAsync()
         {
             IsLoading = Visibility.Visible;
-            CurrentCommanders =     await ApplyFilter(await MageekUtils.GetCommanders(CurrentDeck));
-            CurrentCreatures =      await ApplyFilter(await MageekUtils.GetCreatures(CurrentDeck));
-            CurrentInstants =       await ApplyFilter(await MageekUtils.GetInstants(CurrentDeck));
-            CurrentSorceries =      await ApplyFilter(await MageekUtils.GetSorceries(CurrentDeck));
-            CurrentEnchantments =   await ApplyFilter(await MageekUtils.GetEnchantments(CurrentDeck));
-            CurrentArtifacts =      await ApplyFilter(await MageekUtils.GetCurrentArtifacts(CurrentDeck));
-            CurrentNonBasicLands =  await ApplyFilter(await MageekUtils.GetCurrentNonBasicLands(CurrentDeck));
-            CurrentOthers =         await ApplyFilter(await MageekUtils.GetCurrentOthers(CurrentDeck));
-            CurrentBasicLands =     await ApplyFilter(await MageekUtils.GetCurrentBasicLands(CurrentDeck));
-            CurrentSide =           await ApplyFilter(await MageekUtils.GetCurrentSide(CurrentDeck));
+            CurrentCommanders =     await ApplyFilter(await MageekStats.GetCommanders(CurrentDeck));
+            CurrentCreatures =      await ApplyFilter(await MageekStats.GetCreatures(CurrentDeck));
+            CurrentInstants =       await ApplyFilter(await MageekStats.GetInstants(CurrentDeck));
+            CurrentSorceries =      await ApplyFilter(await MageekStats.GetSorceries(CurrentDeck));
+            CurrentEnchantments =   await ApplyFilter(await MageekStats.GetEnchantments(CurrentDeck));
+            CurrentArtifacts =      await ApplyFilter(await MageekStats.GetCurrentArtifacts(CurrentDeck));
+            CurrentNonBasicLands =  await ApplyFilter(await MageekStats.GetCurrentNonBasicLands(CurrentDeck));
+            CurrentOthers =         await ApplyFilter(await MageekStats.GetCurrentOthers(CurrentDeck));
+            CurrentBasicLands =     await ApplyFilter(await MageekStats.GetCurrentBasicLands(CurrentDeck));
+            CurrentSide =           await ApplyFilter(await MageekStats.GetCurrentSide(CurrentDeck));
             await RaiseChanges();
             await Task.Run(() => { IsLoading = Visibility.Collapsed; });
         }
@@ -156,9 +156,9 @@ namespace MaGeek.UI
 
         #region Methods
 
-        private async Task<IEnumerable<CardDeckRelation>> ApplyFilter(IEnumerable<CardDeckRelation> enumerable)
+        private async Task<IEnumerable<DeckCard>> ApplyFilter(IEnumerable<DeckCard> enumerable)
         {
-            IEnumerable<CardDeckRelation> rels = new List<CardDeckRelation>();
+            IEnumerable<DeckCard> rels = new List<DeckCard>();
             await Task.Run(() => {
                 rels = enumerable.Where(x =>
                     x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
@@ -170,48 +170,48 @@ namespace MaGeek.UI
         private void LessCard(object sender, RoutedEventArgs e)
         {
             var b = (Button)sender;
-            var cr = b.DataContext as CardDeckRelation;
+            var cr = b.DataContext as DeckCard;
             var c = cr.Card;
-            MageekUtils.RemoveCardFromDeck(c.Card, CurrentDeck).ConfigureAwait(true);
+            MageekCollection.RemoveCardFromDeck(c.Card, CurrentDeck).ConfigureAwait(true);
         }
 
         private void MoreCard(object sender, RoutedEventArgs e)
         {
             var b = (Button)sender;
-            var cr = b.DataContext as CardDeckRelation;
+            var cr = b.DataContext as DeckCard;
             var c = cr.Card;
-            MageekUtils.AddCardToDeck(c, CurrentDeck,1).ConfigureAwait(true);
+            MageekCollection.AddCardToDeck(c, CurrentDeck,1).ConfigureAwait(true);
         }
 
         private void SetCommandant(object sender, RoutedEventArgs e)
         {
-            CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
-            MageekUtils.ChangeCardDeckRelation(cardRel, 1).ConfigureAwait(true);
+            DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
+            MageekCollection.ChangeCardDeckRelation(cardRel, 1).ConfigureAwait(true);
         }
 
         private void UnsetCommandant(object sender, RoutedEventArgs e)
         {
-            CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
-            MageekUtils.ChangeCardDeckRelation(cardRel,0).ConfigureAwait(true);
+            DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
+            MageekCollection.ChangeCardDeckRelation(cardRel,0).ConfigureAwait(true);
         }
 
         private void ToSide(object sender, RoutedEventArgs e)
         {
-            CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
-            MageekUtils.ChangeCardDeckRelation(cardRel, 2).ConfigureAwait(true);
+            DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
+            MageekCollection.ChangeCardDeckRelation(cardRel, 2).ConfigureAwait(true);
         }
 
         private void ToDeck(object sender, RoutedEventArgs e)
         {
-            CardDeckRelation cardRel = GetListView(sender).SelectedItem as CardDeckRelation;
-            MageekUtils.ChangeCardDeckRelation(cardRel, 0).ConfigureAwait(true);
+            DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
+            MageekCollection.ChangeCardDeckRelation(cardRel, 0).ConfigureAwait(true);
         }
 
         #region UI LINK
 
         private async void CreateDeck(object sender, RoutedEventArgs e)
         {
-            await MageekUtils.AddEmptyDeck();
+            await MageekCollection.AddEmptyDeck();
         }
 
         private void OpenDeckImport(object sender, RoutedEventArgs e)
@@ -223,7 +223,7 @@ namespace MaGeek.UI
         private void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListView sendedBy = (sender as ListView);
-            if (sendedBy.SelectedItem is CardDeckRelation cardRel) App.Events.RaiseCardSelected(cardRel.Card.Card);
+            if (sendedBy.SelectedItem is DeckCard cardRel) App.Events.RaiseCardSelected(cardRel.Card.Card);
             sendedBy.UnselectAll();
         }
 

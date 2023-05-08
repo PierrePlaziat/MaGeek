@@ -106,13 +106,13 @@ namespace MaGeek
         {
             Visibility_FirstLaunch = Visibility.Visible;
             MageekMessage = "First launch.";
-            //await MageekInitializer.DownloadMtgJsonSqlite();
+            await MageekBulkinator.Download_MtgJsonSqlite();
             Visibility_MtgJsonDownloaded = Visibility.Visible;
-            await MageekInitializer.BulkTranslations();
+            await MageekBulkinator.Bulk_CardTraductions();
             Visibility_ForeignNamesImported = Visibility.Visible;
         }
         
-        private async Task Activate_NormalLaunch()
+        private void Activate_NormalLaunch()
         {
             Hide();
             App.LaunchMainWin();
@@ -136,12 +136,12 @@ namespace MaGeek
         //    // TODO
         //}
 
-        private void ImportAllCards(object sender, RoutedEventArgs e)
+        private void LaunchMassImport(object sender, RoutedEventArgs e)
         {
             bool fun = true;
             App.LaunchMainWin();
             //if (Fun.IsChecked.HasValue) fun = Fun.IsChecked.Value;
-            MageekInitializer.LaunchFirstImport(fun).ConfigureAwait(false);
+            MageekBulkinator.Bulk_Cards(fun).ConfigureAwait(false);
             Close();
         }
 

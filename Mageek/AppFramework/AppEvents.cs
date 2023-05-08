@@ -23,13 +23,13 @@ namespace MaGeek.AppFramework
         public event LayoutActionHandler LayoutActionEvent;
 
         // Card Selected
-        public virtual void RaiseCardSelected(MagicCard Card) { CardSelectedEvent?.Invoke(Card); }
-        public delegate void CardSelectedHandler(MagicCard Card);
+        public virtual void RaiseCardSelected(CardModel Card) { CardSelectedEvent?.Invoke(Card); }
+        public delegate void CardSelectedHandler(CardModel Card);
         public event CardSelectedHandler CardSelectedEvent;
 
         // Deck Selected
-        public virtual void RaiseDeckSelect(MagicDeck deck) { SelectDeckEvent?.Invoke(deck); }
-        public delegate void SelectDeckHandler(MagicDeck deck);
+        public virtual void RaiseDeckSelect(Deck deck) { SelectDeckEvent?.Invoke(deck); }
+        public delegate void SelectDeckHandler(Deck deck);
         public event SelectDeckHandler SelectDeckEvent;
 
         // Update Card Collec 
@@ -51,9 +51,9 @@ namespace MaGeek.AppFramework
     public class ChangeCardRelationVariantCommand : ICommand
     {
 
-        private CardDeckRelation relation;
+        private DeckCard relation;
 
-        public ChangeCardRelationVariantCommand(CardDeckRelation relation)
+        public ChangeCardRelationVariantCommand(DeckCard relation)
         {
             this.relation = relation;
         }
@@ -63,8 +63,8 @@ namespace MaGeek.AppFramework
         }
         public async void Execute(object parameter)
         {
-            MagicCardVariant variant = (MagicCardVariant)parameter;
-            await MageekUtils.ChangeVariant(relation, variant);
+            CardVariant variant = (CardVariant)parameter;
+            await MageekCollection.ChangeVariant(relation, variant);
         }
 
         public event EventHandler CanExecuteChanged;

@@ -16,8 +16,8 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        private MagicDeck currentDeck;
-        public MagicDeck CurrentDeck
+        private Deck currentDeck;
+        public Deck CurrentDeck
         {
             get { return currentDeck; }
             set
@@ -82,7 +82,7 @@ namespace MaGeek.UI
             App.Events.UpdateDeckEvent += HandleDeckModified;
         }
 
-        void HandleDeckSelected(MagicDeck deck)
+        void HandleDeckSelected(Deck deck)
         {
             CurrentDeck = deck;
         }
@@ -105,22 +105,22 @@ namespace MaGeek.UI
         {
             if (CurrentDeck == null) return;
             IsLoading = Visibility.Visible;
-            CreatureCount = await MageekUtils.Count_Creature(currentDeck);
-            InstantCount = await MageekUtils.Count_Instant(currentDeck);
-            SorceryCount = await MageekUtils.Count_Sorcery(currentDeck);
-            EnchantmentCount = await MageekUtils.Count_Enchantment(currentDeck); 
-            ArtifactCount = await MageekUtils.Count_Artifact(currentDeck);
-            BasicLandCount = await MageekUtils.Count_BasicLand(currentDeck);
-            SpecialLandCount = await MageekUtils.Count_SpecialLand(currentDeck);
-            OtherCount = await MageekUtils.Count_other(currentDeck);
-            DevotionB = await MageekUtils.DevotionB(currentDeck);
-            DevotionW = await MageekUtils.DevotionW(currentDeck);
-            DevotionU = await MageekUtils.DevotionU(currentDeck);
-            DevotionG = await MageekUtils.DevotionG(currentDeck);
-            DevotionR = await MageekUtils.DevotionR(currentDeck);
-            StandardOk = await MageekUtils.Validity_Standard(currentDeck);
-            CommanderOk = await MageekUtils.Validity_Commander(currentDeck);
-            OwnedRatio = await MageekUtils.OwnedRatio(currentDeck);
+            CreatureCount = await MageekStats.Count_Creature(currentDeck);
+            InstantCount = await MageekStats.Count_Instant(currentDeck);
+            SorceryCount = await MageekStats.Count_Sorcery(currentDeck);
+            EnchantmentCount = await MageekStats.Count_Enchantment(currentDeck); 
+            ArtifactCount = await MageekStats.Count_Artifact(currentDeck);
+            BasicLandCount = await MageekStats.Count_BasicLand(currentDeck);
+            SpecialLandCount = await MageekStats.Count_SpecialLand(currentDeck);
+            OtherCount = await MageekStats.Count_other(currentDeck);
+            DevotionB = await MageekStats.DevotionB(currentDeck);
+            DevotionW = await MageekStats.DevotionW(currentDeck);
+            DevotionU = await MageekStats.DevotionU(currentDeck);
+            DevotionG = await MageekStats.DevotionG(currentDeck);
+            DevotionR = await MageekStats.DevotionR(currentDeck);
+            StandardOk = await MageekStats.Validity_Standard(currentDeck);
+            CommanderOk = await MageekStats.Validity_Commander(currentDeck);
+            OwnedRatio = await MageekStats.OwnedRatio(currentDeck);
             await Task.Run(() => {
                 OnPropertyChanged(nameof(CreatureCount));
                 OnPropertyChanged(nameof(InstantCount));
@@ -139,7 +139,7 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(DevotionR));
                 OnPropertyChanged(nameof(OwnedRatio));
             });
-            int[] manacurve = await MageekUtils.GetManaCurve(currentDeck);
+            int[] manacurve = await MageekStats.GetManaCurve(currentDeck);
             DrawNewHand();
             DrawManacurve(manacurve);
             await Task.Run(() =>
@@ -154,7 +154,7 @@ namespace MaGeek.UI
 
         private async void ListMissing(object sender, RoutedEventArgs e)
         {
-            string missList = await MageekUtils.ListMissingCards(currentDeck);
+            string missList = await MageekStats.ListMissingCards(currentDeck);
             if (!string.IsNullOrEmpty(missList))
             {
                 var window = new DeckListExporter(missList);
@@ -201,8 +201,8 @@ namespace MaGeek.UI
 
         #region Hand
 
-        private List<MagicCardVariant> hand;
-        public List<MagicCardVariant> Hand
+        private List<CardVariant> hand;
+        public List<CardVariant> Hand
         {
             get { return hand; }
             set { hand = value; OnPropertyChanged(); }
@@ -214,7 +214,7 @@ namespace MaGeek.UI
 
         private void DrawNewHand()
         {
-            Hand = new List<MagicCardVariant>();
+            Hand = new List<CardVariant>();
             alreadyDrawed = new List<int>();
             HandPanel.Children.Clear();
             for (int i = 0; i < 7; i++)
@@ -225,7 +225,7 @@ namespace MaGeek.UI
 
         private void DrawNewCard()
         {
-            MagicCardVariant newCard = DoDraw();
+            CardVariant newCard = DoDraw();
             if (newCard != null)
             {
                 HandPanel.Children.Add(
@@ -238,7 +238,7 @@ namespace MaGeek.UI
             }
         }
 
-        private MagicCardVariant DoDraw()
+        private CardVariant DoDraw()
         {
             if (CurrentDeck == null) return null;
             if (currentDeck.CardRelations.Count <= alreadyDrawed.Count) return null;

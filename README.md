@@ -17,31 +17,27 @@ You can import all cards at first run (fun cards included), or start fresh and i
 -	Import/Export decks/sets/lists
 -	Print proxies
 -	Foreign language suport
--	card prices and legalities available, auto-updating
+-	Auto update card data
 -	IDE style movable panels
 -	Stats
 -	Tags
 
 ## TODO
 
-### Incomming
-
--	update db fields (remove some)
--	Better searcher
-	-	speed up
-	- 	link got indicator
+-	better double sided gestion (text of second face not gathered)
+-	Better searcher 
+	-	speed up (didnt scale correctly)
+	- 	relink got count (carreful with speed)
 	- 	search on keywords	
--	better double sided gestion
-- 	fast and better card counts
 	
-### Maybe later
+### Later
 
 -	Custom cards print support (need to figure out how to generate the image for print (maybe Markdown??)
 -	Auto deck (need to reflect on the building strategy)
 -	Tags sort and stats for deck
 -	Pie charts for stats
 
-### Maybe after all that
+### Maybe one day
 
 -	differentes variant in deck
 -	Avalonia port

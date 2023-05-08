@@ -14,7 +14,7 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        public IEnumerable<MagicDeck> Decks { get; private set; }
+        public IEnumerable<Deck> Decks { get; private set; }
 
         #region Filter
 
@@ -29,7 +29,7 @@ namespace MaGeek.UI
             }
         }
 
-        private IEnumerable<MagicDeck> FilterDeckEnumerator(IEnumerable<MagicDeck> enumerable)
+        private IEnumerable<Deck> FilterDeckEnumerator(IEnumerable<Deck> enumerable)
         {
             if (enumerable == null) return null;
             return enumerable.Where(x => x.Title.ToLower().Contains(FilterString.ToLower()))
@@ -89,7 +89,7 @@ namespace MaGeek.UI
         private async Task Reload()
         {
             IsLoading = Visibility.Visible;
-            Decks = FilterDeckEnumerator(await MageekUtils.GetDecks());
+            Decks = FilterDeckEnumerator(await MageekCollection.GetDecks());
             await Task.Run(() =>
             {
                 OnPropertyChanged(nameof(Decks));
@@ -99,37 +99,37 @@ namespace MaGeek.UI
 
         private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var deck = decklistbox.SelectedItem as MagicDeck;
+            var deck = decklistbox.SelectedItem as Deck;
             if (deck != null) App.Events.RaiseDeckSelect(deck);
         }
 
         private async void AddDeck(object sender, RoutedEventArgs e)
         {
-            await MageekUtils.AddEmptyDeck();
+            await MageekCollection.AddEmptyDeck();
         }
         
         private async void RenameDeck(object sender, RoutedEventArgs e)
         {
-            await MageekUtils.RenameDeck(App.State.SelectedDeck);
+            await MageekCollection.RenameDeck(App.State.SelectedDeck);
         }
 
         private async void DuplicateDeck(object sender, RoutedEventArgs e)
         {
             if (decklistbox.SelectedIndex == -1) return;
-            await MageekUtils.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
+            await MageekCollection.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
         }
 
         private async void DeleteDeck(object sender, RoutedEventArgs e)
         {
             if (decklistbox.SelectedIndex == -1) return;
-            foreach(MagicDeck d in decklistbox.SelectedItems)
-                await MageekUtils.DeleteDeck(d);
+            foreach(Deck d in decklistbox.SelectedItems)
+                await MageekCollection.DeleteDeck(d);
         }
 
         private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
         {
             if (App.State.SelectedDeck == null) return;
-            float totalPrice = await MageekUtils.EstimateDeckPrice(App.State.SelectedDeck);
+            float totalPrice = await MageekStats.EstimateDeckPrice(App.State.SelectedDeck);
             MessageBox.Show("Estimation : " + totalPrice + " €");
         }
 

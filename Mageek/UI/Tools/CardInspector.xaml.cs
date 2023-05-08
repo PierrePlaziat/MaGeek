@@ -20,8 +20,8 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        private MagicCard selectedCard;
-        public MagicCard SelectedCard
+        private CardModel selectedCard;
+        public CardModel SelectedCard
         {
             get { return selectedCard; }
             set
@@ -35,10 +35,10 @@ namespace MaGeek.UI
             }
         }
 
-        public List<MagicCardVariant> Variants { get; private set; }
+        public List<CardVariant> Variants { get; private set; }
 
-        private MagicCardVariant selectedVariant;
-        public MagicCardVariant SelectedVariant
+        private CardVariant selectedVariant;
+        public CardVariant SelectedVariant
         {
             get { return selectedVariant; }
             set { 
@@ -51,9 +51,9 @@ namespace MaGeek.UI
             }
         }
 
-        public List<Legality> Legalities { get; private set; }
-        public List<Rule> Rulings { get; private set; }
-        public List<CardCardRelation> RelatedCards { get; private set; }
+        public List<CardLegality> Legalities { get; private set; }
+        public List<CardRule> Rulings { get; private set; }
+        public List<CardRelation> RelatedCards { get; private set; }
         public List<CardTag> Tags { get; private set; }
 
         #region Visibilities
@@ -97,12 +97,12 @@ namespace MaGeek.UI
             App.Events.CardSelectedEvent += HandleCardSelected;
         }
 
-        void HandleCardSelected(MagicCard Card)
+        void HandleCardSelected(CardModel Card)
         {
             if (!isPinned)
             {
                 if (Card == null) SelectedCard = null;
-                else SelectedCard = MageekUtils.FindCardById(Card.CardId).Result;
+                else SelectedCard = MageekCollection.FindCardById(Card.CardId).Result;
             }
         }
 
@@ -157,18 +157,18 @@ namespace MaGeek.UI
 
         #region Data Retrieve
 
-        private List<MagicCardVariant> GetVariants()
+        private List<CardVariant> GetVariants()
         {
             if (selectedCard != null && selectedCard.Variants != null && selectedCard.Variants.Count > 0)
                 return selectedCard.Variants;
             else 
-                return new List<MagicCardVariant>();
+                return new List<CardVariant>();
         }
 
         private async Task<List<CardTag>> GetTags()
         {
             if(selectedCard==null) return null;
-            return await MageekUtils.FindTagsForCard(selectedCard.CardId);
+            return await MageekStats.FindTagsForCard(selectedCard.CardId);
         }
 
         #endregion
@@ -193,21 +193,21 @@ namespace MaGeek.UI
 
         private async void AddCardToCollection(object sender, RoutedEventArgs e)
         {
-            MagicCardVariant variant = (MagicCardVariant) ((Button)sender).DataContext;
-            await MageekUtils.GotCard_Add(variant);
+            CardVariant variant = (CardVariant) ((Button)sender).DataContext;
+            await MageekCollection.GotCard_Add(variant);
             HandleCardSelected(selectedCard);
         }
 
         private async void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
-            MagicCardVariant variant = (MagicCardVariant)((Button)sender).DataContext;
-            await MageekUtils.GotCard_Remove(variant);
+            CardVariant variant = (CardVariant)((Button)sender).DataContext;
+            await MageekCollection.GotCard_Remove(variant);
             HandleCardSelected(selectedCard);
         }
 
         private async void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            await MageekUtils.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1);
+            await MageekCollection.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1);
         }
 
         #endregion
@@ -217,13 +217,13 @@ namespace MaGeek.UI
         private void SelectVariant(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (VariantListBox.SelectedIndex < 0) return;
-            SelectedVariant = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;
+            SelectedVariant = VariantListBox.Items[VariantListBox.SelectedIndex] as CardVariant;
         }
 
         private async void SetFav(object sender, RoutedEventArgs e)
         {
-            var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as MagicCardVariant;  
-            await MageekUtils.SetFav(cardvar.Card, cardvar);
+            var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as CardVariant;  
+            await MageekCollection.SetFav(cardvar.Card, cardvar);
         }
 
         private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)
@@ -240,7 +240,7 @@ namespace MaGeek.UI
         {
             if (!string.IsNullOrEmpty(NewTag.Text))
             {
-                await MageekUtils.TagCard(selectedCard,NewTag.Text);
+                await MageekStats.TagCard(selectedCard,NewTag.Text);
                 OnPropertyChanged("Tags");
                 NewTag.Text = "";
                 sugestions.Visibility = Visibility.Collapsed;
@@ -250,7 +250,7 @@ namespace MaGeek.UI
         private async void DeleteTag(object sender, RoutedEventArgs e)
         {
             CardTag cardTag = (CardTag)((Button)sender).DataContext;
-            await MageekUtils.UnTagCard(cardTag);
+            await MageekStats.UnTagCard(cardTag);
             OnPropertyChanged("Tags");
             sugestions.Visibility = Visibility.Collapsed;
         }
@@ -259,7 +259,7 @@ namespace MaGeek.UI
         {
             bool found = false;
             var border = (resultStack.Parent as ScrollViewer).Parent as Border;
-            var data = await MageekUtils.GetTagsDistinct();
+            var data = await MageekStats.GetTagsDistinct();
             string query = (sender as TextBox).Text;
             if (query.Length == 0)
             {
@@ -342,11 +342,11 @@ namespace MaGeek.UI
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            CardCardRelation rel = (CardCardRelation)((Button)sender).DataContext;
-            MagicCard relatedCard;
+            CardRelation rel = (CardRelation)((Button)sender).DataContext;
+            CardModel relatedCard;
             using (var DB = App.DB.GetNewContext())
             {
-                relatedCard = DB.Cards.Where(x => x.CardId == rel.Card2Id)
+                relatedCard = DB.CardModels.Where(x => x.CardId == rel.Card2Id)
                     .ToList()
                     .FirstOrDefault();
             }

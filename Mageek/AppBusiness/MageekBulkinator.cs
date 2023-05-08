@@ -13,49 +13,44 @@ using System.Threading.Tasks;
 namespace MaGeek.AppBusiness
 {
 
-    public static class MageekInitializer
+    /// <summary>
+    /// Interracts with MtgJson, called at first launch
+    /// TODO : currently no way to import only missing data later
+    /// </summary>
+    public static class MageekBulkinator
     {
 
-        static string SQL_Translations = @" SELECT cards.name, foreign_data.language, foreign_data.name
-                                                 FROM cards JOIN foreign_data ON cards.uuid=foreign_data.uuid
-                                                 WHERE 1=1";
+        #region SQL
 
-        static string SQL_Cards = @" SELECT DISTINCT
-                                                    name, 
-                                                    type, 
-                                                    text,
-                                                    keywords,
-                                                    power,
-                                                    toughness,
-                                                    manaCost,
-                                                    convertedManaCost,
-                                                    colorIdentity,
-                                                    faceName
-                                                 FROM cards 
-                                                 WHERE availability LIKE '%paper%'";
+        private const string SQL_AllCardTraductions = @"
+            SELECT 
+                cards.name, foreign_data.language, foreign_data.name
+            FROM 
+                cards JOIN foreign_data ON cards.uuid=foreign_data.uuid
+            WHERE 
+                1=1";
 
-        static string SQL_Variants = @" SELECT DISTINCT
-                                                    cards.scryfallId,
-                                                    cards.rarity,
-                                                    cards.artist,
-                                                    cards.language,
-                                                    sets.name,
-                                                    cards.name,
-                                                    cards.faceName,
-                                                    cards.type
-                                                 FROM cards JOIN sets ON cards.setCode=sets.code
-                                                 WHERE availability LIKE '%paper%'";
+        private const string SQL_AllCardModels = @"
+            SELECT DISTINCT
+                name, type, text, keywords, power, toughness, manaCost, convertedManaCost, colorIdentity, faceName
+            FROM 
+                cards 
+            WHERE 
+                availability LIKE '%paper%'";
 
-        public static async Task LaunchFirstImport(bool includeFun)
-        {
-            App.Events.RaisePreventUIAction(true, "Importing archetypes...");
-            await BulkCards(includeFun);
-            App.Events.RaisePreventUIAction(true, "Importing variants... (several minutes needed)");
-            await BulkVariants(includeFun);
-            App.Events.RaiseUpdateCardCollec();
-            App.Events.RaisePreventUIAction(false, "");
-        }
-        public static async Task DownloadMtgJsonSqlite()
+        private const string SQL_AllCardVariants = @" 
+            SELECT DISTINCT
+                cards.scryfallId, cards.rarity, cards.artist, cards.language, sets.name, cards.name, cards.faceName, cards.type
+            FROM 
+                cards JOIN sets ON cards.setCode=sets.code
+            WHERE 
+                availability LIKE '%paper%'";
+
+        #endregion
+
+        #region Before Launch
+
+        public static async Task Download_MtgJsonSqlite()
         {
             try
             {
@@ -64,10 +59,9 @@ namespace MaGeek.AppBusiness
                 using var fs = new FileStream(App.Config.Path_MtgJsonDownload, FileMode.Create);
                 await s.CopyToAsync(fs);
             }
-            catch (Exception e) { MessageBoxHelper.ShowError("AddDeck", e); }
+            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
-
-        public static async Task BulkTranslations()
+        public static async Task Bulk_CardTraductions()
         {
             await Task.Run(async () => {
                 try
@@ -77,7 +71,7 @@ namespace MaGeek.AppBusiness
                     {
                         await connection.OpenAsync();
                         var command = connection.CreateCommand();
-                        command.CommandText = SQL_Translations;
+                        command.CommandText = SQL_AllCardTraductions;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             while (await reader.ReadAsync())
@@ -103,7 +97,20 @@ namespace MaGeek.AppBusiness
             });
         }
 
-        public static async Task BulkCards(bool includeFun)
+        #endregion
+
+        #region Once Launched
+
+        public static async Task Bulk_Cards(bool includeFun)
+        {
+            App.Events.RaisePreventUIAction(true, "Importing Card Models...");
+            await Bulk_CardModels(includeFun);
+            App.Events.RaisePreventUIAction(true, "Importing Cards Variants...");
+            await Bulk_CardVariants(includeFun);
+            App.Events.RaiseUpdateCardCollec();
+            App.Events.RaisePreventUIAction(false, "");
+        }
+        private static async Task Bulk_CardModels(bool includeFun)
         {
             await Task.Run(async () => {
                 try
@@ -120,12 +127,12 @@ namespace MaGeek.AppBusiness
                     bool alreadyAdded_SlySpy = false;
                     bool alreadyAdded_GarbageElemental = false;
 
-                    List<MagicCard> cards = new();
+                    List<CardModel> cards = new();
                     using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
                     {
                         connection.Open();
                         var command = connection.CreateCommand();
-                        command.CommandText = SQL_Cards;
+                        command.CommandText = SQL_AllCardModels;
                         if (includeFun) command.CommandText += " AND isFunny=0";
                         using (var reader = await command.ExecuteReaderAsync())
                         {
@@ -215,14 +222,14 @@ namespace MaGeek.AppBusiness
                                     else preventAdd = true;
                                 }
                                 
-                                if(!preventAdd) cards.Add(new MagicCard(name, type, Text, KeyWords, Power, Toughness, manacost, cmc, colorId));
+                                if(!preventAdd) cards.Add(new CardModel(name, type, Text, KeyWords, Power, Toughness, manacost, cmc, colorId));
                             }
                         }
                     }
                     using var DB = App.DB.GetNewContext();
                     {
                         using var transaction = DB.Database.BeginTransaction();
-                        await DB.Cards.AddRangeAsync(cards);
+                        await DB.CardModels.AddRangeAsync(cards);
                         await DB.SaveChangesAsync();
                         transaction.Commit();
                     }
@@ -230,8 +237,7 @@ namespace MaGeek.AppBusiness
                 catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             });
         }
-
-        public static async Task BulkVariants(bool includeFun)
+        private static async Task Bulk_CardVariants(bool includeFun)
         {
             await Task.Run(async () => {
                 DateTime startTime = DateTime.Now;
@@ -240,12 +246,12 @@ namespace MaGeek.AppBusiness
                     bool preventAdd;
                     using var DB = App.DB.GetNewContext();
                     {
-                        List<MagicCardVariant> cards = new();
+                        List<CardVariant> cards = new();
                         using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
                         {
                             connection.Open();
                             var command = connection.CreateCommand();
-                            command.CommandText = SQL_Variants;
+                            command.CommandText = SQL_AllCardVariants;
                             if (includeFun) command.CommandText += " AND isFunny=0";
                             using (var reader = await command.ExecuteReaderAsync())
                             {
@@ -271,8 +277,8 @@ namespace MaGeek.AppBusiness
                                     // Two different cards with same name...
                                     if (name == "Unquenchable Fury") name += " [" + reader.GetString(7) + "]";
 
-                                    MagicCard CardRef = await DB.Cards.Where(x => x.CardId == name).FirstOrDefaultAsync();
-                                    if (!preventAdd) cards.Add(new MagicCardVariant(Id,Rarity,Artist,Lang,Set, CardRef));
+                                    CardModel CardRef = await DB.CardModels.Where(x => x.CardId == name).FirstOrDefaultAsync();
+                                    if (!preventAdd) cards.Add(new CardVariant(Id,Rarity,Artist,Lang,Set, CardRef));
                                 }
                             }
                         }
@@ -287,6 +293,8 @@ namespace MaGeek.AppBusiness
                 catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             });
         }
+
+        #endregion
 
     }
 

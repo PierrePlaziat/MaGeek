@@ -42,8 +42,8 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        MagicCard selectedCard;
-        public MagicCard SelectedCard
+        CardModel selectedCard;
+        public CardModel SelectedCard
         {
             get { return selectedCard; }
             set { selectedCard = value; OnPropertyChanged(); }
@@ -76,7 +76,7 @@ namespace MaGeek.UI
             }
         }
 
-        public MagicCardVariant CustomCard;
+        public CardVariant CustomCard;
 
         public Visibility HasPower
         {
@@ -92,11 +92,11 @@ namespace MaGeek.UI
 
         #region CTOR
 
-        public CreateCustomCard(MagicCard card)
+        public CreateCustomCard(CardModel card)
         {
             InitializeComponent();
             SelectedCard = card;
-            CustomCard = new MagicCardVariant();
+            CustomCard = new CardVariant();
             DataContext = this;
         }
 

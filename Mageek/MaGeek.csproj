@@ -47,4 +47,8 @@
     <SplashScreen Include="Resources\Images\splash.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UI\NewFolder\" />
+  </ItemGroup>
+
 </Project>

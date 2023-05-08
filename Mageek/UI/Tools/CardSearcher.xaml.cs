@@ -16,8 +16,8 @@ namespace MaGeek.UI
 
         #region Attributes
 
-        public List<MagicCard> CardList { get; private set; }
-        public List<CardTag> AvailableTags { get { return MageekUtils.GetTagsDistinct().Result; } }
+        public List<CardModel> CardList { get; private set; }
+        public List<CardTag> AvailableTags { get { return MageekStats.GetTagsDistinct().Result; } }
 
         #region Filters
 
@@ -197,14 +197,14 @@ namespace MaGeek.UI
             });
         }
 
-        private async Task<List<MagicCard>> LoadCards()
+        private async Task<List<CardModel>> LoadCards()
         {
-            IEnumerable<MagicCard> retour = new List<MagicCard>();
-            string lang = App.Config.Settings[Setting.ForeignLangugage];
+            IEnumerable<CardModel> retour = new List<CardModel>();
+            string lang = App.Config.Settings[Setting.ForeignLanguage];
 
             using (var DB = App.DB.GetNewContext())
             {
-                retour = await DB.Cards.Include(card => card.Traductions)
+                retour = await DB.CardModels.Include(card => card.Traductions)
                                        .Where(x => x.Cmc >= FilterMinCmc)
                                        .Where(x => x.Cmc <= FilterMaxCmc)
                                        .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower()) 
@@ -221,15 +221,15 @@ namespace MaGeek.UI
 
             if (!string.IsNullOrEmpty(TagFilterSelected))
             {
-                var tagged = new List<MagicCard>();
+                var tagged = new List<CardModel>();
                 foreach (var card in retour)
                 {
-                    if (await MageekUtils.DoesCardHasTag(card.CardId, TagFilterSelected))
+                    if (await MageekStats.DoesCardHasTag(card.CardId, TagFilterSelected))
                     {
                         tagged.Add(card);
                     }
                 }
-                return new List<MagicCard>(tagged);
+                return new List<CardModel>(tagged);
             }
             return retour.ToList();
         }
@@ -240,7 +240,7 @@ namespace MaGeek.UI
 
         private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CardGrid.SelectedItem is MagicCard card) App.Events.RaiseCardSelected(card);
+            if (CardGrid.SelectedItem is CardModel card) App.Events.RaiseCardSelected(card);
         }
 
         private async void Button_SearchLocal(object sender, RoutedEventArgs e)
@@ -279,9 +279,9 @@ namespace MaGeek.UI
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            foreach (MagicCard c in CardGrid.SelectedItems)
+            foreach (CardModel c in CardGrid.SelectedItems)
             {
-                MageekUtils.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1)
+                MageekCollection.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1)
                     .ConfigureAwait(true);
             }
         }

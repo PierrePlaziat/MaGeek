@@ -18,8 +18,8 @@ namespace MaGeek.UI
         const int CardSize_Picture = 130;
         const int CardSize_Header = 25;
 
-        private MagicDeck currentDeck;
-        public MagicDeck CurrentDeck
+        private Deck currentDeck;
+        public Deck CurrentDeck
         {
             get { return currentDeck; }
             set
@@ -30,30 +30,30 @@ namespace MaGeek.UI
             }
         }
 
-        public List<CardDeckRelation> CardRelations
+        public List<DeckCard> CardRelations
         {
             get {
-                if (CurrentDeck == null || CurrentDeck.CardRelations == null) return new List<CardDeckRelation>();
+                if (CurrentDeck == null || CurrentDeck.CardRelations == null) return new List<DeckCard>();
                 else return CurrentDeck.CardRelations.ToList(); 
             }
         }
 
-        public List<CardDeckRelation> CardRelations_Commandant { get; private set; }
-        public List<CardDeckRelation> CardRelations_Lands { get; private set; }
-        public List<CardDeckRelation> CardRelations_Lands_B { get; private set; }
-        public List<CardDeckRelation> CardRelations_Lands_W { get; private set; }
-        public List<CardDeckRelation> CardRelations_Lands_U { get; private set; }
-        public List<CardDeckRelation> CardRelations_Lands_G { get; private set; }
-        public List<CardDeckRelation> CardRelations_Lands_R { get; private set; }
-        public List<CardDeckRelation> CardRelations_Lands_S { get; private set; }
-        public List<CardDeckRelation> CardRelations_Cmc0 { get; private set; }
-        public List<CardDeckRelation> CardRelations_Cmc1 { get; private set; }
-        public List<CardDeckRelation> CardRelations_Cmc2 { get; private set; }
-        public List<CardDeckRelation> CardRelations_Cmc3 { get; private set; }
-        public List<CardDeckRelation> CardRelations_Cmc4 { get; private set; }
-        public List<CardDeckRelation> CardRelations_Cmc5 { get; private set; }
-        public List<CardDeckRelation> CardRelations_Cmc6 { get; private set; }
-        public List<CardDeckRelation> CardRelations_Cmc7 { get; private set; }
+        public List<DeckCard> CardRelations_Commandant { get; private set; }
+        public List<DeckCard> CardRelations_Lands { get; private set; }
+        public List<DeckCard> CardRelations_Lands_B { get; private set; }
+        public List<DeckCard> CardRelations_Lands_W { get; private set; }
+        public List<DeckCard> CardRelations_Lands_U { get; private set; }
+        public List<DeckCard> CardRelations_Lands_G { get; private set; }
+        public List<DeckCard> CardRelations_Lands_R { get; private set; }
+        public List<DeckCard> CardRelations_Lands_S { get; private set; }
+        public List<DeckCard> CardRelations_Cmc0 { get; private set; }
+        public List<DeckCard> CardRelations_Cmc1 { get; private set; }
+        public List<DeckCard> CardRelations_Cmc2 { get; private set; }
+        public List<DeckCard> CardRelations_Cmc3 { get; private set; }
+        public List<DeckCard> CardRelations_Cmc4 { get; private set; }
+        public List<DeckCard> CardRelations_Cmc5 { get; private set; }
+        public List<DeckCard> CardRelations_Cmc6 { get; private set; }
+        public List<DeckCard> CardRelations_Cmc7 { get; private set; }
 
         public Visibility HasCommandant { get; private set; }
         public Visibility HasNonLands { get; private set; }
@@ -119,10 +119,10 @@ namespace MaGeek.UI
 
         #region Data Retrieve
 
-        private List<CardDeckRelation> GetCardRelations_Lands()
+        private List<DeckCard> GetCardRelations_Lands()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations_Lands = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations_Lands = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.Card != null && x.Card.Card.Type.ToLower().Contains("land")
             ))
@@ -134,10 +134,10 @@ namespace MaGeek.UI
             }
             return cardRelations_Lands;
         }
-        private List<CardDeckRelation> GetCardRelations_Lands_B()
+        private List<DeckCard> GetCardRelations_Lands_B()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations_Lands = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations_Lands = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Swamp"
@@ -150,10 +150,10 @@ namespace MaGeek.UI
             }
             return cardRelations_Lands;
         }
-        private List<CardDeckRelation> GetCardRelations_Lands_W()
+        private List<DeckCard> GetCardRelations_Lands_W()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations_Lands = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations_Lands = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Plains"
@@ -166,10 +166,10 @@ namespace MaGeek.UI
             }
             return cardRelations_Lands;
         }
-        private List<CardDeckRelation> GetCardRelations_Lands_U()
+        private List<DeckCard> GetCardRelations_Lands_U()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations_Lands = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations_Lands = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Island"
@@ -182,10 +182,10 @@ namespace MaGeek.UI
             }
             return cardRelations_Lands;
         }
-        private List<CardDeckRelation> GetCardRelations_Lands_G()
+        private List<DeckCard> GetCardRelations_Lands_G()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations_Lands = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations_Lands = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Forest"
@@ -198,10 +198,10 @@ namespace MaGeek.UI
             }
             return cardRelations_Lands;
         }
-        private List<CardDeckRelation> GetCardRelations_Lands_R()
+        private List<DeckCard> GetCardRelations_Lands_R()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations_Lands = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations_Lands = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Mountain"
@@ -214,10 +214,10 @@ namespace MaGeek.UI
             }
             return cardRelations_Lands;
         }
-        private List<CardDeckRelation> GetCardRelations_Lands_S()
+        private List<DeckCard> GetCardRelations_Lands_S()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations_Lands = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations_Lands = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId != "Swamp"
@@ -234,10 +234,10 @@ namespace MaGeek.UI
             }
             return cardRelations_Lands;
         }
-        private List<CardDeckRelation> GetCardRelations_Cmc0()
+        private List<DeckCard> GetCardRelations_Cmc0()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
@@ -251,10 +251,10 @@ namespace MaGeek.UI
             }
             return cardRelations;
         }
-        private List<CardDeckRelation> GetCardRelations_Cmc1()
+        private List<DeckCard> GetCardRelations_Cmc1()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
@@ -268,10 +268,10 @@ namespace MaGeek.UI
             }
             return cardRelations;
         }
-        private List<CardDeckRelation> GetCardRelations_Cmc2()
+        private List<DeckCard> GetCardRelations_Cmc2()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
@@ -285,10 +285,10 @@ namespace MaGeek.UI
             }
             return cardRelations;
         }
-        private List<CardDeckRelation> GetCardRelations_Cmc3()
+        private List<DeckCard> GetCardRelations_Cmc3()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
@@ -302,10 +302,10 @@ namespace MaGeek.UI
             }
             return cardRelations;
         }
-        private List<CardDeckRelation> GetCardRelations_Cmc4()
+        private List<DeckCard> GetCardRelations_Cmc4()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
@@ -319,10 +319,10 @@ namespace MaGeek.UI
             }
             return cardRelations;
         }
-        private List<CardDeckRelation> GetCardRelations_Cmc5()
+        private List<DeckCard> GetCardRelations_Cmc5()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
@@ -336,10 +336,10 @@ namespace MaGeek.UI
             }
             return cardRelations;
         }
-        private List<CardDeckRelation> GetCardRelations_Cmc6()
+        private List<DeckCard> GetCardRelations_Cmc6()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
@@ -353,10 +353,10 @@ namespace MaGeek.UI
             }
             return cardRelations;
         }
-        private List<CardDeckRelation> GetCardRelations_Cmc7()
+        private List<DeckCard> GetCardRelations_Cmc7()
         {
             if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
-            List<CardDeckRelation> cardRelations = new List<CardDeckRelation>();
+            List<DeckCard> cardRelations = new List<DeckCard>();
             foreach (var card in CurrentDeck.CardRelations.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
@@ -434,14 +434,14 @@ namespace MaGeek.UI
             App.Events.UpdateDeckEvent += HandleDeckModified;
         }
 
-        void HandleDeckSelected(MagicDeck deck)
+        void HandleDeckSelected(Deck deck)
         {
             CurrentDeck = deck;
         }
 
         void HandleDeckModified()
         {
-            MagicDeck tmp = CurrentDeck;
+            Deck tmp = CurrentDeck;
             CurrentDeck = null;
             CurrentDeck = tmp;
         }
@@ -464,7 +464,7 @@ namespace MaGeek.UI
         private async Task DoAsyncReload()
         {
             IsLoading = Visibility.Visible;
-            CardRelations_Commandant = (await MageekUtils.GetCommanders(CurrentDeck)).ToList();
+            CardRelations_Commandant = (await MageekStats.GetCommanders(CurrentDeck)).ToList();
             await Task.Run(() =>
             {
                 CardRelations_Lands = GetCardRelations_Lands();
@@ -555,38 +555,38 @@ namespace MaGeek.UI
         private async void SetCommandant_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
-            var cr = b.DataContext as CardDeckRelation;
-            await MageekUtils.ChangeCardDeckRelation(cr, 1);
+            var cr = b.DataContext as DeckCard;
+            await MageekCollection.ChangeCardDeckRelation(cr, 1);
         }
 
         private async void UnsetCommandant_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
-            var cr = b.DataContext as CardDeckRelation;
-            await MageekUtils.ChangeCardDeckRelation(cr, 0);
+            var cr = b.DataContext as DeckCard;
+            await MageekCollection.ChangeCardDeckRelation(cr, 0);
         }
 
         private async void ToSide_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
-            var cr = b.DataContext as CardDeckRelation;
-            await MageekUtils.ChangeCardDeckRelation(cr, 2);
+            var cr = b.DataContext as DeckCard;
+            await MageekCollection.ChangeCardDeckRelation(cr, 2);
         }
 
         private async void AddOne_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
-            var cr = b.DataContext as CardDeckRelation;
+            var cr = b.DataContext as DeckCard;
             var c = cr.Card;
-            await MageekUtils.AddCardToDeck(c, CurrentDeck,1);
+            await MageekCollection.AddCardToDeck(c, CurrentDeck,1);
         }
 
         private async void RemoveOne_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
-            var cr = b.DataContext as CardDeckRelation;
+            var cr = b.DataContext as DeckCard;
             var c = cr.Card;
-            await MageekUtils.RemoveCardFromDeck(c.Card, CurrentDeck);
+            await MageekCollection.RemoveCardFromDeck(c.Card, CurrentDeck);
         }
 
     }

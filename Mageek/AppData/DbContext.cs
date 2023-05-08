@@ -14,79 +14,74 @@ namespace MaGeek.AppBusiness
 
         SqliteDbInfos dbData;
 
-        public MageekDbContext(SqliteDbInfos dbData)
-        {
-            this.dbData = dbData;
-        }
+        public MageekDbContext(SqliteDbInfos dbData) { this.dbData = dbData; }
 
-        public DbSet<MagicCard> Cards { get; set; }
-        public DbSet<MagicCardVariant> CardVariants { get; set; }
-        public DbSet<CardTraduction> CardTraductions { get; set; } // TODO get foreign names from another source with more complete data
-        public DbSet<Legality> Legalities { get; set; }
-        public DbSet<Rule> CardRules { get; set; }
-        public DbSet<CardCardRelation> CardRelations { get; set; }
-
-        public DbSet<MagicDeck> Decks { get; set; }
-        public DbSet<CardDeckRelation> CardsInDecks { get; set; }
-        
-        public DbSet<CardTag> Tags { get; set; }
-        public DbSet<Param> Params { get; set; }
-        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(dbData.ConnexionString);
             optionsBuilder.EnableSensitiveDataLogging();
         }
 
+        public DbSet<CardLegality> CardLegalities { get; set; }
+        public DbSet<CardModel> CardModels { get; set; }
+        public DbSet<CardRelation> CardRelations { get; set; }
+        public DbSet<CardRule> CardRules { get; set; }
+        public DbSet<CardTag> CardTags { get; set; }
+        public DbSet<CardTraduction> CardTraductions { get; set; }
+        public DbSet<CardVariant> CardVariants { get; set; }
+        public DbSet<Deck> Decks { get; set; }
+        public DbSet<DeckCard> DeckCards { get; set; }
+        public DbSet<Param> Params { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<DeckCard>()
+                        .HasKey(q => new { q.DeckId, q.CardId });
 
-            modelBuilder.Entity<CardDeckRelation>()
-                .HasKey(q => new { q.DeckId, q.CardId });
-
-            modelBuilder.Entity<MagicCardVariant>()
-                .HasOne(e => e.Card).WithMany(e => e.Variants);
-
-            modelBuilder.Entity<CardTraduction>()
-                .HasOne(e => e.Card).WithMany(e => e.Traductions);
-
-            modelBuilder.Entity<CardDeckRelation>()
-                .HasOne(s => s.Deck).WithMany(e => e.CardRelations)
-                .HasForeignKey(t => t.DeckId);
-
-            modelBuilder.Entity<CardDeckRelation>()
-                .HasOne(s => s.Card).WithMany(e => e.DeckRelations)
-                .HasForeignKey(t => t.CardId);
-
-            modelBuilder.Entity<MagicDeck>()
-                .Property(e => e.DeckId).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CardVariant>()
+                        .HasOne(e => e.Card).WithMany(e => e.Variants);
 
             modelBuilder.Entity<CardTraduction>()
-                .Property(e => e.TraductionId).ValueGeneratedOnAdd();
+                        .HasOne(e => e.Card).WithMany(e => e.Traductions);
+
+            modelBuilder.Entity<DeckCard>()
+                        .HasOne(s => s.Deck).WithMany(e => e.CardRelations)
+                        .HasForeignKey(t => t.DeckId);
+
+            modelBuilder.Entity<DeckCard>()
+                        .HasOne(s => s.Card).WithMany(e => e.DeckRelations)
+                        .HasForeignKey(t => t.CardId);
+
+            modelBuilder.Entity<Deck>()
+                        .Property(e => e.DeckId).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<CardTraduction>()
+                        .Property(e => e.TraductionId).ValueGeneratedOnAdd();
 
             modelBuilder.Entity<CardTag>()
-                .Property(e => e.Id).ValueGeneratedOnAdd();
+                        .Property(e => e.Id).ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<Legality>()
-                .Property(e => e.LegalityId).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CardLegality>()
+                        .Property(e => e.LegalityId).ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<CardCardRelation>()
-                .Property(e => e.RelationId).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CardRelation>()
+                        .Property(e => e.RelationId).ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<Rule>()
-                .Property(e => e.RuleId).ValueGeneratedOnAdd();
+            modelBuilder.Entity<CardRule>()
+                        .Property(e => e.RuleId).ValueGeneratedOnAdd();
         }
 
+        // TODO more granullar DB gestion
         internal void DeleteAllContent()
         {
-            Cards.ExecuteDeleteAsync();
+            CardModels.ExecuteDeleteAsync();
             CardVariants.ExecuteDeleteAsync();
-            Legalities.ExecuteDeleteAsync();
+            CardLegalities.ExecuteDeleteAsync();
             CardRules.ExecuteDeleteAsync();
             CardRelations.ExecuteDeleteAsync();
             Decks.ExecuteDeleteAsync();
-            CardsInDecks.ExecuteDeleteAsync();
-            Tags.ExecuteDeleteAsync();
+            DeckCards.ExecuteDeleteAsync();
+            CardTags.ExecuteDeleteAsync();
             App.Restart();
         }
 
