@@ -276,7 +276,14 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        public static async Task AddCardToDeck(CardVariant card, Deck deck, int qty, int relation = 0)
+        public static async Task AddCardToDeck(CardModel card, Deck deck, int qty, int relation = 0)
+        {
+            using var DB = App.DB.GetNewContext();
+            CardVariant v = await DB.CardVariants.Where(x=>x.Card.CardId == card.CardId).Include(x=>x.Card).FirstOrDefaultAsync();
+            if (v != null) await AddCardToDeck(v, deck, qty, relation);
+        }
+
+            public static async Task AddCardToDeck(CardVariant card, Deck deck, int qty, int relation = 0)
         {
             if (card == null || deck == null) return;
             try {

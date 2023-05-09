@@ -74,6 +74,7 @@ namespace MaGeek.UI.CustomControls
         {
             MenuItem item = sender as MenuItem;
             App.Config.ChangeSetting(Setting.ForeignLanguage, item.Header.ToString());
+            App.Events.RaiseUpdateCardCollec();
         }
 
         #endregion

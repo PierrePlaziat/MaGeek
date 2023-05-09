@@ -321,7 +321,7 @@ namespace MaGeek.UI
         {
             foreach (CardModel c in CardGrid.SelectedItems)
             {
-                MageekCollection.AddCardToDeck(c.Variants[0], App.State.SelectedDeck,1)
+                MageekCollection.AddCardToDeck(c, App.State.SelectedDeck,1)
                     .ConfigureAwait(true);
             }
         }
