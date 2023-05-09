@@ -35,7 +35,7 @@
             
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=ReleaseDate,StringFormat={}{0:dd-MM-yyyy},Converter={StaticResource DateConverter}}" Header="| Date   " Width="Auto" IsReadOnly="True"  />
-                <DataGridTemplateColumn Header="| Icon   " IsReadOnly="True" Width="40">
+                <!--<DataGridTemplateColumn Header="| Icon   " IsReadOnly="True" Width="40">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <UserControl xmlns:svgc="http://sharpvectors.codeplex.com/svgc/">
@@ -43,7 +43,7 @@
                             </UserControl>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                </DataGridTemplateColumn>-->
                 <DataGridTextColumn Binding="{Binding Path=Name}" Header="| Name   " Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=SetType}" Header="| Type   " Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Path=Block}" Header="| Block   " Width="Auto" IsReadOnly="True"/>

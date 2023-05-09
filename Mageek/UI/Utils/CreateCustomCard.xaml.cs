@@ -63,7 +63,7 @@ namespace MaGeek.UI
             set { 
                 customNameInput = value; 
                 OnPropertyChanged();
-                OnPropertyChanged("CustomNameOutput");
+                OnPropertyChanged(nameof(CustomNameOutput));
             }
         }
 

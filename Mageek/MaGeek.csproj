@@ -19,6 +19,8 @@
 
   <ItemGroup>
     <None Remove="Resources\Corner.png" />
+    <None Remove="Resources\Images\IconCard.jpg" />
+    <None Remove="Resources\Images\IconDeck.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +30,8 @@
   <ItemGroup>
     <Resource Include="Resources\Images\Corner.png" />
     <Resource Include="Resources\Images\document.png" />
+    <Resource Include="Resources\Images\IconCard.jpg" />
+    <Resource Include="Resources\Images\IconDeck.jpg" />
     <Resource Include="Resources\Images\property-blue.png" />
   </ItemGroup>
 

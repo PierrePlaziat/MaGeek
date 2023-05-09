@@ -242,7 +242,7 @@ namespace MaGeek.UI
             if (!string.IsNullOrEmpty(NewTag.Text))
             {
                 await MageekStats.TagCard(selectedCard,NewTag.Text);
-                OnPropertyChanged("Tags");
+                OnPropertyChanged(nameof(Tags));
                 NewTag.Text = "";
                 sugestions.Visibility = Visibility.Collapsed;
             }
@@ -252,7 +252,7 @@ namespace MaGeek.UI
         {
             CardTag cardTag = (CardTag)((Button)sender).DataContext;
             await MageekStats.UnTagCard(cardTag);
-            OnPropertyChanged("Tags");
+            OnPropertyChanged(nameof(Tags));
             sugestions.Visibility = Visibility.Collapsed;
         }
 

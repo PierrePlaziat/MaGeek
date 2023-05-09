@@ -1,6 +1,8 @@
-﻿using MaGeek.Utils.CommonWpf;
+﻿using MaGeek;
+using MaGeek.Utils.CommonWpf;
 using System;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace Plaziat.CommonWpf
 {
@@ -15,7 +17,8 @@ namespace Plaziat.CommonWpf
             MessageBoxButton button = MessageBoxButton.OK;
             MessageBoxImage icon = MessageBoxImage.Asterisk;
             MessageBoxResult result;
-            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+            App.State.LogMessage(messageBoxText);
+            //result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         }
 
         public static bool AskUser(string message)
@@ -46,8 +49,8 @@ namespace Plaziat.CommonWpf
             {
                 msg += " \n\n>>> " + e.InnerException.Message;
             }
-            Console.WriteLine(msg);
-            ShowMsg(msg);
+            App.State.LogMessage(msg);
+            //ShowMsg(msg);
         }
     }
 

@@ -54,7 +54,7 @@ namespace MaGeek.UI.Windows.Importers
                 string title = splited[splited.Length - 1].Replace(".txt","");
                 PrecoList.Add(title);
             }
-            OnPropertyChanged("PrecoList");
+            OnPropertyChanged(nameof(PrecoList));
         }
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)

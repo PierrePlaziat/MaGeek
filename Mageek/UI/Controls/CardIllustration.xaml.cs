@@ -49,8 +49,8 @@ namespace MaGeek.UI
             set { 
                 selectedVariant = value;
                 OnPropertyChanged();
-                OnPropertyChanged("HasPower");
-                OnPropertyChanged("SelectedCard");
+                OnPropertyChanged(nameof(HasPower));
+                OnPropertyChanged(nameof(SelectedCard));
                 ShowBack = false;
                 OnPropertyChanged(nameof(HasBackFace));
                 SetValue(CardProperty, value);
@@ -63,7 +63,7 @@ namespace MaGeek.UI
 
         private void CardImage_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            OnPropertyChanged("CardImage.Result");
+            OnPropertyChanged(nameof(CardImage.Result));
         }
 
         public CardModel SelectedCard { get { return SelectedVariant == null ? null:SelectedVariant.Card; } }
@@ -73,7 +73,7 @@ namespace MaGeek.UI
             get { return cardImage; }
             set { 
                 cardImage = value;
-                OnPropertyChanged("CardImage");
+                OnPropertyChanged(nameof(CardImage));
             }
         }
 

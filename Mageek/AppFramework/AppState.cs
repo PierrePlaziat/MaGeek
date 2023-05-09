@@ -1,4 +1,6 @@
 ﻿using MaGeek.AppData.Entities;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace MaGeek.AppFramework
@@ -12,7 +14,7 @@ namespace MaGeek.AppFramework
 
         #region Attributes
 
-        public Queue<string> OutputMessages { get; set; } = new Queue<string>() {};
+        public ConcurrentQueue<string> OutputMessages { get; } = new ConcurrentQueue<string>() {};
         const int maxLog = 30;
 
         private CardModel selectedCard = null;
@@ -29,7 +31,6 @@ namespace MaGeek.AppFramework
         {
             App.Events.CardSelectedEvent += DoSelectCard;
             App.Events.SelectDeckEvent += DoSelectDeck;
-            LogMessage("Welcome");
         }
 
         #endregion
@@ -39,7 +40,8 @@ namespace MaGeek.AppFramework
         public void LogMessage(string message)
         {
             OutputMessages.Enqueue(message);
-            if (OutputMessages.Count>maxLog) OutputMessages.Dequeue();
+            string s;
+            if (OutputMessages.Count>maxLog) OutputMessages.TryDequeue(out s);
         }
 
         private void DoSelectDeck(Deck deck) 

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Timers;
 using System.Windows;
@@ -21,13 +23,39 @@ namespace MaGeek.UI.CustomControls
 
         #endregion
 
-        public string SelectedString
+        public string SelectedDeckString
         {
             get {
                 string s = "";
-                if (App.State.SelectedDeck != null) s += "Selected Deck : " + App.State.SelectedDeck.Title;
-                s += " | ";
-                if (App.State.SelectedCard != null) s += "Selected Card : " + App.State.SelectedCard.CardId;
+                if (App.State.SelectedDeck != null) s = App.State.SelectedDeck.Title;
+                return s;
+            }
+        }
+        
+        public string SelectedCardString
+        {
+            get {
+                string s = "";
+                if (App.State.SelectedCard != null) s = App.State.SelectedCard.CardId;
+                return s;
+            }
+        }
+        
+        public string Msg
+        {
+            get {
+                string s = "";
+                s += App.State.OutputMessages.LastOrDefault();
+                return s;
+            }
+        }
+        
+        public string Msgs
+        {
+            get {
+                string s = "";
+                foreach (var ss in App.State.OutputMessages) s += "> " + ss + "\n";
+                if (App.State.OutputMessages.Count > 1) s = s.Remove(s.Length - 2);
                 return s;
             }
         }
@@ -62,21 +90,18 @@ namespace MaGeek.UI.CustomControls
             InitializeComponent();
             ConfigureTimer();
             DataContext = this;
-
-            //App.CARDS.Importer.Play();
-
             App.Events.CardSelectedEvent += STATE_CardSelectedEvent;
             App.Events.SelectDeckEvent += STATE_SelectDeckEvent; ;
         }
 
         private void STATE_SelectDeckEvent(Deck deck)
         {
-            OnPropertyChanged("SelectedString");
+            OnPropertyChanged(nameof(SelectedDeckString));
         }
 
         private void STATE_CardSelectedEvent(CardModel Card)
         {
-            OnPropertyChanged("SelectedString");
+            OnPropertyChanged(nameof(SelectedCardString));
         }
 
         private void ConfigureTimer()
@@ -89,10 +114,22 @@ namespace MaGeek.UI.CustomControls
 
         private void LoopTimer(object sender, ElapsedEventArgs e)
         {
+            UpdateImporterInfos();
+            UpdateMsgs();
+        }
+
+        private void UpdateMsgs()
+        {
+            OnPropertyChanged(nameof(Msg));
+            OnPropertyChanged(nameof(Msgs));
+        }
+
+        private void UpdateImporterInfos()
+        {
             ImportCount = App.Importer.PendingCount;
             CurrentPercent = App.Importer.WorkerProgress;
             State = App.Importer.Message;
-            OnPropertyChanged("InfoText");
+            OnPropertyChanged(nameof(InfoText));
         }
 
         private void ButtonPlay_Click(object sender, RoutedEventArgs e)

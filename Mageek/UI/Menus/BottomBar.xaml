@@ -8,18 +8,59 @@
              d:DesignHeight="20" d:DesignWidth="800"
              >
     <Grid Background="Black">
-        <DockPanel Margin="3,0,0,0">
-            <Button Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444" Click="ButtonPause_Click">||</Button>
-            <Button Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444" Click="ButtonPlay_Click">></Button>
-            <Label Content="{Binding ImportCount}"/>
-            <Label ToolTip="{Binding InfoText}">Importations</Label>
-            <Grid>
-                <ProgressBar Margin="3" Value="{Binding CurrentPercent}" Width="500 "/>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <Grid ToolTip="{Binding InfoText}">
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Column="0" Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444" Click="ButtonPause_Click">||</Button>
+            <Button Grid.Column="1" Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444" Click="ButtonPlay_Click">></Button>
+            <Label Grid.Column="2" Content="{Binding ImportCount}"/>
+            <Grid Grid.Column="3" HorizontalAlignment="Stretch">
+                <ProgressBar Margin="3" Value="{Binding CurrentPercent}" HorizontalAlignment="Stretch"/>
                 <Label Content="{Binding State}" Foreground="Black"/>
             </Grid>
-            <Button Width="20" ToolTip="Cancell all importations" Background="#222" Foreground="#444" Click="ButtonCancel_Click">X</Button>
-            <Label HorizontalAlignment="Right" Content="{Binding SelectedString}"></Label>
-        </DockPanel>
+            <Button Grid.Column="4" Width="20" ToolTip="Cancell all importations" Background="#222" Foreground="#444" Click="ButtonCancel_Click" HorizontalAlignment="Right">X</Button>
+            <Button Grid.Column="5" Width="20" ToolTip="Cancell all importations" Background="#222" Foreground="#444" Click="ButtonCancel_Click" HorizontalAlignment="Right">X</Button>
         
+        </Grid>
+
+        <Grid Grid.Column="1" ToolTip="{Binding Msgs}">
+            
+            <Label HorizontalAlignment="Center" 
+                   Content="{Binding Msg}" />
+            
+        </Grid>
+
+        <Grid Grid.Column="2" Margin="2">
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Column="0" Source="/Resources/Images/IconCard.jpg" />
+            <Label Grid.Column="1" Content="{Binding SelectedCardString}"></Label>
+            <Image Grid.Column="2" Source="/Resources/Images/IconDeck.jpg" />
+            <Label Grid.Column="3" Content="{Binding SelectedDeckString}"></Label>
+
+        </Grid>
+        
+            
     </Grid>
 </UserControl>
