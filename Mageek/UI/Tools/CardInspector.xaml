@@ -8,7 +8,7 @@
       xmlns:controls="clr-namespace:MaGeek.UI.Controls"
       mc:Ignorable="d" Width="255">
 
-    <Grid Width="255">
+    <Grid Width="255" Background="#333">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -24,7 +24,7 @@
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
                                 SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Background="#333">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
@@ -145,7 +145,7 @@
 
             </ScrollViewer>
 
-            <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Visible">
+            <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Visible" Background="#333">
                 <ListView ItemsSource="{Binding RelatedCards}" Width="5000" HorizontalAlignment="Stretch" Background="#333">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -155,8 +155,8 @@
                 </ListView>
             </ScrollViewer>
 
-            <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Visible">
-                <ListView ItemsSource="{Binding Rulings}" Width="5000">
+            <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Visible" Background="#333">
+                <ListView ItemsSource="{Binding Rulings}" Width="5000" Background="#333">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <DockPanel>

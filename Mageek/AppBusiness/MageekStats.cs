@@ -1,4 +1,5 @@
 ﻿using MaGeek.AppData.Entities;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -13,8 +14,12 @@ namespace MaGeek.AppBusiness
 
         public static async Task<List<CardTag>> GetTagsDistinct()
         {
+            List<CardTag> tags = new();
             using var DB = App.DB.GetNewContext();
-            return await DB.CardTags.GroupBy(x => x.Tag).Select(x => x.First()).ToListAsync();
+            tags.AddRange(
+                    DB.CardTags.GroupBy(x => x.Tag).Select(x => x.First())
+            );
+            return tags;
         }
 
         public static async Task<bool> DoesCardHasTag(string cardId, string tagFilterSelected)

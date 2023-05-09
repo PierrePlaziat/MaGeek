@@ -11,13 +11,7 @@ Aimed toward paper MTG game, so online only cards are not included.
 Import all cards at first run (fun cards included), or start fresh and import cards at your will, 
 but initial importation is criticaly faster.
 
-## TODO
-
--	decks import : bugs after first
-	
 ## Functionalities
-
-### Implemented
 
 -	All paper cards support including fun
 -	Decks/sets/lists gestion
@@ -27,11 +21,19 @@ but initial importation is criticaly faster.
 -	IDE style movable panels
 -	Stats and tags
 
-### 
+#### Known issues
 
-(I currently dont plan time for those)
+-	some preco imports can give error
+-	restart app only stops it
+-	ui async needs polish (ui sometime blocks)
+-	need to reselect card after tag add or card update
+-	wont update gotCounts in card searcher until new search
+-	original layout disposition horizontal sizes blocked (because trick to maxsize card inspector)
+
+### Ideas
 
 -	bulk import later than first launch (you can currently simply delete the db to force first launch)
+-	better print experience (prevent basic land to print, only one window, get rid of the wpf win clunchy teknik)
 -	Custom cards print support (need to figure out how to generate the image for print (maybe Markdown??)
 -	Auto deck (need to reflect on the building strategy)
 -	Tags sort and stats for deck (need refactoring some tools)
