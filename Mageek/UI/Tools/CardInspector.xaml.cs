@@ -139,7 +139,7 @@ namespace MaGeek.UI
                     IsLoading = Visibility.Collapsed;
                 });
             }
-            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
         private async Task ReloadCardVariant()
@@ -151,7 +151,7 @@ namespace MaGeek.UI
                     OnPropertyChanged(nameof(Legalities));
                 });
             }
-            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
         #endregion

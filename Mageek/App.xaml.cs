@@ -30,7 +30,7 @@ namespace MaGeek
 
         public static void Restart()
         {
-            MessageBoxHelper.ShowMsg("App should restart now.");
+            AppLogger.ShowMsg("App should restart now.");
             Process.Start(ResourceAssembly.Location);
             Current.Shutdown();
         }

@@ -166,7 +166,7 @@ namespace MaGeek.AppBusiness
             {
                 Message = "Making a deck";
                 WorkerProgress=(75);
-                await MakeADeck(importResult);
+                await MakeADeck(CurrentImport.Value, importResult);
             }
 
             while (state != ImporterState.Canceled && state == ImporterState.Pause) { };
@@ -225,7 +225,7 @@ namespace MaGeek.AppBusiness
                     }
                 });
             }
-            catch (Exception e) { MessageBoxHelper.ShowError("ParseCardList", e); }
+            catch (Exception e) { AppLogger.ShowError("ParseCardList", e); }
             return tuples;
         }
 
@@ -242,7 +242,7 @@ namespace MaGeek.AppBusiness
                     WorkerProgress=i * 100 / deckList.Count / 2;
                 }
             }
-            catch (Exception e) { MessageBoxHelper.ShowError("ImportList", e); }
+            catch (Exception e) { AppLogger.ShowError("ImportList", e); }
             return cards;
         }
 
@@ -256,22 +256,22 @@ namespace MaGeek.AppBusiness
             }
         }
 
-        private async Task MakeADeck(List<Card> importResult)
+        private async Task MakeADeck(PendingImport importing, List<Card> importResult)
         {
-            if (CurrentImport.Value.Mode == ImportMode.Search || CurrentImport.Value.Mode == ImportMode.Update) return;
-            if (importResult.Count == 0) return;
+            if (importing.Mode == ImportMode.Search || importing.Mode == ImportMode.Update) return;
+            //if (importResult.Count == 0) return;
             List<ImportLine> importLines = new();
-            if (CurrentImport.Value.Mode == ImportMode.List)
+            if (importing.Mode == ImportMode.List)
             {
-                importLines = await ParseCardList(CurrentImport.Value.Content);
+                importLines = await ParseCardList(importing.Content);
             }
-            if (CurrentImport.Value.Mode == ImportMode.Set)
+            if (importing.Mode == ImportMode.Set)
             {
                 foreach (var v in importResult) importLines.Add(new ImportLine() { Name = v.Name, Quantity = 1 });
             }
             await MageekCollection.AddDeck(
                 importLines,
-                CurrentImport.Value.Title ?? DateTime.Now.ToString()
+                importing.Title ?? DateTime.Now.ToString()
             );
         }
 
@@ -330,7 +330,7 @@ namespace MaGeek.AppBusiness
                 jsonString += JsonSerializer.Serialize(x);
                 File.WriteAllText(SaveStatePath, jsonString);
             }
-            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
         public void LoadState()
@@ -348,7 +348,7 @@ namespace MaGeek.AppBusiness
             catch (Exception e)
             {
                 File.WriteAllText(SaveStatePath, "");
-                MessageBoxHelper.ShowMsg("Something went wrong during importer state load, import list was emptied");
+                AppLogger.ShowMsg("Something went wrong during importer state load, import list was emptied");
             }
         }
 

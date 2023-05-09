@@ -210,25 +210,53 @@ namespace MaGeek.UI
 
         private async Task<List<CardModel>> LoadCards()
         {
-            IEnumerable<CardModel> retour = new List<CardModel>();
-            string lang = App.Config.Settings[Setting.ForeignLanguage];
+            List<CardModel> retour = new List<CardModel>();
 
-            using (var DB = App.DB.GetNewContext())
+            if (!string.IsNullOrEmpty(FilterName))
             {
-                retour = await DB.CardModels.Include(card => card.Traductions)
-                                       .Where(x => x.Cmc >= FilterMinCmc)
-                                       .Where(x => x.Cmc <= FilterMaxCmc)
-                                       .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower()) 
-                                                || x.Traductions.Where(y=>y.Language==lang && y.TraductedName.ToLower().Contains(FilterName.ToLower())).Any())
-                                       .Where(x => x.Type.ToLower().Contains(FilterType.ToLower()))
-                                       .ToArrayAsync();
+                using (var DB = App.DB.GetNewContext())
+                {
+
+                    retour.AddRange(
+                        await DB.CardModels.Include(x => x.Traductions)
+                                           .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower()))
+                                           .ToArrayAsync()
+                    );
+
+                    string lang = App.Config.Settings[Setting.ForeignLanguage];
+                    var t = DB.CardTraductions.Include(x => x.Card)
+                                              .Where(x => x.Language == lang)
+                                              .Where(x => x.TraductedName.ToLower().Contains(FilterName.ToLower()))
+                                              .GroupBy(x=>x.CardId).Select(g => g.First());
+                    foreach (var tt in t)
+                    {
+                        string traductedname = tt.CardId;
+                        retour.AddRange(
+                            await DB.CardModels.Include(x => x.Traductions)
+                                               .Where(x => x.CardId.ToLower().Contains(traductedname.ToLower()))
+                                               .ToArrayAsync()
+                        );
+                    }
+                }
+
+            }
+            else
+            {
+                using (var DB = App.DB.GetNewContext())
+                {
+                    retour.AddRange( await DB.CardModels.Include(card => card.Traductions).ToArrayAsync());
+                }
             }
 
-            if (!filterColorB) retour = retour.Where(x => !x.ManaCost.Contains('B'));
-            if (!filterColorW) retour = retour.Where(x => !x.ManaCost.Contains('W'));
-            if (!filterColorU) retour = retour.Where(x => !x.ManaCost.Contains('U'));
-            if (!filterColorG) retour = retour.Where(x => !x.ManaCost.Contains('G'));
-            if (!filterColorR) retour = retour.Where(x => !x.ManaCost.Contains('R'));
+            if(!string.IsNullOrEmpty(FilterType))
+            {
+                retour = retour.Where(x => x.Type.ToLower().Contains(FilterType.ToLower())).ToList();
+            }
+
+            if(!string.IsNullOrEmpty(FilterKeyword))
+            {
+                retour = retour.Where(x => x.KeyWords.ToLower().Contains(FilterKeyword.ToLower())).ToList();
+            }
 
             if (!string.IsNullOrEmpty(TagFilterSelected))
             {
@@ -242,7 +270,8 @@ namespace MaGeek.UI
                 }
                 return new List<CardModel>(tagged);
             }
-            return retour.ToList();
+
+            return retour;
         }
 
         #endregion

@@ -61,23 +61,23 @@ namespace MaGeek.AppData
                         localDb.Close();
                         backupDb.Close();
                     }
-                    MessageBoxHelper.ShowMsg("DB saved successfully.");
+                    AppLogger.ShowMsg("DB saved successfully.");
                 }
                 catch (IOException iox)
                 {
-                    MessageBoxHelper.ShowMsg("DB save failed : " + iox.Message);
+                    AppLogger.ShowMsg("DB save failed : " + iox.Message);
                 }
             }
         }
 
         public void EraseDb()
         {
-            if (MessageBoxHelper.AskUser("Do you really want to erase all data?")) DeleteAllContent();
+            if (AppLogger.AskUser("Do you really want to erase all data?")) DeleteAllContent();
         }
 
         public void RestoreDb()
         {
-            if (!MessageBoxHelper.AskUser("Current data will be lost, ensure you have a backup if needed.\n Are you sure you still want to launch restoration?")) return;
+            if (!AppLogger.AskUser("Current data will be lost, ensure you have a backup if needed.\n Are you sure you still want to launch restoration?")) return;
             string tmpDbPath = App.Config.Path_Db + ".tmp";
             string loadFile = SelectFileHelper.SelectAFile("Db Files (.db)|*.db");
             if (loadFile != null)
@@ -89,7 +89,7 @@ namespace MaGeek.AppData
                 }
                 catch (IOException iox)
                 {
-                    MessageBoxHelper.ShowMsg("DB load failed : " + iox.Message);
+                    AppLogger.ShowMsg("DB load failed : " + iox.Message);
                 }
             }
         }

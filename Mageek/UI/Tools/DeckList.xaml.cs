@@ -97,7 +97,13 @@ namespace MaGeek.UI
             });
         }
 
-        private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    var deck = decklistbox.SelectedItem as Deck;
+        //    if (deck != null) App.Events.RaiseDeckSelect(deck);
+        //}
+
+        private void decklistbox_SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var deck = decklistbox.SelectedItem as Deck;
             if (deck != null) App.Events.RaiseDeckSelect(deck);
@@ -122,8 +128,10 @@ namespace MaGeek.UI
         private async void DeleteDeck(object sender, RoutedEventArgs e)
         {
             if (decklistbox.SelectedIndex == -1) return;
-            foreach(Deck d in decklistbox.SelectedItems)
-                await MageekCollection.DeleteDeck(d);
+            var v = decklistbox.SelectedItems;
+            List<Deck> v2 = new();
+            foreach (var vv in v) v2.Add((Deck)vv);
+            await MageekCollection.DeleteDecks(v2);
         }
 
         private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
@@ -134,7 +142,6 @@ namespace MaGeek.UI
         }
 
         #endregion
-
     }
 
 }

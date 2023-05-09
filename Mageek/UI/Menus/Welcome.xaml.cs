@@ -117,12 +117,6 @@ namespace MaGeek
             Hide();
             App.LaunchMainWin();
             Close();
-            //Visibility_NormalLaunch = Visibility.Visible;
-            //using (var DB = App.DB.GetNewContext())
-            //{
-            //    MageekMessage = "I currently know " + await DB.CardVariants.CountAsync() + " cards.";
-            //}
-            //if (!DetermineIfNewUpdate()) DetermineIfNewCards();
         }
 
         //private bool DetermineIfNewUpdate()
@@ -141,7 +135,6 @@ namespace MaGeek
             Hide();
             bool fun = true;
             App.LaunchMainWin();
-            //if (Fun.IsChecked.HasValue) fun = Fun.IsChecked.Value;
             MageekBulkinator.Bulk_Cards(fun).ConfigureAwait(false);
             Close();
         }

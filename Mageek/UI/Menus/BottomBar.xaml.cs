@@ -55,7 +55,7 @@ namespace MaGeek.UI.CustomControls
             get {
                 string s = "";
                 foreach (var ss in App.State.OutputMessages) s += "> " + ss + "\n";
-                if (App.State.OutputMessages.Count > 1) s = s.Remove(s.Length - 2);
+                s = s.Remove(s.Length - 1);
                 return s;
             }
         }

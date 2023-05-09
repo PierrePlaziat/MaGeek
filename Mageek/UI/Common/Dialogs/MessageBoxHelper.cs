@@ -7,7 +7,7 @@ using System.Windows.Interop;
 namespace Plaziat.CommonWpf
 {
 
-    public static class MessageBoxHelper
+    public static class AppLogger
     {
 
         public static void ShowMsg(string message)
@@ -47,11 +47,12 @@ namespace Plaziat.CommonWpf
             string msg = "ERROR : "+ errorTitle + " \n\n>>> " + e.Message;
             if (e.InnerException != null)
             {
-                msg += " \n\n>>> " + e.InnerException.Message;
+                msg += " >>> " + e.InnerException.Message;
             }
             App.State.LogMessage(msg);
             //ShowMsg(msg);
         }
+
     }
 
 }

@@ -32,10 +32,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="2"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="2"></ColumnDefinition>
@@ -54,62 +55,19 @@
                         Grid.Row="0" 
                         HorizontalAlignment="Stretch"/>
 
-            <Label  Grid.Column="6" 
+            <Label  Grid.Column="5" 
                     Content="Keywords"/>
-            <TextBox  Grid.Column="7" Text="{Binding FilterKeyword}"
+            <TextBox  Grid.Column="6" Text="{Binding FilterKeyword}"
                        
                         Grid.Row="0" 
                         HorizontalAlignment="Stretch"/>
+
+            <Label Grid.Column="7">Tags</Label>
+            <ComboBox Grid.Column="8" Name="FilterTag" DropDownOpened="FilterTag_DropDownOpened" ItemsSource="{Binding AvailableTags}" DisplayMemberPath="Tag" SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"></ComboBox>
+
         </Grid>
 
-        <WrapPanel Grid.Row="1" Grid.Column="0">
-            
-            <Label Content="CMC >="
-                    HorizontalAlignment="Left"/>
-            <Slider Minimum="0" Maximum="20"
-                    Width="40"
-                    Value="{Binding FilterMinCmc}"
-                    HorizontalAlignment="Left"/>
-            
-            <Label Content="CMC &lt;="
-                    HorizontalAlignment="Left"/>
-            <Slider Minimum="0" Maximum="20"
-                    Width="40"
-                    Value="{Binding FilterMaxCmc}"
-                    HorizontalAlignment="Left"/>
-
-            <DockPanel Margin="0,0,20,0">
-<Separator Width="10" Background="Transparent"></Separator>
-
-                <CheckBox IsChecked="{Binding FilterColorB}" Padding="0" Margin="3"></CheckBox>
-                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">b</Label>
-                
-                <CheckBox IsChecked="{Binding FilterColorW}" Padding="0" Margin="3"></CheckBox>
-                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">w</Label>
-                
-                <CheckBox IsChecked="{Binding FilterColorU}" Padding="0" Margin="3"></CheckBox>
-                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">u</Label>
-                
-                <CheckBox IsChecked="{Binding FilterColorG}" Padding="0" Margin="3"></CheckBox>
-                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">g</Label>
-                
-                <CheckBox IsChecked="{Binding FilterColorR}" Padding="0" Margin="3"></CheckBox>
-                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">r</Label>
-                
-                <CheckBox IsChecked="{Binding FilterColorI}" Padding="0" Margin="3"></CheckBox>
-                <Label Padding="0" Margin="0" FontFamily="{StaticResource MtgSymbols}" FontSize="20">o</Label>
-                <Separator Width="10" Background="Transparent"></Separator>
-            </DockPanel>
-
-            <DockPanel>
-                <Label>Tags</Label>
-                <ComboBox Name="FilterTag" DropDownOpened="FilterTag_DropDownOpened" ItemsSource="{Binding AvailableTags}" DisplayMemberPath="Tag" SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"></ComboBox>
-            </DockPanel>
-
-        </WrapPanel>
-
-        <Button Grid.Column="1" Grid.Row="0" Height="25" Margin="1,1,1,0" Click="Button_SearchLocal" >Search local</Button>
-        <Button Grid.Column="1" Grid.Row="1" Height="25" Margin="1" Click="Button_SearchOnline">Search online</Button>
+        <Button Grid.Column="1" Grid.Row="0" Height="25" Margin="1,1,1,0" Click="Button_SearchLocal" >Search</Button>
         
         <!-- Card datagrid -->
 
@@ -129,9 +87,8 @@
                       RowHeaderWidth="0"
                       AutoGenerateColumns="False"
                       SelectionChanged="CardGrid_SelectionChanged">
-                
+
                 <DataGrid.Columns>
-                    <!--<DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />-->
                     <DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />
                     <DataGridTextColumn Header="| Name   " Binding="{Binding CardId}" />
                     <DataGridTextColumn Header="| Foreign Name   " Binding="{Binding CardForeignName}" />

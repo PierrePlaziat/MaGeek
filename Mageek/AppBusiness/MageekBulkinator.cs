@@ -59,7 +59,7 @@ namespace MaGeek.AppBusiness
                 using var fs = new FileStream(App.Config.Path_MtgJsonDownload, FileMode.Create);
                 await s.CopyToAsync(fs);
             }
-            catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
         public static async Task Bulk_CardTraductions()
         {
@@ -93,7 +93,7 @@ namespace MaGeek.AppBusiness
                         transaction.Commit();
                     }
                 }
-                catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+                catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             });
         }
 
@@ -237,7 +237,7 @@ namespace MaGeek.AppBusiness
                         transaction.Commit();
                     }
                 }
-                catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+                catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             });
         }
         private static async Task Bulk_CardVariants(bool includeFun)
@@ -295,7 +295,7 @@ namespace MaGeek.AppBusiness
                     DateTime endTime = DateTime.Now;
                     //MessageBoxHelper.ShowMsg("DONE!!! Took " + (endTime - startTime).TotalMinutes + " mins");
                 }
-                catch (Exception e) { MessageBoxHelper.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+                catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
             });
         }
 
