@@ -464,9 +464,9 @@ namespace MaGeek.UI
         private async Task DoAsyncReload()
         {
             IsLoading = Visibility.Visible;
-            CardRelations_Commandant = (await MageekStats.GetCommanders(CurrentDeck)).ToList();
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
+                CardRelations_Commandant = (await MageekStats.GetCommanders(CurrentDeck)).ToList();
                 CardRelations_Lands = GetCardRelations_Lands();
                 CardRelations_Lands_B = GetCardRelations_Lands_B();
                 CardRelations_Lands_W = GetCardRelations_Lands_W();
@@ -494,9 +494,6 @@ namespace MaGeek.UI
                 HasCmc5 = GetHasCmc5();
                 HasCmc6 = GetHasCmc6();
                 HasCmc7 = GetHasCmc7();
-            });
-            await Task.Run(() =>
-            {
                 OnPropertyChanged(nameof(IsActive));
                 OnPropertyChanged(nameof(CardRelations));
                 OnPropertyChanged(nameof(CardRelations_Commandant));

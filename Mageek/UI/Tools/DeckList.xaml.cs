@@ -89,9 +89,9 @@ namespace MaGeek.UI
         private async Task Reload()
         {
             IsLoading = Visibility.Visible;
-            Decks = FilterDeckEnumerator(await MageekCollection.GetDecks());
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
+                Decks = FilterDeckEnumerator(await MageekCollection.GetDecks());
                 OnPropertyChanged(nameof(Decks));
                 IsLoading = Visibility.Collapsed;
             });

@@ -44,26 +44,35 @@
 
             <Button Margin="3" Click="Button_Reset">X</Button>
             
-            <Label Grid.Column="1" Content="Name"/>
-            <TextBox Grid.Column="2" Text="{Binding FilterName}"
-                        HorizontalAlignment="Stretch"/>
+            <Label Grid.Column="1" 
+                   Content="Name"/>
+            <TextBox Grid.Column="2" 
+                     Text="{Binding FilterName}"
+                     HorizontalAlignment="Stretch"
+                     KeyDown="TextBox_KeyDown"/>
 
-            <Label  Grid.Column="3" 
-                    Content="Type"/>
-            <TextBox  Grid.Column="4" Text="{Binding FilterType}"
-                       
-                        Grid.Row="0" 
-                        HorizontalAlignment="Stretch"/>
+            <Label Grid.Column="3" 
+                   Content="Type"/>
+            <TextBox Grid.Column="4" Text="{Binding FilterType}"
+                     Grid.Row="0" 
+                     HorizontalAlignment="Stretch"
+                     KeyDown="TextBox_KeyDown"/>
 
-            <Label  Grid.Column="5" 
-                    Content="Keywords"/>
-            <TextBox  Grid.Column="6" Text="{Binding FilterKeyword}"
-                       
-                        Grid.Row="0" 
-                        HorizontalAlignment="Stretch"/>
+            <Label Grid.Column="5" 
+                   Content="Keywords"/>
+            <TextBox Grid.Column="6" Text="{Binding FilterKeyword}"
+                     Grid.Row="0" 
+                     HorizontalAlignment="Stretch"
+                     KeyDown="TextBox_KeyDown"/>
 
-            <Label Grid.Column="7">Tags</Label>
-            <ComboBox Grid.Column="8" Name="FilterTag" DropDownOpened="FilterTag_DropDownOpened" ItemsSource="{Binding AvailableTags}" DisplayMemberPath="Tag" SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"></ComboBox>
+            <Label Grid.Column="7"
+                   Content="Tags"/>
+            <ComboBox Grid.Column="8" 
+                      Name="FilterTag" 
+                      DropDownOpened="FilterTag_DropDownOpened" 
+                      ItemsSource="{Binding AvailableTags}" 
+                      DisplayMemberPath="Tag" 
+                      SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"/>
 
         </Grid>
 

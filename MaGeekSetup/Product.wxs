@@ -3,7 +3,7 @@
 	
 <!-- Product -->  
   
-  <Product Id="*" Name="MaGeek" Language="1033" Version="1.0.0.1" Manufacturer="PlaziatPierre" UpgradeCode="501e43bf-cd40-4b37-b88c-bec3e3a8b24b">
+  <Product Id="*" Name="MaGeek" Language="1033" Version="1.0.0.2" Manufacturer="PlaziatPierre" UpgradeCode="501e43bf-cd40-4b37-b88c-bec3e3a8b24b">
 	
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     

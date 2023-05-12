@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
 using MaGeek.AppBusiness;
 using MaGeek.AppFramework;
+using Microsoft.Extensions.Logging;
 
 namespace MaGeek.UI
 {
@@ -198,14 +199,10 @@ namespace MaGeek.UI
             IsLoading = Visibility.Visible;
             await Task.Run(() =>
             {
-                IsLoading = Visibility.Visible;
-            });
-            CardList = await LoadCards();
-            await Task.Run(() =>
-            {
+                CardList = LoadCards().Result;
                 OnPropertyChanged(nameof(CardList));
-                IsLoading = Visibility.Collapsed;
             });
+            IsLoading = Visibility.Collapsed;
         }
 
         private async Task<List<CardModel>> LoadCards()
@@ -283,9 +280,9 @@ namespace MaGeek.UI
             if (CardGrid.SelectedItem is CardModel card) App.Events.RaiseCardSelected(card);
         }
 
-        private async void Button_SearchLocal(object sender, RoutedEventArgs e)
+        private void Button_SearchLocal(object sender, RoutedEventArgs e)
         {
-            await ReloadData();
+            ReloadData().ConfigureAwait(false);
         }
 
         private async void Button_SearchOnline(object sender, RoutedEventArgs e)
@@ -296,10 +293,10 @@ namespace MaGeek.UI
             await ReloadData();
         }
 
-        private async void Button_Reset(object sender, RoutedEventArgs e)
+        private void Button_Reset(object sender, RoutedEventArgs e)
         {
             ResetFilters();
-            await ReloadData();
+            ReloadData().ConfigureAwait(false); 
         }
 
         private void ResetFilters()
@@ -313,6 +310,17 @@ namespace MaGeek.UI
             FilterColorU = true;
             FilterColorG = true;
             FilterColorR = true;
+        }
+
+        private void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key==System.Windows.Input.Key.Enter)
+            {
+                e.Handled = true;
+                var binding = ((TextBox)sender).GetBindingExpression(TextBox.TextProperty);
+                binding.UpdateSource();
+                ReloadData().ConfigureAwait(false);
+            }
         }
 
         #endregion
@@ -335,7 +343,6 @@ namespace MaGeek.UI
         {
             OnPropertyChanged(nameof(AvailableTags));
         }
-
     }
 
 }

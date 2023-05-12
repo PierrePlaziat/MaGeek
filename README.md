@@ -23,6 +23,9 @@ but initial importation is criticaly faster.
 
 #### Known issues
 
+-	"stitch in time" has 2 archetypes for its 3 variants
+-	sometimes no names in deck content
+-	biface cards traductions not present
 -	some preco imports can give error
 -	restart app only stops it
 -	ui async needs polish (ui sometime blocks)

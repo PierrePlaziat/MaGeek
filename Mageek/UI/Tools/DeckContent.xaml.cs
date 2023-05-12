@@ -120,24 +120,18 @@ namespace MaGeek.UI
         private async Task ReloadAsync()
         {
             IsLoading = Visibility.Visible;
-            CurrentCommanders =     await ApplyFilter(await MageekStats.GetCommanders(CurrentDeck));
-            CurrentCreatures =      await ApplyFilter(await MageekStats.GetCreatures(CurrentDeck));
-            CurrentInstants =       await ApplyFilter(await MageekStats.GetInstants(CurrentDeck));
-            CurrentSorceries =      await ApplyFilter(await MageekStats.GetSorceries(CurrentDeck));
-            CurrentEnchantments =   await ApplyFilter(await MageekStats.GetEnchantments(CurrentDeck));
-            CurrentArtifacts =      await ApplyFilter(await MageekStats.GetCurrentArtifacts(CurrentDeck));
-            CurrentNonBasicLands =  await ApplyFilter(await MageekStats.GetCurrentNonBasicLands(CurrentDeck));
-            CurrentOthers =         await ApplyFilter(await MageekStats.GetCurrentOthers(CurrentDeck));
-            CurrentBasicLands =     await ApplyFilter(await MageekStats.GetCurrentBasicLands(CurrentDeck));
-            CurrentSide =           await ApplyFilter(await MageekStats.GetCurrentSide(CurrentDeck));
-            await RaiseChanges();
-            await Task.Run(() => { IsLoading = Visibility.Collapsed; });
-        }
-
-        private async Task RaiseChanges()
-        {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
+                CurrentCommanders =     await ApplyFilter(await MageekStats.GetCommanders(CurrentDeck));
+                CurrentCreatures =      await ApplyFilter(await MageekStats.GetCreatures(CurrentDeck));
+                CurrentInstants =       await ApplyFilter(await MageekStats.GetInstants(CurrentDeck));
+                CurrentSorceries =      await ApplyFilter(await MageekStats.GetSorceries(CurrentDeck));
+                CurrentEnchantments =   await ApplyFilter(await MageekStats.GetEnchantments(CurrentDeck));
+                CurrentArtifacts =      await ApplyFilter(await MageekStats.GetCurrentArtifacts(CurrentDeck));
+                CurrentNonBasicLands =  await ApplyFilter(await MageekStats.GetCurrentNonBasicLands(CurrentDeck));
+                CurrentOthers =         await ApplyFilter(await MageekStats.GetCurrentOthers(CurrentDeck));
+                CurrentBasicLands =     await ApplyFilter(await MageekStats.GetCurrentBasicLands(CurrentDeck));
+                CurrentSide =           await ApplyFilter(await MageekStats.GetCurrentSide(CurrentDeck));
                 OnPropertyChanged(nameof(CurrentCommanders));
                 OnPropertyChanged(nameof(CurrentCreatures));
                 OnPropertyChanged(nameof(CurrentInstants));
@@ -149,6 +143,7 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(CurrentBasicLands));
                 OnPropertyChanged(nameof(CurrentSide));
                 OnPropertyChanged(nameof(HasCommander));
+                IsLoading = Visibility.Collapsed;
             });
         }
 

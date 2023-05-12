@@ -105,23 +105,23 @@ namespace MaGeek.UI
         {
             if (CurrentDeck == null) return;
             IsLoading = Visibility.Visible;
-            CreatureCount = await MageekStats.Count_Creature(currentDeck);
-            InstantCount = await MageekStats.Count_Instant(currentDeck);
-            SorceryCount = await MageekStats.Count_Sorcery(currentDeck);
-            EnchantmentCount = await MageekStats.Count_Enchantment(currentDeck); 
-            ArtifactCount = await MageekStats.Count_Artifact(currentDeck);
-            BasicLandCount = await MageekStats.Count_BasicLand(currentDeck);
-            SpecialLandCount = await MageekStats.Count_SpecialLand(currentDeck);
-            OtherCount = await MageekStats.Count_other(currentDeck);
-            DevotionB = await MageekStats.DevotionB(currentDeck);
-            DevotionW = await MageekStats.DevotionW(currentDeck);
-            DevotionU = await MageekStats.DevotionU(currentDeck);
-            DevotionG = await MageekStats.DevotionG(currentDeck);
-            DevotionR = await MageekStats.DevotionR(currentDeck);
-            StandardOk = await MageekStats.Validity_Standard(currentDeck);
-            CommanderOk = await MageekStats.Validity_Commander(currentDeck);
-            OwnedRatio = await MageekStats.OwnedRatio(currentDeck);
-            await Task.Run(() => {
+            await Task.Run(async () => {
+                CreatureCount = await MageekStats.Count_Creature(currentDeck);
+                InstantCount = await MageekStats.Count_Instant(currentDeck);
+                SorceryCount = await MageekStats.Count_Sorcery(currentDeck);
+                EnchantmentCount = await MageekStats.Count_Enchantment(currentDeck); 
+                ArtifactCount = await MageekStats.Count_Artifact(currentDeck);
+                BasicLandCount = await MageekStats.Count_BasicLand(currentDeck);
+                SpecialLandCount = await MageekStats.Count_SpecialLand(currentDeck);
+                OtherCount = await MageekStats.Count_other(currentDeck);
+                DevotionB = await MageekStats.DevotionB(currentDeck);
+                DevotionW = await MageekStats.DevotionW(currentDeck);
+                DevotionU = await MageekStats.DevotionU(currentDeck);
+                DevotionG = await MageekStats.DevotionG(currentDeck);
+                DevotionR = await MageekStats.DevotionR(currentDeck);
+                StandardOk = await MageekStats.Validity_Standard(currentDeck);
+                CommanderOk = await MageekStats.Validity_Commander(currentDeck);
+                OwnedRatio = await MageekStats.OwnedRatio(currentDeck);
                 OnPropertyChanged(nameof(CreatureCount));
                 OnPropertyChanged(nameof(InstantCount));
                 OnPropertyChanged(nameof(SorceryCount));

@@ -217,7 +217,10 @@
 
 
         <Grid Background="Black" Grid.Row="2" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
-            <controls:BusyIndicator></controls:BusyIndicator>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label Content="{Binding LoadMsg}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <controls:BusyIndicator HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
         </Grid>
         
         
