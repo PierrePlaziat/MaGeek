@@ -49,12 +49,13 @@
 
             </StackPanel>
 
-            <ScrollViewer Grid.Row="1">   
+            <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Visible">   
                 
                 <ListView BorderThickness="0"
                           x:Name="VariantListBox"  
                           ItemsSource="{Binding Variants}" 
-                          Background="#333" MouseUp="SelectVariant" SelectedIndex="0" HorizontalAlignment="Stretch">
+                          SelectionChanged="VariantListBox_Selected"
+                          SelectedIndex="0" HorizontalAlignment="Stretch">
                 
                     <ListView.ContextMenu>
                         <ContextMenu>
@@ -126,7 +127,7 @@
                 
             </ScrollViewer>
 
-            <ScrollViewer Grid.Row="2">
+            <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Visible">
 
                 <ListView ItemsSource="{Binding Legalities}" Width="255">
                     <ListBox.ItemsPanel>
@@ -145,8 +146,8 @@
 
             </ScrollViewer>
 
-            <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Visible" Background="#333">
-                <ListView ItemsSource="{Binding RelatedCards}" Width="5000" HorizontalAlignment="Stretch" Background="#333">
+            <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Visible">
+                <ListView ItemsSource="{Binding RelatedCards}" Width="5000" HorizontalAlignment="Stretch">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Button Click="Button_Click_1" Content="{Binding Description}" HorizontalAlignment="Stretch"></Button>
@@ -155,8 +156,8 @@
                 </ListView>
             </ScrollViewer>
 
-            <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Visible" Background="#333">
-                <ListView ItemsSource="{Binding Rulings}" Width="5000" Background="#333">
+            <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Visible">
+                <ListView ItemsSource="{Binding Rulings}" Width="5000">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <DockPanel>
@@ -169,7 +170,7 @@
                 </ListView>
             </ScrollViewer>
 
-            <StackPanel Grid.Row="5" Background="#333">
+            <StackPanel Grid.Row="5">
                 <DockPanel>
                     <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>
                     <Button Click="AddTag">Add Tag</Button>

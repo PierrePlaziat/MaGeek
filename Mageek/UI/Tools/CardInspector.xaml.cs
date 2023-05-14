@@ -221,7 +221,7 @@ namespace MaGeek.UI
 
         #region Variants
 
-        private void SelectVariant(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void VariantListBox_Selected(object sender, RoutedEventArgs e)
         {
             if (VariantListBox.SelectedIndex < 0) return;
             SelectedVariant = VariantListBox.Items[VariantListBox.SelectedIndex] as CardVariant;
@@ -359,6 +359,7 @@ namespace MaGeek.UI
             }
             if (relatedCard != null) App.Events.RaiseCardSelected(relatedCard);
         }
+
     }
 
 }
