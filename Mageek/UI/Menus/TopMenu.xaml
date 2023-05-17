@@ -24,6 +24,7 @@
             <MenuItem Header="Backup" Foreground="Black" Click="BackupDb"/>
             <MenuItem Header="Restore" Foreground="Black" Click="RestoreDb"/>
             <MenuItem Header="Erase" Foreground="Black" Click="EraseDb"/>
+            <MenuItem Header="Reimport traductions" Foreground="Black" Click="ReimportTraductions"/>
         </MenuItem>
 
         <MenuItem Header="Language">

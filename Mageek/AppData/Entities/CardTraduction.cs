@@ -10,6 +10,7 @@ namespace MaGeek.AppData.Entities
         public string CardId { get; set; }
         public string Language { get; set; }
         public string TraductedName { get; set; }
+        public string Normalized { get; set; }
 
         public virtual CardModel Card { get; set; }
     }

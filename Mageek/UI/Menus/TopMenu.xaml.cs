@@ -1,4 +1,5 @@
-﻿using MaGeek.AppFramework;
+﻿using MaGeek.AppBusiness;
+using MaGeek.AppFramework;
 using MaGeek.UI.Windows.Importers;
 using MaGeek.UI.Windows.ImportExport;
 using System.Windows;
@@ -144,6 +145,15 @@ namespace MaGeek.UI.CustomControls
 
         #endregion
 
+        private void ChangeCurrency(object sender, RoutedEventArgs e)
+        {
+            // TODO
+        }
+
+        private void ReimportTraductions(object sender, RoutedEventArgs e)
+        {
+            MageekBulkinator.ReBulk_CardTraductions().ConfigureAwait(false);
+        }
     }
 
 }

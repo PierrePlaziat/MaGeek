@@ -7,7 +7,10 @@ using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
 using MaGeek.AppBusiness;
 using MaGeek.AppFramework;
-using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
+using System.Text;
+using System;
+using MaGeek.AppFramework.Utils;
 
 namespace MaGeek.UI
 {
@@ -40,7 +43,8 @@ namespace MaGeek.UI
             get { return filterName; }
             set
             {
-                filterName = value;
+                filterName = StringExtension.RemoveDiacritics(value).ToLower();
+                //filterName = value.ToLower();
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CardList));
             }
@@ -194,19 +198,26 @@ namespace MaGeek.UI
 
         #region Async data reload
 
+        //private bool isReloading = false;
         private async Task ReloadData()
         {
+            //if (isReloading) return;
             IsLoading = Visibility.Visible;
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                CardList = LoadCards().Result;
+                //isReloading = true;
+                CardList = await LoadCards();
                 OnPropertyChanged(nameof(CardList));
+                await Task.Delay(50);
+                //isReloading = false;
             });
             IsLoading = Visibility.Collapsed;
         }
 
+
         private async Task<List<CardModel>> LoadCards()
         {
+            string lang = App.Config.Settings[Setting.ForeignLanguage];
             List<CardModel> retour = new List<CardModel>();
 
             if (!string.IsNullOrEmpty(FilterName))
@@ -215,22 +226,23 @@ namespace MaGeek.UI
                 {
 
                     retour.AddRange(
-                        await DB.CardModels.Include(x => x.Traductions)
-                                           .Where(x => x.CardId.ToLower().Contains(FilterName.ToLower()))
-                                           .ToArrayAsync()
+                        await DB.CardModels//.Include(x => x.Traductions)
+                            .Where(x => x.CardId.ToLower().Contains(FilterName))
+                            .ToArrayAsync()
                     );
 
-                    string lang = App.Config.Settings[Setting.ForeignLanguage];
-                    var t = DB.CardTraductions.Include(x => x.Card)
-                                              .Where(x => x.Language == lang)
-                                              .Where(x => x.TraductedName.ToLower().Contains(FilterName.ToLower()))
-                                              .GroupBy(x=>x.CardId).Select(g => g.First());
-                    foreach (var tt in t)
+                    var trads = DB.CardTraductions.Include(x => x.Card)
+                        .Where(x => x.Language == lang && x.Normalized.Contains(FilterName))
+                        .GroupBy(x => x.CardId).Select(g => g.First());
+
+
+
+
+                    foreach (var trad in trads)
                     {
-                        string traductedname = tt.CardId;
-                        retour.AddRange(
-                            await DB.CardModels.Include(x => x.Traductions)
-                                               .Where(x => x.CardId.ToLower().Contains(traductedname.ToLower()))
+                        string traductedname = trad.CardId.ToLower(); 
+                        retour.AddRange(await DB.CardModels.Include(x => x.Traductions)
+                                               .Where(x => x.CardId.ToLower().Contains(traductedname))
                                                .ToArrayAsync()
                         );
                     }
@@ -271,13 +283,33 @@ namespace MaGeek.UI
             return retour;
         }
 
+        public string ReplaceDiatrics(string input)
+        {
+            return Regex.Replace(input, @"[ÀÁÂÄÇÚÎÉÈÊ]", match => {
+                switch (match.Value)
+                {
+                    case "À": return "à";
+                    case "Á": return "á";
+                    case "Â": return "â";
+                    case "Ä": return "ä";
+                    case "Ç": return "ç";
+                    case "Ú": return "ú";
+                    case "Î": return "î";
+                    case "É": return "é";
+                    case "È": return "è";
+                    case "Ê": return "ê";
+                    default: throw new Exception("Unexpected match!");
+                }
+            });
+        }
+
         #endregion
 
         #region UI Link
 
         private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CardGrid.SelectedItem is CardModel card) App.Events.RaiseCardSelected(card);
+            //if (CardGrid.SelectedItem is CardModel card) App.Events.RaiseCardSelected(card);
         }
 
         private void Button_SearchLocal(object sender, RoutedEventArgs e)
@@ -342,6 +374,11 @@ namespace MaGeek.UI
         private void FilterTag_DropDownOpened(object sender, System.EventArgs e)
         {
             OnPropertyChanged(nameof(AvailableTags));
+        }
+
+        private void CardGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (CardGrid.SelectedItem is CardModel card) App.Events.RaiseCardSelected(card);
         }
     }
 

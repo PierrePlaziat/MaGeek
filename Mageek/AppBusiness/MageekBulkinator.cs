@@ -1,4 +1,5 @@
 ﻿using MaGeek.AppData.Entities;
+using MaGeek.AppFramework.Utils;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Plaziat.CommonWpf;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace MaGeek.AppBusiness
 {
@@ -61,6 +63,7 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
+
         public static async Task Bulk_CardTraductions()
         {
             await Task.Run(async () => {
@@ -74,14 +77,33 @@ namespace MaGeek.AppBusiness
                         command.CommandText = SQL_AllCardTraductions;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
+                            string id = "";
+                            string lang = "";
+                            string traducted = "";
+                            string normalized = "";
                             while (await reader.ReadAsync())
                             {
-                                trads.Add(new CardTraduction()
+                                try
                                 {
-                                    CardId = reader.GetString(0),
-                                    Language = reader.GetString(1),
-                                    TraductedName= reader.GetString(2),
-                                });
+                                    id = reader.GetString(0);
+                                    lang = reader.GetString(1);
+                                    traducted = reader.GetString(2);
+                                    if(lang != "Korean" && lang != "Arabic")
+                                    {
+                                        normalized = StringExtension.RemoveDiacritics(traducted).ToLower();
+                                    }
+                                    else normalized = traducted;
+                                    trads.Add(new CardTraduction()
+                                    {
+                                        CardId = id,
+                                        Language = lang,
+                                        TraductedName = traducted,
+                                        Normalized = normalized,
+                                    });
+                                }
+                                catch
+                                {
+                                }
                             }
                         }
                     }
@@ -100,6 +122,22 @@ namespace MaGeek.AppBusiness
         #endregion
 
         #region Once Launched
+
+        public static async Task ReBulk_CardTraductions()
+        {
+            AppLogger.ShowMsg("Reimporting traductions");
+            App.Events.RaisePreventUIAction(true, "Reimporting traductions");
+            using (var DB = App.DB.GetNewContext())
+            {
+                await DB.CardTraductions.ExecuteDeleteAsync();
+            }
+            AppLogger.ShowMsg("> Deleted Old Data");
+            DateTime start = DateTime.Now;
+            await Bulk_CardTraductions();
+            DateTime end = DateTime.Now;
+            App.Events.RaisePreventUIAction(false, "");
+            AppLogger.ShowMsg("Traductions reimporter, took " + (end-start).TotalMinutes + " min.");
+        }
 
         public static async Task Bulk_Cards(bool includeFun)
         {
