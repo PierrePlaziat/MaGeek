@@ -355,7 +355,7 @@ namespace MaGeek.AppBusiness
                         string cardName;
                         part.TryGetValue("name", out cardName);
 
-                        if (cardName.StartsWith("A-"))
+                        if (!cardName.StartsWith("A-"))
                         {
                             string cardId;
                             string relationType;
@@ -395,7 +395,7 @@ namespace MaGeek.AppBusiness
                                 }
                                 else
                                 {
-                                    AppLogger.ShowMsg("couldnt retrieve related card");
+                                    AppLogger.ShowMsg("Couldnt retrieve related card");
                                 }
                             }
                         }
@@ -469,7 +469,7 @@ namespace MaGeek.AppBusiness
                 DB.Entry(cardVariant).State = EntityState.Modified;
                 await DB.SaveChangesAsync();
             }
-            catch (Exception e) { AppLogger.ShowError("SavePrice", e); }
+            catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
         private static async Task SaveLegality(CardModel card, Dictionary<string, string> legalityDico)
         {
@@ -493,7 +493,7 @@ namespace MaGeek.AppBusiness
                     await DB.SaveChangesAsync();
                 }
             }
-            catch (Exception e) { AppLogger.ShowError("SaveLegality", e); }
+            catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
         private static async Task SaveRulings(CardModel card, ResultList<CardRule> rulings)
         {
@@ -511,7 +511,7 @@ namespace MaGeek.AppBusiness
                     await DB.SaveChangesAsync();
                 }
             }
-            catch (Exception e) { AppLogger.ShowError("SaveLegality", e); }
+            catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
         private static async Task SaveRelatedCards(CardModel card, List<CardRelation> rels)
         {
@@ -522,7 +522,7 @@ namespace MaGeek.AppBusiness
                 DB.Entry(card).State = EntityState.Unchanged;
                 await DB.SaveChangesAsync();
             }
-            catch (Exception e) { AppLogger.ShowError("SaveRelated", e); }
+            catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
         private static async Task DestroyLegalitiesRecords(CardModel localCard)

@@ -14,6 +14,8 @@ namespace MaGeek.AppData.Entities
         public virtual CardModel Card1 { get; set; }
         public virtual CardModel Card2 { get; set; }
 
+        public string Description { get { return RelationType + " : " + Card2Id; } }
+
     }
 
 }
