@@ -171,15 +171,18 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <ScrollViewer Visibility="{Binding ShowRelateds}" MaxHeight="100" MinHeight="0"  Grid.Row="3" HorizontalScrollBarVisibility="Visible">
-                <ListView ItemsSource="{Binding RelatedCards}" Width="5000" HorizontalAlignment="Stretch">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Button Click="Button_Click_1" Content="{Binding Description}" HorizontalAlignment="Stretch"></Button>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollViewer>
+            <ListView Visibility="{Binding ShowRelateds}" 
+                      MaxHeight="100" MinHeight="0" Margin="0" Padding="0" 
+                      Grid.Row="3"  
+                      Width="255"
+                      ItemsSource="{Binding RelatedCards}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Button Margin="0"
+                      Width="225" Click="Button_Click_1" Content="{Binding Description}" ></Button>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
 
             <ListView Background="#333"
