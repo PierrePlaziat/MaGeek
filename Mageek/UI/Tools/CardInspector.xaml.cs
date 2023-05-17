@@ -4,8 +4,6 @@ using Plaziat.CommonWpf;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,7 +25,7 @@ namespace MaGeek.UI
             get { return loadMsg; }
             set { loadMsg = value; OnPropertyChanged(); }
         }
-
+        
         private CardModel selectedCard;
         public CardModel SelectedCard
         {
@@ -38,12 +36,9 @@ namespace MaGeek.UI
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsActive));
                 if (value != null) ReloadCard().ConfigureAwait(false);
-                UpdateButton.Visibility = Visibility.Visible;
-                AutoSelectVariant().ConfigureAwait(false);
+                //UpdateButton.Visibility = Visibility.Visible;
             }
         }
-
-        public List<CardVariant> Variants { get; private set; }
 
         private CardVariant selectedVariant;
         public CardVariant SelectedVariant
@@ -52,9 +47,6 @@ namespace MaGeek.UI
             set { 
                 selectedVariant = value; 
                 OnPropertyChanged();
-                Dispatcher.Invoke(() => {
-                    VariantListBox.SelectedItem = selectedVariant;
-                });
             }
         }
 
@@ -81,6 +73,11 @@ namespace MaGeek.UI
         {
             get { return RelatedCards == null || RelatedCards.Count>0 ? Visibility.Visible : Visibility.Collapsed; }
         }
+        
+        public Visibility ShowRules
+        {
+            get { return Rulings == null || Rulings.Count>0 ? Visibility.Visible : Visibility.Collapsed; }
+        }
 
         #endregion
 
@@ -106,7 +103,7 @@ namespace MaGeek.UI
 
         void HandleCardSelected(CardModel Card)
         {
-            if (!isPinned)
+            //if (!isPinned)
             {
                 if (Card == null) SelectedCard = null;
                 else
@@ -130,30 +127,27 @@ namespace MaGeek.UI
             try
             {
                 IsLoading = Visibility.Visible; 
-                await Task.Run(() => { 
-                    AutoSelectVariant().ConfigureAwait(true);
-                    LoadMsg = "Loading variants";
-                    Variants = GetVariants();
+                await Task.Run(async () => {
+                    await AutoSelectVariant();
                     LoadMsg = "Loading legalities";
-                    Legalities = MageekApi.GetLegalities(SelectedCard).Result;
+                    Legalities = await MageekApi.GetLegalities(SelectedCard);
                     LoadMsg = "Loading rulings";
-                    Rulings = MageekApi.GetRules(SelectedCard).Result;
+                    Rulings =  await MageekApi.GetRules(SelectedCard);
                     LoadMsg = "Loading prices";
-                    foreach (var v in SelectedCard.Variants)
-                    {
-                        MageekApi.RetrieveCardValues(v).ConfigureAwait(true);
-                    }
+                    foreach (var v in SelectedCard.Variants) await MageekApi.RetrieveCardValues(v);
                     LoadMsg = "Loading relateds";
-                    RelatedCards = MageekApi.GetRelatedCards(SelectedCard).Result;
+                    RelatedCards = await MageekApi.GetRelatedCards(SelectedCard);
                     LoadMsg = "Loading tags";
-                    Tags = GetTags().Result;
+                    Tags = await GetTags();
                     LoadMsg = "Updating";
-                    OnPropertyChanged(nameof(Variants));
+                    await AutoSelectVariant();
+                    OnPropertyChanged(nameof(SelectedCard.Variants));
                     OnPropertyChanged(nameof(Legalities));
                     OnPropertyChanged(nameof(Tags));
                     OnPropertyChanged(nameof(Rulings));
                     OnPropertyChanged(nameof(RelatedCards));
                     OnPropertyChanged(nameof(ShowRelateds));
+                    OnPropertyChanged(nameof(ShowRules));
                 });
                 IsLoading = Visibility.Collapsed;
             }
@@ -163,14 +157,6 @@ namespace MaGeek.UI
         #endregion
 
         #region Data Retrieve
-
-        private List<CardVariant> GetVariants()
-        {
-            if (selectedCard != null && selectedCard.Variants != null && selectedCard.Variants.Count > 0)
-                return selectedCard.Variants;
-            else 
-                return new List<CardVariant>();
-        }
 
         private async Task<List<CardTag>> GetTags()
         {
@@ -191,7 +177,7 @@ namespace MaGeek.UI
                 }
                 else
                 {
-                    SelectedVariant = selectedCard.Variants/*.Where(x => !string.IsNullOrEmpty(x.ImageUrl_Front))*/.FirstOrDefault();
+                    SelectedVariant = selectedCard.Variants.FirstOrDefault();
                 }
             });
         }
@@ -202,14 +188,14 @@ namespace MaGeek.UI
         {
             CardVariant variant = (CardVariant) ((Button)sender).DataContext;
             await MageekCollection.GotCard_Add(variant);
-            HandleCardSelected(selectedCard);
+            HandleCardSelected(variant.Card);
         }
 
         private async void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
             CardVariant variant = (CardVariant)((Button)sender).DataContext;
             await MageekCollection.GotCard_Remove(variant);
-            HandleCardSelected(selectedCard);
+            HandleCardSelected(variant.Card);
         }
 
         private async void AddToCurrentDeck(object sender, RoutedEventArgs e)
@@ -220,12 +206,6 @@ namespace MaGeek.UI
         #endregion
 
         #region Variants
-
-        private void VariantListBox_Selected(object sender, RoutedEventArgs e)
-        {
-            if (VariantListBox.SelectedIndex < 0) return;
-            SelectedVariant = VariantListBox.Items[VariantListBox.SelectedIndex] as CardVariant;
-        }
 
         private async void SetFav(object sender, RoutedEventArgs e)
         {
@@ -324,7 +304,7 @@ namespace MaGeek.UI
 
         private void UpdateCardVariants(object sender, RoutedEventArgs e)
         {
-            UpdateButton.Visibility = Visibility.Hidden;
+            //UpdateButton.Visibility = Visibility.Hidden;
             App.Importer.AddImportToQueue(
                 new PendingImport
                 {
@@ -334,13 +314,13 @@ namespace MaGeek.UI
             );
         }
 
-        bool isPinned = false;
-        private void PinCard(object sender, RoutedEventArgs e)
-        {
-            isPinned = !isPinned;
-            if (isPinned) PinButton.Background = Brushes.Gray;
-            else PinButton.Background = (Brush)(new BrushConverter().ConvertFrom("#555")); ;
-        }
+        //bool isPinned = false;
+        //private void PinCard(object sender, RoutedEventArgs e)
+        //{
+        //    isPinned = !isPinned;
+        //    if (isPinned) PinButton.Background = Brushes.Gray;
+        //    else PinButton.Background = (Brush)(new BrushConverter().ConvertFrom("#555")); ;
+        //}
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

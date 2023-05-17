@@ -31,12 +31,28 @@ namespace MaGeek.AppData.Entities
 
         public virtual List<CardVariant> Variants { get; set; } = new List<CardVariant>();
         public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
-        
+
         #endregion
 
         #region Accessors
 
         public string CardForeignName { get { return MageekCollection.GetTraduction(CardId).Result; } }
+        public string MeanPrice { 
+            get{
+                float total = 0;
+                int count = 0;
+                foreach (CardVariant variant in Variants)
+                {
+                    if(!string.IsNullOrEmpty(variant.ValueEur))
+                    {
+                        count++;
+                        total += float.Parse(variant.ValueEur);
+                    }
+                }
+                if (count > 0) return (total / count).ToString("0.##");
+                else return "";
+            } 
+        }
         
         #endregion
 

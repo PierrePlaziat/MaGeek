@@ -473,6 +473,7 @@ namespace MaGeek.AppBusiness
         }
         private static async Task SaveLegality(CardModel card, Dictionary<string, string> legalityDico)
         {
+            if (legalityDico == null) return;
             try
             {
                 List<CardLegality> legal = new();

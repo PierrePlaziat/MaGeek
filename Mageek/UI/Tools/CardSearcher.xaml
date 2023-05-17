@@ -32,7 +32,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
@@ -46,7 +46,7 @@
             
             <Label Grid.Column="1" 
                    Content="Name"/>
-            <TextBox Grid.Column="2" 
+            <TextBox Grid.Column="2"  MinWidth="200"
                      Text="{Binding FilterName}"
                      HorizontalAlignment="Stretch"
                      KeyDown="TextBox_KeyDown"/>
@@ -93,6 +93,7 @@
                       CanUserSortColumns="True"
                       CanUserDeleteRows="False"
                       IsReadOnly="True"
+                      MouseDoubleClick="CardGrid_MouseDoubleClick"
                       RowHeaderWidth="0"
                       AutoGenerateColumns="False"
                       SelectionChanged="CardGrid_SelectionChanged">

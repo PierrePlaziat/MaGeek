@@ -8,19 +8,19 @@
       xmlns:controls="clr-namespace:MaGeek.UI.Controls"
       mc:Ignorable="d" Width="255">
 
-    <Grid Width="255" Background="#333">
+    <Grid Width="255" Background="Black">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="355"></RowDefinition>
+            <RowDefinition Height="360"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <local:CardIllustration x:Name="yo" 
-                                Width="255" Height="355" Margin="0" 
+        <local:CardIllustration x:Name="yo"
+                                Width="255" Height="360" Margin="0" 
                                 HorizontalAlignment="Left" VerticalAlignment="Top" 
                                 SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
@@ -28,125 +28,150 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <StackPanel>
+            <StackPanel Background="Black">
 
-                <DockPanel>
-                    <Button Width="75" Click="UpdateCardVariants" Name="UpdateButton">Update</Button>
-                    <Button Click="PinCard" Name="PinButton">PIN</Button>
-                </DockPanel>
+                <Grid  Margin="7,0,7,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70"></ColumnDefinition>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
 
-                <DockPanel>
-                    <Button Click="AddToCurrentDeck" Content="Add to Deck"/>
-                </DockPanel>
+                    <Label Grid.Column="0" HorizontalAlignment="Center" Content="{Binding SelectedCard.Got}"
+                           />
+                    <Label Grid.Column="1" HorizontalAlignment="Center" Content="{Binding SelectedCard.MeanPrice}"/>
+                    <DockPanel Grid.Column="2" HorizontalAlignment="Center" >
+                        <Label Content="("/>
+                        <Label Content="{Binding SelectedCard.Variants.Count}"/>
+                        <Label Content=")"/>
+                    </DockPanel>
 
-                <Button Click="Button_Click">Search on cardmarket</Button>
+                </Grid>
+
+                <Separator Height="1" Margin="0" Background="#111"></Separator>
 
             </StackPanel>
 
-            <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Visible">   
-                
-                <ListView BorderThickness="0"
+            <ListView Grid.Row="1" BorderThickness="0"
                           x:Name="VariantListBox"  
-                          ItemsSource="{Binding Variants}" 
-                          SelectionChanged="VariantListBox_Selected"
-                          SelectedIndex="0" HorizontalAlignment="Stretch">
-                
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set FAV" Click="SetFav"/>
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-                
-                    <ListView.ItemTemplate>
-                    
-                        <DataTemplate>
+                          ItemsSource="{Binding SelectedCard.Variants}" 
+                          SelectedItem="{Binding SelectedVariant}"
+                          SelectionMode="Single"
+                          HorizontalAlignment="Stretch"
+                          Background="Black"
+                      Margin="0" Padding="0">
 
-                            <DockPanel Grid.Column="0"  Height="21" Margin="0">
-                            
-                                <DockPanel Grid.Column="1" Background="Black" Height="21">
-                                
-                                    <Button Width="20" 
-                                        HorizontalAlignment="Left" 
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Set FAV" Click="SetFav"/>
+                        <MenuItem Header="Add to Deck" Click="AddToCurrentDeck"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+
+                <ListView.ItemTemplate>
+
+                    <DataTemplate>
+
+                        <Grid Height="15" Margin="0" Width="243">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                                <ColumnDefinition Width="123"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel Grid.Column="0" 
+                                       Height="16" 
+                                       Margin="0" >
+
+                                <Button Width="16" Height="16" 
+                                        Margin="0,0,0,0" Padding="0" 
+                                        Background="#222"
+                                        Foreground="#444"
                                         Click="SubstractCardFromCollection" 
-                                        Content="-"/>
+                                        Content="-"
+                                        FontWeight="ExtraBlack"
+                                        BorderThickness="0"
+                                        >
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="7,0,0,8"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
 
-                                    <Label  Width="35" 
+                                <Label  Width="40" HorizontalContentAlignment="Center"
                                         HorizontalAlignment="Center" 
                                         Foreground="White" 
-                                        Padding="5,2" 
+                                        Padding="0" 
+                                       Background="#111"  
+                                        Margin="0,-1,0,0" 
                                         Content="{Binding Got}"/>
 
-                                    <Button Width="20" 
+                                <Button Width="16" Height="16" 
+                                        Margin="0,0,0,0" 
+                                        Padding="0"   
+                                        Background="#222"
+                                        Foreground="#666"
                                         HorizontalAlignment="Right" 
                                         Click="AddCardToCollection" 
-                                        Content="+"/>
-
-                                </DockPanel>
-
-                                <Separator Width="5" Background="Transparent"></Separator>
-
-                                <Border Width="10" Height="10" CornerRadius="2 2 2 2" >
-                                    <Border.Style>
-                                        <Style TargetType="{x:Type Border}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Rarity}" Value="Common">
-                                                    <Setter Property="Background" Value="Black"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Rarity}" Value="Uncommon">
-                                                    <Setter Property="Background" Value="LightGray"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Rarity}" Value="Rare">
-                                                    <Setter Property="Background" Value="Gold"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Rarity}" Value="Mythic">
-                                                    <Setter Property="Background" Value="OrangeRed"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
+                                        Content="+"
+                                        FontWeight="ExtraBlack"
+                                        BorderThickness="0"
+                                        >
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="0,7,8,0"/>
                                         </Style>
-                                    </Border.Style>
-                                </Border>
-                                
-                                <Label Content="{Binding ValueEur}" Foreground="{Binding GetPriceColor}" Margin="0" Padding="5,1"></Label>
-                                <Label Content="€" Foreground="{Binding GetPriceColor}" Margin="0" Padding="5,1"></Label>
-                                <Label Content="{Binding Lang}" Foreground="{Binding LineColoration}" Margin="0" Padding="5,1"></Label>
-                                <Label Content="{Binding SetName}" Foreground="{Binding LineColoration}" Margin="0" Padding="5,1"></Label>
+                                    </Button.Resources>
+                                </Button>
 
                             </DockPanel>
-                            
-                        </DataTemplate>
-                        
-                    </ListView.ItemTemplate>
-                    
-                </ListView>
-                
-            </ScrollViewer>
 
-            <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Visible">
+                            <Label Content="{Binding ValueEur}"  Grid.Column="1" HorizontalAlignment="Center"
+                                        Foreground="{Binding GetPriceColor}" 
+                                        Margin="0,-1,0,0" 
+                                        Padding="0"/>
 
-                <ListView ItemsSource="{Binding Legalities}" Width="255">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Columns="2"/>
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel>
-                                <Label Content="{Binding Format}" Foreground="{Binding IsLegalColor}"></Label>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
 
-            </ScrollViewer>
+                            <Label Grid.Column="2" 
+                                       Content="{Binding SetName}" 
+                                       Foreground="{Binding GetRarityColor}"
+                                        Margin="0,-1,0,0" 
+                                       Padding="0"/>
 
-            <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Visible">
+
+                        </Grid>
+
+                    </DataTemplate>
+
+                </ListView.ItemTemplate>
+
+            </ListView>
+
+            <ListView Background="#111" MaxHeight="100" MinHeight="0"  Grid.Row="2" ItemsSource="{Binding Legalities}" Width="255">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="3" Width="235"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <Label Margin="0" Padding="0" Content="{Binding Format}" Foreground="{Binding IsLegalColor}"></Label>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <ScrollViewer Visibility="{Binding ShowRelateds}" MaxHeight="100" MinHeight="0"  Grid.Row="3" HorizontalScrollBarVisibility="Visible">
                 <ListView ItemsSource="{Binding RelatedCards}" Width="5000" HorizontalAlignment="Stretch">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -156,21 +181,24 @@
                 </ListView>
             </ScrollViewer>
 
-            <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Visible">
-                <ListView ItemsSource="{Binding Rulings}" Width="5000">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel>
-                                <Label Content="{Binding Source}"></Label>
-                                <Label Content=":"></Label>
-                                <Label Content="{Binding Comment}"></Label>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollViewer>
 
-            <StackPanel Grid.Row="5">
+            <ListView Background="#333"
+                      Visibility="{Binding ShowRules}" 
+                      MaxHeight="100" MinHeight="0"  
+                      Grid.Row="4"  
+                      ItemsSource="{Binding Rulings}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="0" ToolTip="{Binding Comment}" Width="225">
+                            <Label Margin="0" Padding="0" Content="{Binding Source}"></Label>
+                            <Label Margin="0" Padding="0" Content=" : "></Label>
+                            <Label Margin="0" Padding="0" Foreground="White" Content="{Binding Comment}"></Label>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <StackPanel MaxHeight="100" MinHeight="100" Grid.Row="5" Background="Black">
                 <DockPanel>
                     <TextBox Name="NewTag" Width="180" KeyUp="NewTag_KeyUp" LostFocus="NewTag_LostFocus"></TextBox>
                     <Button Click="AddTag">Add Tag</Button>
@@ -205,6 +233,20 @@
                 </ItemsControl>
                 
             </StackPanel>
+            
+            <Grid Grid.Row="6">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="0" Click="Button_Click">Cardmarket</Button>
+                <Button Grid.Column="1" Click="Button_Click">EdhRec</Button>
+                <Button Grid.Column="2" Click="Button_Click">Scryfall</Button>
+
+            </Grid>
 
         </Grid>
         
@@ -217,15 +259,14 @@
         </StackPanel>
 
 
-        <Grid Background="Black" Grid.Row="2" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
+        <Grid Background="Black" Grid.Row="0" Grid.RowSpan="6" Visibility="{Binding IsLoading}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Label Content="{Binding LoadMsg}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <controls:BusyIndicator HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
-        
-        
-        
+
+
     </Grid>
     
 </local:TemplatedUserControl>

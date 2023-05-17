@@ -31,7 +31,7 @@
 
                 <avalonDock:LayoutPanel>
 
-                    <LayoutAnchorablePane DockMinWidth="400" DockWidth="10" FloatingWidth="300">
+                    <LayoutAnchorablePane DockMinWidth="300" DockWidth="10" FloatingWidth="300">
 
                         <avalonDock:LayoutAnchorable x:Name="DL" Title="Deck List">
                             <local:DeckList/>
@@ -39,7 +39,7 @@
 
                     </LayoutAnchorablePane>
 
-                    <LayoutAnchorablePane DockMinWidth="400" DockWidth="10" FloatingWidth="300">
+                    <LayoutAnchorablePane DockMinWidth="300" DockWidth="10" FloatingWidth="300">
 
                         <avalonDock:LayoutAnchorable x:Name="DC" Title="Deck Content" >
                             <local:DeckContent/>

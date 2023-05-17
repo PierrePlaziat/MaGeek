@@ -65,31 +65,31 @@ namespace MaGeek.AppData.Entities
             return await MageekApi.RetrieveImage(this,back);
         }
 
-        public Brush LineColoration
-        {
-            get
-            {
-                return string.IsNullOrEmpty(ImageUrl_Front) ? Brushes.Black : Brushes.White;
-            }
-        }
-
         public Brush GetPriceColor {
             get
             {
                 if (ValueEur == null) return Brushes.Black;
                 float p = 0;
-                try
-                {
-                    p = float.Parse(ValueEur);
-                }
-                catch { }
-                if (p >= 10) return Brushes.White;
+                if (ValueEur != null) p = float.Parse(ValueEur);
+                if (p >= 10) return Brushes.Yellow;
                 else if (p >= 5) return Brushes.Orange;
-                else if (p >= 2) return Brushes.Yellow;
-                else if (p >= 1) return Brushes.Green;
-                else if (p >= 0.2) return Brushes.LightGray;
+                else if (p >= 2) return Brushes.Red;
+                else if (p >= 1) return Brushes.White;
+                else if (p >= 0.5) return Brushes.LightGray;
                 else if (p >= 0) return Brushes.DarkGray;
                 else return Brushes.Black;
+            }
+        }
+        
+        public Brush GetRarityColor {
+            get
+            {
+                if (string.IsNullOrEmpty(Rarity)) return Brushes.Black;
+                else if (Rarity == "common") return Brushes.LightGray;
+                else if (Rarity == "uncommon") return Brushes.CadetBlue;
+                else if (Rarity == "rare") return Brushes.Gold;
+                else if (Rarity == "mythic") return Brushes.OrangeRed;
+                else return Brushes.Green;
             }
         }
 
