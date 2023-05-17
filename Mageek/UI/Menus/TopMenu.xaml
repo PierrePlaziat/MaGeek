@@ -39,6 +39,13 @@
             <MenuItem Header="Russian" Foreground="Black" Click="ChangeLanguage"/>
         </MenuItem>
 
+        <MenuItem Header="Values">
+            <MenuItem Header="None" Foreground="Black" Click="ChangeCurrency"/>
+            <MenuItem Header="Eur" Foreground="Black" Click="ChangeCurrency"/>
+            <MenuItem Header="Usd" Foreground="Black" Click="ChangeCurrency"/>
+            <MenuItem Header="EdhRank" Foreground="Black" Click="ChangeCurrency"/>
+        </MenuItem>
+
         <MenuItem Header="Display">
             <MenuItem Header="Tools" Foreground="Black">
                 <MenuItem Header="Card Searcher" Foreground="Black" Click="CardSearcher_Click"/>

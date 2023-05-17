@@ -4,38 +4,32 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MaGeek.UI.CustomControls"
+             xmlns:menus="clr-namespace:MaGeek.UI.Menus"
              mc:Ignorable="d" 
              d:DesignHeight="20" d:DesignWidth="800"
              >
     <Grid Background="Black">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
-        <Grid ToolTip="{Binding InfoText}">
-            
+
+        <Grid  Grid.Column="2" Margin="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            
-            <Button Grid.Column="0" Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444" Click="ButtonPause_Click">||</Button>
-            <Button Grid.Column="1" Width="20" HorizontalAlignment="Right" Background="#222" Foreground="#444" Click="ButtonPlay_Click">></Button>
-            <Label Grid.Column="2" Content="{Binding ImportCount}"/>
-            <Grid Grid.Column="3" HorizontalAlignment="Stretch">
-                <ProgressBar Margin="3" Value="{Binding CurrentPercent}" HorizontalAlignment="Stretch"/>
-                <Label Content="{Binding State}" Foreground="Black"/>
-            </Grid>
-            <Button Grid.Column="4" Width="20" ToolTip="Cancell all importations" Background="#222" Foreground="#444" Click="ButtonCancel_Click" HorizontalAlignment="Right">X</Button>
-            <!--<Button Grid.Column="5" Width="20" ToolTip="Cancell all importations" Background="#222" Foreground="#444" Click="ButtonCancel_Click" HorizontalAlignment="Right">X</Button>-->
+
+            <Image Grid.Column="0" Source="/Resources/Images/IconDeck.jpg" />
+            <Label Grid.Column="1" Content="{Binding SelectedDeckString}" FontSize="12" Margin="3" Padding="0"></Label>
         
+        </Grid>
+
+        <Grid Grid.Column="0">
+            <menus:ImporterUi></menus:ImporterUi>
         </Grid>
 
         <Grid Grid.Column="1" ToolTip="{Binding Msgs}">
@@ -45,20 +39,16 @@
             
         </Grid>
 
-        <Grid Grid.Column="2" Margin="2">
+        <Grid Grid.Column="3" Margin="2">
             
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Image Grid.Column="0" Source="/Resources/Images/IconCard.jpg" />
-            <Label Grid.Column="1" Content="{Binding SelectedCardString}" FontSize="12" Margin="2" Padding="0"></Label>
-            <Image Grid.Column="2" Source="/Resources/Images/IconDeck.jpg" />
-            <Label Grid.Column="3" Content="{Binding SelectedDeckString}" FontSize="12" Margin="3" Padding="0"></Label>
-
+            <Label  Grid.Column="1" Content="{Binding SelectedCardString}" FontSize="12" Margin="2" Padding="0"></Label>
+            <Image  Grid.Column="0" Source="/Resources/Images/IconCard.jpg" />
+            
         </Grid>
         
             

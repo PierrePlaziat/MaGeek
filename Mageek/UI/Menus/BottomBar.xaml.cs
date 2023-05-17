@@ -62,29 +62,6 @@ namespace MaGeek.UI.CustomControls
 
         Timer loopTimer;
 
-        int importCount = 0;
-        public int ImportCount
-        {
-            get { return importCount; }
-            set { importCount = value; OnPropertyChanged(); }
-        }
-
-        int currentPercent = 0;
-        public int CurrentPercent
-        {
-            get { return currentPercent; }
-            set { currentPercent = value; OnPropertyChanged(); }
-        }
-
-        string state = "";
-        public string State
-        {
-            get { return state; }
-            set { state = value; OnPropertyChanged(); }
-        }
-
-        public string InfoText { get { return App.Importer.InfoText; } }
-
         public StateBar()
         {
             InitializeComponent();
@@ -114,7 +91,6 @@ namespace MaGeek.UI.CustomControls
 
         private void LoopTimer(object sender, ElapsedEventArgs e)
         {
-            UpdateImporterInfos();
             UpdateMsgs();
         }
 
@@ -122,29 +98,6 @@ namespace MaGeek.UI.CustomControls
         {
             OnPropertyChanged(nameof(Msg));
             OnPropertyChanged(nameof(Msgs));
-        }
-
-        private void UpdateImporterInfos()
-        {
-            ImportCount = App.Importer.PendingCount;
-            CurrentPercent = App.Importer.WorkerProgress;
-            State = App.Importer.Message;
-            OnPropertyChanged(nameof(InfoText));
-        }
-
-        private void ButtonPlay_Click(object sender, RoutedEventArgs e)
-        {
-            App.Importer.Play();
-        }
-
-        private void ButtonPause_Click(object sender, RoutedEventArgs e)
-        {
-            App.Importer.Pause();
-        }
-
-        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
-        {
-            App.Importer.CancelAll();
         }
 
     }
