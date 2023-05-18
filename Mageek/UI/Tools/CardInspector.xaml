@@ -179,7 +179,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Button Margin="0"
-                      Width="225" Click="Button_Click_1" Content="{Binding Description}" ></Button>
+                      Width="225" Click="GotoRelated" Content="{Binding Description}" ></Button>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -245,9 +245,9 @@
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 
-                <Button Grid.Column="0" Click="Button_Click">Cardmarket</Button>
-                <Button Grid.Column="1" Click="Button_Click">EdhRec</Button>
-                <Button Grid.Column="2" Click="Button_Click">Scryfall</Button>
+                <Button Grid.Column="0" Click="LinkWeb_Cardmarket">Cardmarket</Button>
+                <Button Grid.Column="1" Click="LinkWeb_Cardmarket">EdhRec</Button>
+                <Button Grid.Column="2" Click="LinkWeb_Cardmarket">Scryfall</Button>
 
             </Grid>
 

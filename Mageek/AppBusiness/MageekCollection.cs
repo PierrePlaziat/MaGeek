@@ -37,12 +37,13 @@ namespace MaGeek.AppBusiness
         {
             if (selectedCard == null) return;
             using var DB = App.DB.GetNewContext();
-            var c = DB.CardVariants.Where(x => x.Id == selectedCard.Id)
+            var variant = DB.CardVariants.Where(x => x.Id == selectedCard.Id)
                 .Include(x=>x.Card)
                 .FirstOrDefault();
-            c.Got++;
-            c.Card.Got++;
-            DB.Entry(c).State = EntityState.Modified;
+            variant.Got++;
+            variant.Card.Got++;
+            if (string.IsNullOrEmpty(variant.Card.FavouriteVariant)) variant.Card.FavouriteVariant = variant.Id;
+            DB.Entry(variant).State = EntityState.Modified;
             await DB.SaveChangesAsync();
         }
 

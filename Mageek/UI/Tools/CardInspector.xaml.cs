@@ -33,8 +33,6 @@ namespace MaGeek.UI
             set
             {
                 selectedCard = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsActive));
                 if (value != null) ReloadCard().ConfigureAwait(false);
                 //UpdateButton.Visibility = Visibility.Visible;
             }
@@ -128,7 +126,7 @@ namespace MaGeek.UI
             {
                 IsLoading = Visibility.Visible; 
                 await Task.Run(async () => {
-                    await AutoSelectVariant();
+                    //await AutoSelectVariant();
                     LoadMsg = "Loading legalities";
                     Legalities = await MageekApi.GetLegalities(SelectedCard);
                     LoadMsg = "Loading rulings";
@@ -140,14 +138,16 @@ namespace MaGeek.UI
                     LoadMsg = "Loading tags";
                     Tags = await GetTags();
                     LoadMsg = "Updating";
-                    await AutoSelectVariant();
-                    OnPropertyChanged(nameof(SelectedCard.Variants));
+                    //OnPropertyChanged(nameof(SelectedCard.Variants));
                     OnPropertyChanged(nameof(Legalities));
                     OnPropertyChanged(nameof(Tags));
                     OnPropertyChanged(nameof(Rulings));
                     OnPropertyChanged(nameof(RelatedCards));
                     OnPropertyChanged(nameof(ShowRelateds));
                     OnPropertyChanged(nameof(ShowRules));
+                    OnPropertyChanged(nameof(SelectedCard));
+                    OnPropertyChanged(nameof(IsActive));
+                    await AutoSelectVariant();
                 });
                 IsLoading = Visibility.Collapsed;
             }
@@ -156,15 +156,7 @@ namespace MaGeek.UI
 
         #endregion
 
-        #region Data Retrieve
-
-        private async Task<List<CardTag>> GetTags()
-        {
-            if(selectedCard==null) return null;
-            return await MageekStats.FindTagsForCard(selectedCard.CardId);
-        }
-
-        #endregion
+        #region Variants
 
         private async Task AutoSelectVariant()
         {
@@ -181,8 +173,6 @@ namespace MaGeek.UI
                 }
             });
         }
-
-        #region Buttons
 
         private async void AddCardToCollection(object sender, RoutedEventArgs e)
         {
@@ -203,10 +193,6 @@ namespace MaGeek.UI
             await MageekCollection.AddCardToDeck(SelectedVariant, App.State.SelectedDeck,1);
         }
 
-        #endregion
-
-        #region Variants
-
         private async void SetFav(object sender, RoutedEventArgs e)
         {
             var cardvar = VariantListBox.Items[VariantListBox.SelectedIndex] as CardVariant;  
@@ -219,9 +205,53 @@ namespace MaGeek.UI
             window.Show();
         }
 
+        private void UpdateCardVariants(object sender, RoutedEventArgs e)
+        {
+            //UpdateButton.Visibility = Visibility.Hidden;
+            App.Importer.AddImportToQueue(
+                new PendingImport
+                {
+                    Mode = ImportMode.Update,
+                    Content = SelectedCard.CardId
+                }
+            );
+        }
+
+        //bool isPinned = false;
+        //private void PinCard(object sender, RoutedEventArgs e)
+        //{
+        //    isPinned = !isPinned;
+        //    if (isPinned) PinButton.Background = Brushes.Gray;
+        //    else PinButton.Background = (Brush)(new BrushConverter().ConvertFrom("#555")); ;
+        //}
+
+        private void GotoRelated(object sender, RoutedEventArgs e)
+        {
+            CardRelation rel = (CardRelation)((Button)sender).DataContext;
+            CardModel relatedCard;
+            using (var DB = App.DB.GetNewContext())
+            {
+                relatedCard = DB.CardModels.Where(x => x.CardId == rel.Card2Id)
+                    .ToList()
+                    .FirstOrDefault();
+            }
+            if (relatedCard != null) App.Events.RaiseCardSelected(relatedCard);
+        }
+
+        private void LinkWeb_Cardmarket(object sender, RoutedEventArgs e)
+        {
+            App.HyperLink("https://www.cardmarket.com/en/Magic/Products/Search?searchString=" + selectedCard.CardId);
+        }
+
         #endregion
 
         #region Tags
+
+        private async Task<List<CardTag>> GetTags()
+        {
+            if (selectedCard == null) return null;
+            return await MageekStats.FindTagsForCard(selectedCard.CardId);
+        }
 
         private async void AddTag(object sender, RoutedEventArgs e)
         {
@@ -301,44 +331,6 @@ namespace MaGeek.UI
         }
 
         #endregion
-
-        private void UpdateCardVariants(object sender, RoutedEventArgs e)
-        {
-            //UpdateButton.Visibility = Visibility.Hidden;
-            App.Importer.AddImportToQueue(
-                new PendingImport
-                {
-                    Mode = ImportMode.Update,
-                    Content = SelectedCard.CardId
-                }
-            );
-        }
-
-        //bool isPinned = false;
-        //private void PinCard(object sender, RoutedEventArgs e)
-        //{
-        //    isPinned = !isPinned;
-        //    if (isPinned) PinButton.Background = Brushes.Gray;
-        //    else PinButton.Background = (Brush)(new BrushConverter().ConvertFrom("#555")); ;
-        //}
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            App.HyperLink("https://www.cardmarket.com/en/Magic/Products/Search?searchString=" + selectedCard.CardId);
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            CardRelation rel = (CardRelation)((Button)sender).DataContext;
-            CardModel relatedCard;
-            using (var DB = App.DB.GetNewContext())
-            {
-                relatedCard = DB.CardModels.Where(x => x.CardId == rel.Card2Id)
-                    .ToList()
-                    .FirstOrDefault();
-            }
-            if (relatedCard != null) App.Events.RaiseCardSelected(relatedCard);
-        }
 
     }
 
