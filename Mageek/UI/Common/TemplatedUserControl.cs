@@ -15,7 +15,9 @@ namespace MaGeek.UI
         }
         public async Task OnPropertyChangedAsync([CallerMemberName] string name = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            await Task.Run(() => {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            });
         }
 
     }

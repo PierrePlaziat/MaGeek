@@ -28,14 +28,16 @@
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0" Content="X" ToolTip="Clear filter"
-                    Click="Button_Reset"/>
+                    Click="ResetFilters"/>
             <Button Grid.Column="1" Content="V" ToolTip="Advanced search"
-                    Click="Button_AdvancedSearcher"/>
+                    Click="Button_AdvancedSearcher"
+                    Visibility="{Binding ShowNormal}"/>
             <TextBox Grid.Column="2" Text="{Binding FilterName}" ToolTip="Search a card by its name"
                      HorizontalAlignment="Stretch" MinWidth="200"
-                     KeyDown="FilterName_KeyDown"/>
-            <Button Grid.Column="3" Content=">>" ToolTip="Launch search" 
-                    Click="Button_SearchLocal"/>
+                     KeyDown="FilterName_KeyDown"
+                     Visibility="{Binding ShowNormal}"/>
+            <Button Grid.Column="3" Content="Search" ToolTip="Launch search" 
+                    Click="Button_Search"/>
 
         </Grid>
 
@@ -67,31 +69,31 @@
                          Width="150" 
                          HorizontalAlignment="Stretch"/>
             </DockPanel>
+            
             <DockPanel HorizontalAlignment="Center">
                 <Label Content="Colors"
                        Width="50"
                        HorizontalAlignment="Center"/>
-                <ComboBox Name="FilterColor" 
-                          ItemsSource="{Binding AvailableTags}" 
-                          SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"
-                          DropDownOpened="FilterTag_DropDownOpened" 
-                          DisplayMemberPath="Tag"
+                <ComboBox Name="ColorComboBox" 
+                          SelectedItem="{Binding FilterColor, Mode=TwoWay}"
+                          FontFamily="{StaticResource MtgSymbols}"
+                          FontSize="16"
                           Width="150" />
             </DockPanel>
             <DockPanel HorizontalAlignment="Center">
                 <Label Content="Tags"
                        HorizontalAlignment="Center"
                        Width="50"/>
-                <ComboBox Name="FilterTag" 
-                          ItemsSource="{Binding AvailableTags}" 
-                          SelectedItem="{Binding TagFilterSelected, Mode=TwoWay}"
+                <ComboBox ItemsSource="{Binding AvailableTags}" 
+                          SelectedItem="{Binding FilterTag, Mode=TwoWay}"
                           DropDownOpened="FilterTag_DropDownOpened" 
                           DisplayMemberPath="Tag"
                           Width="150" />
             </DockPanel>
+            
             <DockPanel HorizontalAlignment="Left">
                 <CheckBox Margin="6" Foreground="#777" Content="Got only"
-                          Checked="OnlyGot_Checked"
+                          IsChecked="{Binding OnlyGot}"
                           Grid.Row="0" 
                           HorizontalAlignment="Left"
                           Width="200"/>
@@ -106,7 +108,7 @@
               ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             
             <DataGrid x:Name="CardGrid" 
-                      ItemsSource="{Binding CardList}"
+                      ItemsSource="{Binding CardList}" 
                       CanUserAddRows="False"
                       CanUserResizeRows="False"
                       CanUserResizeColumns="True"
@@ -144,7 +146,7 @@
 
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="To deck" Click="MenuItem_Click"/>
+                        <MenuItem Header="To deck" Click="AddToDeck"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
 

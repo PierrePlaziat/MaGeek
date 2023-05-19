@@ -16,6 +16,7 @@ namespace MaGeek.AppBusiness
         {
             List<CardTag> tags = new();
             using var DB = App.DB.GetNewContext();
+            tags.Add(null);
             tags.AddRange(
                     DB.CardTags.GroupBy(x => x.Tag).Select(x => x.First())
             );

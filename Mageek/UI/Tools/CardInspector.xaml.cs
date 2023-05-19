@@ -217,14 +217,6 @@ namespace MaGeek.UI
             );
         }
 
-        //bool isPinned = false;
-        //private void PinCard(object sender, RoutedEventArgs e)
-        //{
-        //    isPinned = !isPinned;
-        //    if (isPinned) PinButton.Background = Brushes.Gray;
-        //    else PinButton.Background = (Brush)(new BrushConverter().ConvertFrom("#555")); ;
-        //}
-
         private void GotoRelated(object sender, RoutedEventArgs e)
         {
             CardRelation rel = (CardRelation)((Button)sender).DataContext;
@@ -272,6 +264,7 @@ namespace MaGeek.UI
                 NewTag.Text = "";
                 sugestions.Visibility = Visibility.Collapsed;
             }
+            HandleCardSelected(SelectedCard);
         }
 
         private async void DeleteTag(object sender, RoutedEventArgs e)
@@ -280,6 +273,7 @@ namespace MaGeek.UI
             await MageekStats.UnTagCard(cardTag);
             OnPropertyChanged(nameof(Tags));
             sugestions.Visibility = Visibility.Collapsed;
+            HandleCardSelected(SelectedCard);
         }
 
         private async void NewTag_KeyUp(object sender, KeyEventArgs e)
