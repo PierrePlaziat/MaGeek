@@ -242,6 +242,16 @@ namespace MaGeek.UI
         {
             App.HyperLink("https://www.cardmarket.com/en/Magic/Products/Search?searchString=" + selectedCard.CardId);
         }
+        
+        private void LinkWeb_EdhRec(object sender, RoutedEventArgs e)
+        {
+            App.HyperLink("https://edhrec.com/cards/" + selectedCard.CardId.Split(" // ")[0].ToLower().Replace(' ','-').Replace("\"","").Replace(",","").Replace("'",""));
+        }
+        
+        private void LinkWeb_Scryfall(object sender, RoutedEventArgs e)
+        {
+            App.HyperLink("https://scryfall.com/search?q=" + selectedCard.CardId);
+        }
 
         #endregion
 

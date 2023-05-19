@@ -246,8 +246,8 @@
                 </Grid.ColumnDefinitions>
                 
                 <Button Grid.Column="0" Click="LinkWeb_Cardmarket">Cardmarket</Button>
-                <Button Grid.Column="1" Click="LinkWeb_Cardmarket">EdhRec</Button>
-                <Button Grid.Column="2" Click="LinkWeb_Cardmarket">Scryfall</Button>
+                <Button Grid.Column="1" Click="LinkWeb_EdhRec">EdhRec</Button>
+                <Button Grid.Column="2" Click="LinkWeb_Scryfall">Scryfall</Button>
 
             </Grid>
 
