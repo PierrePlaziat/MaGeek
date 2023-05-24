@@ -36,9 +36,16 @@ namespace MaGeek.UI.Menus
 
         Timer loopTimer;
 
+        public Visibility HasImportInQueue
+        {
+            get { return App.Importer.PendingCount>0? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+
         private void LoopTimer(object sender, ElapsedEventArgs e)
         {
             UpdateImporterInfos();
+            OnPropertyChanged(nameof(HasImportInQueue));
         }
         private void ConfigureTimer()
         {

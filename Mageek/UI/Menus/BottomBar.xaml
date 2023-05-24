@@ -11,13 +11,13 @@
     <Grid Background="Black">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
-            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Grid  Grid.Column="2" Margin="2">
+        <Grid  Grid.Column="0" Margin="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -28,11 +28,11 @@
         
         </Grid>
 
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="1">
             <menus:ImporterUi></menus:ImporterUi>
         </Grid>
 
-        <Grid Grid.Column="1" ToolTip="{Binding Msgs}">
+        <Grid Grid.Column="2" ToolTip="{Binding Msgs}">
             
             <Label HorizontalAlignment="Center" 
                    Content="{Binding Msg}" />
@@ -42,12 +42,12 @@
         <Grid Grid.Column="3" Margin="2">
             
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Label  Grid.Column="1" Content="{Binding SelectedCardString}" FontSize="12" Margin="2" Padding="0"></Label>
-            <Image  Grid.Column="0" Source="/Resources/Images/IconCard.jpg" />
+            <Label  Grid.Column="0" Content="{Binding SelectedCardString}" FontSize="12" Margin="2" Padding="0" HorizontalAlignment="Right"></Label>
+            <Image  Grid.Column="1" Source="/Resources/Images/IconCard.jpg" />
             
         </Grid>
         

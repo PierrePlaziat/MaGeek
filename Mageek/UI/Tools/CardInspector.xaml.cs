@@ -126,7 +126,7 @@ namespace MaGeek.UI
             {
                 IsLoading = Visibility.Visible; 
                 await Task.Run(async () => {
-                    //await AutoSelectVariant();
+                    await AutoSelectVariant();
                     LoadMsg = "Loading legalities";
                     Legalities = await MageekApi.GetLegalities(SelectedCard);
                     LoadMsg = "Loading rulings";
