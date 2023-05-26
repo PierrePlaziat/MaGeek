@@ -23,10 +23,12 @@
             <Label>Owned cards</Label>
             <DockPanel HorizontalAlignment="Center">
                 <Label>Total :</Label>
-                <Label Content="{Binding TotalGot}"/>
+                <Label Content="{Binding TotalGot}" Foreground="White" FontWeight="Bold"/>
                 <Label>|</Label>
                 <Label>Differents :</Label>
-                <Label Content="{Binding TotalDiffGot}" />
+                <Label Content="{Binding TotalDiffGot}"
+                       Foreground="White"
+                       FontWeight="Bold" />
                 <Label>/</Label>
                 <Label Content="{Binding TotalDiffExist}" />
             </DockPanel>
@@ -36,7 +38,10 @@
         <DockPanel Grid.Row="1">
             
             <Label>Auto-Estimation :</Label>
-            <Label Content="{Binding AutoEstimation}" />
+            <Label Content="{Binding AutoEstimation}"
+                   Foreground="White"
+                   FontWeight="Bold" />
+            <Label>€</Label>
             <Label>|</Label>
             <Label>Not estimated :</Label>
             <Label Content="{Binding MissingCount}" />
@@ -44,7 +49,9 @@
 
             <DockPanel HorizontalAlignment="Right">
                 <Button Click="AddManualEstimations">Add manual estimations ></Button>
-                <Label Content="{Binding FinalEstimation}" />
+                <Label Content="{Binding FinalEstimation}"
+                       Foreground="White"
+                       FontWeight="Bold" />
                 <Label HorizontalAlignment="Right"></Label>
             </DockPanel>
             

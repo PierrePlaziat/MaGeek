@@ -1,6 +1,10 @@
 ﻿using MaGeek.Entities;
+using MaGeek.Framework;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MaGeek.AppBusiness
@@ -543,6 +547,55 @@ namespace MaGeek.AppBusiness
             return ok;
         }
 
+        internal static async Task<int> GetTotalOwned()
+        {
+            int total = 0;
+            try
+            {
+                using var DB = App.DB.GetNewContext();
+                await Task.Run(() =>
+                {
+                    total = DB.CardVariants.Sum(x => x.Got);
+                });
+            }
+            catch (Exception e) { Log.Write(e, "GetTotalOwned"); }
+            return total;
+        }
+        
+        internal static async  Task<int> GetTotalDiffGot()
+        {
+            int total = 0;
+            try
+            {
+                using var DB = App.DB.GetNewContext();
+                await Task.Run(() =>
+                {
+                    total = DB.CardVariants.Where(x=>x.Got>0)
+                                            .GroupBy(x=>x.Card)
+                                            .Select(g => g.First().Card)
+                                            .Count();
+                    
+                });
+            }
+            catch (Exception e) { Log.Write(e, "GetTotalDiffGot"); }
+            return total;
+        }
+        
+        internal static async  Task<int> GetTotalDiffExist()
+        {
+            int total = 0;
+            try
+            {
+                using var DB = App.DB.GetNewContext();
+                await Task.Run(() =>
+                {
+                    total = DB.CardModels.Count();
+                });
+            }
+            catch (Exception e) { Log.Write(e, "GetTotalDiffExist"); }
+            return total;
+        }
+        
         #endregion
 
         #endregion
