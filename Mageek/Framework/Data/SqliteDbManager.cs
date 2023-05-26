@@ -20,6 +20,7 @@ namespace MaGeek.Framework.Data
             "CREATE TABLE \"DeckCards\" (\r\n\t\"DeckId\"\tINTEGER,\r\n\t\"CardId\"\tTEXT,\r\n\t\"Quantity\"\tINTEGER,\r\n\t\"RelationType\"\tINTEGER,\r\n\tPRIMARY KEY(\"CardId\",\"DeckId\")\r\n);",
             "CREATE TABLE \"Decks\" (\r\n\t\"DeckId\"\tINTEGER,\r\n\t\"Title\"\tTEXT,\r\n\t\"Description\"\tTEXT,\r\n\t\"DeckColors\"\tTEXT,\r\n\t\"CardCount\"\tINTEGER,\r\n\tPRIMARY KEY(\"DeckId\")\r\n);",
             "CREATE TABLE \"Params\" (\r\n\t\"ParamName\"\tTEXT,\r\n\t\"ParamValue\"\tTEXT\r\n);",
+            "CREATE TABLE \"Sets\" (\r\n\t\"Name\"\tTEXT,\r\n\t\"Type\"\tTEXT,\r\n\t\"Svg\"\tTEXT,\r\n\t\"Date\"\tTEXT,\r\n\tPRIMARY KEY(\"Name\")\r\n);",
         };
 
         SqliteDbInfos DbInfos = new SqliteDbInfos(App.Config.Path_Db, SqliteDbCreationString);
@@ -58,23 +59,23 @@ namespace MaGeek.Framework.Data
                         localDb.Close();
                         backupDb.Close();
                     }
-                    AppLogger.LogMessage("DB saved successfully.");
+                    Log.Write("DB saved successfully.");
                 }
                 catch (IOException iox)
                 {
-                    AppLogger.LogMessage("DB save failed : " + iox.Message);
+                    Log.Write("DB save failed : " + iox.Message);
                 }
             }
         }
 
         public void EraseDb()
         {
-            if (AppLogger.AskUser("Do you really want to erase all data?")) DeleteAllContent();
+            if (Log.AskUser("Do you really want to erase all data?")) DeleteAllContent();
         }
 
         public void RestoreDb()
         {
-            if (!AppLogger.AskUser("Current data will be lost, ensure you have a backup if needed.\n Are you sure you still want to launch restoration?")) return;
+            if (!Log.AskUser("Current data will be lost, ensure you have a backup if needed.\n Are you sure you still want to launch restoration?")) return;
             string tmpDbPath = App.Config.Path_Db + ".tmp";
             string loadFile = BrowserHelper.SelectAFile("Db Files (.db)|*.db");
             if (loadFile != null)
@@ -86,7 +87,7 @@ namespace MaGeek.Framework.Data
                 }
                 catch (IOException iox)
                 {
-                    AppLogger.LogMessage("DB load failed : " + iox.Message);
+                    Log.Write("DB load failed : " + iox.Message);
                 }
             }
         }

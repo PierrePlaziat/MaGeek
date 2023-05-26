@@ -47,16 +47,27 @@ namespace MaGeek.UI.Menus
             window.Show();
         }
 
+        private void OpenWindow_CollectionEstimation(object sender, RoutedEventArgs e)
+        {
+            var window = new CollectionEstimation();
+            window.Show();
+        }
+
         #endregion
 
         #region Database
 
-        private void BackupDb(object sender, RoutedEventArgs e)
+        private void ReimportTraductions(object sender, RoutedEventArgs e)
+        {
+            MageekBulkinator.ReBulk_CardTraductions().ConfigureAwait(false);
+        }
+
+        private void BackupCollection(object sender, RoutedEventArgs e)
         {
             App.DB.Backup();
         }
 
-        private void RestoreDb(object sender, RoutedEventArgs e)
+        private void RestoreCollection(object sender, RoutedEventArgs e)
         {
             App.DB.RestoreDb();
         }
@@ -150,10 +161,6 @@ namespace MaGeek.UI.Menus
             //App.Restart();
         }
 
-        private void ReimportTraductions(object sender, RoutedEventArgs e)
-        {
-            MageekBulkinator.ReBulk_CardTraductions().ConfigureAwait(false);
-        }
     }
 
 }

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using MaGeek.AppBusiness;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
 
 namespace MaGeek.UI
 {

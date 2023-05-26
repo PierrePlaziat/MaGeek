@@ -8,7 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
+using MaGeek.Framework;
 
 namespace MaGeek.UI
 {
@@ -150,7 +151,7 @@ namespace MaGeek.UI
                 });
                 IsLoading = Visibility.Collapsed;
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
 
         #endregion

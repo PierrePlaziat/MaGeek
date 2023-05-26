@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
+using MaGeek.Framework;
 
 namespace MaGeek.AppBusiness
 {
@@ -82,7 +82,7 @@ namespace MaGeek.AppBusiness
                     }
                 }
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
             return englishName;
         }
 
@@ -101,7 +101,7 @@ namespace MaGeek.AppBusiness
                     }
                 }
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
             return foreignName;
         }
         
@@ -117,16 +117,16 @@ namespace MaGeek.AppBusiness
                 using (var DB = App.DB.GetNewContext())
                 {
                     decks = await DB.Decks
-                        .Include(deck => deck.CardRelations)
+                        .Include(deck => deck.DeckCards)
                             .ThenInclude(cardrel => cardrel.Card)
                                 .ThenInclude(card => card.Card)
-                        .Include(deck => deck.CardRelations)
+                        .Include(deck => deck.DeckCards)
                             .ThenInclude(cardrel => cardrel.Card)
                                 .ThenInclude(card => card.DeckRelations)
                         .ToListAsync();
                 }
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
             return decks;
         }
 
@@ -135,11 +135,11 @@ namespace MaGeek.AppBusiness
             try
             {
                 using var DB = App.DB.GetNewContext();
-                string deckTitle = AppLogger.UserInputString("Please enter a title for this new deck", "");
+                string deckTitle = Log.GetInpurFromUser("Please enter a title for this new deck", "");
                 if (deckTitle == null) return;
                 if (DB.Decks.Where(x => x.Title == deckTitle).Any())
                 {
-                    AppLogger.LogMessage("There is already a deck with that name.");
+                    Log.Write("There is already a deck with that name.");
                     return;
                 }
                 Deck deck = new(deckTitle);
@@ -148,7 +148,7 @@ namespace MaGeek.AppBusiness
                 App.Events.RaiseUpdateDeckList();
                 App.Events.RaiseDeckSelect(deck);
             }
-            catch (Exception e) { AppLogger.LogError("AddEmptyDeck", e); }
+            catch (Exception e) { Log.Write(e); }
         }
 
         public static async Task AddDeck(List<ImportLine> importLines, string title)
@@ -175,7 +175,7 @@ namespace MaGeek.AppBusiness
                             if (card != null)
                             {
                                 CardVariant variant = card.Variants[0];
-                                var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
+                                var cardRelation = deck.DeckCards.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
                                 if (cardRelation == null)
                                 {
                                     cardRelation = new DeckCard()
@@ -187,7 +187,7 @@ namespace MaGeek.AppBusiness
                                         RelationType = cardOccurence.Side ? 2 : 0
                                     };
                                     DB.Entry(cardRelation).State = EntityState.Added;
-                                    deck.CardRelations.Add(cardRelation);
+                                    deck.DeckCards.Add(cardRelation);
                                 }
                                 else
                                 {
@@ -205,18 +205,18 @@ namespace MaGeek.AppBusiness
                     }
                 }
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
 
         public static async Task RenameDeck(Deck deck)
         {
             using var DB = App.DB.GetNewContext();
             if (deck == null) return;
-            string newTitle = AppLogger.UserInputString("Please enter a title for the deck \"" + deck.Title + "\"", deck.Title);
+            string newTitle = Log.GetInpurFromUser("Please enter a title for the deck \"" + deck.Title + "\"", deck.Title);
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
             if (DB.Decks.Where(x => x.Title == newTitle).Any())
             {
-                AppLogger.LogMessage("There is already a deck with that name.");
+                Log.Write("There is already a deck with that name.");
                 return;
             }
             deck.Title = newTitle;
@@ -231,10 +231,10 @@ namespace MaGeek.AppBusiness
             var newDeck = new Deck(deckToCopy.Title + " - Copie");
             using (var DB = App.DB.GetNewContext())
             {
-                newDeck.CardRelations = new ObservableCollection<DeckCard>();
+                newDeck.DeckCards = new ObservableCollection<DeckCard>();
                 DB.Decks.Add(newDeck);
                 DB.Entry(newDeck).State = EntityState.Added;
-                foreach (DeckCard relation in deckToCopy.CardRelations)
+                foreach (DeckCard relation in deckToCopy.DeckCards)
                 {
                     var cardRelation = new DeckCard()
                     {
@@ -243,7 +243,7 @@ namespace MaGeek.AppBusiness
                         Quantity = relation.Quantity,
                         RelationType = relation.RelationType
                     };
-                    newDeck.CardRelations.Add(cardRelation);
+                    newDeck.DeckCards.Add(cardRelation);
                     newDeck.CardCount += relation.Quantity;
                     DB.Entry(cardRelation).State = EntityState.Added;
                 }
@@ -254,7 +254,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task DeleteDeck(Deck deckToDelete)
         {
-            if (AppLogger.AskUser("Are you sure to delete this deck ? (" + deckToDelete.Title + ")"))
+            if (Log.AskUser("Are you sure to delete this deck ? (" + deckToDelete.Title + ")"))
             {
                 using var DB = App.DB.GetNewContext();
                 var deck = deckToDelete;
@@ -265,7 +265,7 @@ namespace MaGeek.AppBusiness
         
         public static async Task DeleteDecks(List<Deck> deckToDelete)
         {
-            if (AppLogger.AskUser("Are you sure to delete those deck ? (" + deckToDelete.Count + " decks)"))
+            if (Log.AskUser("Are you sure to delete those deck ? (" + deckToDelete.Count + " decks)"))
             {
                 using var DB = App.DB.GetNewContext();
                 var deck = deckToDelete;
@@ -288,7 +288,7 @@ namespace MaGeek.AppBusiness
             try {
                 using (var DB = App.DB.GetNewContext())
                 {
-                    var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
+                    var cardRelation = deck.DeckCards.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
                     if (cardRelation == null)
                     {
                         cardRelation = new DeckCard()
@@ -300,7 +300,7 @@ namespace MaGeek.AppBusiness
                             RelationType = relation
                         };
                         DB.Entry(cardRelation).State = EntityState.Added;
-                        deck.CardRelations.Add(cardRelation);
+                        deck.DeckCards.Add(cardRelation);
                     }
                     else
                     {
@@ -313,7 +313,7 @@ namespace MaGeek.AppBusiness
                 }
                 App.Events.RaiseUpdateDeck();
             }
-            catch (Exception ex) { AppLogger.LogError("AddCardToDeck", ex); }
+            catch (Exception e) { Log.Write(e); }
         }
 
         public static async Task RemoveCardFromDeck(CardModel card, Deck deck, int qty = 1)
@@ -322,12 +322,12 @@ namespace MaGeek.AppBusiness
             try {
                 using (var DB = App.DB.GetNewContext())
                 {
-                    var cardRelation = deck.CardRelations.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
+                    var cardRelation = deck.DeckCards.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
                     if (cardRelation == null) return;
                     cardRelation.Quantity -= qty;
                     if (cardRelation.Quantity <= 0)
                     {
-                        deck.CardRelations.Remove(cardRelation);
+                        deck.DeckCards.Remove(cardRelation);
                         DB.Entry(cardRelation).State = EntityState.Deleted;
                     }
                     else
@@ -342,7 +342,7 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception ex)
             {
-                AppLogger.LogMessage(ex.Message);
+                Log.Write(ex.Message);
             }
         }
 

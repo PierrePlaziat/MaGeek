@@ -1,4 +1,4 @@
-﻿using MaGeek.AppBusiness.Entities;
+﻿using MaGeek.Entities;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;

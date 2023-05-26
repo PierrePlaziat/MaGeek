@@ -1,10 +1,10 @@
-﻿using ScryfallApi.Client.Models;
+﻿using MaGeek.Framework;
+using ScryfallApi.Client.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
@@ -224,7 +224,7 @@ namespace MaGeek.AppBusiness
                     }
                 });
             }
-            catch (Exception e) { AppLogger.LogError("ParseCardList", e); }
+            catch (Exception e) { Log.Write(e); }
             return tuples;
         }
 
@@ -329,7 +329,7 @@ namespace MaGeek.AppBusiness
                 jsonString += JsonSerializer.Serialize(x);
                 File.WriteAllText(SaveStatePath, jsonString);
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
 
         public void LoadState()
@@ -347,7 +347,7 @@ namespace MaGeek.AppBusiness
             catch (Exception e)
             {
                 File.WriteAllText(SaveStatePath, "");
-                AppLogger.LogError("LoadState error, import list was emptied.", e);
+                Log.Write(e);
             }
         }
 

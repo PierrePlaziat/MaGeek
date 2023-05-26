@@ -27,19 +27,22 @@
             <MenuItem Header="Print Proxy"
                       Foreground="Black"
                       Click="OpenWindow_ProxyPrint" />
+            <MenuItem Header="Estimate Collection"
+                      Foreground="Black"
+                      Click="OpenWindow_CollectionEstimation" />
         </MenuItem>
 
         <MenuItem Header="Database">
-            <MenuItem Header="Reimport All Cards"
+            <MenuItem Header="Update All Cards"
                       Foreground="Black"
                       Click="ReimportTraductions" />
             <Separator />
             <MenuItem Header="Backup Collection"
                       Foreground="Black"
-                      Click="BackupDb" />
+                      Click="BackupCollection" />
             <MenuItem Header="Restore Collection"
                       Foreground="Black"
-                      Click="RestoreDb" />
+                      Click="RestoreCollection" />
         </MenuItem>
 
         <MenuItem Header="Language">

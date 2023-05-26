@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 using System.Collections.Generic;
 
@@ -14,17 +14,16 @@ namespace MaGeek
 
         #region Attributes
 
-        public bool seemToBeFirstLaunch { get; private set; } = false;
+        public bool SeemToBeFirstLaunch { get; private set; } = false;
 
-        private static readonly string Path_RoamingFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
-        private static readonly string Path_Settings = Path.Combine(Path_RoamingFolder, "Settings.json");
-
+        private static string Path_RoamingFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
+        private static string Path_Settings { get; } = Path.Combine(Path_RoamingFolder, "Settings.json");
         public string Path_ImageFolder { get; } = Path.Combine(Path_RoamingFolder, "CardsIllus");
-        public string Path_Db { get; } = Path.Combine(Path_RoamingFolder, "MaGeek.sqlite");
+        public string Path_Db { get; } = Path.Combine(Path_RoamingFolder, "MaGeek.db");
         public string Path_MtgJsonDownload { get; } = Path.Combine(Path_RoamingFolder, "mtgjson.sqlite");
         public string Path_ImporterState { get; } = Path.Combine(Path_RoamingFolder, "ImporterState.json");
         public string Path_LayoutSave { get; } = Path.Combine(Path_RoamingFolder, "Layout.xml");
-
+        public string Path_Log { get; } = Path.Combine(Path_RoamingFolder, "Log.txt");
         public Dictionary<Setting, string> Settings { get; private set; } = new Dictionary<Setting, string>();
 
         #endregion
@@ -46,7 +45,7 @@ namespace MaGeek
         {
             if (!File.Exists(Path_Db))
             {
-                seemToBeFirstLaunch = true;
+                SeemToBeFirstLaunch = true;
                 Directory.CreateDirectory(Path_RoamingFolder);
             }
             if (!File.Exists(Path_ImageFolder)) Directory.CreateDirectory(Path_ImageFolder);

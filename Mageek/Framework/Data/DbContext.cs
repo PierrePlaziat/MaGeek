@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
 
 namespace MaGeek.Framework.Data
 {
@@ -31,6 +31,7 @@ namespace MaGeek.Framework.Data
         public DbSet<Deck> Decks { get; set; }
         public DbSet<DeckCard> DeckCards { get; set; }
         public DbSet<Param> Params { get; set; }
+        public DbSet<Set> Sets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,11 +41,14 @@ namespace MaGeek.Framework.Data
             modelBuilder.Entity<CardVariant>()
                         .HasOne(e => e.Card).WithMany(e => e.Variants);
 
+            //modelBuilder.Entity<CardVariant>()
+            //            .HasOne(e => e.Set).WithMany(e => e.SetCards);
+
             modelBuilder.Entity<CardTraduction>()
                         .HasOne(e => e.Card).WithMany(e => e.Traductions);
 
             modelBuilder.Entity<DeckCard>()
-                        .HasOne(s => s.Deck).WithMany(e => e.CardRelations)
+                        .HasOne(s => s.Deck).WithMany(e => e.DeckCards)
                         .HasForeignKey(t => t.DeckId);
 
             modelBuilder.Entity<DeckCard>()

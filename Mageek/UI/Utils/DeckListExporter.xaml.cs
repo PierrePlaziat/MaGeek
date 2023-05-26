@@ -1,4 +1,4 @@
-﻿using MaGeek.AppBusiness.Entities;
+﻿using MaGeek.Entities;
 using System.Windows;
 
 namespace MaGeek.UI.Windows.ImportExport
@@ -22,7 +22,7 @@ namespace MaGeek.UI.Windows.ImportExport
             if (selectedDeck == null) return "No deck selected.";
             string result = "";
             result += selectedDeck.Title +"\n\n";
-            foreach(var v in selectedDeck.CardRelations)
+            foreach(var v in selectedDeck.DeckCards)
             {
                 result += v.Quantity + " " + v.Card.Card.CardId+ "\n";
             }

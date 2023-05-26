@@ -2,12 +2,11 @@
 using ScryfallApi.Client.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace MaGeek.AppBusiness.Entities
+namespace MaGeek.Entities
 {
 
     public class CardVariant
@@ -30,6 +29,7 @@ namespace MaGeek.AppBusiness.Entities
 
         public virtual ICollection<DeckCard> DeckRelations { get; set; }
         public virtual CardModel Card { get; set; }
+        public virtual Set Set { get; set; }
 
         #region CTOR
 

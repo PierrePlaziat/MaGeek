@@ -1,12 +1,11 @@
-﻿using MaGeek.AppBusiness.Entities;
-using System;
+﻿using MaGeek.Entities;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MaGeek.AppBusiness
 {
+
     internal static class MageekStats
     {
 
@@ -63,11 +62,11 @@ namespace MaGeek.AppBusiness
         {
             string retour = "";
             await Task.Run(() => {
-                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains('B')).Any()) retour += "B";
-                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains('W')).Any()) retour += "W";
-                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains('U')).Any()) retour += "U";
-                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains('G')).Any()) retour += "G";
-                if (deck.CardRelations.Where(x => x.Card.Card.ManaCost.Contains('R')).Any()) retour += "R";
+                if (deck.DeckCards.Where(x => x.Card.Card.ManaCost.Contains('B')).Any()) retour += "B";
+                if (deck.DeckCards.Where(x => x.Card.Card.ManaCost.Contains('W')).Any()) retour += "W";
+                if (deck.DeckCards.Where(x => x.Card.Card.ManaCost.Contains('U')).Any()) retour += "U";
+                if (deck.DeckCards.Where(x => x.Card.Card.ManaCost.Contains('G')).Any()) retour += "G";
+                if (deck.DeckCards.Where(x => x.Card.Card.ManaCost.Contains('R')).Any()) retour += "R";
             });
             return retour;
         }
@@ -76,7 +75,7 @@ namespace MaGeek.AppBusiness
         {
             float total = 0;
             await Task.Run(() => {
-                foreach (var v in selectedDeck.CardRelations)
+                foreach (var v in selectedDeck.DeckCards)
                 {
                     float price = float.Parse(v.Card.ValueEur);
                     total += v.Quantity * price;
@@ -90,55 +89,55 @@ namespace MaGeek.AppBusiness
         public static async Task<int> DevotionB(Deck deck)
         {
             if (deck == null) return 0;
-            if (deck.CardRelations == null) return 0;
+            if (deck.DeckCards == null) return 0;
             int devotion = 0;
             await Task.Run(() =>
             {
-                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionB;
+                foreach (var c in deck.DeckCards) devotion += c.Card.Card.DevotionB;
             });
             return devotion;
         }
         public static async Task<int> DevotionW(Deck deck)
         {
             if (deck == null) return 0;
-            if (deck.CardRelations == null) return 0;
+            if (deck.DeckCards == null) return 0;
             int devotion = 0;
             await Task.Run(() =>
             {
-                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionW;
+                foreach (var c in deck.DeckCards) devotion += c.Card.Card.DevotionW;
             });
             return devotion;
         }
         public static async Task<int> DevotionU(Deck deck)
         {
             if (deck == null) return 0;
-            if (deck.CardRelations == null) return 0;
+            if (deck.DeckCards == null) return 0;
             int devotion = 0;
             await Task.Run(() =>
             {
-                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionU;
+                foreach (var c in deck.DeckCards) devotion += c.Card.Card.DevotionU;
             });
             return devotion;
         }
         public static async Task<int> DevotionG(Deck deck)
         {
             if (deck == null) return 0;
-            if (deck.CardRelations == null) return 0;
+            if (deck.DeckCards == null) return 0;
             int devotion = 0;
             await Task.Run(() =>
             {
-                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionG;
+                foreach (var c in deck.DeckCards) devotion += c.Card.Card.DevotionG;
             });
             return devotion;
         }
         public static async Task<int> DevotionR(Deck deck)
         {
             if (deck == null) return 0;
-            if (deck.CardRelations == null) return 0;
+            if (deck.DeckCards == null) return 0;
             int devotion = 0;
             await Task.Run(() =>
             {
-                foreach (var c in deck.CardRelations) devotion += c.Card.Card.DevotionR;
+                foreach (var c in deck.DeckCards) devotion += c.Card.Card.DevotionR;
             });
             return devotion;
         }
@@ -151,9 +150,9 @@ namespace MaGeek.AppBusiness
         {
             int count = 0;
             await Task.Run(() => {
-                if (deck != null && deck.CardRelations != null)
+                if (deck != null && deck.DeckCards != null)
                 {
-                    foreach (var card in deck.CardRelations.Where(x => x.RelationType < 2))
+                    foreach (var card in deck.DeckCards.Where(x => x.RelationType < 2))
                     {
                         count += card.Quantity;
                     }
@@ -166,9 +165,9 @@ namespace MaGeek.AppBusiness
         {
             int count = 0;
             await Task.Run(() => {
-                if (deck != null && deck.CardRelations != null)
+                if (deck != null && deck.DeckCards != null)
                 {
-                    foreach (var v in deck.CardRelations.Where(x => x.Card != null && x.Card.Card.Type.ToLower().Contains("creature")))
+                    foreach (var v in deck.DeckCards.Where(x => x.Card != null && x.Card.Card.Type.ToLower().Contains("creature")))
                     {
                         count += v.Quantity;
                     };
@@ -181,9 +180,9 @@ namespace MaGeek.AppBusiness
         {
             int count = 0;
             await Task.Run(() => {
-                if (deck != null && deck.CardRelations != null)
+                if (deck != null && deck.DeckCards != null)
                 {
-                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("instant")))
+                    foreach (var v in deck.DeckCards.Where(x => x.Card.Card.Type.ToLower().Contains("instant")))
                     {
                         count += v.Quantity;
                     };
@@ -196,9 +195,9 @@ namespace MaGeek.AppBusiness
         {
             int count = 0;
             await Task.Run(() => {
-                if (deck != null && deck.CardRelations != null)
+                if (deck != null && deck.DeckCards != null)
                 {
-                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("sorcery")))
+                    foreach (var v in deck.DeckCards.Where(x => x.Card.Card.Type.ToLower().Contains("sorcery")))
                     {
                         count += v.Quantity;
                     };
@@ -211,9 +210,9 @@ namespace MaGeek.AppBusiness
         {
             int count = 0;
             await Task.Run(() => {
-                if (deck != null && deck.CardRelations != null)
+                if (deck != null && deck.DeckCards != null)
                 {
-                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("enchantment")))
+                    foreach (var v in deck.DeckCards.Where(x => x.Card.Card.Type.ToLower().Contains("enchantment")))
                     {
                         count += v.Quantity;
                     };
@@ -226,9 +225,9 @@ namespace MaGeek.AppBusiness
         {
             int count = 0;
             await Task.Run(() => {
-                if (deck != null && deck.CardRelations != null)
+                if (deck != null && deck.DeckCards != null)
                 {
-                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("artifact")))
+                    foreach (var v in deck.DeckCards.Where(x => x.Card.Card.Type.ToLower().Contains("artifact")))
                     {
                         count += v.Quantity;
                     };
@@ -241,9 +240,9 @@ namespace MaGeek.AppBusiness
         {
             int count = 0;
             await Task.Run(() => {
-                if (deck != null && deck.CardRelations != null)
+                if (deck != null && deck.DeckCards != null)
                 {
-                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("basic land")))
+                    foreach (var v in deck.DeckCards.Where(x => x.Card.Card.Type.ToLower().Contains("basic land")))
                     {
                         count += v.Quantity;
                     };
@@ -256,9 +255,9 @@ namespace MaGeek.AppBusiness
         {
             int count = 0;
             await Task.Run(() => {
-                if (deck != null && deck.CardRelations != null)
+                if (deck != null && deck.DeckCards != null)
                 {
-                    foreach (var v in deck.CardRelations.Where(x => x.Card.Card.Type.ToLower().Contains("land") && !x.Card.Card.Type.ToLower().Contains("basic")))
+                    foreach (var v in deck.DeckCards.Where(x => x.Card.Card.Type.ToLower().Contains("land") && !x.Card.Card.Type.ToLower().Contains("basic")))
                     {
                         count += v.Quantity;
                     };
@@ -272,9 +271,9 @@ namespace MaGeek.AppBusiness
 
             int count = 0;
             await Task.Run(() => {
-                if (deck != null && deck.CardRelations != null)
+                if (deck != null && deck.DeckCards != null)
                 {
-                    foreach (var v in deck.CardRelations.Where(x =>
+                    foreach (var v in deck.DeckCards.Where(x =>
                         !x.Card.Card.Type.ToLower().Contains("creature") &&
                         !x.Card.Card.Type.ToLower().Contains("instant") &&
                         !x.Card.Card.Type.ToLower().Contains("sorcery") &&
@@ -297,18 +296,18 @@ namespace MaGeek.AppBusiness
         public static async Task<IEnumerable<DeckCard>> GetCommanders(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(x => x.RelationType == 1);
+                rels = deck.DeckCards.Where(x => x.RelationType == 1);
             });
             return rels;
         }
         public static async Task<IEnumerable<DeckCard>> GetCreatures(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(
+                rels = deck.DeckCards.Where(
                 x => x.RelationType == 0
                 && x.Card != null && x.Card.Card.Type.ToLower().Contains("creature"))
                 .OrderBy(x => x.Card.Card.Cmc)
@@ -319,9 +318,9 @@ namespace MaGeek.AppBusiness
         public static async Task<IEnumerable<DeckCard>> GetInstants(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(
+                rels = deck.DeckCards.Where(
                 x => x.RelationType == 0
                 && x.Card != null && x.Card.Card.Type.ToLower().Contains("instant"))
                 .OrderBy(x => x.Card.Card.Cmc)
@@ -332,9 +331,9 @@ namespace MaGeek.AppBusiness
         public static async Task<IEnumerable<DeckCard>> GetSorceries(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(
+                rels = deck.DeckCards.Where(
                 x => x.RelationType == 0
                 && x.Card != null && x.Card.Card.Type.ToLower().Contains("sorcery"))
                 .OrderBy(x => x.Card.Card.Cmc)
@@ -345,9 +344,9 @@ namespace MaGeek.AppBusiness
         public static async Task<IEnumerable<DeckCard>> GetEnchantments(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(
+                rels = deck.DeckCards.Where(
                 x => x.RelationType == 0
                 && x.Card != null && x.Card.Card.Type.ToLower().Contains("enchantment"))
                 .OrderBy(x => x.Card.Card.Cmc)
@@ -358,9 +357,9 @@ namespace MaGeek.AppBusiness
         public static async Task<IEnumerable<DeckCard>> GetCurrentArtifacts(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(
+                rels = deck.DeckCards.Where(
                 x => x.RelationType == 0
                 && x.Card != null
                 && x.Card.Card.Type.ToLower().Contains("artifact"))
@@ -372,9 +371,9 @@ namespace MaGeek.AppBusiness
         public static async Task<IEnumerable<DeckCard>> GetCurrentNonBasicLands(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(
+                rels = deck.DeckCards.Where(
                 x => x.RelationType == 0
                 && x.Card != null
                 && x.Card.Card.Type.ToLower().Contains("land")
@@ -387,9 +386,9 @@ namespace MaGeek.AppBusiness
         public static async Task<IEnumerable<DeckCard>> GetCurrentBasicLands(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(
+                rels = deck.DeckCards.Where(
                 x => x.RelationType == 0
                 && x.Card != null
                 && x.Card.Card.Type.ToLower().Contains("land")
@@ -402,9 +401,9 @@ namespace MaGeek.AppBusiness
         public static async Task<IEnumerable<DeckCard>> GetCurrentOthers(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(
+                rels = deck.DeckCards.Where(
                 x => x.RelationType == 0
                 && x.Card != null
                 && !x.Card.Card.Type.ToLower().Contains("artifact")
@@ -421,9 +420,9 @@ namespace MaGeek.AppBusiness
         public static async Task<IEnumerable<DeckCard>> GetCurrentSide(Deck deck)
         {
             IEnumerable<DeckCard> rels = new List<DeckCard>();
-            if (deck == null || deck.CardRelations == null) return rels;
+            if (deck == null || deck.DeckCards == null) return rels;
             await Task.Run(() => {
-                rels = deck.CardRelations.Where(
+                rels = deck.DeckCards.Where(
                 x => x.RelationType == 2
                 && x.Card != null)
                 .OrderBy(x => x.Card.Card.Cmc)
@@ -440,17 +439,17 @@ namespace MaGeek.AppBusiness
         {
             var manaCurve = new int[11];
             await Task.Run(() => {
-                manaCurve[0] = deck.CardRelations.Where(x => !x.Card.Card.Type.ToLower().Contains("land") && x.Card.Card.Cmc == 0).Count();
-                manaCurve[1] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 1).Count();
-                manaCurve[2] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 2).Count();
-                manaCurve[3] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 3).Count();
-                manaCurve[4] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 4).Count();
-                manaCurve[5] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 5).Count();
-                manaCurve[6] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 6).Count();
-                manaCurve[7] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 7).Count();
-                manaCurve[8] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 8).Count();
-                manaCurve[9] = deck.CardRelations.Where(x => x.Card.Card.Cmc == 9).Count();
-                manaCurve[10] = deck.CardRelations.Where(x => x.Card.Card.Cmc >= 10).Count();
+                manaCurve[0] = deck.DeckCards.Where(x => !x.Card.Card.Type.ToLower().Contains("land") && x.Card.Card.Cmc == 0).Count();
+                manaCurve[1] = deck.DeckCards.Where(x => x.Card.Card.Cmc == 1).Count();
+                manaCurve[2] = deck.DeckCards.Where(x => x.Card.Card.Cmc == 2).Count();
+                manaCurve[3] = deck.DeckCards.Where(x => x.Card.Card.Cmc == 3).Count();
+                manaCurve[4] = deck.DeckCards.Where(x => x.Card.Card.Cmc == 4).Count();
+                manaCurve[5] = deck.DeckCards.Where(x => x.Card.Card.Cmc == 5).Count();
+                manaCurve[6] = deck.DeckCards.Where(x => x.Card.Card.Cmc == 6).Count();
+                manaCurve[7] = deck.DeckCards.Where(x => x.Card.Card.Cmc == 7).Count();
+                manaCurve[8] = deck.DeckCards.Where(x => x.Card.Card.Cmc == 8).Count();
+                manaCurve[9] = deck.DeckCards.Where(x => x.Card.Card.Cmc == 9).Count();
+                manaCurve[10] = deck.DeckCards.Where(x => x.Card.Card.Cmc >= 10).Count();
             });
             return manaCurve;
         }
@@ -458,11 +457,11 @@ namespace MaGeek.AppBusiness
         public static async Task<int> OwnedRatio(Deck currentDeck)
         {
             if (currentDeck == null) return 0;
-            if (currentDeck.CardRelations == null) return 0;
+            if (currentDeck.DeckCards == null) return 0;
             int total = 0;
             int miss = 0;
             await Task.Run(() => {
-                foreach (var v in currentDeck.CardRelations)
+                foreach (var v in currentDeck.DeckCards)
                 {
                     total += v.Quantity;
 
@@ -479,10 +478,10 @@ namespace MaGeek.AppBusiness
         public static async Task<string> ListMissingCards(Deck currentDeck)
         {
             if (currentDeck == null) return null;
-            if (currentDeck.CardRelations == null) return null;
+            if (currentDeck.DeckCards == null) return null;
             string missList = "";
             await Task.Run(() => {
-                foreach (var v in currentDeck.CardRelations)
+                foreach (var v in currentDeck.DeckCards)
                 {
                     int got = v.Card.Got;
                     int need = v.Quantity;
@@ -503,7 +502,7 @@ namespace MaGeek.AppBusiness
             if (deck.CardCount < 60) return "Min 60 cards needed";
             if (!await RespectsMaxCardOccurence(deck, 4)) return "No more than 4 times the same card needed";
             using var DB = App.DB.GetNewContext();
-            foreach (var v in deck.CardRelations)
+            foreach (var v in deck.DeckCards)
             {
                 if (!v.Card.Card.Type.Contains("Basic Land"))
                     if (DB.CardLegalities.Where(x => x.CardId == v.Card.Id && x.Format == "legacy" && x.IsLegal == "legal").Any())
@@ -520,7 +519,7 @@ namespace MaGeek.AppBusiness
             if (deck.CardCount != 100) return "Exctly 100 cards needed";
             if (!await RespectsMaxCardOccurence(deck, 1)) return "No more than 1 times the same card needed.";
             using var DB = App.DB.GetNewContext();
-            foreach (var v in deck.CardRelations)
+            foreach (var v in deck.DeckCards)
             {
                 if (!v.Card.Card.Type.Contains("Basic Land"))
                     if (DB.CardLegalities.Where(x => x.CardId == v.Card.Id && x.Format == "commander" && x.IsLegal == "legal").Any())
@@ -536,7 +535,7 @@ namespace MaGeek.AppBusiness
             if (deck == null) return false;
             bool ok = true;
             await Task.Run(() => {
-                foreach (var v in deck.CardRelations.Where(x => !x.Card.Card.Type.ToString().ToLower().Contains("land")))
+                foreach (var v in deck.DeckCards.Where(x => !x.Card.Card.Type.ToString().ToLower().Contains("land")))
                 {
                     if (v.Quantity > limit) ok = false;
                 }

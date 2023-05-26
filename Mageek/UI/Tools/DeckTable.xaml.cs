@@ -1,5 +1,5 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,8 +33,8 @@ namespace MaGeek.UI
         public List<DeckCard> CardRelations
         {
             get {
-                if (CurrentDeck == null || CurrentDeck.CardRelations == null) return new List<DeckCard>();
-                else return CurrentDeck.CardRelations.ToList(); 
+                if (CurrentDeck == null || CurrentDeck.DeckCards == null) return new List<DeckCard>();
+                else return CurrentDeck.DeckCards.ToList(); 
             }
         }
 
@@ -121,9 +121,9 @@ namespace MaGeek.UI
 
         private List<DeckCard> GetCardRelations_Lands()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations_Lands = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.Card != null && x.Card.Card.Type.ToLower().Contains("land")
             ))
             {
@@ -136,9 +136,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Lands_B()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations_Lands = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Swamp"
             ))
@@ -152,9 +152,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Lands_W()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations_Lands = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Plains"
             ))
@@ -168,9 +168,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Lands_U()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations_Lands = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Island"
             ))
@@ -184,9 +184,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Lands_G()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations_Lands = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Forest"
             ))
@@ -200,9 +200,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Lands_R()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations_Lands = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId == "Mountain"
             ))
@@ -216,9 +216,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Lands_S()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations_Lands = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.CardId != "Swamp"
                 && x.Card.Card.CardId != "Plains"
@@ -236,9 +236,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Cmc0()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.Cmc == 0
@@ -253,9 +253,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Cmc1()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.Cmc == 1
@@ -270,9 +270,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Cmc2()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.Cmc == 2
@@ -287,9 +287,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Cmc3()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.Cmc == 3
@@ -304,9 +304,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Cmc4()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.Cmc == 4
@@ -321,9 +321,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Cmc5()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.Cmc == 5
@@ -338,9 +338,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Cmc6()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.Cmc == 6
@@ -355,9 +355,9 @@ namespace MaGeek.UI
         }
         private List<DeckCard> GetCardRelations_Cmc7()
         {
-            if (CurrentDeck == null || CurrentDeck.CardRelations == null) return null;
+            if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
             List<DeckCard> cardRelations = new List<DeckCard>();
-            foreach (var card in CurrentDeck.CardRelations.Where(x =>
+            foreach (var card in CurrentDeck.DeckCards.Where(x =>
                     x.RelationType == 0
                 && !x.Card.Card.Type.ToLower().Contains("land")
                 && x.Card.Card.Cmc >= 7

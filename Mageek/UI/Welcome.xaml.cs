@@ -80,7 +80,7 @@ namespace MaGeek
         {
             DataContext = this;
             InitializeComponent();
-            if (App.Config.seemToBeFirstLaunch) Activate_FirstLaunch().ConfigureAwait(false);
+            if (App.Config.SeemToBeFirstLaunch) Activate_FirstLaunch().ConfigureAwait(false);
             else Activate_NormalLaunch();
         }
 

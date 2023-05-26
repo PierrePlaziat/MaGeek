@@ -1,5 +1,5 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
 using MaGeek.UI.Windows.ImportExport;
 using System;
 using System.Collections.Generic;
@@ -241,11 +241,11 @@ namespace MaGeek.UI
         private CardVariant DoDraw()
         {
             if (CurrentDeck == null) return null;
-            if (currentDeck.CardRelations.Count <= alreadyDrawed.Count) return null;
+            if (currentDeck.DeckCards.Count <= alreadyDrawed.Count) return null;
             int rgn;
-            do { rgn = random.Next(CurrentDeck.CardRelations.Count); }
+            do { rgn = random.Next(CurrentDeck.DeckCards.Count); }
             while (alreadyDrawed.Contains(rgn));
-            return currentDeck.CardRelations[rgn].Card;
+            return currentDeck.DeckCards[rgn].Card;
         }
 
         #region UI Link

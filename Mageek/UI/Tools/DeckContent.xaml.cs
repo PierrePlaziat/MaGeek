@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using MaGeek.UI.Windows.Importers;
 using System.Threading.Tasks;
 using MaGeek.AppBusiness;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
 
 namespace MaGeek.UI
 {

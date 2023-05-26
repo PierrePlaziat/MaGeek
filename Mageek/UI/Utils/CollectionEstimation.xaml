@@ -1,0 +1,74 @@
+﻿<ui:TemplatedWindow xmlns:ui="clr-namespace:MaGeek.UI"
+                    x:Class="MaGeek.UI.CollectionEstimation"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    mc:Ignorable="d"
+                    d:DesignHeight="450"
+                    d:DesignWidth="800"
+                    Background="#333">
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"
+                    Background="Black">
+
+            <Label>Owned cards</Label>
+            <DockPanel HorizontalAlignment="Center">
+                <Label>Total :</Label>
+                <Label Content="{Binding TotalGot}"/>
+                <Label>|</Label>
+                <Label>Differents :</Label>
+                <Label Content="{Binding TotalDiffGot}" />
+                <Label>/</Label>
+                <Label Content="{Binding TotalDiffExist}" />
+            </DockPanel>
+
+        </StackPanel>
+
+        <DockPanel Grid.Row="1">
+            
+            <Label>Auto-Estimation :</Label>
+            <Label Content="{Binding AutoEstimation}" />
+            <Label>|</Label>
+            <Label>Not estimated :</Label>
+            <Label Content="{Binding MissingCount}" />
+            <Label></Label>
+
+            <DockPanel HorizontalAlignment="Right">
+                <Button Click="AddManualEstimations">Add manual estimations ></Button>
+                <Label Content="{Binding FinalEstimation}" />
+                <Label HorizontalAlignment="Right"></Label>
+            </DockPanel>
+            
+        </DockPanel>
+
+        <ScrollViewer Grid.Row="2"
+                      VerticalAlignment="Stretch">
+
+            <ListView ItemsSource="{Binding MissingList}" VerticalAlignment="Stretch">
+            </ListView>
+
+        </ScrollViewer>
+
+        <Grid Visibility="{Binding IsLoading}"
+              Grid.RowSpan="3"
+              Background="Black"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
+
+            <Label HorizontalAlignment="Center"
+                   VerticalAlignment="Center">Loading</Label>
+
+        </Grid>
+
+    </Grid>
+
+</ui:TemplatedWindow>

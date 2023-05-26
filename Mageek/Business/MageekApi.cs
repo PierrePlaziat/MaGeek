@@ -1,7 +1,6 @@
 ﻿using ScryfallApi.Client.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
@@ -10,8 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Net.Http;
 using System.Windows.Media.Imaging;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
 using MaGeek.Framework.Data;
+using MaGeek.Framework;
 
 namespace MaGeek.AppBusiness
 {
@@ -36,7 +36,7 @@ namespace MaGeek.AppBusiness
                 using var DB = App.DB.GetNewContext();
                 legalities = await DB.CardLegalities.Where(x => x.CardId == card.CardId).ToListAsync();
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
             return legalities;
         }
         public static async Task<List<CardRule>> GetRules(CardModel card)
@@ -49,7 +49,7 @@ namespace MaGeek.AppBusiness
                 using var DB = App.DB.GetNewContext();
                 rules = await DB.CardRules.Where(x => x.CardId == card.CardId).ToListAsync();
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
             return rules;
         }
         public static async Task<List<CardRelation>> GetRelatedCards(CardModel card)
@@ -63,7 +63,7 @@ namespace MaGeek.AppBusiness
                 relatedCards = await DB.CardRelations.Where(x => x.Card1Id == card.CardId)
                     .ToListAsync();
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
             return relatedCards;
         }
 
@@ -80,7 +80,7 @@ namespace MaGeek.AppBusiness
                 await SaveLegality(card, scryfallCard.Legalities);
                 await SaveRulings(card, await RetrieveRulings(card,scryfallCard.RulingsUri));
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
         private static async Task<dynamic> RetrieveRulings(CardModel card,Uri rulingsUri)
         {
@@ -93,7 +93,7 @@ namespace MaGeek.AppBusiness
                 ResultList<CardRule> rules = JsonSerializer.Deserialize<ResultList<CardRule>>(json_data);
                 return rules;
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
             return null;
         }
         private static async Task RetrieveRelatedCards(CardModel card)
@@ -152,7 +152,7 @@ namespace MaGeek.AppBusiness
                                 }
                                 else
                                 {
-                                    AppLogger.LogMessage("Couldnt retrieve related card");
+                                    Log.Write("Couldnt retrieve related card");
                                 }
                             }
                         }
@@ -161,7 +161,7 @@ namespace MaGeek.AppBusiness
                     App.Events.RaiseUpdateCardCollec();
                 }
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
         public static async Task RetrieveCardValues(CardVariant card)
         {
@@ -174,7 +174,7 @@ namespace MaGeek.AppBusiness
                 Card scryfallCard = JsonSerializer.Deserialize<Card>(json_data);
                 await SavePrice(card, scryfallCard.Prices, scryfallCard.EdhrecRank);
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
 
         private static bool IsLegalitiesOutdated(CardModel card)
@@ -226,7 +226,7 @@ namespace MaGeek.AppBusiness
                 DB.Entry(cardVariant).State = EntityState.Modified;
                 await DB.SaveChangesAsync();
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
         private static async Task SaveLegality(CardModel card, Dictionary<string, string> legalityDico)
         {
@@ -250,7 +250,7 @@ namespace MaGeek.AppBusiness
                     await DB.SaveChangesAsync();
                 }
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
         private static async Task SaveRulings(CardModel card, ResultList<CardRule> rulings)
         {
@@ -268,7 +268,7 @@ namespace MaGeek.AppBusiness
                     await DB.SaveChangesAsync();
                 }
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
         private static async Task SaveRelatedCards(CardModel card, List<CardRelation> rels)
         {
@@ -279,7 +279,7 @@ namespace MaGeek.AppBusiness
                 DB.Entry(card).State = EntityState.Unchanged;
                 await DB.SaveChangesAsync();
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
 
         private static async Task DestroyLegalitiesRecords(CardModel localCard)
@@ -294,7 +294,7 @@ namespace MaGeek.AppBusiness
                     await DB.SaveChangesAsync();
                 }
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
         private static async Task DestroyRelatedsRecords(CardModel localCard)
         {
@@ -306,7 +306,7 @@ namespace MaGeek.AppBusiness
                 DB.CardRelations.RemoveRange(existingValues);
                 await DB.SaveChangesAsync();
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(        e); }
         }
         private static async Task DestroyRulings(CardModel localCard)
         {
@@ -318,7 +318,7 @@ namespace MaGeek.AppBusiness
                 DB.CardRules.RemoveRange(existingValues);
                 await DB.SaveChangesAsync();
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(        e); }
         }
 
         public static async Task<BitmapImage> RetrieveImage(CardVariant magicCardVariant, bool back = false, int nbTry = 0)
@@ -365,7 +365,7 @@ namespace MaGeek.AppBusiness
 
             catch (Exception e)
             {
-                AppLogger.LogError("RetrieveImage delayed", e);
+                Log.Write(e);
                 await Task.Run(() => {
                     Thread.Sleep(rnd.Next(10) * 50);
                 });
@@ -401,7 +401,7 @@ namespace MaGeek.AppBusiness
                     }
                 }
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
 
 
         }

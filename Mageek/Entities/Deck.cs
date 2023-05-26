@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace MaGeek.AppBusiness.Entities
+namespace MaGeek.Entities
 {
     public class Deck
     {
@@ -15,7 +15,7 @@ namespace MaGeek.AppBusiness.Entities
         public string DeckColors { get; set; } = "";
         public int CardCount { get; set; }
 
-        public virtual ObservableCollection<DeckCard> CardRelations { get; set; }
+        public virtual ObservableCollection<DeckCard> DeckCards { get; set; }
 
         #endregion
 
@@ -26,7 +26,7 @@ namespace MaGeek.AppBusiness.Entities
         public Deck(string deckTitle)
         {
             Title = deckTitle;
-            CardRelations = new ObservableCollection<DeckCard>();
+            DeckCards = new ObservableCollection<DeckCard>();
         }
 
         #endregion

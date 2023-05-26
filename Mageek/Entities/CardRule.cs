@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace MaGeek.AppBusiness.Entities
+namespace MaGeek.Entities
 {
     public class CardRule : BaseItem
     {

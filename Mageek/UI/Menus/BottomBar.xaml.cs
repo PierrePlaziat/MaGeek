@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Timers;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
+using MaGeek.Framework;
 
 namespace MaGeek.UI.Menus
 {
@@ -30,7 +31,7 @@ namespace MaGeek.UI.Menus
         {
             get {
                 string s = "";
-                s += AppLogger.OutputMessages.LastOrDefault();
+                s += Log.Messages.LastOrDefault();
                 return s;
             }
         }
@@ -39,7 +40,7 @@ namespace MaGeek.UI.Menus
         {
             get {
                 string s = "";
-                foreach (var ss in AppLogger.OutputMessages) s += "> " + ss + "\n";
+                foreach (var ss in Log.Messages) s += "> " + ss + "\n";
                 s = s.Remove(s.Length - 1);
                 return s;
             }

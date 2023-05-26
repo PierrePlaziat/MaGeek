@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using System.Threading.Tasks;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
 
 namespace MaGeek.UI.Windows.ImportExport
 {
@@ -118,7 +118,7 @@ namespace MaGeek.UI.Windows.ImportExport
         private void DetermineListOfCardsToPrint()
         {
             ListOfCardsToPrint= new List<CardVariant>();
-            foreach(var v in selectedDeck.CardRelations)
+            foreach(var v in selectedDeck.DeckCards)
             {
                 for(int i=0;i<v.Quantity;i++) ListOfCardsToPrint.Add(v.Card);
             }

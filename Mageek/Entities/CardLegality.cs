@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
 
-namespace MaGeek.AppBusiness.Entities
+namespace MaGeek.Entities
 {
 
     public class CardLegality

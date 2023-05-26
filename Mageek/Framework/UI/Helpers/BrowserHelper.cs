@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using MaGeek.Framework;
 
 namespace MaGeek.AppFramework.UI.Utils
 {
@@ -16,7 +17,7 @@ namespace MaGeek.AppFramework.UI.Utils
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if (Directory.Exists(dlg.SelectedPath)) return dlg.SelectedPath;
-                else AppLogger.ShowMessage("Couldnt find this path:\n " + dlg.SelectedPath);
+                else Log.InformUser("Couldnt find this path:\n " + dlg.SelectedPath);
             }
             return null;
         }
@@ -32,7 +33,7 @@ namespace MaGeek.AppFramework.UI.Utils
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if(File.Exists(dlg.FileName)) return dlg.FileName;
-                else AppLogger.ShowMessage("Couldnt find this file:\n " + dlg.FileName);
+                else Log.InformUser("Couldnt find this file:\n " + dlg.FileName);
             }
             return null;
         }

@@ -1,4 +1,5 @@
-﻿using MaGeek.AppBusiness.Entities;
+﻿using MaGeek.Entities;
+using MaGeek.Framework;
 using MaGeek.Framework.Extensions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MaGeek.AppBusiness
@@ -59,16 +59,16 @@ namespace MaGeek.AppBusiness
                 using var fs = new FileStream(App.Config.Path_MtgJsonDownload, FileMode.Create);
                 await s.CopyToAsync(fs);
             }
-            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { Log.Write(e); }
         }
 
         public static async Task Bulk_CardTraductions()
         {
-            await Task.Run(async () => {
+            await Task.Run((Func<Task>)(async () => {
                 try
                 {
                     List<CardTraduction> trads = new();
-                    using (var connection = new SqliteConnection("Data Source="+ App.Config.Path_MtgJsonDownload))
+                    using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
                     {
                         await connection.OpenAsync();
                         var command = connection.CreateCommand();
@@ -113,8 +113,8 @@ namespace MaGeek.AppBusiness
                         transaction.Commit();
                     }
                 }
-                catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
-            });
+                catch (Exception e) { Log.Write(e); }
+            }));
         }
 
         #endregion
@@ -123,18 +123,18 @@ namespace MaGeek.AppBusiness
 
         public static async Task ReBulk_CardTraductions()
         {
-            AppLogger.LogMessage("Reimporting traductions");
+            Log.Write("Reimporting traductions");
             App.Events.RaisePreventUIAction(true, "Reimporting traductions");
             using (var DB = App.DB.GetNewContext())
             {
                 await DB.CardTraductions.ExecuteDeleteAsync();
             }
-            AppLogger.LogMessage("> Deleted Old Data");
+            Log.Write("> Deleted Old Data");
             DateTime start = DateTime.Now;
             await Bulk_CardTraductions();
             DateTime end = DateTime.Now;
             App.Events.RaisePreventUIAction(false, "");
-            AppLogger.LogMessage("Traductions reimporter, took " + (end-start).TotalMinutes + " min.");
+            Log.Write("Traductions reimporter, took " + (end-start).TotalMinutes + " min.");
         }
 
         public static async Task Bulk_Cards(bool includeFun)
@@ -147,7 +147,7 @@ namespace MaGeek.AppBusiness
         }
         private static async Task Bulk_CardModels(bool includeFun)
         {
-            await Task.Run(async () => {
+            await Task.Run((Func<Task>)(async () => {
                 try
                 {
                     // Exceptions gestion
@@ -210,9 +210,9 @@ namespace MaGeek.AppBusiness
 
                                 // Exceptionnal cards
                                 // Two different cards with same name...
-                                if (name== "Unquenchable Fury") name += " [" + type + "]";
+                                if (name == "Unquenchable Fury") name += " [" + type + "]";
                                 // One card dispatched on two   
-                                if(name== "B.F.M. (Big Furry Monster)") name += manacost == "" ? " [Left]" : " [Right]";
+                                if(name == "B.F.M. (Big Furry Monster)") name += manacost == "" ? " [Left]" : " [Right]";
                                 
                                 // Same Card but different effects(fun)
                                 if (name == "Scavenger Hunt")
@@ -273,12 +273,12 @@ namespace MaGeek.AppBusiness
                         transaction.Commit();
                     }
                 }
-                catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
-            });
+                catch (Exception e) { Log.Write(e); }
+            }));
         }
         private static async Task Bulk_CardVariants(bool includeFun)
         {
-            await Task.Run(async () => {
+            await Task.Run((Func<Task>)(async () => {
                 DateTime startTime = DateTime.Now;
                 try
                 {
@@ -319,7 +319,7 @@ namespace MaGeek.AppBusiness
                                     if (name == "Unquenchable Fury") name += " [" + reader.GetString(7) + "]";
 
                                     CardModel CardRef = await DB.CardModels.Where(x => x.CardId == name).FirstOrDefaultAsync();
-                                    if (!preventAdd) cards.Add(new CardVariant(Id,Rarity,Artist,Lang,Set, CardRef));
+                                    if (!preventAdd) cards.Add(new CardVariant(Id, Rarity, Artist, Lang, Set, CardRef));
                                 }
                             }
                         }
@@ -331,8 +331,8 @@ namespace MaGeek.AppBusiness
                     DateTime endTime = DateTime.Now;
                     //MessageBoxHelper.ShowMsg("DONE!!! Took " + (endTime - startTime).TotalMinutes + " mins");
                 }
-                catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
-            });
+                catch (Exception e) { Log.Write(e); }
+            }));
         }
 
         #endregion

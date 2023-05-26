@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Input;
 
-namespace MaGeek.AppBusiness.Entities
+namespace MaGeek.Entities
 {
 
     public class DeckCard

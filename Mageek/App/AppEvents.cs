@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using System;
 using MaGeek.AppBusiness;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
 
 namespace MaGeek
 {
@@ -48,6 +48,12 @@ namespace MaGeek
         public event UpdateDeckListHandler UpdateDeckListEvent;
 
     }
+
+    /// <summary>
+    /// TODO Here is currently the only use of the Command design pattern
+    /// Study if this should be used more wildly
+    /// or maybe find a cleaner war in current project conventions
+    /// </summary>
     public class ChangeCardRelationVariantCommand : ICommand
     {
 

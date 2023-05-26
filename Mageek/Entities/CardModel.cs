@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace MaGeek.AppBusiness.Entities
+namespace MaGeek.Entities
 {
     public class CardModel
     {

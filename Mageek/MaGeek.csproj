@@ -50,4 +50,10 @@
     <SplashScreen Include="Resources\Images\splash.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="UI\Utils\CollectionEstimation.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

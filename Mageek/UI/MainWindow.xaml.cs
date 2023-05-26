@@ -1,5 +1,6 @@
 ﻿using AvalonDock.Layout;
 using AvalonDock.Layout.Serialization;
+using MaGeek.Framework;
 using MaGeek.UI;
 using System.ComponentModel;
 using System.IO;
@@ -33,7 +34,7 @@ namespace MaGeek
             App.Events.PreventUIActionEvent += STATE_PreventUIActionEvent;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
             InitializeComponent();
-            AppLogger.LogMessage("Welcome");
+            Log.Write("Welcome");
         }
 
         

@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
 using MaGeek.AppBusiness;
 using System;
-using MaGeek.AppBusiness.Entities;
+using MaGeek.Entities;
 using MaGeek.Framework.Extensions;
 
 namespace MaGeek.UI
@@ -18,7 +18,13 @@ namespace MaGeek.UI
         #region Attributes
 
         public List<CardModel> CardList { get; private set; }
-        public List<CardTag> AvailableTags { get { return MageekStats.GetTagsDistinct().Result; } }
+
+        private List<CardTag> availableTags; 
+        public List<CardTag> AvailableTags
+        {
+            get { return availableTags; }
+            private set { availableTags = value; OnPropertyChanged(); }
+        }
 
         #region Filters
 
@@ -165,7 +171,8 @@ namespace MaGeek.UI
 
         private async Task<List<CardModel>> AdvancedSearch()
         {
-            List<CardModel> retour = new();
+            AvailableTags = await MageekStats.GetTagsDistinct();
+            List <CardModel> retour = new();
             using (var DB = App.DB.GetNewContext())
             {
                 if (OnlyGot)
