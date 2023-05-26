@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Xml;
-using MaGeek.AppData.Entities;
+using MaGeek.AppBusiness.Entities;
 
 namespace MaGeek.UI
 {

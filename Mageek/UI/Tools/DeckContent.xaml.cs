@@ -3,9 +3,9 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using MaGeek.UI.Windows.Importers;
-using MaGeek.AppData.Entities;
 using System.Threading.Tasks;
 using MaGeek.AppBusiness;
+using MaGeek.AppBusiness.Entities;
 
 namespace MaGeek.UI
 {

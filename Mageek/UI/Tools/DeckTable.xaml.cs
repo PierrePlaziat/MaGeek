@@ -1,5 +1,5 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.AppData.Entities;
+using MaGeek.AppBusiness.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

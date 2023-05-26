@@ -44,7 +44,7 @@ namespace MaGeek
             App.Events.PreventUIActionEvent += STATE_PreventUIActionEvent;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
             InitializeComponent();
-            App.State.LogMessage("Welcome");
+            AppLogger.LogMessage("Welcome");
         }
 
         

@@ -1,5 +1,5 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.AppData.Entities;
+using MaGeek.AppBusiness.Entities;
 using MaGeek.UI.Windows.ImportExport;
 using System;
 using System.Collections.Generic;

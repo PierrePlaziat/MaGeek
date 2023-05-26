@@ -3,9 +3,9 @@ using System.Windows.Controls;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
-using MaGeek.AppData.Entities;
 using System.Windows.Media.Imaging;
 using System.Threading.Tasks;
+using MaGeek.AppBusiness.Entities;
 
 namespace MaGeek.UI.Windows.ImportExport
 {

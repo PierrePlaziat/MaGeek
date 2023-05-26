@@ -1,5 +1,4 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.AppFramework;
 using MaGeek.UI.Windows.Importers;
 using MaGeek.UI.Windows.ImportExport;
 using System.Windows;
@@ -20,7 +19,7 @@ namespace MaGeek.UI.CustomControls
 
         private void OpenWindow_TxtImporter(object sender, RoutedEventArgs e)
         {
-            var window = new TxtImporter() { Width = 310 };
+            var window = new TxtImporter();
             window.Show();
         }
 
@@ -38,7 +37,7 @@ namespace MaGeek.UI.CustomControls
 
         private void OpenWindow_DeckListExporter(object sender, RoutedEventArgs e)
         {
-            var window = new DeckListExporter();
+            var window = new DeckListExporter(App.State.SelectedDeck);
             window.Show();
         }
 
@@ -148,6 +147,7 @@ namespace MaGeek.UI.CustomControls
         private void ChangeCurrency(object sender, RoutedEventArgs e)
         {
             // TODO
+            //App.Restart();
         }
 
         private void ReimportTraductions(object sender, RoutedEventArgs e)

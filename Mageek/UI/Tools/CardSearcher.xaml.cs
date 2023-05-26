@@ -1,14 +1,13 @@
-﻿using MaGeek.AppData.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
 using MaGeek.AppBusiness;
-using MaGeek.AppFramework;
-using MaGeek.AppFramework.Utils;
 using System;
+using MaGeek.AppBusiness.Entities;
+using MaGeek.Framework.Extensions;
 
 namespace MaGeek.UI
 {
@@ -133,7 +132,7 @@ namespace MaGeek.UI
             List<CardModel> retour = new List<CardModel>();
             string lang = App.Config.Settings[Setting.ForeignLanguage];
             string lowerFilterName = FilterName.ToLower();
-            string normalizedFilterName = StringExtension.RemoveDiacritics(FilterName).ToLower();
+            string normalizedFilterName = StringExtension.RemoveDiacritics(FilterName).Replace('-', ' ').ToLower();
             if (!string.IsNullOrEmpty(FilterName))
             {
                 using (var DB = App.DB.GetNewContext())

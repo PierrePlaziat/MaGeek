@@ -1,10 +1,9 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
-using MaGeek.AppData.Entities;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using MaGeek.AppBusiness;
+using MaGeek.AppBusiness.Entities;
 
 namespace MaGeek.UI
 {

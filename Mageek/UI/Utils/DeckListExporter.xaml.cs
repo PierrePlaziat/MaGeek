@@ -1,4 +1,4 @@
-﻿using MaGeek.AppData.Entities;
+﻿using MaGeek.AppBusiness.Entities;
 using System.Windows;
 
 namespace MaGeek.UI.Windows.ImportExport
@@ -6,11 +6,15 @@ namespace MaGeek.UI.Windows.ImportExport
     public partial class DeckListExporter : Window
     {
 
-        public DeckListExporter(string preFill = null)
+        public DeckListExporter(string missList)
+        {
+            if (missList != null) ExportBox.Text = missList;
+        }
+
+        public DeckListExporter(Deck selectedDeck, bool setAware = false)
         {
             InitializeComponent();
-            if (preFill==null) ExportBox.Text = ExportList(App.State.SelectedDeck);
-            else ExportBox.Text = preFill;
+            if (selectedDeck != null) ExportBox.Text = ExportList(App.State.SelectedDeck);
         }
 
         private string ExportList(Deck selectedDeck)

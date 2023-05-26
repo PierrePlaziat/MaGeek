@@ -1,6 +1,4 @@
 ﻿using MaGeek.AppBusiness;
-using MaGeek.AppData.Entities;
-using Plaziat.CommonWpf;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -10,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using MaGeek.AppBusiness.Entities;
 
 namespace MaGeek.UI
 {
@@ -151,7 +150,7 @@ namespace MaGeek.UI
                 });
                 IsLoading = Visibility.Collapsed;
             }
-            catch (Exception e) { AppLogger.ShowError(MethodBase.GetCurrentMethod().Name, e); }
+            catch (Exception e) { AppLogger.LogError(MethodBase.GetCurrentMethod().Name, e); }
         }
 
         #endregion

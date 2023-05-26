@@ -5,17 +5,10 @@
     <OutputType>WinExe</OutputType>
     <ApplicationIcon>Resources\Images\Icone.ico</ApplicationIcon>
     
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="UI\NewFolder\**" />
-    <EmbeddedResource Remove="UI\NewFolder\**" />
-    <None Remove="UI\NewFolder\**" />
-    <Page Remove="UI\NewFolder\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Resources\Corner.png" />

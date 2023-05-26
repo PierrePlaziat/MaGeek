@@ -1,11 +1,9 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Timers;
-using System.Windows;
 using System.Windows.Controls;
-using MaGeek.AppData.Entities;
+using MaGeek.AppBusiness.Entities;
 
 namespace MaGeek.UI.CustomControls
 {
@@ -45,7 +43,7 @@ namespace MaGeek.UI.CustomControls
         {
             get {
                 string s = "";
-                s += App.State.OutputMessages.LastOrDefault();
+                s += AppLogger.OutputMessages.LastOrDefault();
                 return s;
             }
         }
@@ -54,7 +52,7 @@ namespace MaGeek.UI.CustomControls
         {
             get {
                 string s = "";
-                foreach (var ss in App.State.OutputMessages) s += "> " + ss + "\n";
+                foreach (var ss in AppLogger.OutputMessages) s += "> " + ss + "\n";
                 s = s.Remove(s.Length - 1);
                 return s;
             }

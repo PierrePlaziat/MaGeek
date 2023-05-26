@@ -10,40 +10,40 @@
     <Menu Background="Black" Foreground="White">
         
         <MenuItem Header="Import">
-            <MenuItem Header="From Txt" Foreground="Black" Click="OpenWindow_TxtImporter"/>
-            <MenuItem Header="Set" Foreground="Black" Click="OpenWindow_SetImporter"/>
-            <MenuItem Header="Preconstruit" Foreground="Black" Click="OpenWindow_PrecoImporter"/>
+            <MenuItem Header="Txt" Foreground="Black" Click="OpenWindow_TxtImporter"/>
+            <!--<MenuItem Header="Set" Foreground="Black" Click="OpenWindow_SetImporter"/>-->
+            <MenuItem Header="Preco" Foreground="Black" Click="OpenWindow_PrecoImporter"/>
         </MenuItem>
         
         <MenuItem Header="Export">
-            <MenuItem Header="Deck List" Foreground="Black" Click="OpenWindow_DeckListExporter"/>
-            <MenuItem Header="Proxy Print" Foreground="Black" Click="OpenWindow_ProxyPrint"/>
+            <MenuItem Header="Txt List" Foreground="Black" Click="OpenWindow_DeckListExporter"/>
+            <MenuItem Header="Print Proxy" Foreground="Black" Click="OpenWindow_ProxyPrint"/>
         </MenuItem>
 
         <MenuItem Header="Database">
-            <MenuItem Header="Backup" Foreground="Black" Click="BackupDb"/>
-            <MenuItem Header="Restore" Foreground="Black" Click="RestoreDb"/>
-            <MenuItem Header="Erase" Foreground="Black" Click="EraseDb"/>
-            <MenuItem Header="Reimport traductions" Foreground="Black" Click="ReimportTraductions"/>
+            <MenuItem Header="Reimport All Cards" Foreground="Black" Click="ReimportTraductions"/>
+            <Separator/>
+            <MenuItem Header="Backup Collection" Foreground="Black" Click="BackupDb"/>
+            <MenuItem Header="Restore Collection" Foreground="Black" Click="RestoreDb"/>
         </MenuItem>
 
         <MenuItem Header="Language">
             <MenuItem Header="French" Foreground="Black" Click="ChangeLanguage"/>
             <MenuItem Header="German" Foreground="Black" Click="ChangeLanguage"/>
-            <MenuItem Header="Spanish" Foreground="Black" Click="ChangeLanguage"/>
             <MenuItem Header="Italian" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Spanish" Foreground="Black" Click="ChangeLanguage"/>
             <MenuItem Header="Portuguese (Brazil)" Foreground="Black" Click="ChangeLanguage"/>
             <MenuItem Header="Japanese" Foreground="Black" Click="ChangeLanguage"/>
-            <MenuItem Header="Chinese" Foreground="Black" Click="ChangeLanguage"/>
             <MenuItem Header="Korean" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Chinese Simplified" Foreground="Black" Click="ChangeLanguage"/>
+            <MenuItem Header="Chinese Traditional" Foreground="Black" Click="ChangeLanguage"/>
             <MenuItem Header="Russian" Foreground="Black" Click="ChangeLanguage"/>
         </MenuItem>
 
-        <MenuItem Header="Values">
+        <MenuItem Header="Currency">
             <MenuItem Header="None" Foreground="Black" Click="ChangeCurrency"/>
             <MenuItem Header="Eur" Foreground="Black" Click="ChangeCurrency"/>
             <MenuItem Header="Usd" Foreground="Black" Click="ChangeCurrency"/>
-            <MenuItem Header="EdhRank" Foreground="Black" Click="ChangeCurrency"/>
         </MenuItem>
 
         <MenuItem Header="Display">
@@ -55,10 +55,10 @@
                 <MenuItem Header="Deck Stats" Foreground="Black" Click="DeckStats_Click"/>
                 <MenuItem Header="Deck Table" Foreground="Black" Click="DeckTable_Click"/>
             </MenuItem>
-        <MenuItem Header="Layout" Foreground="Black">
-            <MenuItem Header="Save" Foreground="Black" Click="LayoutBackup_Click"/>
-            <MenuItem Header="Load" Foreground="Black" Click="LayoutRestore_Click"/>
-        </MenuItem>
+            <MenuItem Header="Layout" Foreground="Black">
+                <MenuItem Header="Save" Foreground="Black" Click="LayoutBackup_Click"/>
+                <MenuItem Header="Load" Foreground="Black" Click="LayoutRestore_Click"/>
+            </MenuItem>
         </MenuItem>
 
         <!-- <MenuItem Header="Help">

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using MaGeek.AppBusiness;
-using MaGeek.AppData;
-using MaGeek.AppFramework;
-using Plaziat.CommonWpf;
+using MaGeek.Framework.Data;
 
 namespace MaGeek
 {
@@ -30,8 +27,7 @@ namespace MaGeek
 
         public static void Restart()
         {
-            AppLogger.ShowMsg("App should restart now.");
-            Process.Start(ResourceAssembly.Location);
+            Process.Start(Process.GetCurrentProcess().MainModule.FileName);
             Current.Shutdown();
         }
 
@@ -45,6 +41,7 @@ namespace MaGeek
             mainWin = new MainWindow();
             mainWin.Show();
         }
+
     }
 
 }
