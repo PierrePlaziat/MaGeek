@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace MaGeek.UI.Windows.Importers
 {
-    public partial class SetImporter : Window, INotifyPropertyChanged
+    public partial class SetExplorer : Window, INotifyPropertyChanged
     {
 
         #region PropertyChange
@@ -46,14 +46,14 @@ namespace MaGeek.UI.Windows.Importers
             set { setList = value; OnPropertyChanged(); }
         }
 
-        public SetImporter()
+        public SetExplorer()
         {
             DataContext = this;
             InitializeComponent();
-            LoadSets().ConfigureAwait(false);
+            LoadSets();//.ConfigureAwait(false);
         }
 
-        private async Task LoadSets()
+        private /*async Task*/void LoadSets()
         {
             //List<Set> sets = (await MageekApi.RetrieveSets()).ToList();
             //foreach (var set in sets) SetList.Add(set);

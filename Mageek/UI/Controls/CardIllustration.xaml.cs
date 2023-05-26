@@ -1,28 +1,16 @@
 ﻿using MaGeek.AppBusiness.Entities;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace MaGeek.UI
 {
 
-    public partial class CardIllustration : UserControl, INotifyPropertyChanged
+    public partial class CardIllustration : TemplatedUserControl
     {
 
         #region Attributes
-
-        #region Binding
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
 
         #region Dependancy Property
 

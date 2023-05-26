@@ -26,8 +26,8 @@ namespace MaGeek.AppBusiness
         PendingImport? CurrentImport = null;
 
         enum ImporterState { Init, Play, Pause, Canceled }
-        ImporterState state { get; set; } = ImporterState.Init;
-        bool importing { get; set; }
+        ImporterState State { get; set; } = ImporterState.Init;
+        bool Importing { get; set; }
 
         Timer timer;
 
@@ -64,12 +64,12 @@ namespace MaGeek.AppBusiness
             ConfigureTimer();
             if (PendingCount > 0)
             {
-                state = ImporterState.Pause;
+                State = ImporterState.Pause;
                 Message = "Paused, "+ PendingCount + " imports waiting";
             }
             else
             {
-                state = ImporterState.Play;
+                State = ImporterState.Play;
                 Message = "";
             }
         }
@@ -92,18 +92,18 @@ namespace MaGeek.AppBusiness
 
         public void Play()
         {
-            if (state == ImporterState.Pause || state == ImporterState.Canceled)
+            if (State == ImporterState.Pause || State == ImporterState.Canceled)
             {
-                state = ImporterState.Play;
+                State = ImporterState.Play;
                 Message = "Play";
             }
         }
 
         public void Pause()
         {
-            if (state == ImporterState.Play)
+            if (State == ImporterState.Play)
             {
-                state = ImporterState.Pause;
+                State = ImporterState.Pause;
                 Message = "Pause";
             }
         }
@@ -111,7 +111,7 @@ namespace MaGeek.AppBusiness
         public void CancelAll()
         {
             Message = "Canceling";
-            state = ImporterState.Canceled;
+            State = ImporterState.Canceled;
             PendingImport = new();
             CurrentImport = null;
             Message = "Canceled";
@@ -121,21 +121,21 @@ namespace MaGeek.AppBusiness
 
         private void MainLoop(object sender, ElapsedEventArgs e)
         {
-            if (!importing && state == ImporterState.Play) CheckNextImport().ConfigureAwait(false);
+            if (!Importing && State == ImporterState.Play) CheckNextImport().ConfigureAwait(false);
         }
 
         private async Task CheckNextImport()
         {
             SaveState();
-            if (state == ImporterState.Play)
+            if (State == ImporterState.Play)
             {
                 if (PendingImport.Count > 0) CurrentImport = PendingImport.Dequeue();
                 UpdateInfoText();
                 if (CurrentImport != null)
                 {
-                    importing = true;
+                    Importing = true;
                     await DoImport();
-                    importing = false;
+                    Importing = false;
                 }
             }
         }
@@ -160,16 +160,16 @@ namespace MaGeek.AppBusiness
             //    await RecordCards(importResult);
             //}
 
-            while (state != ImporterState.Canceled && state == ImporterState.Pause) { };
-            if (state != ImporterState.Canceled)
+            while (State != ImporterState.Canceled && State == ImporterState.Pause) { };
+            if (State != ImporterState.Canceled)
             {
                 Message = "Making a deck";
                 WorkerProgress=(75);
                 await MakeADeck(CurrentImport.Value, importResult);
             }
 
-            while (state != ImporterState.Canceled && state == ImporterState.Pause) { };
-            if (state != ImporterState.Canceled)
+            while (State != ImporterState.Canceled && State == ImporterState.Pause) { };
+            if (State != ImporterState.Canceled)
             {
                 WorkerProgress=(99);
                 Message = "Finalizing";
@@ -180,18 +180,18 @@ namespace MaGeek.AppBusiness
 
         #region Work
 
-        private async Task<List<Card>> RetrieveCards(PendingImport? currentImport)
-        {
-            List<Card> list = new();
-            switch (currentImport.Value.Mode)
-            {
-                //case ImportMode.Set: list = await MageekApi.RetrieveSetCards(CurrentImport.Value.Content); break;
-                //case ImportMode.Search: list = await MageekApi.RetrieveCard(CurrentImport.Value.Content, false, false,true); break;
-                //case ImportMode.Update: list = await MageekApi.RetrieveCard(CurrentImport.Value.Content, true, false, false); break;
-                //case ImportMode.List: list = await RetrieveCardList(await ParseCardList(CurrentImport.Value.Content)); break;
-            };
-            return list;
-        }
+        //private /*async Task<*/List<Card>/*>*/ RetrieveCards(PendingImport? currentImport)
+        //{
+        //    List<Card> list = new();
+        //    //switch (currentImport.Value.Mode)
+        //    //{
+        //        //case ImportMode.Set: list = await MageekApi.RetrieveSetCards(CurrentImport.Value.Content); break;
+        //        //case ImportMode.Search: list = await MageekApi.RetrieveCard(CurrentImport.Value.Content, false, false,true); break;
+        //        //case ImportMode.Update: list = await MageekApi.RetrieveCard(CurrentImport.Value.Content, true, false, false); break;
+        //        //case ImportMode.List: list = await RetrieveCardList(await ParseCardList(CurrentImport.Value.Content)); break;
+        //    //};
+        //    return list;
+        //}
 
         private async Task<List<ImportLine>> ParseCardList(string cardlist)
         {
@@ -347,7 +347,7 @@ namespace MaGeek.AppBusiness
             catch (Exception e)
             {
                 File.WriteAllText(SaveStatePath, "");
-                AppLogger.LogMessage("Something went wrong during importer state load, import list was emptied");
+                AppLogger.LogError("LoadState error, import list was emptied.", e);
             }
         }
 

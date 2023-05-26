@@ -51,7 +51,7 @@ namespace MaGeek
     public class ChangeCardRelationVariantCommand : ICommand
     {
 
-        private DeckCard relation;
+        private readonly DeckCard relation;
 
         public ChangeCardRelationVariantCommand(DeckCard relation)
         {
@@ -67,7 +67,10 @@ namespace MaGeek
             await MageekCollection.ChangeVariant(relation, variant);
         }
 
+        #pragma warning disable CS0067 // L'événement 'ChangeCardRelationVariantCommand.CanExecuteChanged' n'est jamais utilisé
         public event EventHandler CanExecuteChanged;
+        #pragma warning restore CS0067 // L'événement 'ChangeCardRelationVariantCommand.CanExecuteChanged' n'est jamais utilisé
+
     }
 
 }

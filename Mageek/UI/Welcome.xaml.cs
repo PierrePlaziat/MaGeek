@@ -1,28 +1,14 @@
 ﻿using MaGeek.AppBusiness;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using MaGeek.UI;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace MaGeek
 {
 
-    public partial class Welcome : Window, INotifyPropertyChanged
+    public partial class Welcome : TemplatedWindow
     {
-
-        #region PropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
 
         #region Attributes
 

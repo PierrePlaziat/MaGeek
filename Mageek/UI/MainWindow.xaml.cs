@@ -1,6 +1,5 @@
 ﻿using AvalonDock.Layout;
 using AvalonDock.Layout.Serialization;
-using MaGeek.AppBusiness;
 using MaGeek.UI;
 using System.ComponentModel;
 using System.IO;
@@ -11,18 +10,8 @@ using System.Windows;
 namespace MaGeek
 {
 
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : TemplatedWindow
     {
-
-        #region Property Changed
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
 
         private Visibility preventActionVisibility = Visibility.Hidden;
         public Visibility PreventActionVisibility { 

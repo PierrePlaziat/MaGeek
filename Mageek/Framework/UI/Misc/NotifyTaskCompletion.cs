@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+
 public sealed class NotifyTaskCompletion<TResult> : INotifyPropertyChanged
 {
+
     public NotifyTaskCompletion(Task<TResult> task)
     {
         Task = task;
@@ -11,6 +13,7 @@ public sealed class NotifyTaskCompletion<TResult> : INotifyPropertyChanged
             var _ = WatchTaskAsync(task);
         }
     }
+
     private async Task WatchTaskAsync(Task task)
     {
         try
@@ -85,4 +88,5 @@ null : InnerException.Message;
         }
     }
     public event PropertyChangedEventHandler PropertyChanged;
+
 }

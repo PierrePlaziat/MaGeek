@@ -4,10 +4,10 @@ using MaGeek.UI.Windows.ImportExport;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MaGeek.UI.CustomControls
+namespace MaGeek.UI.Menus
 {
 
-    public partial class TopMenu : UserControl
+    public partial class TopMenu : TemplatedUserControl
     {
 
         public TopMenu()
@@ -25,7 +25,7 @@ namespace MaGeek.UI.CustomControls
 
         private void OpenWindow_SetImporter(object sender, RoutedEventArgs e)
         {
-            var window = new SetImporter();
+            var window = new SetExplorer();
             window.Show();
         }
 

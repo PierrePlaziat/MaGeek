@@ -1,25 +1,12 @@
-﻿using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.Linq;
 using System.Timers;
-using System.Windows.Controls;
 using MaGeek.AppBusiness.Entities;
 
-namespace MaGeek.UI.CustomControls
+namespace MaGeek.UI.Menus
 {
 
-    public partial class StateBar : UserControl, INotifyPropertyChanged
+    public partial class StateBar : TemplatedUserControl
     {
-
-        #region Binding
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
 
         public string SelectedDeckString
         {

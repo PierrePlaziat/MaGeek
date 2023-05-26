@@ -24,7 +24,7 @@ namespace MaGeek.AppBusiness
     {
 
         const int DelayApi = 150;
-        static Random rnd = new();
+        static readonly Random rnd = new();
 
         public static async Task<List<CardLegality>> GetLegalities(CardModel card)
         {
@@ -111,15 +111,12 @@ namespace MaGeek.AppBusiness
                 {
                     foreach (var part in scryfallCard.AllParts)
                     {
-                        string cardName;
-                        part.TryGetValue("name", out cardName);
+                        part.TryGetValue("name", out string cardName);
 
                         if (!cardName.StartsWith("A-"))
                         {
-                            string cardId;
-                            string relationType;
-                            part.TryGetValue("id", out cardId);
-                            part.TryGetValue("component", out relationType);
+                            part.TryGetValue("id", out string cardId);
+                            part.TryGetValue("component", out string relationType);
 
                             if (cardName != card.CardId)
                             {
@@ -368,6 +365,7 @@ namespace MaGeek.AppBusiness
 
             catch (Exception e)
             {
+                AppLogger.LogError("RetrieveImage delayed", e);
                 await Task.Run(() => {
                     Thread.Sleep(rnd.Next(10) * 50);
                 });

@@ -15,11 +15,13 @@ namespace MaGeek.AppBusiness
         public static async Task<List<CardTag>> GetTagsDistinct()
         {
             List<CardTag> tags = new();
-            using var DB = App.DB.GetNewContext();
-            tags.Add(null);
-            tags.AddRange(
-                    DB.CardTags.GroupBy(x => x.Tag).Select(x => x.First())
-            );
+            await Task.Run(() => {
+                using var DB = App.DB.GetNewContext();
+                tags.Add(null);
+                tags.AddRange(
+                        DB.CardTags.GroupBy(x => x.Tag).Select(x => x.First())
+                );
+            });
             return tags;
         }
 
@@ -500,16 +502,14 @@ namespace MaGeek.AppBusiness
             if (deck == null) return "";
             if (deck.CardCount < 60) return "Min 60 cards needed";
             if (!await RespectsMaxCardOccurence(deck, 4)) return "No more than 4 times the same card needed";
-            using (var DB = App.DB.GetNewContext())
+            using var DB = App.DB.GetNewContext();
+            foreach (var v in deck.CardRelations)
             {
-                foreach (var v in deck.CardRelations)
-                {
-                    if (!v.Card.Card.Type.Contains("Basic Land"))
-                        if (DB.CardLegalities.Where(x => x.CardId == v.Card.Id && x.Format == "legacy" && x.IsLegal == "legal").Any())
-                        {
-                            return v.Card.Card.CardId + " is not legal";
-                        }
-                }
+                if (!v.Card.Card.Type.Contains("Basic Land"))
+                    if (DB.CardLegalities.Where(x => x.CardId == v.Card.Id && x.Format == "legacy" && x.IsLegal == "legal").Any())
+                    {
+                        return v.Card.Card.CardId + " is not legal";
+                    }
             }
             return "OK";
         }
@@ -519,16 +519,14 @@ namespace MaGeek.AppBusiness
             if (deck == null) return "";
             if (deck.CardCount != 100) return "Exctly 100 cards needed";
             if (!await RespectsMaxCardOccurence(deck, 1)) return "No more than 1 times the same card needed.";
-            using (var DB = App.DB.GetNewContext())
+            using var DB = App.DB.GetNewContext();
+            foreach (var v in deck.CardRelations)
             {
-                foreach (var v in deck.CardRelations)
-                {
-                    if (!v.Card.Card.Type.Contains("Basic Land"))
-                        if (DB.CardLegalities.Where(x => x.CardId == v.Card.Id && x.Format == "commander" && x.IsLegal == "legal").Any())
-                        {
-                            return v.Card.Card.CardId + " is not legal";
-                        }
-                }
+                if (!v.Card.Card.Type.Contains("Basic Land"))
+                    if (DB.CardLegalities.Where(x => x.CardId == v.Card.Id && x.Format == "commander" && x.IsLegal == "legal").Any())
+                    {
+                        return v.Card.Card.CardId + " is not legal";
+                    }
             }
             return "OK";
         }

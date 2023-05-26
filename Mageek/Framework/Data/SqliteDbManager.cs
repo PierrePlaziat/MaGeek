@@ -44,7 +44,7 @@ namespace MaGeek.Framework.Data
 
         public void Backup()
         {
-            string saveFolder = SelectFileHelper.SelectAFolder();
+            string saveFolder = BrowserHelper.SelectAFolder();
             if (saveFolder != null)
             {
                 try
@@ -76,7 +76,7 @@ namespace MaGeek.Framework.Data
         {
             if (!AppLogger.AskUser("Current data will be lost, ensure you have a backup if needed.\n Are you sure you still want to launch restoration?")) return;
             string tmpDbPath = App.Config.Path_Db + ".tmp";
-            string loadFile = SelectFileHelper.SelectAFile("Db Files (.db)|*.db");
+            string loadFile = BrowserHelper.SelectAFile("Db Files (.db)|*.db");
             if (loadFile != null)
             {
                 try
