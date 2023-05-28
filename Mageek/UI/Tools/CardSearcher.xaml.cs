@@ -141,7 +141,7 @@ namespace MaGeek.UI
             string normalizedFilterName = StringExtension.RemoveDiacritics(FilterName).Replace('-', ' ').ToLower();
             if (!string.IsNullOrEmpty(FilterName))
             {
-                using (var DB = App.DB.GetNewContext())
+                using (var DB = App.DB.NewContext)
                 {
                     // Search in VO
                     retour.AddRange(await DB.CardModels.Where(x => x.CardId.ToLower().Contains(lowerFilterName))
@@ -161,7 +161,7 @@ namespace MaGeek.UI
             }
             else
             {
-                using (var DB = App.DB.GetNewContext())
+                using (var DB = App.DB.NewContext)
                 {
                     retour.AddRange(await DB.CardModels.ToArrayAsync());
                 }
@@ -173,7 +173,7 @@ namespace MaGeek.UI
         {
             AvailableTags = await MageekStats.GetTagsDistinct();
             List <CardModel> retour = new();
-            using (var DB = App.DB.GetNewContext())
+            using (var DB = App.DB.NewContext)
             {
                 if (OnlyGot)
                 {

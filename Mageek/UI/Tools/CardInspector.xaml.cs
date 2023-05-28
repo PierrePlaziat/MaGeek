@@ -221,7 +221,7 @@ namespace MaGeek.UI
         {
             CardRelation rel = (CardRelation)((Button)sender).DataContext;
             CardModel relatedCard;
-            using (var DB = App.DB.GetNewContext())
+            using (var DB = App.DB.NewContext)
             {
                 relatedCard = DB.CardModels.Where(x => x.CardId == rel.Card2Id)
                     .ToList()

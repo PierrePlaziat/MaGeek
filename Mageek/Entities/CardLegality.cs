@@ -22,7 +22,7 @@ namespace MaGeek.Entities
                 if (IsLegal == "legal") return Brushes.DarkSeaGreen;
                 if (IsLegal == "restricted") return Brushes.GreenYellow;
                 if (IsLegal == "banned") return Brushes.IndianRed;
-                return Brushes.Black;
+                return Brushes.CornflowerBlue;
             }
         }
 

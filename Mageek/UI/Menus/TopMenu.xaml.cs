@@ -69,12 +69,12 @@ namespace MaGeek.UI.Menus
 
         private void RestoreCollection(object sender, RoutedEventArgs e)
         {
-            App.DB.RestoreDb();
+            App.DB.PlanToRestore();
         }
 
         private void EraseDb(object sender, RoutedEventArgs e)
         {
-            App.DB.EraseDb();
+            App.DB.PlanToErase();
         }
 
         #endregion

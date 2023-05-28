@@ -19,7 +19,7 @@ namespace MaGeek.AppBusiness
         {
             List<CardTag> tags = new();
             await Task.Run(() => {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 tags.Add(null);
                 tags.AddRange(
                         DB.CardTags.GroupBy(x => x.Tag).Select(x => x.First())
@@ -35,14 +35,14 @@ namespace MaGeek.AppBusiness
 
         public static async Task TagCard(CardModel selectedCard, string text)
         {
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             DB.CardTags.Add(new CardTag(text, selectedCard));
             await DB.SaveChangesAsync();
         }
 
         public static async Task UnTagCard(CardTag cardTag)
         {
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             DB.CardTags.Remove(cardTag);
             await DB.SaveChangesAsync();
         }
@@ -51,7 +51,7 @@ namespace MaGeek.AppBusiness
         {
             List<CardTag> tags = new();
             await Task.Run(() => {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 tags.AddRange(DB.CardTags.Where(x => x.CardId == cardId));
             });
             return tags;
@@ -505,7 +505,7 @@ namespace MaGeek.AppBusiness
             if (deck == null) return "";
             if (deck.CardCount < 60) return "Min 60 cards needed";
             if (!await RespectsMaxCardOccurence(deck, 4)) return "No more than 4 times the same card needed";
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             foreach (var v in deck.DeckCards)
             {
                 if (!v.Card.Card.Type.Contains("Basic Land"))
@@ -522,7 +522,7 @@ namespace MaGeek.AppBusiness
             if (deck == null) return "";
             if (deck.CardCount != 100) return "Exctly 100 cards needed";
             if (!await RespectsMaxCardOccurence(deck, 1)) return "No more than 1 times the same card needed.";
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             foreach (var v in deck.DeckCards)
             {
                 if (!v.Card.Card.Type.Contains("Basic Land"))
@@ -552,7 +552,7 @@ namespace MaGeek.AppBusiness
             int total = 0;
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 await Task.Run(() =>
                 {
                     total = DB.CardVariants.Sum(x => x.Got);
@@ -567,7 +567,7 @@ namespace MaGeek.AppBusiness
             int total = 0;
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 await Task.Run(() =>
                 {
                     total = DB.CardVariants.Where(x=>x.Got>0)
@@ -586,7 +586,7 @@ namespace MaGeek.AppBusiness
             int total = 0;
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 await Task.Run(() =>
                 {
                     total = DB.CardModels.Count();
@@ -595,7 +595,42 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { Log.Write(e, "GetTotalDiffExist"); }
             return total;
         }
-        
+
+
+        internal static async Task<float> AutoEstimatePrices()
+        {
+            float total = 0;
+            //try
+            //{
+            //    await Task.Run(() => {
+            //        using var DB = App.DB.GetNewContext();
+            //        var miss = DB.CardVariants.Where(x => x.Got > 0).Include(x=>x.Card);
+            //        foreach (CardVariant card in miss)
+            //        {
+            //            if (card.ValueEur != null)
+            //            {
+            //                total += card.Got * float.Parse(card.ValueEur);
+            //            }
+            //            else
+            //            {
+            //                var cardModel = DB.CardModels.Where(x => x.CardId == card.Id).FirstOrDefault();
+            //                if (!string.IsNullOrEmpty(cardModel.MeanPrice))
+            //                {
+            //                    total += card.Got * float.Parse(card.ValueEur);
+            //                }
+            //                else
+            //                {
+            //                    missingList.Add(card);
+            //                    MissingCount++;
+            //                }
+            //            }
+            //        }
+            //    });
+            //}
+            //catch (Exception e) { Log.Write(e, "AutoEstimatePrices"); }
+            return total;
+        }
+
         #endregion
 
         #endregion

@@ -3,6 +3,7 @@ using MaGeek.Entities;
 using MaGeek.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,6 +30,8 @@ namespace MaGeek.UI
             set { missingList = value; OnPropertyChanged(); }
         }
 
+        #region Visibilities
+
         Visibility isLoading = Visibility.Visible;
         public Visibility IsLoading
         {
@@ -37,6 +40,8 @@ namespace MaGeek.UI
         }
 
         #endregion
+        
+        #endregion
 
         #region CTOR
 
@@ -44,12 +49,8 @@ namespace MaGeek.UI
         {
             DataContext = this;
             InitializeComponent();
-            DelayLoad();
+            DelayLoad().ConfigureAwait(false);
         }
-
-        #endregion
-
-        #region Methods
 
         private async Task DelayLoad()
         {
@@ -57,6 +58,10 @@ namespace MaGeek.UI
             await AutoEstimate();
         }
         
+        #endregion
+
+        #region Methods
+
         private async Task AutoEstimate()
         {
             try
@@ -84,15 +89,27 @@ namespace MaGeek.UI
             float total = 0;
             try
             {
-                using var DB = App.DB.GetNewContext();
                 await Task.Run(() => {
-                    foreach (CardVariant card in DB.CardVariants.Where(x => x.Got > 0))
+                    using var DB = App.DB.NewContext;
+                    var miss = DB.CardVariants.Where(x => x.Got > 0);
+                    foreach (CardVariant card in miss)
                     {
-                        if (card.ValueEur != null) total += card.Got * float.Parse(card.ValueEur);
+                        if (card.ValueEur != null)
+                        {
+                            total += card.Got * float.Parse(card.ValueEur);
+                        }
                         else
                         {
-                            missingList.Add(card);
-                            MissingCount++;
+                            var cardModel = DB.CardModels.Where(x => x.CardId == card.Id).FirstOrDefault();
+                            //if (!string.IsNullOrEmpty(cardModel.MeanPrice))
+                            //{
+                            //    total += card.Got * float.Parse(card.ValueEur);
+                            //}
+                            //else
+                            //{
+                            //    missingList.Add(card);
+                            //    MissingCount++;
+                            //}
                         }
                     }
                 });

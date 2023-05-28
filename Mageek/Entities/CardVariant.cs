@@ -29,7 +29,7 @@ namespace MaGeek.Entities
 
         public virtual ICollection<DeckCard> DeckRelations { get; set; }
         public virtual CardModel Card { get; set; }
-        public virtual Set Set { get; set; }
+        //public virtual Set Set { get; set; }
 
         #region CTOR
 

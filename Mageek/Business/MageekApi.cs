@@ -33,7 +33,7 @@ namespace MaGeek.AppBusiness
             try
             {
                 await RetrieveLegalities(card);
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 legalities = await DB.CardLegalities.Where(x => x.CardId == card.CardId).ToListAsync();
             }
             catch (Exception e) { Log.Write(e); }
@@ -46,7 +46,7 @@ namespace MaGeek.AppBusiness
             try
             {
                 await RetrieveLegalities(card);
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 rules = await DB.CardRules.Where(x => x.CardId == card.CardId).ToListAsync();
             }
             catch (Exception e) { Log.Write(e); }
@@ -59,7 +59,7 @@ namespace MaGeek.AppBusiness
             try
             {
                 await RetrieveRelatedCards(card);
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 relatedCards = await DB.CardRelations.Where(x => x.Card1Id == card.CardId)
                     .ToListAsync();
             }
@@ -121,7 +121,7 @@ namespace MaGeek.AppBusiness
                             if (cardName != card.CardId)
                             {
                                 CardModel relatedCard;
-                                using (var DB = App.DB.GetNewContext())
+                                using (var DB = App.DB.NewContext)
                                 {
                                     relatedCard = await DB.CardModels.Where(x => x.CardId == cardName)
                                             .FirstOrDefaultAsync();
@@ -180,7 +180,7 @@ namespace MaGeek.AppBusiness
         private static bool IsLegalitiesOutdated(CardModel card)
         {
             DateTime lastUpdate;
-            using (var DB = App.DB.GetNewContext())
+            using (var DB = App.DB.NewContext)
             {
                 var legality = DB.CardLegalities.Where(x => x.CardId == card.CardId).FirstOrDefault();
                 if (legality == null) return true;
@@ -193,7 +193,7 @@ namespace MaGeek.AppBusiness
         private static bool IsRelatedCardsOutdated(CardModel card)
         {
             DateTime lastUpdate;
-            using (var DB = App.DB.GetNewContext())
+            using (var DB = App.DB.NewContext)
             {
                 var relation = DB.CardRelations.Where(x => x.Card1Id == card.CardId).FirstOrDefault();
                 if (relation == null) return true;
@@ -215,7 +215,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 if (price != null)
                 {
                     if (price.Eur != null) cardVariant.ValueEur = price.Eur.ToString();
@@ -244,7 +244,7 @@ namespace MaGeek.AppBusiness
                         LastUpdate = DateTime.Now.ToShortDateString(),
                     });
                 }
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 {
                     DB.CardLegalities.AddRange(legal);
                     await DB.SaveChangesAsync();
@@ -262,7 +262,7 @@ namespace MaGeek.AppBusiness
                     l.CardId = card.CardId;
                     rule.Add(l);
                 }
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 {
                     DB.CardRules.AddRange(rule);
                     await DB.SaveChangesAsync();
@@ -274,7 +274,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 await DB.CardRelations.AddRangeAsync(rels);
                 DB.Entry(card).State = EntityState.Unchanged;
                 await DB.SaveChangesAsync();
@@ -286,7 +286,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 IEnumerable<CardLegality> existingValues = DB.CardLegalities.Where(x => x.CardId == localCard.CardId);
                 if (existingValues.Any())
                 {
@@ -300,7 +300,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 List<CardRelation> existingValues = await DB.CardRelations.Where(x => x.Card1Id == localCard.CardId).ToListAsync();
                 if (existingValues == null || existingValues.Count == 0) return;
                 DB.CardRelations.RemoveRange(existingValues);
@@ -312,7 +312,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 List<CardRule> existingValues = await DB.CardRules.Where(x => x.CardId == localCard.CardId).ToListAsync();
                 if (existingValues == null || existingValues.Count == 0) return;
                 DB.CardRules.RemoveRange(existingValues);
@@ -383,7 +383,7 @@ namespace MaGeek.AppBusiness
                 string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + card.Id);
                 scryCard = JsonSerializer.Deserialize<Card>(json_data);
 
-                using (var DB = App.DB.GetNewContext())
+                using (var DB = App.DB.NewContext)
                 {
                     if (scryCard.ImageUris != null)
                     {

@@ -17,14 +17,14 @@ namespace MaGeek.AppBusiness
 
         public static async Task<CardModel> QuickFindCardById(string cardId)
         {
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             return await DB.CardModels.Where(x => x.CardId == cardId)
                             .FirstOrDefaultAsync();
         }
         
         public static async Task<CardModel> FindCardById(string cardId)
         {
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             return await DB.CardModels.Where(x => x.CardId == cardId)
                             .Include(card => card.Traductions)
                             .Include(card => card.Variants)
@@ -34,7 +34,7 @@ namespace MaGeek.AppBusiness
         public static async Task GotCard_Add(CardVariant selectedCard)
         {
             if (selectedCard == null) return;
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             var variant = DB.CardVariants.Where(x => x.Id == selectedCard.Id)
                 .Include(x=>x.Card)
                 .FirstOrDefault();
@@ -48,7 +48,7 @@ namespace MaGeek.AppBusiness
         public static async Task GotCard_Remove(CardVariant selectedCard)
         {
             if (selectedCard == null) return;
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             var c = DB.CardVariants.Where(x => x.Id == selectedCard.Id)
                 .Include(x => x.Card)
                 .FirstOrDefault();
@@ -62,7 +62,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task SetFav(CardModel card, CardVariant variant)
         {
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             card.FavouriteVariant = variant.Id;
             DB.Entry(card).State = EntityState.Modified;
             await DB.SaveChangesAsync();
@@ -73,7 +73,7 @@ namespace MaGeek.AppBusiness
             string englishName = "";
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 {
                     var t = await DB.CardTraductions.Where(x => x.TraductedName == foreignName).FirstOrDefaultAsync();
                     if (t != null)
@@ -92,7 +92,7 @@ namespace MaGeek.AppBusiness
             try
             {
                 string lang = App.Config.Settings[Setting.ForeignLanguage];
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 {
                     var t = await DB.CardTraductions.Where(x => x.CardId == englishName && x.Language == lang).FirstOrDefaultAsync();
                     if (t != null)
@@ -114,7 +114,7 @@ namespace MaGeek.AppBusiness
             List<Deck> decks = new();
             try
             {
-                using (var DB = App.DB.GetNewContext())
+                using (var DB = App.DB.NewContext)
                 {
                     decks = await DB.Decks
                         .Include(deck => deck.DeckCards)
@@ -134,7 +134,7 @@ namespace MaGeek.AppBusiness
         {
             try
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 string deckTitle = Log.GetInpurFromUser("Please enter a title for this new deck", "");
                 if (deckTitle == null) return;
                 if (DB.Decks.Where(x => x.Title == deckTitle).Any())
@@ -156,7 +156,7 @@ namespace MaGeek.AppBusiness
             try
             {
                 var deck = new Deck(title);
-                using (var DB = App.DB.GetNewContext())
+                using (var DB = App.DB.NewContext)
                 {
                     DB.Decks.Add(deck);
                     await DB.SaveChangesAsync();
@@ -167,7 +167,7 @@ namespace MaGeek.AppBusiness
                     if (!string.IsNullOrEmpty(cardOccurence.Name))
                     {
 
-                        using (var DB = App.DB.GetNewContext())
+                        using (var DB = App.DB.NewContext)
                         {
                             card = DB.CardModels.Where(x => x.CardId == cardOccurence.Name)
                                                 .Include(x => x.Variants)
@@ -210,7 +210,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task RenameDeck(Deck deck)
         {
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.  NewContext;
             if (deck == null) return;
             string newTitle = Log.GetInpurFromUser("Please enter a title for the deck \"" + deck.Title + "\"", deck.Title);
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
@@ -229,7 +229,7 @@ namespace MaGeek.AppBusiness
         {
             if (deckToCopy == null) return;
             var newDeck = new Deck(deckToCopy.Title + " - Copie");
-            using (var DB = App.DB.GetNewContext())
+            using (var DB = App.DB.NewContext)
             {
                 newDeck.DeckCards = new ObservableCollection<DeckCard>();
                 DB.Decks.Add(newDeck);
@@ -256,7 +256,7 @@ namespace MaGeek.AppBusiness
         {
             if (Log.AskUser("Are you sure to delete this deck ? (" + deckToDelete.Title + ")"))
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 var deck = deckToDelete;
                 await DB.SaveChangesAsync();
                 App.Events.RaiseUpdateDeckList();
@@ -267,7 +267,7 @@ namespace MaGeek.AppBusiness
         {
             if (Log.AskUser("Are you sure to delete those deck ? (" + deckToDelete.Count + " decks)"))
             {
-                using var DB = App.DB.GetNewContext();
+                using var DB = App.DB.NewContext;
                 var deck = deckToDelete;
                 DB.Decks.RemoveRange(deck);
                 await DB.SaveChangesAsync();
@@ -277,7 +277,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task AddCardToDeck(CardModel card, Deck deck, int qty, int relation = 0)
         {
-            using var DB = App.DB.GetNewContext();
+            using var DB = App.DB.NewContext;
             CardVariant v = await DB.CardVariants.Where(x=>x.Card.CardId == card.CardId).Include(x=>x.Card).FirstOrDefaultAsync();
             if (v != null) await AddCardToDeck(v, deck, qty, relation);
         }
@@ -286,7 +286,7 @@ namespace MaGeek.AppBusiness
         {
             if (card == null || deck == null) return;
             try {
-                using (var DB = App.DB.GetNewContext())
+                using (var DB = App.DB.NewContext)
                 {
                     var cardRelation = deck.DeckCards.Where(x => x.Card.Card.CardId == card.Card.CardId).FirstOrDefault();
                     if (cardRelation == null)
@@ -320,7 +320,7 @@ namespace MaGeek.AppBusiness
         {
             if (card == null || deck == null) return;
             try {
-                using (var DB = App.DB.GetNewContext())
+                using (var DB = App.DB.NewContext)
                 {
                     var cardRelation = deck.DeckCards.Where(x => x.Card.Card.CardId == card.CardId).FirstOrDefault();
                     if (cardRelation == null) return;
@@ -348,7 +348,7 @@ namespace MaGeek.AppBusiness
 
         public static async Task ChangeCardDeckRelation(DeckCard relation, int type)
         {
-            using (var DB = App.DB.GetNewContext())
+            using (var DB = App.DB.NewContext)
             {
                 relation.RelationType = type;
                 DB.Entry(relation).State = EntityState.Modified;

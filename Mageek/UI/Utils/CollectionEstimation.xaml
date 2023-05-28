@@ -59,8 +59,23 @@
 
         <ScrollViewer Grid.Row="2"
                       VerticalAlignment="Stretch">
-
-            <ListView ItemsSource="{Binding MissingList}" VerticalAlignment="Stretch">
+            <ListView ItemsSource="{Binding MissingList}"
+                      VerticalAlignment="Stretch">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"></ColumnDefinition>
+                                <ColumnDefinition Width="200"></ColumnDefinition>
+                                <ColumnDefinition Width="200"></ColumnDefinition>
+                                <ColumnDefinition Width="200"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="{Binding Card.CardId}"></Label>
+                            <Label Grid.Column="1" Content="{Binding SetName}"></Label>
+                            <TextBox Grid.Column="2"></TextBox>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
             </ListView>
 
         </ScrollViewer>

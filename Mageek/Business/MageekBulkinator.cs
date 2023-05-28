@@ -105,7 +105,7 @@ namespace MaGeek.AppBusiness
                             }
                         }
                     }
-                    using var DB = App.DB.GetNewContext();
+                    using var DB = App.DB.NewContext;
                     {
                         using var transaction = DB.Database.BeginTransaction();
                         await DB.CardTraductions.AddRangeAsync(trads);
@@ -125,7 +125,7 @@ namespace MaGeek.AppBusiness
         {
             Log.Write("Reimporting traductions");
             App.Events.RaisePreventUIAction(true, "Reimporting traductions");
-            using (var DB = App.DB.GetNewContext())
+            using (var DB = App.DB.NewContext)
             {
                 await DB.CardTraductions.ExecuteDeleteAsync();
             }
@@ -265,7 +265,7 @@ namespace MaGeek.AppBusiness
                             }
                         }
                     }
-                    using var DB = App.DB.GetNewContext();
+                    using var DB = App.DB.NewContext;
                     {
                         using var transaction = DB.Database.BeginTransaction();
                         await DB.CardModels.AddRangeAsync(cards);
@@ -283,7 +283,7 @@ namespace MaGeek.AppBusiness
                 try
                 {
                     bool preventAdd;
-                    using var DB = App.DB.GetNewContext();
+                    using var DB = App.DB.NewContext;
                     {
                         List<CardVariant> cards = new();
                         using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
