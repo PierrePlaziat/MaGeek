@@ -1,6 +1,7 @@
 ﻿using MaGeek.Entities;
 using MaGeek.Framework;
 using MaGeek.Framework.Extensions;
+using MaGeek.Framework.Utils;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,8 +15,7 @@ namespace MaGeek.AppBusiness
 {
 
     /// <summary>
-    /// Interracts with MtgJson, called at first launch
-    /// TODO : currently no way to import only missing data later
+    /// Bulk data import gestion using MtgJson's sqlite
     /// </summary>
     public static class MageekBulkinator
     {
@@ -48,31 +48,85 @@ namespace MaGeek.AppBusiness
 
         #endregion
 
-        #region Before Launch
+        #region Download Gestion
 
-        public static async Task Download_MtgJsonSqlite()
+        public static async Task<bool> AreDataOutdated()
         {
             try
             {
+                // Hash Download
                 using var client = new HttpClient();
-                using var s = await client.GetStreamAsync("https://mtgjson.com/api/v5/AllPrintings.sqlite");
-                using var fs = new FileStream(App.Config.Path_MtgJsonDownload, FileMode.Create);
-                await s.CopyToAsync(fs);
+                using var hash = await client.GetStreamAsync("https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256");
+                using var fs_NewHash = new FileStream(App.Config.Path_MtgJsonDownload_NewHash, FileMode.Create);
+                await hash.CopyToAsync(fs_NewHash);
+                // Hash Check
+                if (File.Exists(App.Config.Path_MtgJsonDownload_OldHash))
+                {
+                    return FileUtils.FileContentDiffers(
+                        App.Config.Path_MtgJsonDownload_NewHash, 
+                        App.Config.Path_MtgJsonDownload_OldHash
+                    );
+                }
+                return true;
             }
-            catch (Exception e) { Log.Write(e); }
+            catch (Exception e)
+            {
+                Log.Write(e, "AreDataOutdated");
+                return false;
+            }
         }
 
-        public static async Task Bulk_CardTraductions()
+        public async static Task DownloadBulkData()
         {
-            await Task.Run((Func<Task>)(async () => {
+            Log.Write("Download bulk data : start...");
+            try
+            {
+                // File Download
+                using var client = new HttpClient();
+                using var mtgjson_sqlite = await client.GetStreamAsync("https://mtgjson.com/api/v5/AllPrintings.sqlite");
+                using var fs_mtgjson_sqlite = new FileStream(App.Config.Path_MtgJsonDownload, FileMode.Create);
+                await mtgjson_sqlite.CopyToAsync(fs_mtgjson_sqlite);
+                // Save Hash
+                File.Copy(App.Config.Path_MtgJsonDownload_NewHash, App.Config.Path_MtgJsonDownload_OldHash);
+
+                Log.Write("Download bulk data : done.");
+            }
+            catch (Exception e) { Log.Write(e, "Download bulk data : "); }
+        }
+
+        #endregion
+
+        #region Import Gestion
+
+        public static async Task ImportAllData(bool isFirstOne, bool includeFun = false)
+        {
+            Log.Write("Import all data : start...");
+            try
+            {
+                await Bulk_CardTraductions();
+                await Bulk_CardModels(isFirstOne, includeFun);
+                await Bulk_CardVariants(isFirstOne, includeFun);
+                Log.Write("Import all data : done.");
+            }
+            catch (Exception e) { Log.Write(e, "Import all data"); }
+        }
+
+        private static async Task Bulk_CardTraductions()
+        {
+            // Delete old data
+            using (var DB = App.DB.NewContext) await DB.CardTraductions.ExecuteDeleteAsync();
+            // Insert New Data
+            await Task.Run(async () => {
+                List<CardTraduction> trads = new();
                 try
                 {
-                    List<CardTraduction> trads = new();
-                    using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
+                    // Connect
+                    using (var MtgJsonSqliteConnexion = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
                     {
-                        await connection.OpenAsync();
-                        var command = connection.CreateCommand();
+                        await MtgJsonSqliteConnexion.OpenAsync();
+                        var command = MtgJsonSqliteConnexion.CreateCommand();
                         command.CommandText = SQL_AllCardTraductions;
+                        // Process
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             string id = "";
@@ -105,7 +159,8 @@ namespace MaGeek.AppBusiness
                             }
                         }
                     }
-                    using var DB = App.DB.NewContext;
+                    // Save
+                    using (var DB = App.DB.NewContext)
                     {
                         using var transaction = DB.Database.BeginTransaction();
                         await DB.CardTraductions.AddRangeAsync(trads);
@@ -113,158 +168,73 @@ namespace MaGeek.AppBusiness
                         transaction.Commit();
                     }
                 }
-                catch (Exception e) { Log.Write(e); }
-            }));
+                catch (Exception e) { Log.Write(e, "Bulk_CardTraductions"); }
+            });
         }
 
-        #endregion
-
-        #region Once Launched
-
-        public static async Task ReBulk_CardTraductions()
+        private static async Task Bulk_CardModels(bool isFirstOne, bool includeFun)
         {
-            Log.Write("Reimporting traductions");
-            App.Events.RaisePreventUIAction(true, "Reimporting traductions");
-            using (var DB = App.DB.NewContext)
-            {
-                await DB.CardTraductions.ExecuteDeleteAsync();
-            }
-            Log.Write("> Deleted Old Data");
-            DateTime start = DateTime.Now;
-            await Bulk_CardTraductions();
-            DateTime end = DateTime.Now;
-            App.Events.RaisePreventUIAction(false, "");
-            Log.Write("Traductions reimporter, took " + (end-start).TotalMinutes + " min.");
-        }
-
-        public static async Task Bulk_Cards(bool includeFun)
-        {
-            App.Events.RaisePreventUIAction(true, "Importing Cards, takes few minutes.");
-            await Bulk_CardModels(includeFun);
-            await Bulk_CardVariants(includeFun);
-            App.Events.RaiseUpdateCardCollec();
-            App.Events.RaisePreventUIAction(false, "");
-        }
-        private static async Task Bulk_CardModels(bool includeFun)
-        {
-            await Task.Run((Func<Task>)(async () => {
-                try
+            // Delete old data
+            using (var DB = App.DB.NewContext) await DB.CardModels.ExecuteDeleteAsync();
+            // Insert New Data
+            await Task.Run(async () => { 
+                List<CardModel> cards = new();
+                CardModelDiscriminator cardDiscriminator = new();
+                try 
                 {
-                    // Exceptions gestion
-                    bool preventAdd;
-                    bool alreadyAdded_ScavengerHunt = false;
-                    bool alreadyAdded_TheSuperlatorium = false;
-                    bool alreadyAdded_TriviaContest = false;
-                    bool alreadyAdded_IneffableBlessing = false;
-                    bool alreadyAdded_Everythingamajig = false;
-                    bool alreadyAdded_KnightoftheKitchenSink = false;
-                    bool alreadyAdded_VeryCrypticCommand = false;
-                    bool alreadyAdded_SlySpy = false;
-                    bool alreadyAdded_GarbageElemental = false;
-
-                    List<CardModel> cards = new();
-                    using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
+                    // Connect
+                    using (var MtgJsonSqliteConnexion = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
                     {
-                        connection.Open();
-                        var command = connection.CreateCommand();
+                        MtgJsonSqliteConnexion.Open();
+                        var command = MtgJsonSqliteConnexion.CreateCommand();
                         command.CommandText = SQL_AllCardModels;
                         if (includeFun) command.CommandText += " AND isFunny=0";
+                        // Process
                         using (var reader = await command.ExecuteReaderAsync())
                         {
+                            string name;
+                            string faceName;
+                            string type;
+                            string text;
+                            string keyWords;
+                            string power;
+                            string toughness;
+                            string manacost;
+                            float cmc;
+                            string colorId;
                             while (await reader.ReadAsync())
                             {
-                                preventAdd = false;
-
-                                var name = reader.GetString(0);
-
-
-                                var type = reader.GetString(1);
-                                string v2tmp = "";
-                                if (!await reader.IsDBNullAsync(2)) v2tmp = reader.GetString(2);
-                                var Text = v2tmp;
-                                string v3tmp = "";
-                                if (!await reader.IsDBNullAsync(3)) v3tmp = reader.GetString(3);
-                                var KeyWords = v3tmp;
-                                string v4tmp = "";
-                                if (!await reader.IsDBNullAsync(4)) v4tmp = reader.GetString(4);
-                                var Power = v4tmp;
-                                string v5tmp = "";
-                                if (!await reader.IsDBNullAsync(5)) v5tmp = reader.GetString(5);
-                                var Toughness = v5tmp;
-                                string v6tmp = "";
-                                if (!await reader.IsDBNullAsync(6)) v6tmp = reader.GetString(6);
-                                var manacost = v6tmp;
-                                var cmc = reader.GetFloat(7);
-                                string v8tmp = "";
-                                if (!await reader.IsDBNullAsync(8)) v8tmp = reader.GetString(8);
-                                var colorId = v8tmp;
-
-                                //double sided
-                                if (!await reader.IsDBNullAsync(9))
+                                name = "";
+                                faceName = "";
+                                type = "";
+                                text = "";
+                                keyWords = "";
+                                power = "";
+                                toughness = "";
+                                manacost = "";
+                                cmc = 0;
+                                colorId = "";
+                                // Check
+                                name = reader.GetString(0);
+                                if (!await reader.IsDBNullAsync(9)) faceName = reader.GetString(9);
+                                if (!DiscriminateCardModels(cardDiscriminator,ref name, faceName,reader))
                                 {
-                                    if (!name.StartsWith(reader.GetString(9)))
-                                    {
-                                        preventAdd = true;
-                                    }
+                                    // Parse
+                                    type = reader.GetString(1);
+                                    if (!await reader.IsDBNullAsync(2)) text = reader.GetString(2);
+                                    if (!await reader.IsDBNullAsync(3)) keyWords = reader.GetString(3);
+                                    if (!await reader.IsDBNullAsync(4)) power = reader.GetString(4);
+                                    if (!await reader.IsDBNullAsync(5)) toughness = reader.GetString(5);
+                                    if (!await reader.IsDBNullAsync(6)) manacost = reader.GetString(6);
+                                    cmc = reader.GetFloat(7);
+                                    if (!await reader.IsDBNullAsync(8)) colorId = reader.GetString(8);
+                                    // Register
+                                    cards.Add(new CardModel(name, type, text, keyWords, power, toughness, manacost, cmc, colorId));
                                 }
-
-                                // Exceptionnal cards
-                                // Two different cards with same name...
-                                if (name == "Unquenchable Fury") name += " [" + type + "]";
-                                // One card dispatched on two   
-                                if(name == "B.F.M. (Big Furry Monster)") name += manacost == "" ? " [Left]" : " [Right]";
-                                
-                                // Same Card but different effects(fun)
-                                if (name == "Scavenger Hunt")
-                                {
-                                    if (!alreadyAdded_ScavengerHunt) alreadyAdded_ScavengerHunt = true;
-                                    else preventAdd = true;
-                                }
-                                if (name == "The Superlatorium")
-                                {
-                                    if (!alreadyAdded_TheSuperlatorium) alreadyAdded_TheSuperlatorium = true;
-                                    else preventAdd = true;
-                                }
-                                if (name == "Trivia Contest")
-                                {
-                                    if (!alreadyAdded_TriviaContest) alreadyAdded_TriviaContest = true;
-                                    else preventAdd = true;
-                                }
-                                if (name == "Ineffable Blessing")
-                                {
-                                    if (!alreadyAdded_IneffableBlessing) alreadyAdded_IneffableBlessing = true;
-                                    else preventAdd = true;
-                                }
-                                if (name == "Everythingamajig")
-                                {
-                                    if (!alreadyAdded_Everythingamajig) alreadyAdded_Everythingamajig = true;
-                                    else preventAdd = true;
-                                }
-                                if (name == "Knight of the Kitchen Sink")
-                                {
-                                    if (!alreadyAdded_KnightoftheKitchenSink) alreadyAdded_KnightoftheKitchenSink = true;
-                                    else preventAdd = true;
-                                }
-                                if (name == "Very Cryptic Command")
-                                {
-                                    if (!alreadyAdded_VeryCrypticCommand) alreadyAdded_VeryCrypticCommand = true;
-                                    else preventAdd = true;
-                                }
-                                if (name == "Sly Spy")
-                                {
-                                    if (!alreadyAdded_SlySpy) alreadyAdded_SlySpy = true;
-                                    else preventAdd = true;
-                                }
-                                if (name == "Garbage Elemental")
-                                {
-                                    if (!alreadyAdded_GarbageElemental) alreadyAdded_GarbageElemental = true;
-                                    else preventAdd = true;
-                                }
-                                
-                                if(!preventAdd) cards.Add(new CardModel(name, type, Text, KeyWords, Power, Toughness, manacost, cmc, colorId));
                             }
                         }
                     }
+                    // Save
                     using var DB = App.DB.NewContext;
                     {
                         using var transaction = DB.Database.BeginTransaction();
@@ -273,66 +243,249 @@ namespace MaGeek.AppBusiness
                         transaction.Commit();
                     }
                 }
-                catch (Exception e) { Log.Write(e); }
-            }));
+                catch (Exception e) { Log.Write(e, "Bulk_CardModels"); }
+            });
         }
-        private static async Task Bulk_CardVariants(bool includeFun)
+
+        private static bool DiscriminateCardModels(CardModelDiscriminator cardDiscriminator, ref string name, string faceName, SqliteDataReader reader)
         {
-            await Task.Run((Func<Task>)(async () => {
-                DateTime startTime = DateTime.Now;
+            //double sided
+
+            if (!string.IsNullOrEmpty(faceName) && !name.StartsWith(faceName)) return true;
+
+            // Need rename
+
+            if (name == "Unquenchable Fury")
+            {
+                string type = reader.GetString(1);
+                if (type == "Sorcery") name = "Unquenchable Fury (Battle the Horde)";
+                return false;
+            }
+            if (name == "B.F.M. (Big Furry Monster)")
+            {
+                string manacost = "";
+                if (!reader.IsDBNullAsync(6).Result) manacost = reader.GetString(6);
+                name += manacost == "" ? " (Left)" : " (Right)";
+                return false;
+            }
+
+            // Same Card but different effects(fun)
+            if (name == "Scavenger Hunt")
+            {
+                if (!cardDiscriminator.alreadyAdded_ScavengerHunt) cardDiscriminator.alreadyAdded_ScavengerHunt = true;
+                else return true;
+            }
+            if (name == "The Superlatorium")
+            {
+                if (!cardDiscriminator.alreadyAdded_TheSuperlatorium) cardDiscriminator.alreadyAdded_TheSuperlatorium = true;
+                else return true;
+            }
+            if (name == "Trivia Contest")
+            {
+                if (!cardDiscriminator.alreadyAdded_TriviaContest) cardDiscriminator.alreadyAdded_TriviaContest = true;
+                else return true;
+            }
+            if (name == "Ineffable Blessing")
+            {
+                if (!cardDiscriminator.alreadyAdded_IneffableBlessing) cardDiscriminator.alreadyAdded_IneffableBlessing = true;
+                else return true;
+            }
+            if (name == "Everythingamajig")
+            {
+                if (!cardDiscriminator.alreadyAdded_Everythingamajig) cardDiscriminator.alreadyAdded_Everythingamajig = true;
+                else return true;
+            }
+            if (name == "Knight of the Kitchen Sink")
+            {
+                if (!cardDiscriminator.alreadyAdded_KnightoftheKitchenSink) cardDiscriminator.alreadyAdded_KnightoftheKitchenSink = true;
+                else return true;
+            }
+            if (name == "Very Cryptic Command")
+            {
+                if (!cardDiscriminator.alreadyAdded_VeryCrypticCommand) cardDiscriminator.alreadyAdded_VeryCrypticCommand = true;
+                else return true;
+            }
+            if (name == "Sly Spy")
+            {
+                if (!cardDiscriminator.alreadyAdded_SlySpy) cardDiscriminator.alreadyAdded_SlySpy = true;
+                else return true;
+            }
+            if (name == "Garbage Elemental")
+            {
+                if (!cardDiscriminator.alreadyAdded_GarbageElemental) cardDiscriminator.alreadyAdded_GarbageElemental = true;
+                else return true;
+            }
+
+            return false;
+        }
+
+        private static async Task Bulk_CardVariants(bool isFirstOne, bool includeFun)
+        {
+            // Retain got cards
+            List<User_GotCard> retained = new();
+            if (!isFirstOne) await RetainGotCards(); //TODO check if no edge case
+            // Delete old data
+            using (var DBx = App.DB.NewContext) await DBx.CardVariants.ExecuteDeleteAsync();
+            // Insert New Data
+            await Task.Run(async () => {
+                List<CardVariant> cards = new();
                 try
                 {
-                    bool preventAdd;
-                    using var DB = App.DB.NewContext;
+                    // Connect
+                    using (var MtgJsonSqliteConnexion = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
                     {
-                        List<CardVariant> cards = new();
-                        using (var connection = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
+                        MtgJsonSqliteConnexion.Open();
+                        var command = MtgJsonSqliteConnexion.CreateCommand();
+                        command.CommandText = SQL_AllCardVariants;
+                        if (includeFun) command.CommandText += " AND isFunny=0";
+                        // Process
+                        using (var DBx = App.DB.NewContext) 
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            connection.Open();
-                            var command = connection.CreateCommand();
-                            command.CommandText = SQL_AllCardVariants;
-                            if (includeFun) command.CommandText += " AND isFunny=0";
-                            using (var reader = await command.ExecuteReaderAsync())
+                            string id;
+                            string rarity;
+                            string artist;
+                            string lang;
+                            string set;
+                            string name;
+                            string faceName;
+                            while (await reader.ReadAsync())
                             {
-                                while (await reader.ReadAsync())
+                                id = "";
+                                rarity = "";
+                                artist = "";
+                                lang = ""; ;
+                                set = "";
+                                name = "";
+                                faceName = "";
+                                // Check 
+                                id = reader.GetString(0);
+                                name = reader.GetString(5);
+                                if (!await reader.IsDBNullAsync(6)) faceName = reader.GetString(6);
+                                if (!DiscriminateCardVariants(ref name, faceName, reader))
                                 {
-                                    preventAdd = false;
-                                    var Id = reader.GetString(0);
-                                    var Rarity = reader.GetString(1);
-                                    string v11tmp = "";
-                                    if (!await reader.IsDBNullAsync(2)) v11tmp = reader.GetString(2);
-                                    var Artist = v11tmp;
-                                    var Lang = reader.GetString(3);
-                                    var Set = reader.GetString(4);
-                                    var name = reader.GetString(5);
-
-                                    //double sided
-                                    if (!await reader.IsDBNullAsync(6))
-                                    {
-                                        if (!name.StartsWith(reader.GetString(6)))
-                                        {
-                                            preventAdd = true;
-                                        }
-                                    }
-
-                                    // Two different cards with same name...
-                                    if (name == "Unquenchable Fury") name += " [" + reader.GetString(7) + "]";
-
-                                    CardModel CardRef = await DB.CardModels.Where(x => x.CardId == name).FirstOrDefaultAsync();
-                                    if (!preventAdd) cards.Add(new CardVariant(Id, Rarity, Artist, Lang, Set, CardRef));
+                                    // Parse
+                                    rarity = reader.GetString(1);
+                                    if (!await reader.IsDBNullAsync(2)) artist = reader.GetString(2);
+                                    lang = reader.GetString(3);
+                                    set = reader.GetString(4);
+                                    // Register
+                                    CardModel CardRef = await DBx.CardModels.Where(x => x.CardId == name).FirstOrDefaultAsync();
+                                    cards.Add(new CardVariant(id, rarity, artist, lang, set, CardRef));
                                 }
                             }
                         }
+                    }
+                    // Save
+                    using var DB = App.DB.NewContext;
+                    {
                         using var transaction = DB.Database.BeginTransaction();
                         await DB.CardVariants.AddRangeAsync(cards);
                         await DB.SaveChangesAsync();
                         transaction.Commit();
                     }
-                    DateTime endTime = DateTime.Now;
-                    //MessageBoxHelper.ShowMsg("DONE!!! Took " + (endTime - startTime).TotalMinutes + " mins");
                 }
                 catch (Exception e) { Log.Write(e); }
-            }));
+            });
+            if (!isFirstOne) await ReaplyGotCards();
+
+        }
+
+        private static bool DiscriminateCardVariants(ref string name, string faceName, SqliteDataReader reader)
+        {
+            //double sided
+            if (!string.IsNullOrEmpty(faceName) && !name.StartsWith(faceName)) return true;
+            // Two different cards with same name
+            if (name == "Unquenchable Fury")
+            {
+                string type = reader.GetString(7);
+                if (type == "Sorcery") name = "Unquenchable Fury (Battle the Horde)";
+                return false;
+            }
+            return false;
+        }
+
+        private async static Task RetainGotCards()
+        {
+            // Delete old data
+            using (var DBx = App.DB.NewContext) await DBx.User_GotCards.ExecuteDeleteAsync();
+            // record data
+            List<string> errors = new();
+            await Task.Run(async () => {
+                try
+                {
+                    List<User_GotCard> listed = new();
+                    using var DB = App.DB.NewContext;
+                    {
+                        List<CardVariant> GotThose = await DB.CardVariants.Where(x => x.Got > 0).Include(x => x.Card).ToListAsync();
+                        foreach (var gotThis in GotThose)
+                        {
+                            if (gotThis.Card == null) errors.Add(("Variant's model not found : "+ gotThis.Id));
+                            else
+                            {
+                                var l = new User_GotCard()
+                                {
+                                    CardVariantId = gotThis.Id,
+                                    CardModelId = gotThis.Card.CardId,
+                                    got = gotThis.Got
+                                };
+                                listed.Add(l);
+                            }
+                        }
+                        using var transaction = DB.Database.BeginTransaction();
+                        DB.User_GotCards.AddRange(listed);
+                        await DB.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                }
+                catch (Exception e) { Log.Write(e, "RetainGotCards"); }
+            });
+            //if (errors.Count > 0)
+            //{
+            //    string errmsg = errors.Count+" errors:";
+            //    foreach (var v in errors) errmsg += "- "+ v + "\n";
+            //    Log.InformUser("Errors during retain got cards"+ errmsg);
+            //}
+        }
+
+        private async static Task ReaplyGotCards()
+        {
+            await Task.Run(async () => {
+                try
+                {
+                    using var DB = App.DB.NewContext;
+                    {
+                        using var transaction = DB.Database.BeginTransaction();
+                        foreach (var gotThis in DB.User_GotCards)
+                        {
+                            var v = DB.CardVariants.Where(x => x.Id == gotThis.CardVariantId).Include(x => x.Card).FirstOrDefault();
+                            if (v != null)
+                            {
+                                v.Got = gotThis.got;
+                                v.Card.Got += gotThis.got;
+                                DB.Entry(v).State = EntityState.Modified;
+                            }
+                        }
+                        //DB.User_GotCards.AddRange(listed);
+                        await DB.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                }
+                catch (Exception e) { Log.Write(e, "RetainGotCards"); }
+            });
+        }
+
+        private class CardModelDiscriminator
+        {
+            public bool alreadyAdded_ScavengerHunt = false;
+            public bool alreadyAdded_TheSuperlatorium = false;
+            public bool alreadyAdded_TriviaContest = false;
+            public bool alreadyAdded_IneffableBlessing = false;
+            public bool alreadyAdded_Everythingamajig = false;
+            public bool alreadyAdded_KnightoftheKitchenSink = false;
+            public bool alreadyAdded_VeryCrypticCommand = false;
+            public bool alreadyAdded_SlySpy = false;
+            public bool alreadyAdded_GarbageElemental = false;
         }
 
         #endregion

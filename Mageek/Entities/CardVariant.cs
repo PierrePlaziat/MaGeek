@@ -21,15 +21,15 @@ namespace MaGeek.Entities
         public string ValueEur { get; set; }
         public string ValueUsd { get; set; }
         public int EdhRecRank { get; set; }
-        public int IsCustom { get; set; }
-        public string CustomName { get; set; }
-        public int Got { get; set; }
+        public int Got { get; set; } //DOING in another table /!\ critical
         public string LastUpdate { get; set; } = "";
 
 
         public virtual ICollection<DeckCard> DeckRelations { get; set; }
         public virtual CardModel Card { get; set; }
-        //public virtual Set Set { get; set; }
+
+
+        //public virtual Set Set { get; set; } //TODO
 
         #region CTOR
 
@@ -42,7 +42,6 @@ namespace MaGeek.Entities
             this.Rarity = Rarity;
             this.SetName = SetName;
             this.Card = Card;
-            IsCustom = 0;
             Got = 0;
         }
 
@@ -51,7 +50,6 @@ namespace MaGeek.Entities
             Id = scryCard.Id.ToString();
             Rarity = scryCard.Rarity;
             SetName = scryCard.SetName;
-            IsCustom = 0;
             Got = 0;
             Card = MageekCollection.QuickFindCardById(scryCard.Name).Result;
         }

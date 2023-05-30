@@ -26,8 +26,9 @@ namespace MaGeek.Entities
         public string KeyWords { get; set; }
         public string Power { get; set; }
         public string Toughness { get; set; }
-        public string FavouriteVariant { get; set; } = "";
-        public int Got { get; set; }
+
+        public string FavouriteVariant { get; set; } = "";    // dont use in next version
+        public int Got { get; set; }    // dont use in next version
 
         public virtual List<CardVariant> Variants { get; set; } = new List<CardVariant>();
         public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();

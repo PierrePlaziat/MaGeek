@@ -61,8 +61,8 @@ namespace MaGeek.Framework
         {
             Write("Information :" + message);
             MessageBox.Show(
-                "Information :", 
                 message, 
+                "Information :", 
                 MessageBoxButton.OK, 
                 MessageBoxImage.Information
             );
@@ -72,8 +72,8 @@ namespace MaGeek.Framework
         {
             Write("Question :" + message);
             var response = MessageBox.Show(
-                "Question :",
                 message,
+                "Question :",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question
             );

@@ -17,7 +17,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="210"></RowDefinition>
-            <RowDefinition Height="91"></RowDefinition>
+            <RowDefinition Height="110"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -33,135 +33,106 @@
                Source="/Resources/Images/splash.png" 
                MouseDown="Window_MouseDown"/>
         <!-- Welcome -->
-        <Label Grid.Column="1" 
+        <!--<Label Grid.Column="1" 
                Foreground="Black" FontWeight="ExtraLight" 
                HorizontalAlignment="Center"  VerticalAlignment="Center"
                Margin="0,120,0,0"
                MouseDown="Window_MouseDown" >
             WELCOME
-        </Label>
+        </Label>-->
 
         <!-- BODY -->
-
-        <!-- FIRST LAUNCH -->
-        <Grid Grid.Row="1" Grid.Column="1" Background="Black"
-              Visibility="{Binding Visibility_FirstLaunch}" >
+        <Grid Grid.Row="1"
+              Grid.Column="1"
+              Background="Black">
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="20"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Margin="0">
+            <Grid Grid.Row="0"
+                  Background="#333" />
+            <Grid Grid.Row="1" Grid.RowSpan="2"
+                  Background="#222" />
 
-                <Label FontSize="11" Margin="0" Padding="1">It seems to be your first launch.</Label>
-                <DockPanel Margin="0">
-                    <Label FontSize="11" Margin="0" Padding="1">Downloading data...</Label>
-                    <Label FontSize="11" Margin="0" Padding="1" 
-                           Visibility="{Binding Visibility_MtgJsonDownloaded}">Done</Label>
-                </DockPanel>
-                <DockPanel>
-                    <Label FontSize="11" Margin="0" Padding="1" 
-                           Visibility="{Binding Visibility_MtgJsonDownloaded}">Gathering foreign names...</Label>
-                    <Label FontSize="11" Margin="0" Padding="1" 
-                           Visibility="{Binding Visibility_ForeignNamesImported}">Done</Label>
-                </DockPanel>
+            <Label Content="{Binding MageekMessage}"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Margin="0"
+                   Padding="1" />
 
-            </StackPanel>
+            <!-- NEW CARDS -->
+            <Grid Grid.Row="1" 
+                  VerticalAlignment="Bottom"
+                  Visibility="{Binding Visibility_NewCards}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Height="50"
+                        Margin="10,10,5,10"
+                        Click="Button_Ignore">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius"
+                                    Value="10" />
+                        </Style>
+                    </Button.Resources>
+                    Ignore</Button>
+                <Button Grid.Column="1"
+                        Height="50" Margin="5,10,10,10"
+                        Click="Button_UpdateCardDb">
 
-            <StackPanel Grid.Row="1" 
-                        Visibility="{Binding Visibility_ForeignNamesImported}">
-                <Label Foreground="White" FontSize="11" Margin="0" Padding="1">Would you like to import all existing cards?</Label>
-                <DockPanel>
-                    
-                    
-                </DockPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Click="DoClose">NO</Button>
-                    <Button Grid.Column="1" Click="LaunchMassImport">YES</Button>
-                </Grid>
-
-            </StackPanel>
-
-        </Grid>
-
-        <!-- NORMAL LAUNCH -->
-        <Grid Visibility="{Binding Visibility_NormalLaunch}" 
-              Grid.Row="1" Grid.Column="1" Background="Black">
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="auto"></RowDefinition>
-            </Grid.RowDefinitions>
-
-            <StackPanel>
-                <Label FontSize="11" Margin="0" Padding="1">Glad to see you.</Label>
-                <Label FontSize="11" Margin="0" Padding="1" Content="{Binding MageekMessage}"/>
-            </StackPanel>
-
-             <!--NO NEWS-->
-            <StackPanel Grid.Row="1" >
-                <Button Grid.Column="1" Height="50" Click="DoClose">Close</Button>
-            </StackPanel>
-            <!--NEW CARDS-->
-            <StackPanel Grid.Row="1" Visibility="{Binding Visibility_NewCards}">
-                <Label FontSize="11" Margin="0" Padding="1">There are new cards!</Label>
-                <Label FontSize="11" Margin="0" Padding="1">Would you like to import them?</Label>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Height="25">YES</Button>
-                    <Button Grid.Column="1" Height="25" Click="DoClose">NO</Button>
-                </Grid>
-            </StackPanel>
-            <!--NEW UPDATE--> 
-            <StackPanel Grid.Row="1" Visibility="{Binding Visibility_NewUpdate}">
-                <Label FontSize="11" Margin="0" Padding="1">Update Available:</Label>
-                <Label FontSize="11" Margin="0" Padding="1">[Update info]</Label>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Height="25">Install</Button>
-                    <Button Grid.Column="1" Height="25" Click="DoClose">Ignore</Button>
-                </Grid>
-            </StackPanel>
-
-        </Grid>
-
-        <!-- FOOTER -->
-
-        <StackPanel Grid.Column="1" Grid.Row="2" >
-            
-            <!-- GITHUB LINK -->
-            <Button Height="20" Click="GoToGithub" Margin="0" Padding="0">GitHub</Button>
-            <Grid>
-                <!-- NORMAL LAUNCH -->
-                <Grid Background="#333" 
-                      Grid.Column="1" Grid.Row="2" 
-                      Visibility="{Binding Visibility_NormalLaunch}" >
-                    <CheckBox HorizontalAlignment="Center" VerticalAlignment="Top">
-                        Show at startup
-                    </CheckBox>
-                </Grid>
-                <!-- FIRST LAUNCH -->
-                <!--<Grid Background="#333" 
-                      Grid.Column="1" Grid.Row="2" 
-                      Visibility="{Binding Visibility_ForeignNamesImported}">
-                    <CheckBox Name="Fun" HorizontalAlignment="Center" VerticalAlignment="Top">
-                        Include fun cards
-                    </CheckBox>
-                </Grid>-->
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius"
+                                    Value="10" />
+                        </Style>
+                    </Button.Resources>
+                    Import</Button>
             </Grid>
-        </StackPanel>
+
+            <!-- NEW UPDATE -->
+            <Grid Grid.Row="1"
+                  VerticalAlignment="Bottom"
+                  Visibility="{Binding Visibility_NewUpdate}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Height="50"
+                        Margin="10,10,5,10"
+                        Click="Button_Ignore">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius"
+                                    Value="10" />
+                        </Style>
+                    </Button.Resources>
+                    Ignore
+                </Button>
+                <Button Grid.Column="1"
+                        Height="50"
+                        Margin="5,10,10,10"
+                        Click="Button_UpdateSoftware">
+
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius"
+                                    Value="10" />
+                        </Style>
+                    </Button.Resources>
+                    Update
+                </Button>
+            </Grid>
+
+        </Grid>
         
+
     </Grid>
 
 </ui:TemplatedWindow>

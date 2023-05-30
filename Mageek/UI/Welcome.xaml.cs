@@ -12,7 +12,7 @@ namespace MaGeek
 
         #region Attributes
 
-        string mageekMessage = "test msg";
+        string mageekMessage;
         public string MageekMessage {
             get { return mageekMessage; }
             set { mageekMessage = value; OnPropertyChanged(); }
@@ -20,40 +20,11 @@ namespace MaGeek
 
         #region Visibilities
 
-        private Visibility visibility_FirstLaunch = Visibility.Collapsed;
-        public Visibility Visibility_FirstLaunch
-        {
-            get { return visibility_FirstLaunch; }
-            set { visibility_FirstLaunch = value; OnPropertyChanged(); }
-        }
-        
         private Visibility visibility_NormalLaunch = Visibility.Collapsed;
         public Visibility Visibility_NormalLaunch
         {
             get { return visibility_NormalLaunch; }
             set { visibility_NormalLaunch = value; OnPropertyChanged(); }
-        }
-
-        private Visibility visibility_MtgJsonDownloaded = Visibility.Collapsed;
-        public Visibility Visibility_MtgJsonDownloaded
-        {
-            get { return visibility_MtgJsonDownloaded; }
-            set { visibility_MtgJsonDownloaded = value; OnPropertyChanged(); }
-        }
-
-        private Visibility visibility_ForeignNamesImported = Visibility.Collapsed;
-        public Visibility Visibility_ForeignNamesImported
-        {
-            get { return visibility_ForeignNamesImported; }
-            set { visibility_ForeignNamesImported = value; OnPropertyChanged(); }
-        }
-
-
-        private Visibility visibility_NoNews = Visibility.Collapsed;
-        public Visibility Visibility_NoNews
-        {
-            get { return visibility_NoNews; }
-            set { visibility_NoNews = value; OnPropertyChanged(); }
         }
 
         private Visibility visibility_NewCards = Visibility.Collapsed;
@@ -80,66 +51,70 @@ namespace MaGeek
         {
             DataContext = this;
             InitializeComponent();
-            if (App.Config.SeemToBeFirstLaunch) Activate_FirstLaunch().ConfigureAwait(false);
-            else Activate_NormalLaunch();
+            Init().ConfigureAwait(false);
         }
 
         #endregion
 
         #region Methods
 
-        private async Task Activate_FirstLaunch()
+        private async Task Init()
         {
-            Visibility_FirstLaunch = Visibility.Visible;
-            MageekMessage = "First launch.";
-            await MageekBulkinator.Download_MtgJsonSqlite();
-            Visibility_MtgJsonDownloaded = Visibility.Visible;
-            await MageekBulkinator.Bulk_CardTraductions();
-            Visibility_ForeignNamesImported = Visibility.Visible;
-        }
-        
-        private void Activate_NormalLaunch()
-        {
-            Hide();
-            App.LaunchMainWin();
-            Close();
-        }
+            if (App.Config.SeemToBeFirstLaunch) await UpdateCardDb(true);
+            else
+            { 
+                MageekMessage = "Check updates";
+                if (await MageekBulkinator.AreDataOutdated())
+                {
+                    MageekMessage = "Cards database update available";
+                    Visibility_NewCards = Visibility.Visible;
+                }
+                else if (App.IsUpdateAvailable())
+                {
+                    MageekMessage = "Software update available";
+                    Visibility_NewUpdate = Visibility.Visible;
+                }
+                else Launch();
 
-        //private bool DetermineIfNewUpdate()
-        //{
-        //    // TODO
-        //    return false;
-        //}
-
-        //private void DetermineIfNewCards()
-        //{
-        //    // TODO
-        //}
-
-        private void LaunchMassImport(object sender, RoutedEventArgs e)
-        {
-            Hide();
-            bool fun = true;
-            App.LaunchMainWin();
-            MageekBulkinator.Bulk_Cards(fun).ConfigureAwait(false);
-            Close();
+            }
+               
         }
 
-        private void DoClose(object sender, RoutedEventArgs e)
+
+        private async Task UpdateCardDb(bool isFirst)
+        {
+            MageekMessage = "Downloading Data";
+            await MageekBulkinator.DownloadBulkData();
+            MageekMessage = "Importing Cards (~5 min)";
+            await MageekBulkinator.ImportAllData(isFirst);
+            Launch();
+        }
+
+        private void Launch()
         {
             Hide();
             App.LaunchMainWin();
             Close();
         }
+
+        private void Button_UpdateCardDb(object sender, RoutedEventArgs e)
+        {
+            Visibility_NewCards = Visibility.Collapsed;
+            UpdateCardDb(false).ConfigureAwait(false);
+        }
+        private void Button_UpdateSoftware(object sender, RoutedEventArgs e)
+        {
+            App.UpdateSoftware();
+        }
+        private void Button_Ignore(object sender, RoutedEventArgs e)
+        {
+            Launch();
+        }
+
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left) DragMove();
-        }
-
-        private void GoToGithub(object sender, RoutedEventArgs e)
-        {
-            App.HyperLink("https://github.com/PierrePlaziat/MaGeek");
         }
 
         #endregion

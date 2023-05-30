@@ -35,12 +35,12 @@
         <MenuItem Header="Database">
             <MenuItem Header="Update All Cards"
                       Foreground="Black"
-                      Click="ReimportTraductions" />
+                      Click="UpdateCards"/>
             <Separator />
-            <MenuItem Header="Backup Collection"
+            <MenuItem Header="Backup DB"
                       Foreground="Black"
                       Click="BackupCollection" />
-            <MenuItem Header="Restore Collection"
+            <MenuItem Header="Restore DB"
                       Foreground="Black"
                       Click="RestoreCollection" />
         </MenuItem>

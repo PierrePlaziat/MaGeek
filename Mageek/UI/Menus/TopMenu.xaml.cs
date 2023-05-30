@@ -1,6 +1,8 @@
 ﻿using MaGeek.AppBusiness;
+using MaGeek.Framework;
 using MaGeek.UI.Windows.Importers;
 using MaGeek.UI.Windows.ImportExport;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -57,9 +59,13 @@ namespace MaGeek.UI.Menus
 
         #region Database
 
-        private void ReimportTraductions(object sender, RoutedEventArgs e)
+        private void UpdateCards(object sender, RoutedEventArgs e)
         {
-            MageekBulkinator.ReBulk_CardTraductions().ConfigureAwait(false);
+            if (Log.AskUser("App will restart"))
+            {
+                File.Delete(App.Config.Path_MtgJsonDownload_OldHash);
+                App.Restart();
+            }
         }
 
         private void BackupCollection(object sender, RoutedEventArgs e)
@@ -160,7 +166,6 @@ namespace MaGeek.UI.Menus
             // TODO
             //App.Restart();
         }
-
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using MaGeek.AppBusiness;
 using MaGeek.Framework.Data;
@@ -42,6 +43,17 @@ namespace MaGeek
         {
             Process.Start(Process.GetCurrentProcess().MainModule.FileName);
             Current.Shutdown();
+        }
+
+        internal static bool IsUpdateAvailable()
+        {
+            //TODO UpdateSoftware
+            return false;
+        }
+
+        internal static void UpdateSoftware()
+        {
+            //TODO UpdateSoftware
         }
 
         #endregion

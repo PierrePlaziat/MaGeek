@@ -19,9 +19,12 @@ namespace MaGeek
         private static string Path_RoamingFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
         private static string Path_Settings { get; } = Path.Combine(Path_RoamingFolder, "Settings.json");
         public string Path_ImageFolder { get; } = Path.Combine(Path_RoamingFolder, "CardsIllus");
-        public string Path_Db { get; } = Path.Combine(Path_RoamingFolder, "MaGeek.db");
-        public string Path_Db_ToRestore { get; } = Path.Combine(Path_RoamingFolder, ".tmp");
-        public string Path_MtgJsonDownload { get; } = string.Concat(Path_RoamingFolder, "mtgjson.sqlite");
+        public static string Path_DbFolder { get; } = Path.Combine(Path_RoamingFolder, "DB");
+        public string Path_Db { get; } = Path.Combine(Path_DbFolder, "MaGeek.db");
+        public string Path_Db_ToRestore { get; } = Path.Combine(Path_DbFolder, ".tmp");
+        public string Path_MtgJsonDownload { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite");
+        public string Path_MtgJsonDownload_NewHash { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite.sha256");
+        public string Path_MtgJsonDownload_OldHash { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite.sha256_old");
         public string Path_ImporterState { get; } = Path.Combine(Path_RoamingFolder, "ImporterState.json");
         public string Path_LayoutSave { get; } = Path.Combine(Path_RoamingFolder, "Layout.xml");
         public string Path_Log { get; } = Path.Combine(Path_RoamingFolder, "Log.txt");

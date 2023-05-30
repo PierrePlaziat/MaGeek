@@ -36,8 +36,11 @@ namespace MaGeek
         public DbSet<Deck> Decks { get; set; }
         public DbSet<DeckCard> DeckCards { get; set; }
         public DbSet<Param> Params { get; set; }
-
+        
         //public DbSet<Set> Sets { get; set; }
+
+        public DbSet<FavVariant> FavCards { get; set; }
+        public DbSet<User_GotCard> User_GotCards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -93,6 +96,8 @@ namespace MaGeek
             "CREATE TABLE \"Decks\" (\r\n\t\"DeckId\"\tINTEGER,\r\n\t\"Title\"\tTEXT,\r\n\t\"Description\"\tTEXT,\r\n\t\"DeckColors\"\tTEXT,\r\n\t\"CardCount\"\tINTEGER,\r\n\tPRIMARY KEY(\"DeckId\")\r\n);",
             "CREATE TABLE \"Params\" (\r\n\t\"ParamName\"\tTEXT,\r\n\t\"ParamValue\"\tTEXT\r\n);",
             "CREATE TABLE \"Sets\" (\r\n\t\"Name\"\tTEXT,\r\n\t\"Type\"\tTEXT,\r\n\t\"Svg\"\tTEXT,\r\n\t\"Date\"\tTEXT,\r\n\tPRIMARY KEY(\"Name\")\r\n);",
+            "CREATE TABLE \"User_FavCards\" (\r\n\t\"CardModelId\"\tTEXT,\r\n\t\"CardVariantId\"\tTEXT,\r\n\tPRIMARY KEY(\"CardModelId\")\r\n);",
+            "CREATE TABLE \"User_GotCards\" (\r\n\t\"CardVariantId\"\tTEXT,\r\n\t\"CardModelId\"\tTEXT,\r\n\t\"Got\"\tINTEGER,\r\n\tPRIMARY KEY(\"CardVariantId\")\r\n);",
         };
 
     }

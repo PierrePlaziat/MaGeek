@@ -177,7 +177,7 @@ namespace MaGeek.UI
             {
                 if (OnlyGot)
                 {
-                    retour.AddRange(await DB.CardModels.Where(x => x.Got > 0).ToArrayAsync());
+                    //retour.AddRange(await DB.CardModels.Where(x => x.Got > 0).ToArrayAsync());
                 } 
                 else
                 {
