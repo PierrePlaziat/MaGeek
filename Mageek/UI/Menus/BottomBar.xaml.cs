@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Timers;
 using MaGeek.Entities;
-using MaGeek.Framework;
+using MaGeek.Framework.Utils;
 
 namespace MaGeek.UI.Menus
 {

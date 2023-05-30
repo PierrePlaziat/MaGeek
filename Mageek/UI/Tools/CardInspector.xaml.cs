@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using MaGeek.Entities;
-using MaGeek.Framework;
+using MaGeek.Framework.Utils;
 
 namespace MaGeek.UI
 {

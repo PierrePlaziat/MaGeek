@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 
-namespace MaGeek.Framework
+namespace MaGeek.Framework.Utils
 {
 
     public static class Log
@@ -28,7 +28,8 @@ namespace MaGeek.Framework
 
         public static void Write(string message)
         {
-            LogMessage logLine = new LogMessage(){
+            LogMessage logLine = new LogMessage()
+            {
                 Message = message,
                 Instant = DateTime.Now,
                 Level = LogLevel.Info
@@ -61,9 +62,9 @@ namespace MaGeek.Framework
         {
             Write("Information :" + message);
             MessageBox.Show(
-                message, 
-                "Information :", 
-                MessageBoxButton.OK, 
+                message,
+                "Information :",
+                MessageBoxButton.OK,
                 MessageBoxImage.Information
             );
         }
@@ -106,7 +107,7 @@ namespace MaGeek.Framework
 
         public override string ToString()
         {
-            return "["+Instant+"] " + Level + " - " + Message;
+            return "[" + Instant + "] " + Level + " - " + Message;
         }
     }
 

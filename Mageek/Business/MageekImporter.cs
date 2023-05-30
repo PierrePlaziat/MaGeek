@@ -1,4 +1,4 @@
-﻿using MaGeek.Framework;
+﻿using MaGeek.Framework.Utils;
 using ScryfallApi.Client.Models;
 using System;
 using System.Collections.Generic;

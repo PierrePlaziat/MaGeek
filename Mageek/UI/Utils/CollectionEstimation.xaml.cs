@@ -1,6 +1,6 @@
 ﻿using MaGeek.AppBusiness;
 using MaGeek.Entities;
-using MaGeek.Framework;
+using MaGeek.Framework.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

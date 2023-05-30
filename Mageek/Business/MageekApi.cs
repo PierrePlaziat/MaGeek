@@ -11,7 +11,7 @@ using System.Net.Http;
 using System.Windows.Media.Imaging;
 using MaGeek.Entities;
 using MaGeek.Framework.Data;
-using MaGeek.Framework;
+using MaGeek.Framework.Utils;
 
 namespace MaGeek.AppBusiness
 {

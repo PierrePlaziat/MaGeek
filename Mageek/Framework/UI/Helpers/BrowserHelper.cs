@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using MaGeek.Framework;
+using MaGeek.Framework.Utils;
 
 namespace MaGeek.AppFramework.UI.Utils
 {

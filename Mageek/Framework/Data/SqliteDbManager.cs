@@ -2,6 +2,7 @@
 using System.IO;
 using Microsoft.Data.Sqlite;
 using MaGeek.AppFramework.UI.Utils;
+using MaGeek.Framework.Utils;
 
 namespace MaGeek.Framework.Data
 {

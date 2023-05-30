@@ -1,6 +1,6 @@
 ﻿using AvalonDock.Layout;
 using AvalonDock.Layout.Serialization;
-using MaGeek.Framework;
+using MaGeek.Framework.Utils;
 using MaGeek.UI;
 using System.IO;
 using System.Linq;
