@@ -3,7 +3,7 @@
 	
 <!-- Product -->  
   
-  <Product Id="*" Name="MaGeek" Language="1033" Version="1.0.0.3" Manufacturer="PlaziatPierre" UpgradeCode="501e43bf-cd40-4b37-b88c-bec3e3a8b24b">
+  <Product Id="*" Name="MaGeek" Language="1033" Version="1.0.1.0" Manufacturer="PlaziatPierre" UpgradeCode="501e43bf-cd40-4b37-b88c-bec3e3a8b24b">
 	
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     
@@ -158,25 +158,13 @@
       <Component Id="Microsoft.Extensions.Http.dll" Guid="f6bd16d7-ec59-4452-9895-9b63bf37d0ae">
         <File Id="Microsoft.Extensions.Http.dll" Name="Microsoft.Extensions.Http.dll" Source="$(var.MaGeek_TargetDir)Microsoft.Extensions.Http.dll" />
       </Component>
-      <Component Id="System.Text.Encodings.Web.dll" Guid="3e9ae95e-8bbe-45d9-bdbd-bd670b7dca15">
-        <File Id="System.Text.Encodings.Web.dll" Name="System.Text.Encodings.Web.dll" Source="$(var.MaGeek_TargetDir)System.Text.Encodings.Web.dll" />
-      </Component>
       
       <Component Id="ProductComponent" Guid="4e53269e-7cf7-48b6-ba55-0906ee45863e">
         <File Id="MaGeek.exe" Source="$(var.MaGeek_TargetDir)MaGeek.exe" KeyPath="yes" />
       </Component>
       
-      <Component Id="MtgDbComponent" Guid="f3cdca2a-3630-49bc-b9ab-75de6a83e955">
-        <File Id="Mtg.db" Source="$(var.MaGeek_TargetDir)Mtg.db" KeyPath="yes" />
-      </Component>
-      <Component Id="ProductsDb" Guid="8a66a0c3-d68e-40f5-9b61-7558d8fc379f">
-        <File Id="products.db" Source="$(var.MaGeek_TargetDir)products.db" KeyPath="yes" />
-      </Component>
       <Component Id="SqliteRaw" Guid="f975a985-7454-4830-a30e-ee12ecf151e7">
         <File Id="SQLitePCLRaw.batteries_v2.dll" Source="$(var.MaGeek_TargetDir)SQLitePCLRaw.batteries_v2.dll" KeyPath="yes" />
-      </Component>
-      <Component Id="esqlite" Guid="c9362960-8703-4ffb-8687-60a5f9b02a8e">
-        <File Id="SQLitePCLRaw.provider.e_sqlite3.dll" Source="$(var.MaGeek_TargetDir)SQLitePCLRaw.provider.e_sqlite3.dll" KeyPath="yes" />
       </Component>
       <Component Id="EntityFramework.SqlServer" Guid="7b5bdc2a-7a0a-4dee-928f-0ff104d5c5bf">
         <File Id="EntityFramework.SqlServer.dll" Source="$(var.MaGeek_TargetDir)EntityFramework.SqlServer.dll" KeyPath="yes" />
@@ -233,17 +221,11 @@
 	    <Component Id="Newtonsoft.Json.dll" Guid="6f6ddf56-99a9-49fb-ad5c-49aa12301370">
 	      <File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" Source="$(var.MaGeek_TargetDir)Newtonsoft.Json.dll" />
 	    </Component>
-	    <Component Id="System.Text.Json.dll" Guid="7d8fd0e5-134d-4e0c-8c6c-89f1c082c396">
-	      <File Id="System.Text.Json.dll" Name="System.Text.Json.dll" Source="$(var.MaGeek_TargetDir)System.Text.Json.dll" />
-	    </Component>
 	    <Component Id="Microsoft.EntityFrameworkCore.Proxies.dll" Guid="a18921d4-099d-47f5-84e0-e24a1b533abc">
 	      <File Id="Microsoft.EntityFrameworkCore.Proxies.dll" Name="Microsoft.EntityFrameworkCore.Proxies.dll" Source="$(var.MaGeek_TargetDir)Microsoft.EntityFrameworkCore.Proxies.dll" />
 	    </Component>
 	    <Component Id="Microsoft.EntityFrameworkCore.Sqlite.dll" Guid="c5cc8cee-131b-403f-9dbe-0614ed46cb94">
 	      <File Id="Microsoft.EntityFrameworkCore.Sqlite.dll" Name="Microsoft.EntityFrameworkCore.Sqlite.dll" Source="$(var.MaGeek_TargetDir)Microsoft.EntityFrameworkCore.Sqlite.dll" />
-	    </Component>
-	    <Component Id="EntityFramework.dll" Guid="35f99535-a3a3-4088-9e19-03462af1af90">
-	      <File Id="EntityFramework.dll" Name="EntityFramework.dll" Source="$(var.MaGeek_TargetDir)EntityFramework.dll" />
 	    </Component>
 	    <Component Id="Microsoft.EntityFrameworkCore.dll" Guid="aece676c-16fb-4905-9ab5-04af73f81c22">
 	      <File Id="Microsoft.EntityFrameworkCore.dll" Name="Microsoft.EntityFrameworkCore.dll" Source="$(var.MaGeek_TargetDir)Microsoft.EntityFrameworkCore.dll" />
@@ -260,17 +242,11 @@
       <Component Id="MaGeek.pdb" Guid="a98aaa1d-f4e1-4dd8-bd4c-534021f07142">
         <File Id="MaGeek.pdb" Name="MaGeek.pdb" Source="$(var.MaGeek_TargetDir)MaGeek.pdb" />
       </Component>
-      <Component Id="Microsoft.WindowsAPICodePack.Shell.dll" Guid="3a691db3-59f6-4b4a-aa9a-5b390141548a">
-        <File Id="Microsoft.WindowsAPICodePack.Shell.dll" Name="Microsoft.WindowsAPICodePack.Shell.dll" Source="$(var.MaGeek_TargetDir)Microsoft.WindowsAPICodePack.Shell.dll" />
-      </Component>
       <Component Id="AvalonDock.Themes.Expression.dll" Guid="05206b1f-b05d-4de9-8676-97269289bb2b">
         <File Id="AvalonDock.Themes.Expression.dll" Name="AvalonDock.Themes.Expression.dll" Source="$(var.MaGeek_TargetDir)AvalonDock.Themes.Expression.dll" />
       </Component>
       <Component Id="AvalonDock.dll" Guid="38950e40-a540-4611-9332-6b4336ce96a7">
         <File Id="AvalonDock.dll" Name="AvalonDock.dll" Source="$(var.MaGeek_TargetDir)AvalonDock.dll" />
-      </Component>
-      <Component Id="Microsoft.WindowsAPICodePack.dll" Guid="c9869358-f3d0-446e-8e99-a68be8ecc7a7">
-        <File Id="Microsoft.WindowsAPICodePack.dll" Name="Microsoft.WindowsAPICodePack.dll" Source="$(var.MaGeek_TargetDir)Microsoft.WindowsAPICodePack.dll" />
       </Component>
 	  </ComponentGroup>
 	</Fragment>

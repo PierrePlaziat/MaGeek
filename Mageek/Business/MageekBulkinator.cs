@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace MaGeek.AppBusiness
 {
@@ -54,11 +55,22 @@ namespace MaGeek.AppBusiness
         {
             try
             {
+                bool? tooOld = FileUtils.IsFileOlder(App.Config.Path_MtgJsonDownload_OldHash, new TimeSpan(0, 23, 0, 0));
+                    
+                // Dont check too often
+                if(tooOld.HasValue && !tooOld.Value)
+                {
+                    return false;
+                }
                 // Hash Download
-                using var client = new HttpClient();
-                using var hash = await client.GetStreamAsync("https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256");
-                using var fs_NewHash = new FileStream(App.Config.Path_MtgJsonDownload_NewHash, FileMode.Create);
-                await hash.CopyToAsync(fs_NewHash);
+                using (var client = new HttpClient())
+                {
+                    using (var hash = await client.GetStreamAsync("https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256"))
+                    using (var fs_NewHash = new FileStream(App.Config.Path_MtgJsonDownload_NewHash, FileMode.Create))
+                    {
+                        await hash.CopyToAsync(fs_NewHash);
+                    }
+                }
                 // Hash Check
                 if (File.Exists(App.Config.Path_MtgJsonDownload_OldHash))
                 {
