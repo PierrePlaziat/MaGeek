@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace MaGeek.Entities
 {
-    public class Set
+    public class MtgSet
     {
         [Key]
         public string Name { get; set; }
         public string Type { get; set; }
+        public string Block { get; set; }
+        public int BaseSetSize { get; set; }
+        public int TotalSetSize { get; set; }
+        public DateOnly ReleaseDate { get; set; }
         public string Svg { get; set; }
-        public DateOnly Date { get; set; }
-
-
-        public virtual ObservableCollection<CardVariant> SetCards { get; set; }
-
 
     }
 }

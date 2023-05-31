@@ -1,17 +1,19 @@
 ﻿<ui:TemplatedWindow  xmlns:ui="clr-namespace:MaGeek.UI"
                      x:Class="MaGeek.Welcome"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Title="Welcome" 
-        Width="350" Height="350"
-        Background="Transparent"
-        AllowsTransparency="True"
-        WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-        Topmost="True">
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:controls="clr-namespace:MaGeek.UI.Controls"
+                     mc:Ignorable="d"
+                     Title="Welcome"
+                     Width="350"
+                     Height="350"
+                     Background="Transparent"
+                     AllowsTransparency="True"
+                     WindowStartupLocation="CenterScreen"
+                     WindowStyle="None"
+                     Topmost="True">
 
     <Grid Background="Transparent">
 
@@ -29,17 +31,19 @@
         <!-- HEADER -->
 
         <!-- BackGround -->
-        <Image Grid.RowSpan="3" Grid.ColumnSpan="3"
-               Source="/Resources/Images/splash.png" 
-               MouseDown="Window_MouseDown"/>
+        <Image Grid.RowSpan="3"
+               Grid.ColumnSpan="3"
+               Source="/Resources/Images/splash.png"
+               MouseDown="Window_MouseDown" />
         <!-- Welcome -->
-        <!--<Label Grid.Column="1" 
+        <Label Grid.Column="1" 
                Foreground="Black" FontWeight="ExtraLight" 
                HorizontalAlignment="Center"  VerticalAlignment="Center"
                Margin="0,120,0,0"
                MouseDown="Window_MouseDown" >
             WELCOME
-        </Label>-->
+        </Label>
+
 
         <!-- BODY -->
         <Grid Grid.Row="1"
@@ -54,56 +58,34 @@
 
             <Grid Grid.Row="0"
                   Background="#333" />
-            <Grid Grid.Row="1" Grid.RowSpan="2"
+            <Grid Grid.Row="1"
+                  Grid.RowSpan="2"
                   Background="#222" />
+
+            <controls:BusyIndicator HorizontalAlignment="Stretch"
+                                    Visibility="{Binding Visibility_IsLoading}"
+                                        VerticalAlignment="Stretch"
+                                        Grid.Row="1"
+                                        Grid.Column="1" />
 
             <Label Content="{Binding MageekMessage}"
                    FontWeight="Bold"
+                   Foreground="White"
                    HorizontalAlignment="Center"
                    Margin="0"
                    Padding="1" />
 
             <!-- NEW CARDS -->
-            <Grid Grid.Row="1" 
-                  VerticalAlignment="Bottom"
+            <Grid Grid.Row="1"
+                  VerticalAlignment="Center"
                   Visibility="{Binding Visibility_NewCards}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
-                        Height="50"
-                        Margin="10,10,5,10"
-                        Click="Button_Ignore">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius"
-                                    Value="10" />
-                        </Style>
-                    </Button.Resources>
-                    Ignore</Button>
-                <Button Grid.Column="1"
-                        Height="50" Margin="5,10,10,10"
-                        Click="Button_UpdateCardDb">
-
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius"
-                                    Value="10" />
-                        </Style>
-                    </Button.Resources>
-                    Import</Button>
-            </Grid>
-
-            <!-- NEW UPDATE -->
-            <Grid Grid.Row="1"
-                  VerticalAlignment="Bottom"
-                  Visibility="{Binding Visibility_NewUpdate}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0"
+                        BorderThickness="0"
+                        Background="IndianRed"
                         Height="50"
                         Margin="10,10,5,10"
                         Click="Button_Ignore">
@@ -116,6 +98,47 @@
                     Ignore
                 </Button>
                 <Button Grid.Column="1"
+                        BorderThickness="0"
+                        Background="LightSeaGreen"
+                        Height="50"
+                        Margin="5,10,10,10"
+                        Click="Button_UpdateCardDb">
+
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius"
+                                    Value="10" />
+                        </Style>
+                    </Button.Resources>
+                    Import
+                </Button>
+            </Grid>
+
+            <!-- NEW UPDATE -->
+            <Grid Grid.Row="1"
+                  VerticalAlignment="Center"
+                  Visibility="{Binding Visibility_NewUpdate}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        BorderThickness="0"
+                        Background="IndianRed"
+                        Height="50"
+                        Margin="10,10,5,10"
+                        Click="Button_Ignore">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius"
+                                    Value="10" />
+                        </Style>
+                    </Button.Resources>
+                    Ignore
+                </Button>
+                <Button Grid.Column="1"
+                        BorderThickness="0"
+                        Background="LightSeaGreen"
                         Height="50"
                         Margin="5,10,10,10"
                         Click="Button_UpdateSoftware">
@@ -131,7 +154,12 @@
             </Grid>
 
         </Grid>
-        
+
+        <ui:OutputMsg Grid.Column="1"
+                      Grid.Row="2"
+                      Margin="0" Padding="0"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"></ui:OutputMsg>
 
     </Grid>
 

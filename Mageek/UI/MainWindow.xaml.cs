@@ -33,7 +33,6 @@ namespace MaGeek
             Application.Current.MainWindow = this;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
             InitializeComponent();
-            Log.Write("Welcome");
         }
 
         

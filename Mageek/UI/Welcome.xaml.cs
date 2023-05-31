@@ -1,4 +1,5 @@
 ﻿using MaGeek.AppBusiness;
+using MaGeek.Framework.Utils;
 using MaGeek.UI;
 using System.Threading.Tasks;
 using System.Windows;
@@ -40,6 +41,13 @@ namespace MaGeek
             get { return visibility_NewUpdate; }
             set { visibility_NewUpdate = value; OnPropertyChanged(); }
         }
+        
+        private Visibility visibility_IsLoading = Visibility.Collapsed;
+        public Visibility Visibility_IsLoading
+        {
+            get { return visibility_IsLoading; }
+            set { visibility_IsLoading = value; OnPropertyChanged(); }
+        }
 
         #endregion
 
@@ -60,11 +68,18 @@ namespace MaGeek
 
         private async Task Init()
         {
-            if (App.Config.SeemToBeFirstLaunch) await UpdateCardDb(true);
+            MageekMessage = "Init";
+            Log.Write("Init");
+            if (App.Config.SeemToBeFirstLaunch)
+            {
+                Log.Write("First launch");
+                Visibility_IsLoading = Visibility.Visible;
+                await MageekCardImporter.DownloadHash();
+                await UpdateCardDb(true);
+            }
             else
-            { 
-                MageekMessage = "Check updates";
-                if (await MageekBulkinator.AreDataOutdated())
+            {
+                if (await MageekCardImporter.AreDataOutdated())
                 {
                     MageekMessage = "Cards database update available";
                     Visibility_NewCards = Visibility.Visible;
@@ -84,9 +99,9 @@ namespace MaGeek
         private async Task UpdateCardDb(bool isFirst)
         {
             MageekMessage = "Downloading Data";
-            await MageekBulkinator.DownloadBulkData();
+            await MageekCardImporter.DownloadBulkData();
             MageekMessage = "Importing Cards (~5 min)";
-            await MageekBulkinator.ImportAllData(isFirst);
+            await MageekCardImporter.ImportAllData(isFirst);
             Launch();
         }
 
@@ -100,10 +115,13 @@ namespace MaGeek
         private void Button_UpdateCardDb(object sender, RoutedEventArgs e)
         {
             Visibility_NewCards = Visibility.Collapsed;
+            Visibility_IsLoading = Visibility.Visible;
             UpdateCardDb(false).ConfigureAwait(false);
         }
         private void Button_UpdateSoftware(object sender, RoutedEventArgs e)
         {
+            Visibility_NewUpdate= Visibility.Collapsed;
+            Visibility_IsLoading = Visibility.Visible;
             App.UpdateSoftware();
         }
         private void Button_Ignore(object sender, RoutedEventArgs e)

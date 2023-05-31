@@ -17,7 +17,7 @@ namespace MaGeek.AppBusiness
     /// Interacts with API, called regularly to get fresh data
     /// TODO : replace BackgroundWorker by a Task list 
     /// </summary>
-    public class MageekImporter
+    public class MageekDeckImporter
     {
 
         #region Attributes
@@ -58,7 +58,7 @@ namespace MaGeek.AppBusiness
 
         #region CTOR
 
-        public MageekImporter()
+        public MageekDeckImporter()
         {
             LoadState();
             ConfigureTimer();
@@ -239,34 +239,34 @@ namespace MaGeek.AppBusiness
 
         public void SaveState()
         {
-            try
-            {
-                string jsonString = "";
-                var x = PendingImport.ToList();
-                if (CurrentImport != null) x.Add(CurrentImport.Value);
-                jsonString += JsonSerializer.Serialize(x);
-                File.WriteAllText(SaveStatePath, jsonString);
-            }
-            catch (Exception e) { Log.Write(e); }
+            //try
+            //{
+            //    string jsonString = "";
+            //    var x = PendingImport.ToList();
+            //    if (CurrentImport != null) x.Add(CurrentImport.Value);
+            //    jsonString += JsonSerializer.Serialize(x);
+            //    File.WriteAllText(SaveStatePath, jsonString);
+            //}
+            //catch (Exception e) { Log.Write(e); }
         }
 
         public void LoadState()
         {
-            try
-            {
-                if (!File.Exists(SaveStatePath)) return;
-                string jsonString = File.ReadAllText(SaveStatePath);
-                File.WriteAllText(SaveStatePath, "");
-                if (string.IsNullOrEmpty(jsonString)) return;
-                List<PendingImport> loadedImports = JsonSerializer.Deserialize<List<PendingImport>>(jsonString);
-                PendingImport = new Queue<PendingImport>();
-                foreach (var import in loadedImports) PendingImport.Enqueue(import);
-            }
-            catch (Exception e)
-            {
-                File.WriteAllText(SaveStatePath, "");
-                Log.Write(e);
-            }
+            //try
+            //{
+            //    if (!File.Exists(SaveStatePath)) return;
+            //    string jsonString = File.ReadAllText(SaveStatePath);
+            //    File.WriteAllText(SaveStatePath, "");
+            //    if (string.IsNullOrEmpty(jsonString)) return;
+            //    List<PendingImport> loadedImports = JsonSerializer.Deserialize<List<PendingImport>>(jsonString);
+            //    PendingImport = new Queue<PendingImport>();
+            //    foreach (var import in loadedImports) PendingImport.Enqueue(import);
+            //}
+            //catch (Exception e)
+            //{
+            //    File.WriteAllText(SaveStatePath, "");
+            //    Log.Write(e);
+            //}
         }
 
         #endregion

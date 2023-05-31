@@ -38,12 +38,8 @@
             <menus:ImporterUi></menus:ImporterUi>
         </Grid>
 
-        <Grid Grid.Column="2"
-              ToolTip="{Binding Msgs}">
-
-            <Label HorizontalAlignment="Center"
-                   Content="{Binding Msg}" />
-
+        <Grid Grid.Column="2">
+            <ui:OutputMsg></ui:OutputMsg>
         </Grid>
 
         <Grid Grid.Column="3"

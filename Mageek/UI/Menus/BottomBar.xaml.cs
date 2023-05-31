@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Timers;
-using MaGeek.Entities;
-using MaGeek.Framework.Utils;
+﻿using MaGeek.Entities;
 
 namespace MaGeek.UI.Menus
 {
@@ -26,32 +23,10 @@ namespace MaGeek.UI.Menus
                 return s;
             }
         }
-        
-        public string Msg
-        {
-            get {
-                string s = "";
-                s += Log.Messages.LastOrDefault();
-                return s;
-            }
-        }
-        
-        public string Msgs
-        {
-            get {
-                string s = "";
-                foreach (var ss in Log.Messages) s += "> " + ss + "\n";
-                s = s.Remove(s.Length - 1);
-                return s;
-            }
-        }
-
-        Timer loopTimer;
 
         public StateBar()
         {
             InitializeComponent();
-            ConfigureTimer();
             DataContext = this;
             App.Events.CardSelectedEvent += STATE_CardSelectedEvent;
             App.Events.SelectDeckEvent += STATE_SelectDeckEvent; ;
@@ -65,25 +40,6 @@ namespace MaGeek.UI.Menus
         private void STATE_CardSelectedEvent(CardModel Card)
         {
             OnPropertyChanged(nameof(SelectedCardString));
-        }
-
-        private void ConfigureTimer()
-        {
-            loopTimer = new Timer(1000);
-            loopTimer.AutoReset = true;
-            loopTimer.Elapsed += LoopTimer;
-            loopTimer.Start();
-        }
-
-        private void LoopTimer(object sender, ElapsedEventArgs e)
-        {
-            UpdateMsgs();
-        }
-
-        private void UpdateMsgs()
-        {
-            OnPropertyChanged(nameof(Msg));
-            OnPropertyChanged(nameof(Msgs));
         }
 
     }

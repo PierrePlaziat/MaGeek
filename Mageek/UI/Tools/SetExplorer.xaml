@@ -76,7 +76,7 @@
 
         </DataGrid>
 
-        <Grid Visibility="{Binding IsLoading}"
+        <!--<Grid Visibility="{Binding IsLoading}"
               Grid.RowSpan="2"
               Background="Black"
               HorizontalAlignment="Stretch"
@@ -85,7 +85,7 @@
             <Label HorizontalAlignment="Center"
                    VerticalAlignment="Center">Loading</Label>
 
-        </Grid>
+        </Grid>-->
 
     </Grid>
     

@@ -16,7 +16,7 @@ namespace MaGeek
         public static AppConfig Config { get; private set; }
         public static AppState State { get; private set; }
         public static SqliteDbManager DB { get; private set; }
-        public static MageekImporter Importer { get; private set; }
+        public static MageekDeckImporter Importer { get; private set; }
 
         public App() {
             Events = new();
