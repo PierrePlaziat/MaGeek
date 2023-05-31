@@ -205,18 +205,6 @@ namespace MaGeek.UI
             window.Show();
         }
 
-        private void UpdateCardVariants(object sender, RoutedEventArgs e)
-        {
-            //UpdateButton.Visibility = Visibility.Hidden;
-            App.Importer.AddImportToQueue(
-                new PendingImport
-                {
-                    Mode = ImportMode.Update,
-                    Content = SelectedCard.CardId
-                }
-            );
-        }
-
         private void GotoRelated(object sender, RoutedEventArgs e)
         {
             CardRelation rel = (CardRelation)((Button)sender).DataContext;

@@ -144,22 +144,6 @@ namespace MaGeek.AppBusiness
         {
             List<Card> importResult = new();
 
-            //while (state != ImporterState.Canceled && state == ImporterState.Pause) { };
-            //if (state != ImporterState.Canceled)
-            //{
-            //    Message = "Retrieving cards";
-            //    WorkerProgress=(0);
-            //    importResult = await RetrieveCards(CurrentImport);
-            //}
-
-            //while (state != ImporterState.Canceled && state == ImporterState.Pause) { };
-            //if (state != ImporterState.Canceled)  //App.Events.RaisePreventUIAction(true);
-            //{ 
-            //    Message = "Recording cards";
-            //    WorkerProgress=(50);
-            //    await RecordCards(importResult);
-            //}
-
             while (State != ImporterState.Canceled && State == ImporterState.Pause) { };
             if (State != ImporterState.Canceled)
             {
@@ -179,19 +163,6 @@ namespace MaGeek.AppBusiness
         }
 
         #region Work
-
-        //private /*async Task<*/List<Card>/*>*/ RetrieveCards(PendingImport? currentImport)
-        //{
-        //    List<Card> list = new();
-        //    //switch (currentImport.Value.Mode)
-        //    //{
-        //        //case ImportMode.Set: list = await MageekApi.RetrieveSetCards(CurrentImport.Value.Content); break;
-        //        //case ImportMode.Search: list = await MageekApi.RetrieveCard(CurrentImport.Value.Content, false, false,true); break;
-        //        //case ImportMode.Update: list = await MageekApi.RetrieveCard(CurrentImport.Value.Content, true, false, false); break;
-        //        //case ImportMode.List: list = await RetrieveCardList(await ParseCardList(CurrentImport.Value.Content)); break;
-        //    //};
-        //    return list;
-        //}
 
         private async Task<List<ImportLine>> ParseCardList(string cardlist)
         {
@@ -228,46 +199,10 @@ namespace MaGeek.AppBusiness
             return tuples;
         }
 
-        //private async Task<List<Card>> RetrieveCardList(List<ImportLine> deckList)
-        //{
-        //    List<Card> cards = new();
-        //    try
-        //    {
-        //        for (int i = 0; i < deckList.Count; i++)
-        //        {
-        //            Message = "Retrieve Card : " + deckList[i].Name;
-        //            var foundCards = await MageekApi.RetrieveCard(deckList[i].Name, true, true,true);
-        //            cards.AddRange(foundCards);
-        //            WorkerProgress=i * 100 / deckList.Count / 2;
-        //        }
-        //    }
-        //    catch (Exception e) { AppLogger.ShowError("ImportList", e); }
-        //    return cards;
-        //}
-
-        //private async Task RecordCards(List<Card> results)
-        //{
-        //    bool owned = CurrentImport.HasValue && CurrentImport.Value.AsOwned;
-        //    for (int i = 0; i < results.Count; i++)
-        //    {
-        //        await MageekApi.RecordCard(results[i], owned);
-        //        WorkerProgress=i * 100 / results.Count / 2 + 50;
-        //    }
-        //}
-
         private async Task MakeADeck(PendingImport importing, List<Card> importResult)
         {
-            if (importing.Mode == ImportMode.Search || importing.Mode == ImportMode.Update) return;
-            //if (importResult.Count == 0) return;
             List<ImportLine> importLines = new();
-            if (importing.Mode == ImportMode.List)
-            {
-                importLines = await ParseCardList(importing.Content);
-            }
-            if (importing.Mode == ImportMode.Set)
-            {
-                foreach (var v in importResult) importLines.Add(new ImportLine() { Name = v.Name, Quantity = 1 });
-            }
+            importLines = await ParseCardList(importing.Content);
             await MageekCollection.AddDeck(
                 importLines,
                 importing.Title ?? DateTime.Now.ToString()
@@ -276,36 +211,19 @@ namespace MaGeek.AppBusiness
 
         private void FinalizeImport()
         {
-                if (CurrentImport.Value.Mode == ImportMode.Search)
-                {
-                    App.Events.RaiseUpdateCardCollec();
-                }
-                if (CurrentImport.Value.Mode == ImportMode.Set)
-                {
-                    App.Events.RaiseUpdateCardCollec();
-                    App.Events.RaiseUpdateDeckList();
-                }
-                if (CurrentImport.Value.Mode == ImportMode.List)
-                {
-                    App.Events.RaiseUpdateCardCollec();
-                    App.Events.RaiseUpdateDeckList();
-                }
-                if (CurrentImport.Value.Mode == ImportMode.Update)
-                {
-                    //var c = App.State.SelectedCard;
-                    //if (c!=null) App.Events.RaiseCardSelected(c);
-                }
-                CurrentImport = null;
-                WorkerProgress = 100;
-                Message = "Done";
+            App.Events.RaiseUpdateCardCollec();
+            App.Events.RaiseUpdateDeckList();
+            CurrentImport = null;
+            WorkerProgress = 100;
+            Message = "Done";
         }
 
         private void UpdateInfoText()
         {
             int i = 0;
             string s = "";
-            if (CurrentImport.HasValue) s += i++ + " : " + CurrentImport.Value.Mode + " - " + CurrentImport.Value.Title;
-            foreach (var v in PendingImport) s += "\n" + i++ + " : " + v.Mode + " - " + v.Title;
+            if (CurrentImport.HasValue) s += i++ + " : " + CurrentImport.Value.Title;
+            foreach (var v in PendingImport) s += "\n" + i++ + " : " + v.Title;
             InfoText = s;
         }
         private void ReportImportProgress(object sender, ProgressChangedEventArgs e)
@@ -368,28 +286,17 @@ namespace MaGeek.AppBusiness
 
     public struct PendingImport
     {
-
-        public ImportMode Mode { get; set; }
         public string Content { get; set; }
         public bool AsOwned { get; set; }
         public string Title { get; set; }
 
-        public PendingImport(ImportMode Mode, string Content, bool asGot = false, string title = "")
+        public PendingImport(string Content, bool asGot = false, string title = "")
         {
-            this.Mode = Mode;
             this.Content = Content;
             AsOwned = asGot;
             this.Title = title;
         }
 
-    }
-
-    public enum ImportMode
-    {
-        Search,
-        Set,
-        List,
-        Update
     }
 
     #endregion

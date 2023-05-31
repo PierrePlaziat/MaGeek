@@ -75,7 +75,6 @@ namespace MaGeek.UI.Windows.Importers
                 new PendingImport
                 {
                     Title = "[Preco] " + title,
-                    Mode = ImportMode.List,
                     Content = File.ReadAllText(path + "\\" + title + ".txt"),
                     AsOwned = asOwned
                 }
