@@ -46,17 +46,21 @@
 
                     </LayoutAnchorablePane>
 
-
                     <avalonDock:LayoutPanel Orientation="Vertical" DockWidth="30*">
-                        
+
                         <LayoutAnchorablePane>
 
-                            <avalonDock:LayoutAnchorable x:Name="CS" Title="Card Searcher">
-                                <local:CardSearcher/>
+                            <avalonDock:LayoutAnchorable x:Name="CS"
+                                                         Title="Card Searcher">
+                                <local:CardSearcher />
+                            </avalonDock:LayoutAnchorable>
+
+                            <avalonDock:LayoutAnchorable x:Name="SE"
+                                                         Title="Set Explorer">
+                                <local:SetExplorer />
                             </avalonDock:LayoutAnchorable>
 
                         </LayoutAnchorablePane>
-
 
                         <avalonDock:LayoutPanel>
 

@@ -16,6 +16,12 @@ namespace MaGeek.UI
             InitializeComponent();
         }
 
+        public TxtImporter(string prefill)
+        {
+            InitializeComponent();
+            RichTextBoxHelper.SetContent(ImportTxt,prefill);
+        }
+
         #endregion
 
         #region Methods
@@ -27,7 +33,6 @@ namespace MaGeek.UI
             App.Importer.AddImportToQueue(
                 new PendingImport
                 {
-                    Mode = ImportMode.List,
                     Content = RichTextBoxHelper.GetContent(ImportTxt),
                     Title = title,
                     AsOwned = asOwned

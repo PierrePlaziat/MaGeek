@@ -56,6 +56,7 @@ namespace MaGeek
                 case LayoutEventType.Open_DeckList: DL.Show(); break;
                 case LayoutEventType.Open_DeckStats: DS.Show(); break;
                 case LayoutEventType.Open_DeckTable: DT.Show(); break;
+                case LayoutEventType.Open_SetExplorer: SE.Show(); break;
                 default: break;
             }
         }
@@ -87,6 +88,7 @@ namespace MaGeek
                     case "Deck Table": element.Content = new DeckTable(); break;
                     case "Card Inspector": element.Content = new CardInspector(); break;
                     case "Card Searcher": element.Content = new CardSearcher(); break;
+                    case "Set Explorer": element.Content = new SetExplorer(); break;
                 }
             }
         }
@@ -103,6 +105,7 @@ namespace MaGeek
         Open_DeckContent,
         Open_DeckTable,
         Open_DeckStats,
+        Open_SetExplorer,
         ResetLayout,
     }
 

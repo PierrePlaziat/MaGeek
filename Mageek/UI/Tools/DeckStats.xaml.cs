@@ -157,7 +157,7 @@ namespace MaGeek.UI
             string missList = await MageekStats.ListMissingCards(currentDeck);
             if (!string.IsNullOrEmpty(missList))
             {
-                var window = new DeckListExporter(missList);
+                var window = new TxtImporter(missList);
                 window.Show();
             }
         }

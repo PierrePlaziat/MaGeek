@@ -10,42 +10,61 @@
     <Menu Background="Black"
           Foreground="White">
 
-        <MenuItem Header="Import">
-            <MenuItem Header="Txt"
+        <MenuItem Header="Tools">
+            <MenuItem Header="Set Explorer"
                       Foreground="Black"
-                      Click="OpenWindow_TxtImporter" />
-            <!--<MenuItem Header="Set" Foreground="Black" Click="OpenWindow_SetImporter"/>-->
-            <MenuItem Header="Preco"
+                      Click="SetExplorer_Click" />
+            <Separator />
+            <MenuItem Header="Card Searcher"
                       Foreground="Black"
-                      Click="OpenWindow_PrecoImporter" />
+                      Click="CardSearcher_Click" />
+            <MenuItem Header="Card Inspector"
+                      Foreground="Black"
+                      Click="CardInspector_Click" />
+            <Separator />
+            <MenuItem Header="Deck List"
+                      Foreground="Black"
+                      Click="DeckList_Click" />
+            <MenuItem Header="Deck Content"
+                      Foreground="Black"
+                      Click="DeckContent_Click" />
+            <MenuItem Header="Deck Stats"
+                      Foreground="Black"
+                      Click="DeckStats_Click" />
+            <MenuItem Header="Deck Table"
+                      Foreground="Black"
+                      Click="DeckTable_Click" />
         </MenuItem>
 
-        <MenuItem Header="Export">
-            <MenuItem Header="Txt List"
+        <MenuItem Header="Utils">
+            <MenuItem Header="Txt Importer"
                       Foreground="Black"
-                      Click="OpenWindow_DeckListExporter" />
-            <MenuItem Header="Print Proxy"
+                      Click="OpenWindow_TxtImporter" />
+            <MenuItem Header="Preco Importer"
+                      Foreground="Black"
+                      Click="OpenWindow_PrecoImporter" />
+            <Separator />
+            <MenuItem Header="Proxy Printer"
                       Foreground="Black"
                       Click="OpenWindow_ProxyPrint" />
-            <MenuItem Header="Estimate Collection"
+            <MenuItem Header="Collection Estimator"
                       Foreground="Black"
                       Click="OpenWindow_CollectionEstimation" />
         </MenuItem>
 
-        <MenuItem Header="Database">
-            <MenuItem Header="Update All Cards"
+        <MenuItem Header="Layout">
+            <MenuItem Header="Save"
                       Foreground="Black"
-                      Click="UpdateCards"/>
+                      Click="LayoutBackup_Click" />
+            <MenuItem Header="Load"
+                      Foreground="Black"
+                      Click="LayoutRestore_Click" />
             <Separator />
-            <MenuItem Header="Backup DB"
-                      Foreground="Black"
-                      Click="BackupCollection" />
-            <MenuItem Header="Restore DB"
-                      Foreground="Black"
-                      Click="RestoreCollection" />
         </MenuItem>
 
-        <MenuItem Header="Language">
+        <MenuItem Header="Options">
+        <MenuItem Header="Language"
+                  Foreground="Black">
             <MenuItem Header="French"
                       Foreground="Black"
                       Click="ChangeLanguage" />
@@ -78,7 +97,8 @@
                       Click="ChangeLanguage" />
         </MenuItem>
 
-        <MenuItem Header="Currency">
+        <MenuItem Header="Currency"
+                  Foreground="Black">
             <MenuItem Header="None"
                       Foreground="Black"
                       Click="ChangeCurrency" />
@@ -89,39 +109,24 @@
                       Foreground="Black"
                       Click="ChangeCurrency" />
         </MenuItem>
+            <MenuItem Header="Database"
+                      Foreground="Black">
+                <MenuItem Header="Reinit mtg data"
+                          Foreground="Black"
+                          Click="UpdateCards" />
+                <Separator />
+                <MenuItem Header="Backup DB"
+                          Foreground="Black"
+                          Click="BackupCollection" />
+                <MenuItem Header="Restore DB"
+                          Foreground="Black"
+                          Click="RestoreCollection" />
+            </MenuItem>
 
-        <MenuItem Header="Display">
-            <MenuItem Header="Tools"
-                      Foreground="Black">
-                <MenuItem Header="Card Searcher"
-                          Foreground="Black"
-                          Click="CardSearcher_Click" />
-                <MenuItem Header="Deck List"
-                          Foreground="Black"
-                          Click="DeckList_Click" />
-                <MenuItem Header="Deck Content"
-                          Foreground="Black"
-                          Click="DeckContent_Click" />
-                <MenuItem Header="Card Inspector"
-                          Foreground="Black"
-                          Click="CardInspector_Click" />
-                <MenuItem Header="Deck Stats"
-                          Foreground="Black"
-                          Click="DeckStats_Click" />
-                <MenuItem Header="Deck Table"
-                          Foreground="Black"
-                          Click="DeckTable_Click" />
-            </MenuItem>
-            <MenuItem Header="Layout"
-                      Foreground="Black">
-                <MenuItem Header="Save"
-                          Foreground="Black"
-                          Click="LayoutBackup_Click" />
-                <MenuItem Header="Load"
-                          Foreground="Black"
-                          Click="LayoutRestore_Click" />
-            </MenuItem>
         </MenuItem>
+
+        <MenuItem Header="About"
+                  Click="AboutClicked" />
 
         <!-- <MenuItem Header="Help">
             <MenuItem Header="About" Foreground="Black" Click="AboutClicked"/>

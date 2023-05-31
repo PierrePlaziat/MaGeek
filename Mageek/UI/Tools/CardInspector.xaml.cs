@@ -199,12 +199,6 @@ namespace MaGeek.UI
             await MageekCollection.SetFav(cardvar.Card, cardvar);
         }
 
-        private void LaunchCustomCardCreation(object sender, RoutedEventArgs e)
-        {
-            var window = new CreateCustomCard(selectedCard);
-            window.Show();
-        }
-
         private void GotoRelated(object sender, RoutedEventArgs e)
         {
             CardRelation rel = (CardRelation)((Button)sender).DataContext;

@@ -17,89 +17,13 @@ namespace MaGeek.UI.Menus
             InitializeComponent();
         }
 
-        #region Import Export
-
-        private void OpenWindow_TxtImporter(object sender, RoutedEventArgs e)
-        {
-            var window = new TxtImporter();
-            window.Show();
-        }
-
-        private void OpenWindow_SetImporter(object sender, RoutedEventArgs e)
-        {
-            var window = new SetExplorer();
-            window.Show();
-        }
-
-        private void OpenWindow_PrecoImporter(object sender, RoutedEventArgs e)
-        {
-            var window = new PrecoImporter();
-            window.Show();
-        }
-
-        private void OpenWindow_DeckListExporter(object sender, RoutedEventArgs e)
-        {
-            var window = new DeckListExporter(App.State.SelectedDeck);
-            window.Show();
-        }
-
-        private void OpenWindow_ProxyPrint(object sender, RoutedEventArgs e)
-        {
-            var window = new ProxyPrint(App.State.SelectedDeck);
-            window.Show();
-        }
-
-        private void OpenWindow_CollectionEstimation(object sender, RoutedEventArgs e)
-        {
-            var window = new CollectionEstimation();
-            window.Show();
-        }
-
-        #endregion
-
-        #region Database
-
-        private void UpdateCards(object sender, RoutedEventArgs e)
-        {
-            if (Log.AskUser("App will restart"))
-            {
-                File.Delete(App.Config.Path_MtgJsonDownload_OldHash);
-                App.Restart();
-            }
-        }
-
-        private void BackupCollection(object sender, RoutedEventArgs e)
-        {
-            App.DB.Backup();
-        }
-
-        private void RestoreCollection(object sender, RoutedEventArgs e)
-        {
-            App.DB.PlanToRestore();
-        }
-
-        private void EraseDb(object sender, RoutedEventArgs e)
-        {
-            App.DB.PlanToErase();
-        }
-
-        #endregion
-
-        #region Language
-
-        private void ChangeLanguage(object sender, RoutedEventArgs e)
-        {
-            MenuItem item = sender as MenuItem;
-            App.Config.ChangeSetting(Setting.ForeignLanguage, item.Header.ToString());
-            App.Events.RaiseUpdateCardCollec();
-        }
-
-        #endregion
-
-        #region Display
-
         #region Tools
 
+        private void SetExplorer_Click(object sender, RoutedEventArgs e)
+        {
+            App.Events.RaiseLayoutAction(LayoutEventType.Open_SetExplorer);
+        }
+        
         private void CardSearcher_Click(object sender, RoutedEventArgs e)
         {
             App.Events.RaiseLayoutAction(LayoutEventType.Open_CardSearcher);
@@ -132,6 +56,79 @@ namespace MaGeek.UI.Menus
 
         #endregion
 
+        #region Utils
+
+        private void OpenWindow_TxtImporter(object sender, RoutedEventArgs e)
+        {
+            var window = new TxtImporter();
+            window.Show();
+        }
+
+        private void OpenWindow_PrecoImporter(object sender, RoutedEventArgs e)
+        {
+            var window = new PrecoImporter();
+            window.Show();
+        }
+
+        private void OpenWindow_ProxyPrint(object sender, RoutedEventArgs e)
+        {
+            var window = new ProxyPrint(App.State.SelectedDeck);
+            window.Show();
+        }
+
+        private void OpenWindow_CollectionEstimation(object sender, RoutedEventArgs e)
+        {
+            var window = new CollectionEstimation();
+            window.Show();
+        }
+
+        #endregion
+
+        #region Database
+
+        private void UpdateCards(object sender, RoutedEventArgs e)
+        {
+            if (Log.AskUser("App will restart, proposing a card update."))
+            {
+                File.Delete(App.Config.Path_MtgJsonDownload_OldHash);
+                App.Restart();
+            }
+        }
+
+        private void BackupCollection(object sender, RoutedEventArgs e)
+        {
+            App.DB.Backup();
+        }
+
+        private void RestoreCollection(object sender, RoutedEventArgs e)
+        {
+            App.DB.PlanToRestore();
+        }
+
+        private void EraseDb(object sender, RoutedEventArgs e)
+        {
+            App.DB.PlanToErase();
+        }
+
+        #endregion
+
+        #region Settings
+
+        private void ChangeLanguage(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            App.Config.ChangeSetting(Setting.ForeignLanguage, item.Header.ToString());
+            App.Events.RaiseUpdateCardCollec();
+        }
+
+        private void ChangeCurrency(object sender, RoutedEventArgs e)
+        {
+            MenuItem s = (MenuItem)sender;
+            App.Config.ChangeSetting(Setting.Currency, s.Header.ToString());
+        }
+
+        #endregion
+
         #region Layout
 
         private void LayoutBackup_Click(object sender, RoutedEventArgs e)
@@ -150,22 +147,11 @@ namespace MaGeek.UI.Menus
 
         #endregion
 
-        #endregion
-
-        #region Help
-
         private void AboutClicked(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/PierrePlaziat/MaGeek");
+            App.HyperLink("https://github.com/PierrePlaziat/MaGeek");
         }
 
-        #endregion
-
-        private void ChangeCurrency(object sender, RoutedEventArgs e)
-        {
-            // TODO
-            //App.Restart();
-        }
     }
 
 }

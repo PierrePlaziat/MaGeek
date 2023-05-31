@@ -1,18 +1,12 @@
-﻿using MaGeek.AppBusiness;
-using ScryfallApi.Client.Models;
+﻿using ScryfallApi.Client.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 
-//TODO replace by SetTool
-
-namespace MaGeek.UI.Windows.Importers
+namespace MaGeek.UI
 {
-    public partial class SetExplorer : Window, INotifyPropertyChanged
+    public partial class SetExplorer : TemplatedUserControl
     {
 
         #region PropertyChange
@@ -60,37 +54,6 @@ namespace MaGeek.UI.Windows.Importers
             SetList = null;
             //SetList = sets;
             IsLoading = Visibility.Collapsed;
-        }
-
-        private void ImportSet(Set set)
-        {
-            App.Importer.AddImportToQueue(
-                new PendingImport
-                {
-                    Mode = ImportMode.Set,
-                    Title = "[Set] "+set.ReleaseDate.Value.ToShortDateString()+" "+set.Name,
-                    Content = set.Code,
-                    AsOwned = asOwned,
-                }
-            );
-        }
-
-        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var set = ((Set)SetListView.SelectedItem);
-            if(set!=null) ImportSet(set);
-            Close();
-        }
-
-        private void ImportSelectedDecks(object sender, RoutedEventArgs e)
-        {
-            foreach (var v in SetListView.SelectedItems)
-            {
-                var set = (Set)v;
-                if (set == null) return;
-                ImportSet(set);
-            }
-            Close();
         }
     }
 }
