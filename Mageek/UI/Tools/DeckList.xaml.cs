@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using MaGeek.AppBusiness;
 using MaGeek.Entities;
+using System.Windows.Controls;
 
 namespace MaGeek.UI
 {
@@ -141,6 +142,12 @@ namespace MaGeek.UI
         }
 
         #endregion
+
+        private async void GetAsTxtList(object sender, RoutedEventArgs e)
+        {
+            string txt = await MageekCollection.GetDeckTxt((Deck)decklistbox.SelectedItem);
+            new TxtImporter(txt).Show();
+        }
     }
 
 }

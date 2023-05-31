@@ -252,6 +252,19 @@ namespace MaGeek.AppBusiness
             App.Events.RaiseUpdateDeckList();
         }
 
+        //TODO use a string builder
+        public static async Task<string> GetDeckTxt(Deck deck)
+        {
+            if (deck == null) return "null";
+            string result = "";
+            result += deck.Title + "\n\n";
+            foreach (var v in deck.DeckCards)
+            {
+                result += v.Quantity + " " + v.Card.Card.CardId + "\n";
+            }
+            return result;
+        }
+
         public static async Task DeleteDeck(Deck deckToDelete)
         {
             if (Log.AskUser("Are you sure to delete this deck ? (" + deckToDelete.Title + ")"))
