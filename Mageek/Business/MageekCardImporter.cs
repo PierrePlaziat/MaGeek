@@ -157,10 +157,10 @@ namespace MaGeek.AppBusiness
                 await Bulk_Sets();
                 Log.Write("ImportAllData : Bulk_CardModels...");
                 await Bulk_CardModels(includeFun);
-                Log.Write("ImportAllData : Bulk_CardVariants...");
-                await Bulk_CardVariants(isFirstOne, includeFun);
                 Log.Write("ImportAllData : Bulk_CardTraductions...");
                 await Bulk_CardTraductions();
+                Log.Write("ImportAllData : Bulk_CardVariants...");
+                await Bulk_CardVariants(isFirstOne, includeFun);
                 Log.Write("Done");
             }
             catch (Exception e) { Log.Write(e, "ImportAllData"); }
