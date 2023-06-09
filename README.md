@@ -20,10 +20,12 @@ I needed a tool to manage my MTG card collection on local drive, that reflect my
 
 ## TODO
 
+-	Set collections
+	-	icons
+
 -	Better preco imports
 -	Better layout gestion
--	Better print experience
--	Set collections
--	Auto deck / Deck helper
+
 -	Recent cards/searches
--	Show set icons in card inspector
+-	Better proxy ux
+-	Auto deck / Deck helper

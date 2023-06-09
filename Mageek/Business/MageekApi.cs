@@ -82,7 +82,7 @@ namespace MaGeek.AppBusiness
             }
             catch (Exception e) { Log.Write(e); }
         }
-        private static async Task<dynamic> RetrieveRulings(CardModel card,Uri rulingsUri)
+        private static async Task<ResultList<CardRule>> RetrieveRulings(CardModel card,Uri rulingsUri)
         {
             if (rulingsUri==null) return null;
             try
@@ -177,7 +177,16 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { Log.Write(e); }
         }
 
-        private static bool IsLegalitiesOutdated(CardModel card)
+        public static async Task<ResultList<Set>> RetrieveSets()
+        {
+            ResultList<Set> Setz = new();
+            Thread.Sleep(DelayApi);
+            string json_data = await HttpUtils.Get("https://api.scryfall.com/sets/");
+            Setz = JsonSerializer.Deserialize<ResultList<Set>>(json_data);
+            return Setz;
+        }
+
+    private static bool IsLegalitiesOutdated(CardModel card)
         {
             DateTime lastUpdate;
             using (var DB = App.DB.NewContext)
@@ -336,7 +345,7 @@ namespace MaGeek.AppBusiness
                 {
                     if (back)
                     {
-                        localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + "_back.png");
+                        localFileName = Path.Combine(App.Config.Path_IllustrationsFolder, magicCardVariant.Id + "_back.png");
                         if (!File.Exists(localFileName))
                         {
                             var httpClient = new HttpClient();
@@ -347,7 +356,7 @@ namespace MaGeek.AppBusiness
                     }
                     else
                     {
-                        localFileName = Path.Combine(App.Config.Path_ImageFolder, magicCardVariant.Id + ".png");
+                        localFileName = Path.Combine(App.Config.Path_IllustrationsFolder, magicCardVariant.Id + ".png");
                         if (!File.Exists(localFileName))
                         {
                             var httpClient = new HttpClient();

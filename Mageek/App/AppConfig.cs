@@ -18,7 +18,8 @@ namespace MaGeek
 
         private static string Path_RoamingFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
         public static string Path_DbFolder { get; } = Path.Combine(Path_RoamingFolder, "DB");
-        public string Path_ImageFolder { get; } = Path.Combine(Path_RoamingFolder, "CardsIllus");
+        public string Path_IllustrationsFolder { get; } = Path.Combine(Path_RoamingFolder, "CardsIllus");
+        public string Path_SetIconsFolder { get; } = Path.Combine(Path_RoamingFolder, "SetIcons");
         private static string Path_Settings { get; } = Path.Combine(Path_RoamingFolder, "Settings.json");
         public string Path_Db { get; } = Path.Combine(Path_DbFolder, "MaGeek.db");
         public string Path_Db_ToRestore { get; } = Path.Combine(Path_DbFolder, ".tmp");
@@ -51,8 +52,10 @@ namespace MaGeek
             {
                 SeemToBeFirstLaunch = true;
                 Directory.CreateDirectory(Path_RoamingFolder);
+                Directory.CreateDirectory(Path_DbFolder);
             }
-            if (!File.Exists(Path_ImageFolder)) Directory.CreateDirectory(Path_ImageFolder);
+            if (!File.Exists(Path_IllustrationsFolder)) Directory.CreateDirectory(Path_IllustrationsFolder);
+            if (!File.Exists(Path_SetIconsFolder)) Directory.CreateDirectory(Path_SetIconsFolder);
         }
 
         private void DefaultSettings()

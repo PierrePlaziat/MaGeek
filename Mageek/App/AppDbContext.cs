@@ -48,10 +48,7 @@ namespace MaGeek
 
             modelBuilder.Entity<CardVariant>()
                         .HasOne(e => e.Card).WithMany(e => e.Variants);
-
-            //modelBuilder.Entity<CardVariant>()
-            //            .HasOne(e => e.Set).WithMany(e => e.SetCards);
-
+            
             modelBuilder.Entity<CardTraduction>()
                         .HasOne(e => e.Card).WithMany(e => e.Traductions);
 

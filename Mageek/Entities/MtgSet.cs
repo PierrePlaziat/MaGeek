@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaGeek.AppBusiness;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MaGeek.Entities
@@ -11,7 +12,7 @@ namespace MaGeek.Entities
         public string Block { get; set; }
         public int BaseSetSize { get; set; }
         public int TotalSetSize { get; set; }
-        public DateOnly ReleaseDate { get; set; }
+        public string ReleaseDate { get; set; }
         public string Svg { get; set; }
 
     }
