@@ -3,6 +3,7 @@ using MaGeek.Framework.Extensions;
 using MaGeek.Framework.Utils;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using ScryfallApi.Client.Apis;
 using ScryfallApi.Client.Models;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,10 @@ namespace MaGeek.AppBusiness
     public static class MageekCardImporter
     {
 
-        #region SQL
+        #region Attributes
 
         private const string hashAddress = "https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256";
-        
+
         private const string allPrintingsAddress = "https://mtgjson.com/api/v5/AllPrintings.sqlite";
 
         private const string SQL_AllSets = @"
@@ -34,7 +35,7 @@ namespace MaGeek.AppBusiness
                 sets
             WHERE 
                 1=1";
-        
+
         private const string SQL_AllCardTraductions = @"
             SELECT 
                 cards.name, card_foreign_data.language, card_foreign_data.name
@@ -87,7 +88,7 @@ namespace MaGeek.AppBusiness
                         App.Config.Path_MtgJsonDownload_OldHash
                     );
                 }
-                if(check) Log.Write("Cards update available");
+                if (check) Log.Write("Cards update available");
                 else Log.Write("No cards update available");
                 return check;
             }
@@ -147,7 +148,7 @@ namespace MaGeek.AppBusiness
                 Log.Write("Done");
             }
         }
-        
+
         public static async Task ImportAllData(bool isFirstOne, bool includeFun = false)
         {
             Log.Write("Importing all data...");
@@ -175,7 +176,8 @@ namespace MaGeek.AppBusiness
             // Delete old data
             using (var DB = App.DB.NewContext) await DB.CardTraductions.ExecuteDeleteAsync();
             // Insert New Data
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 List<CardTraduction> trads = new();
                 try
                 {
@@ -275,7 +277,7 @@ namespace MaGeek.AppBusiness
                                     baseSetSize = int.Parse(reader.GetString(3));
                                     totalSetSize = int.Parse(reader.GetString(4));
                                     releaseDate = reader.GetString(5);
-                                    svg = await DownloadSvg(name,scryfallSets);
+                                    svg = await DownloadSvg(name, scryfallSets);
                                     sets.Add(new MtgSet()
                                     {
                                         Name = name,
@@ -321,7 +323,8 @@ namespace MaGeek.AppBusiness
                         {
                             try
                             {
-                                await Task.Run( () => {
+                                await Task.Run(() =>
+                                {
                                     using (WebClient client = new WebClient())
                                     {
                                         client.DownloadFile(uri, localFileName);
@@ -343,10 +346,11 @@ namespace MaGeek.AppBusiness
             // Delete old data
             using (var DBx = App.DB.NewContext) await DBx.CardModels.ExecuteDeleteAsync();
             // Insert New Data
-            await Task.Run(async () => { 
+            await Task.Run(async () =>
+            {
                 List<CardModel> cards = new();
                 CardModelDiscriminator cardDiscriminator = new();
-                try 
+                try
                 {
                     using (var DB = App.DB.NewContext)
                     {
@@ -419,18 +423,12 @@ namespace MaGeek.AppBusiness
 
         private static async Task Bulk_CardVariants(bool isFirstOne, bool includeFun)
         {
-            // Retain got cards
-            List<User_GotCard> retained = new();
-            //if (!isFirstOne)
-            //{
-            //    Log.Write("> RetainGotCards...");
-            //    await RetainGotCards();
-            //}
             // Delete old data
             using (var DBx = App.DB.NewContext) await DBx.CardVariants.ExecuteDeleteAsync();
             Log.Write("> Importing (Most time heavy operation but last one)...");
             // Insert New Data
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 List<CardVariant> cards = new();
                 try
                 {
@@ -476,7 +474,6 @@ namespace MaGeek.AppBusiness
                                         // Register
                                         CardModel cardModel = await DB.CardModels.Where(x => x.CardId == name).FirstOrDefaultAsync();
                                         cards.Add(new CardVariant(id, rarity, artist, lang, set, cardModel));
-
                                     }
                                 }
                             }
@@ -490,11 +487,6 @@ namespace MaGeek.AppBusiness
                 }
                 catch (Exception e) { Log.Write(e); }
             });
-            //if (!isFirstOne)
-            //{
-            //    Log.Write("> ReaplyGotCards...");
-            //    await ReaplyGotCards();
-            //}
 
         }
 
@@ -601,7 +593,113 @@ namespace MaGeek.AppBusiness
 
         #endregion
 
-        #region UserData retention
+        #endregion
+
+        // DOING
+        #region Migrations
+        // After migration to new json, will become useless
+        // UserData wont be in the same tables as cards data
+        // allowing to bulk regularly without dataloss, and in less steps than before
+
+        // from old mtgjson sqlite 
+        // to new mtgjson sqlite 
+        #region NEW
+
+        public async static Task ImportOldMageekData(string oldDbPath)
+        {
+            // Get old data
+            Dictionary<string, int> cardsOldId;
+            cardsOldId = await RetrieveOldMageekData_Method1(oldDbPath);
+            if(cardsOldId.Count==0) cardsOldId = await RetrieveOldMageekData_Method2(oldDbPath);
+            if (cardsOldId.Count == 0) return;
+            // Traduct old IDs to newIDs
+            Dictionary<string, int> cardsNewId;
+            cardsNewId = await TraductCardIds(cardsOldId);
+            // Save
+            if (cardsNewId.Count == 0) return;
+            await RegisterOldGotCards(cardsNewId);
+        }
+
+        private static async Task<Dictionary<string, int>> RetrieveOldMageekData_Method1(string oldDbPath)
+        {
+            Dictionary<string, int> dico = new();
+            try
+            {
+                using (var oldDobCo = new SqliteConnection("Data Source=" + oldDbPath))
+                {
+                    // oldDB >> cardsOldId
+                    oldDobCo.Open();
+                    var command = oldDobCo.CreateCommand();
+                    command.CommandText = "TODO";
+                    // Process
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        //TODO
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            return dico;
+        }
+
+        private static async Task<Dictionary<string, int>> RetrieveOldMageekData_Method2(string oldDbPath)
+        {
+            Dictionary<string, int> dico = new();
+            try
+            {
+                using (var oldDobCo = new SqliteConnection("Data Source=" + oldDbPath))
+                {
+                    // oldDB >> cardsOldId
+                    oldDobCo.Open();
+                    var command = oldDobCo.CreateCommand();
+                    command.CommandText = "TODO";
+                    // Process
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        //TODO
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            return dico;
+        }
+
+        private static async Task<Dictionary<string, int>> TraductCardIds(Dictionary<string, int> cardsOldId)
+        {
+            Dictionary<string, int> dico = new();
+            using (var MtgJsonSqliteConnexion = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
+            {
+                // cardsOldId >> cardsNewId
+                //TODO
+            }
+            return dico;
+        }
+
+        private static async Task RegisterOldGotCards(Dictionary<string, int> cardsNewId)
+        {
+            using (var DB = App.DB.NewContext)
+            {
+                using var transaction = DB.Database.BeginTransaction();
+                // TODO cardsNewId >> DB
+                await DB.SaveChangesAsync();
+                transaction.Commit();
+            }
+        }
+
+        #endregion
+
+        // from old mtgjson, stored inside cardvariants table
+        // to old mtgjson, stored in a separate table
+        #region Old
+        // Could be usefull depending on if some old versions got some active users 
+        // Probably not
+        // This code will be discarded pretty quickly
 
         private async static Task RetainGotCards()
         {
@@ -609,7 +707,8 @@ namespace MaGeek.AppBusiness
             using (var DBx = App.DB.NewContext) await DBx.User_GotCards.ExecuteDeleteAsync();
             // record data
             List<string> errors = new();
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 try
                 {
                     List<User_GotCard> listed = new();
@@ -618,7 +717,7 @@ namespace MaGeek.AppBusiness
                         List<CardVariant> GotThose = await DB.CardVariants.Where(x => x.Got > 0).Include(x => x.Card).ToListAsync();
                         foreach (var gotThis in GotThose)
                         {
-                            if (gotThis.Card == null) errors.Add(("Variant's model not found : "+ gotThis.Id));
+                            if (gotThis.Card == null) errors.Add(("Variant's model not found : " + gotThis.Id));
                             else
                             {
                                 var l = new User_GotCard()
@@ -649,7 +748,8 @@ namespace MaGeek.AppBusiness
         // TODO : too long!
         private async static Task ReaplyGotCards()
         {
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 try
                 {
                     using var DB = App.DB.NewContext;
@@ -675,9 +775,8 @@ namespace MaGeek.AppBusiness
         }
 
         #endregion
-        
+
         #endregion
 
     }
-
 }
