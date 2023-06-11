@@ -152,6 +152,11 @@ namespace MaGeek.UI.Menus
             App.HyperLink("https://github.com/PierrePlaziat/MaGeek");
         }
 
+        private void importOldUserData(object sender, RoutedEventArgs e)
+        {
+            string oldFile = @"C:\First_Mageek.db";
+            MageekCardImporter.ImportOldMageekData(oldFile).ConfigureAwait(false);
+        }
     }
 
 }

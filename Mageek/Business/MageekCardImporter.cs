@@ -3,7 +3,6 @@ using MaGeek.Framework.Extensions;
 using MaGeek.Framework.Utils;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using ScryfallApi.Client.Apis;
 using ScryfallApi.Client.Models;
 using System;
 using System.Collections.Generic;
@@ -30,7 +29,7 @@ namespace MaGeek.AppBusiness
 
         private const string SQL_AllSets = @"
             SELECT 
-                name, type, block, base_set_size, total_set_size, release_date
+                name, type, block, baseSetSize, totalSetSize, releaseDate
             FROM 
                 sets
             WHERE 
@@ -38,15 +37,15 @@ namespace MaGeek.AppBusiness
 
         private const string SQL_AllCardTraductions = @"
             SELECT 
-                cards.name, card_foreign_data.language, card_foreign_data.name
+                cards.name, cardForeignData.language, cardForeignData.name
             FROM 
-                cards JOIN card_foreign_data ON cards.uuid=card_foreign_data.uuid
+                cards JOIN cardForeignData ON cards.uuid=cardForeignData.uuid
             WHERE 
                 1=1";
 
         private const string SQL_AllCardModels = @"
             SELECT DISTINCT
-                name, type, text, keywords, power, toughness, mana_cost, mana_value, color_identity, face_name
+                name, type, text, keywords, power, toughness, manaCost, manaValue, colorIdentity, faceName
             FROM 
                 cards 
             WHERE 
@@ -54,10 +53,11 @@ namespace MaGeek.AppBusiness
 
         private const string SQL_AllCardVariants = @" 
             SELECT DISTINCT
-                cards.uuid, cards.rarity, cards.artist, cards.language, sets.name, cards.name, cards.face_name, cards.type
+                cardIdentifiers.scryfallId, cards.rarity, cards.artist, cards.language, sets.name, cards.name, cards.faceName, cards.type
             FROM 
                 cards 
-                JOIN sets ON cards.set_code=sets.code 
+                JOIN sets ON cards.setCode=sets.code 
+                LEFT JOIN cardIdentifiers ON cards.uuid=cardIdentifiers.uuid 
             WHERE 
                 availability LIKE '%paper%'";
 
@@ -100,8 +100,8 @@ namespace MaGeek.AppBusiness
         }
 
         //TODO unbypass those:
-        static bool bypass_Hash = true;
-        static bool bypass_AllPrintings = true;
+        static bool bypass_Hash = false;
+        static bool bypass_AllPrintings = false;
 
         public static async Task DownloadHash()
         {
@@ -597,6 +597,7 @@ namespace MaGeek.AppBusiness
 
         // DOING
         #region Migrations
+
         // After migration to new json, will become useless
         // UserData wont be in the same tables as cards data
         // allowing to bulk regularly without dataloss, and in less steps than before
@@ -612,12 +613,12 @@ namespace MaGeek.AppBusiness
             cardsOldId = await RetrieveOldMageekData_Method1(oldDbPath);
             if(cardsOldId.Count==0) cardsOldId = await RetrieveOldMageekData_Method2(oldDbPath);
             if (cardsOldId.Count == 0) return;
-            // Traduct old IDs to newIDs
-            Dictionary<string, int> cardsNewId;
-            cardsNewId = await TraductCardIds(cardsOldId);
-            // Save
-            if (cardsNewId.Count == 0) return;
-            await RegisterOldGotCards(cardsNewId);
+            //// Traduct old IDs to newIDs
+            //Dictionary<string, int> cardsNewId;
+            //cardsNewId = await TraductCardIds(cardsOldId);
+            //// Save
+            if (cardsOldId.Count == 0) return;
+            await RegisterOldGotCards(cardsOldId);
         }
 
         private static async Task<Dictionary<string, int>> RetrieveOldMageekData_Method1(string oldDbPath)
@@ -630,18 +631,28 @@ namespace MaGeek.AppBusiness
                     // oldDB >> cardsOldId
                     oldDobCo.Open();
                     var command = oldDobCo.CreateCommand();
-                    command.CommandText = "TODO";
+                    command.CommandText = @" 
+                        SELECT 
+                            Id,Got
+                        FROM 
+                            CardVariants 
+                        WHERE 
+                            Got>0";
                     // Process
                     using (var reader = await command.ExecuteReaderAsync())
                     {
-                        //TODO
-
+                        string id;
+                        int got;
+                        while (await reader.ReadAsync())
+                        {
+                            id = reader.GetString(0);
+                            got = int.Parse(reader.GetString(1));
+                            dico.Add(id, got);
+                        }
                     }
                 }
             }
-            catch (Exception e)
-            {
-            }
+            catch (Exception e) { Log.Write(e, "RetrieveOldMageekData_Method1"); }
             return dico;
         }
 
@@ -655,41 +666,107 @@ namespace MaGeek.AppBusiness
                     // oldDB >> cardsOldId
                     oldDobCo.Open();
                     var command = oldDobCo.CreateCommand();
-                    command.CommandText = "TODO";
+                    command.CommandText = @" 
+                        SELECT 
+                            CardVariantId,Got
+                        FROM 
+                            User_GotCards";
                     // Process
                     using (var reader = await command.ExecuteReaderAsync())
                     {
-                        //TODO
-
+                        string id;
+                        int got;
+                        while (await reader.ReadAsync())
+                        {
+                            id = reader.GetString(0);
+                            got = int.Parse(reader.GetString(1));
+                            dico.Add(id, got);
+                        }
                     }
                 }
             }
-            catch (Exception e)
-            {
-            }
+            catch (Exception e) { Log.Write(e, "RetrieveOldMageekData_Method2"); }
             return dico;
         }
 
         private static async Task<Dictionary<string, int>> TraductCardIds(Dictionary<string, int> cardsOldId)
         {
             Dictionary<string, int> dico = new();
-            using (var MtgJsonSqliteConnexion = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
+            try
             {
-                // cardsOldId >> cardsNewId
-                //TODO
+                // get correspondance
+                Dictionary<string, string> idCorresp = new();
+                string sql = @"
+                        select
+                            scryfallId, uuid
+                        from
+                            cardIdentifiers
+                        where
+                            scryfallId in (
+                    ";
+                foreach (var v in cardsOldId)
+                {
+                    sql += "'" + v.Key + "',";
+                }
+                sql = sql.Remove(sql.Length - 1);
+                sql += ")";
+                Console.WriteLine(sql);
+                using (var MtgJsonSqliteConnexion = new SqliteConnection("Data Source=" + App.Config.Path_MtgJsonDownload))
+                {
+                    MtgJsonSqliteConnexion.Open();
+                    var command = MtgJsonSqliteConnexion.CreateCommand();
+                    command.CommandText = sql;
+                    // Process
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        string oldid;
+                        string newid;
+                        while (await reader.ReadAsync())
+                        {
+                            oldid = "";
+                            newid = "";
+                            // Check 
+                            oldid = reader.GetString(0);
+                            newid = reader.GetString(1);
+                            idCorresp.Add(oldid, newid);
+                        }
+                    }
+                }
+                // traduct dico
+                string newId;
+                foreach (var v in cardsOldId)
+                {
+                    idCorresp.TryGetValue(v.Key, out newId);
+                    if(!string.IsNullOrEmpty(newId)) dico.Add(newId, v.Value);
+                }
             }
+            catch (Exception e) { Log.Write(e, "TraductCardIds"); }
             return dico;
         }
 
         private static async Task RegisterOldGotCards(Dictionary<string, int> cardsNewId)
         {
-            using (var DB = App.DB.NewContext)
+            try
             {
-                using var transaction = DB.Database.BeginTransaction();
-                // TODO cardsNewId >> DB
-                await DB.SaveChangesAsync();
-                transaction.Commit();
+                using (var DB = App.DB.NewContext)
+                {
+                    using var transaction = DB.Database.BeginTransaction();
+                    foreach(var cardgot in cardsNewId)
+                    {
+                        var v = DB.CardVariants.Where(x => x.Id == cardgot.Key).Include(x => x.Card).FirstOrDefault();
+                        User_GotCard c = new User_GotCard()
+                        {
+                            CardModelId = v.Card.CardId,
+                            CardVariantId = v.Id,
+                            got = cardgot.Value
+                        };
+                        DB.User_GotCards.Add(c);
+                    }
+                    await DB.SaveChangesAsync();
+                    transaction.Commit();
+                }
             }
+            catch (Exception e) { Log.Write(e, "RegisterOldGotCards"); }
         }
 
         #endregion
@@ -697,84 +774,85 @@ namespace MaGeek.AppBusiness
         // from old mtgjson, stored inside cardvariants table
         // to old mtgjson, stored in a separate table
         #region Old
+
         // Could be usefull depending on if some old versions got some active users 
         // Probably not
         // This code will be discarded pretty quickly
 
         private async static Task RetainGotCards()
-        {
-            // Delete old data
-            using (var DBx = App.DB.NewContext) await DBx.User_GotCards.ExecuteDeleteAsync();
-            // record data
-            List<string> errors = new();
-            await Task.Run(async () =>
-            {
-                try
                 {
-                    List<User_GotCard> listed = new();
-                    using var DB = App.DB.NewContext;
+                    // Delete old data
+                    using (var DBx = App.DB.NewContext) await DBx.User_GotCards.ExecuteDeleteAsync();
+                    // record data
+                    List<string> errors = new();
+                    await Task.Run(async () =>
                     {
-                        List<CardVariant> GotThose = await DB.CardVariants.Where(x => x.Got > 0).Include(x => x.Card).ToListAsync();
-                        foreach (var gotThis in GotThose)
+                        try
                         {
-                            if (gotThis.Card == null) errors.Add(("Variant's model not found : " + gotThis.Id));
-                            else
+                            List<User_GotCard> listed = new();
+                            using var DB = App.DB.NewContext;
                             {
-                                var l = new User_GotCard()
+                                List<CardVariant> GotThose = await DB.CardVariants.Where(x => x.Got > 0).Include(x => x.Card).ToListAsync();
+                                foreach (var gotThis in GotThose)
                                 {
-                                    CardVariantId = gotThis.Id,
-                                    CardModelId = gotThis.Card.CardId,
-                                    got = gotThis.Got
-                                };
-                                listed.Add(l);
+                                    if (gotThis.Card == null) errors.Add(("Variant's model not found : " + gotThis.Id));
+                                    else
+                                    {
+                                        var l = new User_GotCard()
+                                        {
+                                            CardVariantId = gotThis.Id,
+                                            CardModelId = gotThis.Card.CardId,
+                                            got = gotThis.Got
+                                        };
+                                        listed.Add(l);
+                                    }
+                                }
+                                using var transaction = DB.Database.BeginTransaction();
+                                DB.User_GotCards.AddRange(listed);
+                                await DB.SaveChangesAsync();
+                                transaction.Commit();
                             }
                         }
-                        using var transaction = DB.Database.BeginTransaction();
-                        DB.User_GotCards.AddRange(listed);
-                        await DB.SaveChangesAsync();
-                        transaction.Commit();
-                    }
+                        catch (Exception e) { Log.Write(e, "RetainGotCards"); }
+                    });
+                    //if (errors.Count > 0)
+                    //{
+                    //    string errmsg = errors.Count+" errors:";
+                    //    foreach (var v in errors) errmsg += "- "+ v + "\n";
+                    //    Log.InformUser("Errors during retain got cards"+ errmsg);
+                    //}
                 }
-                catch (Exception e) { Log.Write(e, "RetainGotCards"); }
-            });
-            //if (errors.Count > 0)
-            //{
-            //    string errmsg = errors.Count+" errors:";
-            //    foreach (var v in errors) errmsg += "- "+ v + "\n";
-            //    Log.InformUser("Errors during retain got cards"+ errmsg);
-            //}
-        }
 
-        // TODO : too long!
-        private async static Task ReaplyGotCards()
-        {
-            await Task.Run(async () =>
-            {
-                try
+                // TODO : too long!
+                private async static Task ReaplyGotCards()
                 {
-                    using var DB = App.DB.NewContext;
+                    await Task.Run(async () =>
                     {
-                        using var transaction = DB.Database.BeginTransaction();
-                        foreach (var gotThis in DB.User_GotCards)
+                        try
                         {
-                            var v = DB.CardVariants.Where(x => x.Id == gotThis.CardVariantId).Include(x => x.Card).FirstOrDefault();
-                            if (v != null)
+                            using var DB = App.DB.NewContext;
                             {
-                                v.Got = gotThis.got;
-                                v.Card.Got += gotThis.got;
-                                DB.Entry(v).State = EntityState.Modified;
+                                using var transaction = DB.Database.BeginTransaction();
+                                foreach (var gotThis in DB.User_GotCards)
+                                {
+                                    var v = DB.CardVariants.Where(x => x.Id == gotThis.CardVariantId).Include(x => x.Card).FirstOrDefault();
+                                    if (v != null)
+                                    {
+                                        v.Got = gotThis.got;
+                                        v.Card.Got += gotThis.got;
+                                        DB.Entry(v).State = EntityState.Modified;
+                                    }
+                                }
+                                //DB.User_GotCards.AddRange(listed);
+                                await DB.SaveChangesAsync();
+                                transaction.Commit();
                             }
                         }
-                        //DB.User_GotCards.AddRange(listed);
-                        await DB.SaveChangesAsync();
-                        transaction.Commit();
-                    }
+                        catch (Exception e) { Log.Write(e, "RetainGotCards"); }
+                    });
                 }
-                catch (Exception e) { Log.Write(e, "RetainGotCards"); }
-            });
-        }
 
-        #endregion
+                #endregion
 
         #endregion
 

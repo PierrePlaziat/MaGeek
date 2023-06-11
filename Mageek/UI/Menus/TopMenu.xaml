@@ -114,6 +114,9 @@
                 <MenuItem Header="Reinit mtg data"
                           Foreground="Black"
                           Click="UpdateCards" />
+                <!--<MenuItem Header="Import old user data"
+                          Foreground="Black"
+                          Click="importOldUserData" />-->
                 <Separator />
                 <MenuItem Header="Backup DB"
                           Foreground="Black"
