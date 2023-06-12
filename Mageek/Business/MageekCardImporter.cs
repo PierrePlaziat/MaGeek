@@ -779,80 +779,80 @@ namespace MaGeek.AppBusiness
         // Probably not
         // This code will be discarded pretty quickly
 
-        private async static Task RetainGotCards()
-                {
-                    // Delete old data
-                    using (var DBx = App.DB.NewContext) await DBx.User_GotCards.ExecuteDeleteAsync();
-                    // record data
-                    List<string> errors = new();
-                    await Task.Run(async () =>
-                    {
-                        try
-                        {
-                            List<User_GotCard> listed = new();
-                            using var DB = App.DB.NewContext;
-                            {
-                                List<CardVariant> GotThose = await DB.CardVariants.Where(x => x.Got > 0).Include(x => x.Card).ToListAsync();
-                                foreach (var gotThis in GotThose)
-                                {
-                                    if (gotThis.Card == null) errors.Add(("Variant's model not found : " + gotThis.Id));
-                                    else
-                                    {
-                                        var l = new User_GotCard()
-                                        {
-                                            CardVariantId = gotThis.Id,
-                                            CardModelId = gotThis.Card.CardId,
-                                            got = gotThis.Got
-                                        };
-                                        listed.Add(l);
-                                    }
-                                }
-                                using var transaction = DB.Database.BeginTransaction();
-                                DB.User_GotCards.AddRange(listed);
-                                await DB.SaveChangesAsync();
-                                transaction.Commit();
-                            }
-                        }
-                        catch (Exception e) { Log.Write(e, "RetainGotCards"); }
-                    });
-                    //if (errors.Count > 0)
-                    //{
-                    //    string errmsg = errors.Count+" errors:";
-                    //    foreach (var v in errors) errmsg += "- "+ v + "\n";
-                    //    Log.InformUser("Errors during retain got cards"+ errmsg);
-                    //}
-                }
+        //private async static Task RetainGotCards()
+        //        {
+        //            // Delete old data
+        //            using (var DBx = App.DB.NewContext) await DBx.User_GotCards.ExecuteDeleteAsync();
+        //            // record data
+        //            List<string> errors = new();
+        //            await Task.Run(async () =>
+        //            {
+        //                try
+        //                {
+        //                    List<User_GotCard> listed = new();
+        //                    using var DB = App.DB.NewContext;
+        //                    {
+        //                        List<CardVariant> GotThose = await DB.CardVariants.Where(x => x.Got > 0).Include(x => x.Card).ToListAsync();
+        //                        foreach (var gotThis in GotThose)
+        //                        {
+        //                            if (gotThis.Card == null) errors.Add(("Variant's model not found : " + gotThis.Id));
+        //                            else
+        //                            {
+        //                                var l = new User_GotCard()
+        //                                {
+        //                                    CardVariantId = gotThis.Id,
+        //                                    CardModelId = gotThis.Card.CardId,
+        //                                    got = gotThis.Got
+        //                                };
+        //                                listed.Add(l);
+        //                            }
+        //                        }
+        //                        using var transaction = DB.Database.BeginTransaction();
+        //                        DB.User_GotCards.AddRange(listed);
+        //                        await DB.SaveChangesAsync();
+        //                        transaction.Commit();
+        //                    }
+        //                }
+        //                catch (Exception e) { Log.Write(e, "RetainGotCards"); }
+        //            });
+        //            //if (errors.Count > 0)
+        //            //{
+        //            //    string errmsg = errors.Count+" errors:";
+        //            //    foreach (var v in errors) errmsg += "- "+ v + "\n";
+        //            //    Log.InformUser("Errors during retain got cards"+ errmsg);
+        //            //}
+        //        }
 
-                // TODO : too long!
-                private async static Task ReaplyGotCards()
-                {
-                    await Task.Run(async () =>
-                    {
-                        try
-                        {
-                            using var DB = App.DB.NewContext;
-                            {
-                                using var transaction = DB.Database.BeginTransaction();
-                                foreach (var gotThis in DB.User_GotCards)
-                                {
-                                    var v = DB.CardVariants.Where(x => x.Id == gotThis.CardVariantId).Include(x => x.Card).FirstOrDefault();
-                                    if (v != null)
-                                    {
-                                        v.Got = gotThis.got;
-                                        v.Card.Got += gotThis.got;
-                                        DB.Entry(v).State = EntityState.Modified;
-                                    }
-                                }
-                                //DB.User_GotCards.AddRange(listed);
-                                await DB.SaveChangesAsync();
-                                transaction.Commit();
-                            }
-                        }
-                        catch (Exception e) { Log.Write(e, "RetainGotCards"); }
-                    });
-                }
+        //// very slow
+        //private async static Task ReaplyGotCards()
+        //{
+        //    await Task.Run(async () =>
+        //    {
+        //        try
+        //        {
+        //            using var DB = App.DB.NewContext;
+        //            {
+        //                using var transaction = DB.Database.BeginTransaction();
+        //                foreach (var gotThis in DB.User_GotCards)
+        //                {
+        //                    var v = DB.CardVariants.Where(x => x.Id == gotThis.CardVariantId).Include(x => x.Card).FirstOrDefault();
+        //                    if (v != null)
+        //                    {
+        //                        v.Got = gotThis.got;
+        //                        v.Card.Got += gotThis.got;
+        //                        DB.Entry(v).State = EntityState.Modified;
+        //                    }
+        //                }
+        //                //DB.User_GotCards.AddRange(listed);
+        //                await DB.SaveChangesAsync();
+        //                transaction.Commit();
+        //            }
+        //        }
+        //        catch (Exception e) { Log.Write(e, "RetainGotCards"); }
+        //    });
+        //}
 
-                #endregion
+        #endregion
 
         #endregion
 

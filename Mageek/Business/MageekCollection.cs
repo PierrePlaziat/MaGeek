@@ -38,10 +38,29 @@ namespace MaGeek.AppBusiness
             var variant = DB.CardVariants.Where(x => x.Id == selectedCard.Id)
                 .Include(x=>x.Card)
                 .FirstOrDefault();
-            variant.Got++;
-            variant.Card.Got++;
-            if (string.IsNullOrEmpty(variant.Card.FavouriteVariant)) variant.Card.FavouriteVariant = variant.Id;
-            DB.Entry(variant).State = EntityState.Modified;
+
+            var gotLine = await DB.User_GotCards.Where(x => x.CardVariantId == selectedCard.Id).FirstOrDefaultAsync();
+            if(gotLine == null)
+            {
+                // Create
+                DB.User_GotCards.Add(new User_GotCard() {
+                    CardModelId = selectedCard.Card.CardId,
+                    CardVariantId = selectedCard.Id,
+                    got = 1
+                });
+            }
+            else
+            {
+                // Update
+                gotLine.got++;
+                DB.Entry(gotLine).State = EntityState.Modified;
+            }
+            // Auto Fav
+            if (string.IsNullOrEmpty(variant.Card.FavouriteVariant))
+            {
+                variant.Card.FavouriteVariant = variant.Id;
+                //DB.Entry(variant).State = EntityState.Modified;
+            }
             await DB.SaveChangesAsync();
         }
 
@@ -52,12 +71,53 @@ namespace MaGeek.AppBusiness
             var c = DB.CardVariants.Where(x => x.Id == selectedCard.Id)
                 .Include(x => x.Card)
                 .FirstOrDefault();
-            c.Got--;
-            c.Card.Got--;
-            if (c.Got < 0) c.Got = 0;
-            if (c.Card.Got < 0) c.Card.Got = 0;
+
+            var gotLine = await DB.User_GotCards.Where(x => x.CardVariantId == selectedCard.Id).FirstOrDefaultAsync();
+            if (gotLine == null) return;
+            else
+            {
+                // Update
+                gotLine.got--;
+                if (gotLine.got < 0) gotLine.got = 0;
+                DB.Entry(gotLine).State = EntityState.Modified;
+            }
+
             DB.Entry(c).State = EntityState.Modified;
             await DB.SaveChangesAsync();
+        }
+
+        internal static async Task<int> GotCard_HaveOne(CardModel card)
+        {
+            using var DB = App.DB.NewContext;
+            int retour = 0;
+
+            var v = DB.User_GotCards.Where(x => x.CardModelId == card.CardId);
+            foreach(var vv in v)
+            {
+                retour += vv.got;
+            }
+            return retour;
+        }
+        
+        internal static async Task<int> GotCard_HaveOne(CardVariant card, bool onlyThisVariant)
+        {
+            using var DB = App.DB.NewContext;
+            if (onlyThisVariant)
+            {
+                var v = await DB.User_GotCards.Where(x => x.CardVariantId == card.Id).FirstOrDefaultAsync();
+                return v != null ? v.got : 0;
+            }
+            else
+            {
+                int retour = 0;
+
+                var v = DB.User_GotCards.Where(x => x.CardModelId == card.Id).ToList();
+                foreach(var vv in v)
+                {
+                    retour += vv.got;
+                }
+                return retour;
+            }
         }
 
         public static async Task SetFav(CardModel card, CardVariant variant)

@@ -458,41 +458,42 @@ namespace MaGeek.AppBusiness
             return manaCurve;
         }
 
-        public static async Task<int> OwnedRatio(Deck currentDeck)
+        public static async Task<int> OwnedRatio(Deck deck)
         {
-            if (currentDeck == null) return 0;
-            if (currentDeck.DeckCards == null) return 0;
+            if (deck == null) return 0;
+            if (deck.DeckCards == null) return 0;
             int total = 0;
             int miss = 0;
-            await Task.Run(() => {
-                foreach (var v in currentDeck.DeckCards)
+
+            await Task.Run(async () => {
+                foreach (var v in deck.DeckCards)
                 {
                     total += v.Quantity;
-
-                    int got = v.Card.Got;
+                    int got = await MageekCollection.GotCard_HaveOne(v.Card,false);
                     int need = v.Quantity;
                     int diff = need - got;
                     if (diff > 0) miss += diff;
                 }
             });
+
             if (total == 0) return 100;
             return 100 - miss * 100 / total;
         }
 
-        public static async Task<string> ListMissingCards(Deck currentDeck)
+        public static async Task<string> ListMissingCards(Deck deck)
         {
-            if (currentDeck == null) return null;
-            if (currentDeck.DeckCards == null) return null;
+            if (deck == null) return null;
+            if (deck.DeckCards == null) return null;
             string missList = "";
-            await Task.Run(() => {
-                foreach (var v in currentDeck.DeckCards)
+            //await Task.Run(() => {
+                foreach (var v in deck.DeckCards)
                 {
-                    int got = v.Card.Got;
+                    int got = await MageekCollection.GotCard_HaveOne(v.Card, false);
                     int need = v.Quantity;
                     int diff = need - got;
                     if (diff > 0) missList += diff + " " + v.Card.Card.CardId + "\n";
                 }
-            });
+            //});
             return missList;
         }
 
@@ -555,7 +556,7 @@ namespace MaGeek.AppBusiness
                 using var DB = App.DB.NewContext;
                 await Task.Run(() =>
                 {
-                    total = DB.CardVariants.Sum(x => x.Got);
+                    total = DB.User_GotCards.Sum(x => x.got);
                 });
             }
             catch (Exception e) { Log.Write(e, "GetTotalOwned"); }
@@ -564,21 +565,15 @@ namespace MaGeek.AppBusiness
         
         internal static async  Task<int> GetTotalDiffGot()
         {
-            int total = 0;
             try
             {
                 using var DB = App.DB.NewContext;
-                await Task.Run(() =>
-                {
-                    total = DB.CardVariants.Where(x=>x.Got>0)
-                                            .GroupBy(x=>x.Card)
-                                            .Select(g => g.First().Card)
-                                            .Count();
-                    
-                });
+                return DB.User_GotCards.Count();
             }
-            catch (Exception e) { Log.Write(e, "GetTotalDiffGot"); }
-            return total;
+            catch (Exception e) { 
+                Log.Write(e, "GetTotalDiffGot");
+                return 0;
+            }
         }
         
         internal static async  Task<int> GetTotalDiffExist()

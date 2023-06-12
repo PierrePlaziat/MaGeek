@@ -2,6 +2,7 @@
 using ScryfallApi.Client.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -21,7 +22,7 @@ namespace MaGeek.Entities
         public string ValueEur { get; set; }
         public string ValueUsd { get; set; }
         public int EdhRecRank { get; set; }
-        public int Got { get; set; } //DOING in another table /!\ critical
+        //public int Got { get; set; } //DOING in another table /!\ critical
         public string LastUpdate { get; set; } = "";
 
 
@@ -42,7 +43,7 @@ namespace MaGeek.Entities
             this.Rarity = Rarity;
             this.SetName = SetName;
             this.Card = Card;
-            Got = 0;
+            //Got = 0;
         }
 
         public CardVariant(Card scryCard)
@@ -50,7 +51,7 @@ namespace MaGeek.Entities
             Id = scryCard.Id.ToString();
             Rarity = scryCard.Rarity;
             SetName = scryCard.SetName;
-            Got = 0;
+            //Got = 0;
             Card = MageekCollection.QuickFindCardById(scryCard.Name).Result;
         }
 
@@ -90,6 +91,21 @@ namespace MaGeek.Entities
                 else if (Rarity == "rare") return Brushes.Gold;
                 else if (Rarity == "mythic") return Brushes.OrangeRed;
                 else return Brushes.Green;
+            }
+        }
+
+        public int Got
+        {
+            get
+            {
+                return MageekCollection.GotCard_HaveOne(this,true).Result;
+            }
+        }
+        public string SetIconSvg
+        {
+            get
+            {
+                return Path.Combine(App.Config.Path_SetIconsFolder, SetName.Replace(':', '-').Replace('/', '-') + ".svg");
             }
         }
 

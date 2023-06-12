@@ -5,6 +5,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                         xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
       xmlns:controls="clr-namespace:MaGeek.UI.Controls"
       mc:Ignorable="d" Width="255">
 
@@ -106,6 +107,29 @@
                                     </Button.Resources>
                                 </Button>
 
+                                <Grid>
+                                    
+                                    <Border Background="White"
+                                            Margin="5"
+                                            Grid.RowSpan="2">
+
+                                        <Border.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius"
+                                                        Value="20" />
+                                            </Style>
+                                        </Border.Resources>
+
+                                    </Border>
+
+                                    <svg:SvgViewbox Source="{Binding SetIconSvg}"
+                                                    Margin="5"
+                                                    Grid.RowSpan="2"
+                                                    Width="20"
+                                                    Height="20" />
+                                
+                                </Grid>
+                            
                                 <Label  Width="40" HorizontalContentAlignment="Center"
                                         HorizontalAlignment="Center" 
                                         Foreground="White" 

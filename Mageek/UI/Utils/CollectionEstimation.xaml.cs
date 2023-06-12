@@ -86,33 +86,27 @@ namespace MaGeek.UI
 
         private async Task<float> AutoEstimatePrices()
         {
+
             float total = 0;
             try
             {
-                await Task.Run(() => {
                     using var DB = App.DB.NewContext;
-                    var miss = DB.CardVariants.Where(x => x.Got > 0);
-                    foreach (CardVariant card in miss)
+                    foreach (CardVariant card in DB.CardVariants)
                     {
-                        if (card.ValueEur != null)
+                        var gotLine = await DB.User_GotCards.Where(x => x.CardVariantId == card.Id).FirstOrDefaultAsync();
+                        if (gotLine!=null)
                         {
-                            total += card.Got * float.Parse(card.ValueEur);
-                        }
-                        else
-                        {
-                            var cardModel = DB.CardModels.Where(x => x.CardId == card.Id).FirstOrDefault();
-                            //if (!string.IsNullOrEmpty(cardModel.MeanPrice))
-                            //{
-                            //    total += card.Got * float.Parse(card.ValueEur);
-                            //}
-                            //else
-                            //{
-                            //    missingList.Add(card);
-                            //    MissingCount++;
-                            //}
+                            if (card.ValueEur != null)
+                            {
+                                total += gotLine.got * float.Parse(card.ValueEur);
+                            }
+                            else
+                            {
+                                missingList.Add(card);
+                            }
+
                         }
                     }
-                });
             }
             catch (Exception e) { Log.Write(e, "AutoEstimatePrices"); }
             return total;

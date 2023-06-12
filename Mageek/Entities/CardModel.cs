@@ -28,7 +28,7 @@ namespace MaGeek.Entities
         public string Toughness { get; set; }
 
         public string FavouriteVariant { get; set; } = "";    // dont use in next version
-        public int Got { get; set; }    // dont use in next version
+        //public int Got { get; set; }    // dont use in next version
 
         public virtual List<CardVariant> Variants { get; set; } = new List<CardVariant>();
         public virtual List<CardTraduction> Traductions { get; set; } = new List<CardTraduction>();
@@ -54,6 +54,14 @@ namespace MaGeek.Entities
                 }
                 if (count > 0) return (total / count).ToString("0.##");
                 else return "";
+            }
+        }
+
+        public int Got
+        {
+            get
+            {
+                return MageekCollection.GotCard_HaveOne(this).Result;
             }
         }
 
