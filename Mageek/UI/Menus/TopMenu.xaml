@@ -10,6 +10,22 @@
     <Menu Background="Black"
           Foreground="White">
 
+        <MenuItem Header="Utils">
+            <MenuItem Header="Txt Importer"
+                      Foreground="Black"
+                      Click="OpenWindow_TxtImporter" />
+            <MenuItem Header="Preco Importer"
+                      Foreground="Black"
+                      Click="OpenWindow_PrecoImporter" />
+            <Separator />
+            <MenuItem Header="Proxy Printer"
+                      Foreground="Black"
+                      Click="OpenWindow_ProxyPrint" />
+            <MenuItem Header="Collection Estimator"
+                      Foreground="Black"
+                      Click="OpenWindow_CollectionEstimation" />
+        </MenuItem>
+
         <MenuItem Header="Tools">
             <MenuItem Header="Set Explorer"
                       Foreground="Black"
@@ -34,22 +50,6 @@
             <MenuItem Header="Deck Table"
                       Foreground="Black"
                       Click="DeckTable_Click" />
-        </MenuItem>
-
-        <MenuItem Header="Utils">
-            <MenuItem Header="Txt Importer"
-                      Foreground="Black"
-                      Click="OpenWindow_TxtImporter" />
-            <MenuItem Header="Preco Importer"
-                      Foreground="Black"
-                      Click="OpenWindow_PrecoImporter" />
-            <Separator />
-            <MenuItem Header="Proxy Printer"
-                      Foreground="Black"
-                      Click="OpenWindow_ProxyPrint" />
-            <MenuItem Header="Collection Estimator"
-                      Foreground="Black"
-                      Click="OpenWindow_CollectionEstimation" />
         </MenuItem>
 
         <MenuItem Header="Layout">
@@ -111,12 +111,9 @@
         </MenuItem>
             <MenuItem Header="Database"
                       Foreground="Black">
-                <MenuItem Header="Reinit mtg data"
+                <MenuItem Header="Force update cards and sets"
                           Foreground="Black"
                           Click="UpdateCards" />
-                <!--<MenuItem Header="Import old user data"
-                          Foreground="Black"
-                          Click="importOldUserData" />-->
                 <Separator />
                 <MenuItem Header="Backup DB"
                           Foreground="Black"
@@ -124,6 +121,10 @@
                 <MenuItem Header="Restore DB"
                           Foreground="Black"
                           Click="RestoreCollection" />
+                <Separator />
+                <MenuItem Header="Import got cards from previous mageek version"
+                          Foreground="Black"
+                          Click="importOldUserData" />
             </MenuItem>
 
         </MenuItem>

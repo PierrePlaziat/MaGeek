@@ -39,7 +39,7 @@
 
                 <Grid  Margin="7,0,7,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="70"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
                         <ColumnDefinition Width="50"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
@@ -79,19 +79,19 @@
 
                     <DataTemplate>
 
-                        <Grid Height="15" Margin="0" Width="243">
+                        <Grid Height="25" Margin="0" Width="243">
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="70"></ColumnDefinition>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
                                 <ColumnDefinition Width="50"></ColumnDefinition>
                                 <ColumnDefinition Width="123"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <DockPanel Grid.Column="0" 
-                                       Height="16" 
+                                       Height="25" 
                                        Margin="0" >
 
-                                <Button Width="16" Height="16" 
+                                <Button Width="16" Height="25" 
                                         Margin="0,0,0,0" Padding="0" 
                                         Background="#222"
                                         Foreground="#444"
@@ -107,38 +107,15 @@
                                     </Button.Resources>
                                 </Button>
 
-                                <Grid>
-                                    
-                                    <Border Background="White"
-                                            Margin="5"
-                                            Grid.RowSpan="2">
-
-                                        <Border.Resources>
-                                            <Style TargetType="Border">
-                                                <Setter Property="CornerRadius"
-                                                        Value="20" />
-                                            </Style>
-                                        </Border.Resources>
-
-                                    </Border>
-
-                                    <svg:SvgViewbox Source="{Binding SetIconSvg}"
-                                                    Margin="5"
-                                                    Grid.RowSpan="2"
-                                                    Width="20"
-                                                    Height="20" />
-                                
-                                </Grid>
-                            
                                 <Label  Width="40" HorizontalContentAlignment="Center"
                                         HorizontalAlignment="Center" 
                                         Foreground="White" 
-                                        Padding="0" 
-                                       Background="#111"  
-                                        Margin="0,-1,0,0" 
+                                        Padding="5" 
+                                        Background="#111"  
+                                        Margin="0,0,0,0" 
                                         Content="{Binding Got}"/>
 
-                                <Button Width="16" Height="16" 
+                                <Button Width="16" Height="25" 
                                         Margin="0,0,0,0" 
                                         Padding="0"   
                                         Background="#222"
@@ -156,19 +133,40 @@
                                     </Button.Resources>
                                 </Button>
 
+                                <Grid Margin="3,0,0,0">
+
+                                    <Border Background="White" Width="25">
+
+                                        <Border.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius"
+                                                        Value="20" />
+                                            </Style>
+                                        </Border.Resources>
+
+                                    </Border>
+
+                                    <svg:SvgViewbox Source="{Binding SetIconSvg}"
+                                                    Margin="5"
+                                                    Grid.RowSpan="2"
+                                                    Width="15"
+                                                    Height="15"/>
+
+                                </Grid>
+
                             </DockPanel>
 
                             <Label Content="{Binding ValueEur}"  Grid.Column="1" HorizontalAlignment="Center"
                                         Foreground="{Binding GetPriceColor}" 
-                                        Margin="0,-1,0,0" 
+                                        Margin="0,5,0,0" 
                                         Padding="0"/>
 
 
                             <Label Grid.Column="2" 
-                                       Content="{Binding SetName}" 
-                                       Foreground="{Binding GetRarityColor}"
-                                        Margin="0,-1,0,0" 
-                                       Padding="0"/>
+                                       Content="{Binding SetName}"
+                                   Foreground="{Binding GetRarityColor}"
+                                   Margin="0,5,0,0"
+                                   Padding="0"/>
 
 
                         </Grid>
