@@ -3,8 +3,6 @@ using MaGeek.Entities;
 using MaGeek.Framework.Utils;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -71,7 +69,9 @@ namespace MaGeek.UI
                     TotalDiffExist = await MageekStats.GetTotalDiffExist();
                     TotalDiffGot = await MageekStats.GetTotalDiffGot();
                     TotalGot = await MageekStats.GetTotalOwned();
-                    AutoEstimation = await AutoEstimatePrices(); ;
+                    var est = await MageekStats.AutoEstimatePrices(); ;
+                    AutoEstimation = est.Item1;
+                    MissingList = est.Item2;
                     OnPropertyChanged(nameof(TotalDiffExist));
                     OnPropertyChanged(nameof(TotalDiffGot));
                     OnPropertyChanged(nameof(TotalGot));
@@ -82,34 +82,6 @@ namespace MaGeek.UI
                 IsLoading = Visibility.Collapsed;
             }
             catch (Exception e) { Log.Write(e); }
-        }
-
-        private async Task<float> AutoEstimatePrices()
-        {
-
-            float total = 0;
-            try
-            {
-                    using var DB = App.DB.NewContext;
-                    foreach (CardVariant card in DB.CardVariants)
-                    {
-                        var gotLine = await DB.User_GotCards.Where(x => x.CardVariantId == card.Id).FirstOrDefaultAsync();
-                        if (gotLine!=null)
-                        {
-                            if (card.ValueEur != null)
-                            {
-                                total += gotLine.got * float.Parse(card.ValueEur);
-                            }
-                            else
-                            {
-                                missingList.Add(card);
-                            }
-
-                        }
-                    }
-            }
-            catch (Exception e) { Log.Write(e, "AutoEstimatePrices"); }
-            return total;
         }
 
         private void AddManualEstimations(object sender, RoutedEventArgs e)

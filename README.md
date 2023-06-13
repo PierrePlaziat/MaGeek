@@ -20,22 +20,17 @@ I needed a tool to manage my MTG card collection on local drive, that reflect my
 
 ## TODO
 
+- 	Error hash access
+
 ### Planned
 
--	debug collection estimation
+-	finish collection estimation
 -	support $ currency (currently all €)
 - 	Menu Language and currency show currently selected
--	rework list importer
--	Show set completness
--	double clic instead of simple click on set card
-
-### Then
-
--	Retest and polish set explorer, deck stats and deck table
 -	Better proxy ux
 
 ### Maybe later
 
 -	Auto deck / Deck helper
--	Recent cards/searches
+-	Recent cards/searches 
 -	Better preco importer (waiting for mtgsqlive to furnish data)

@@ -1,10 +1,9 @@
 ﻿using MaGeek.Entities;
 using MaGeek.Framework.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MaGeek.AppBusiness
@@ -592,38 +591,41 @@ namespace MaGeek.AppBusiness
         }
 
 
-        internal static async Task<float> AutoEstimatePrices()
+        internal static async Task<Tuple<float, List<CardVariant>>> AutoEstimatePrices()
         {
             float total = 0;
-            //try
-            //{
-            //    await Task.Run(() => {
-            //        using var DB = App.DB.GetNewContext();
-            //        var miss = DB.CardVariants.Where(x => x.Got > 0).Include(x=>x.Card);
-            //        foreach (CardVariant card in miss)
-            //        {
-            //            if (card.ValueEur != null)
-            //            {
-            //                total += card.Got * float.Parse(card.ValueEur);
-            //            }
-            //            else
-            //            {
-            //                var cardModel = DB.CardModels.Where(x => x.CardId == card.Id).FirstOrDefault();
-            //                if (!string.IsNullOrEmpty(cardModel.MeanPrice))
-            //                {
-            //                    total += card.Got * float.Parse(card.ValueEur);
-            //                }
-            //                else
-            //                {
-            //                    missingList.Add(card);
-            //                    MissingCount++;
-            //                }
-            //            }
-            //        }
-            //    });
-            //}
-            //catch (Exception e) { Log.Write(e, "AutoEstimatePrices"); }
-            return total;
+            List<CardVariant> missingList = new();
+            try
+            {
+                using var DB = App.DB.NewContext;
+                foreach (CardVariant card in DB.CardVariants.Include(x=>x.Card))
+                {
+                    var gotLine = await DB.User_GotCards.Where(x => x.CardVariantId == card.Id).FirstOrDefaultAsync();
+                    if (gotLine != null)
+                    {
+                        if (!string.IsNullOrEmpty(card.ValueEur))
+                        {
+                            total += gotLine.got * float.Parse(card.ValueEur);
+                        }
+                        else
+                        {
+                            await MageekApi.RetrieveCardValues(card);
+                            if (!string.IsNullOrEmpty(card.ValueEur))
+                            {
+                                total += gotLine.got * float.Parse(card.ValueEur);
+                            }
+                            else if (!string.IsNullOrEmpty(card.Card.MeanPrice))
+                            {
+                                total += gotLine.got * float.Parse(card.Card.MeanPrice);
+                            }
+                            else missingList.Add(card);
+                        }
+
+                    }
+                }
+            }
+            catch (Exception e) { Log.Write(e, "AutoEstimatePrices"); }
+            return new Tuple<float, List<CardVariant>>(total, missingList);
         }
 
         #endregion

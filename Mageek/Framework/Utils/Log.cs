@@ -39,8 +39,8 @@ namespace MaGeek.Framework.Utils
 
         public static void Write(Exception exception, string source = "")
         {
-            string message = source + "\n>> " + exception.Message;
-            if (exception.InnerException != null) message += "\n>>> " + exception.InnerException.Message;
+            string message = source + " >> " + exception.Message;
+            if (exception.InnerException != null) message += " >>> " + exception.InnerException.Message;
             LogMessage logLine = new LogMessage()
             {
                 Message = message,
