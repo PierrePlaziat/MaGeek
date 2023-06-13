@@ -64,7 +64,7 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="185" />
+                            <ColumnDefinition Width="180" />
                             <ColumnDefinition Width="50" />
                         </Grid.ColumnDefinitions>
 
@@ -175,7 +175,7 @@
                   RowHeaderWidth="0"
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding Variants}"
-                  SelectionChanged="DataGrid_SelectionChanged"
+                  MouseDoubleClick="DataGrid_MouseDoubleClick"
                   SelectionMode="Single">
 
             <DataGrid.Columns>

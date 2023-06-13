@@ -114,11 +114,14 @@ namespace MaGeek.UI
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+        }
+
+        private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
             var v = (DataGrid)sender;
             if (v.SelectedItem == null) return;
             App.Events.RaiseCardSelected((v.SelectedItem as CardVariant).Card);
         }
-
     }
 
 }
