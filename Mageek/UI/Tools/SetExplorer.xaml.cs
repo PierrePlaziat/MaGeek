@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Windows.Controls;
 using System.Linq;
+using MaGeek.AppBusiness;
 
 namespace MaGeek.UI
 {
@@ -105,36 +106,16 @@ namespace MaGeek.UI
             }
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Variants = SelectSet(((ListView)sender).SelectedItem as MtgSet);
-        }
-
-        private List<CardVariant> SelectSet(MtgSet set)
-        {
-            List<CardVariant> variants = new();
-            if (set != null) 
-            {
-                try
-                {
-                    using (var DB = App.DB.NewContext)
-                    {
-                        variants = DB.CardVariants.Where(x => x.SetName == set.Name)
-                                                  .Include(x => x.Card)
-                                                  .ToList();
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Write(e,"SelectSet");
-                }
-            }
-            return variants;
+            var s = ((ListView)sender).SelectedItem as MtgSet;
+            Variants = await MageekCollection.GetCardsFromSet(s);
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var v = (DataGrid)sender;
+            if (v.SelectedItem == null) return;
             App.Events.RaiseCardSelected((v.SelectedItem as CardVariant).Card);
         }
 

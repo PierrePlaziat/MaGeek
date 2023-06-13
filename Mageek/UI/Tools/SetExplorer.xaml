@@ -47,7 +47,6 @@
                   Margin="0"
                   Padding="-3,0,0,0"
                   BorderThickness="0"
-                  
                   SelectionMode="Single"
                   SelectionChanged="ListView_SelectionChanged">
 
@@ -65,8 +64,8 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="200" />
-                            <ColumnDefinition Width="35" />
+                            <ColumnDefinition Width="185" />
+                            <ColumnDefinition Width="50" />
                         </Grid.ColumnDefinitions>
 
                         <Border Background="White"
@@ -79,7 +78,7 @@
                                             Value="20" />
                                 </Style>
                             </Border.Resources>
-                            
+
                         </Border>
 
                         <svg:SvgViewbox Source="{Binding Svg}"
@@ -121,13 +120,42 @@
                                    Padding="0" />
                         </DockPanel>
 
-                        <Label Grid.Column="2" Grid.Row="0"  Margin="0" Padding="0" Content="{Binding BaseSetSize}"></Label>
-                        <Label Grid.Column="2"
-                               Grid.Row="1"
-                               Margin="0"
-                               Padding="0"
-                               Content="{Binding TotalSetSize}"></Label>
-                        
+                        <DockPanel Grid.Column="2"
+                                   Grid.Row="0">
+                            <Label Margin="0"
+                                   Padding="0"
+                                   Content="{Binding BaseSetSize}"></Label>
+                            <Label Margin="0"
+                                   Padding="0"
+                                   Content="("></Label>
+                            <Label Margin="0"
+                                   Padding="0"
+                                   Content="{Binding TotalSetSize}" />
+                            <Label Margin="0"
+                                   Padding="0"
+                                   Content=")"></Label>
+
+                        </DockPanel>
+                        <DockPanel Grid.Column="2"
+                                   Grid.Row="1">
+                            <Label Margin="0"
+                                   Padding="0"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Right"
+                                   Content="{Binding UserGot}" />
+                            <!--<Label Margin="0"
+                                   Padding="0"
+                                   Content="("></Label>
+                            <Label Margin="0"
+                                   Padding="0"
+                                   Content="{Binding UserGotExtended}" />
+                            <Label Margin="0"
+                                   Padding="0"
+                                   Content=")"></Label>-->
+
+                        </DockPanel>
+
                     </Grid>
 
                 </DataTemplate>
@@ -139,9 +167,12 @@
                   Grid.RowSpan="2"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
+                  CanUserResizeColumns="True"
                   CanUserReorderColumns="True"
                   CanUserResizeRows="False"
                   CanUserSortColumns="True"
+                  IsReadOnly="True"
+                  RowHeaderWidth="0"
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding Variants}"
                   SelectionChanged="DataGrid_SelectionChanged"
@@ -159,6 +190,14 @@
                 <DataGridTextColumn Header="| ManaCost   "
                                     Binding="{Binding Card.ManaCost}" />
             </DataGrid.Columns>
+            
+            <DataGrid.Resources>
+                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"
+                       TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background"
+                            Value="#555" />
+                </Style>
+            </DataGrid.Resources>
 
         </DataGrid>
 

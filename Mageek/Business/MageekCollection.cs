@@ -164,7 +164,7 @@ namespace MaGeek.AppBusiness
             catch (Exception e) { Log.Write(e); }
             return foreignName;
         }
-        
+
         #endregion
 
         #region Decks
@@ -437,6 +437,50 @@ namespace MaGeek.AppBusiness
             int rel = cardDeckRelation.RelationType;
             await RemoveCardFromDeck(cardDeckRelation.Card.Card, deck, qty);
             await AddCardToDeck(magicCardVariant, deck, qty, rel);
+        }
+
+        #endregion
+
+        #region sets
+
+        internal async static Task<List<CardVariant>> GetCardsFromSet(MtgSet set)
+        {
+            List<CardVariant> variants = new();
+            if (set != null)
+            {
+                try
+                {
+                    using (var DB = App.DB.NewContext)
+                    {
+                        variants = await DB.CardVariants.Where(x => x.SetName == set.Name)
+                                                  .Include(x => x.Card)
+                                                  .ToListAsync();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Write(e, "SelectSet");
+                }
+            }
+            return variants;
+        }
+
+        internal static async Task<int> SetNbOwned(MtgSet set, bool onlyThisVariant)
+        {
+            int nb = 0;
+            try
+            {
+                var cards = await GetCardsFromSet(set);
+                using var DB = App.DB.NewContext;
+                {
+                    foreach (var c in cards)
+                    {
+                        if (await GotCard_HaveOne(c, onlyThisVariant) > 0) nb++;
+                    }
+                }
+            }
+            catch (Exception e) { Log.Write(e); }
+            return nb;
         }
 
         #endregion

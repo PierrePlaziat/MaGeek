@@ -15,5 +15,21 @@ namespace MaGeek.Entities
         public string ReleaseDate { get; set; }
         public string Svg { get; set; }
 
+        public int UserGot
+        {
+            get
+            {
+                return MageekCollection.SetNbOwned(this,true).Result;
+            }
+        }
+
+        public int UserGotExtended
+        {
+            get
+            {
+                return MageekCollection.SetNbOwned(this,false).Result;
+            }
+        }
+
     }
 }
