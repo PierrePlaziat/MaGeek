@@ -64,13 +64,21 @@ namespace MaGeek.Entities
             return await MageekApi.RetrieveImage(this, back);
         }
 
+        public string Value
+        {
+            get {
+                if (App.Config.Settings[Setting.Currency] == "Eur") return ValueEur;
+                else return ValueUsd;
+            }
+        }
+
         public Brush GetPriceColor
         {
             get
             {
-                if (ValueEur == null) return Brushes.Black;
+                if (Value == null) return Brushes.Black;
                 float p = 0;
-                if (ValueEur != null) p = float.Parse(ValueEur);
+                if (Value != null) p = float.Parse(Value);
                 if (p >= 10) return Brushes.Yellow;
                 else if (p >= 5) return Brushes.Orange;
                 else if (p >= 2) return Brushes.Red;
@@ -101,6 +109,7 @@ namespace MaGeek.Entities
                 return MageekCollection.GotCard_HaveOne(this,true).Result;
             }
         }
+
         public string SetIconSvg
         {
             get

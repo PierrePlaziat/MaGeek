@@ -15,6 +15,14 @@
     <None Remove="Resources\Corner.png" />
     <None Remove="Resources\Images\IconCard.jpg" />
     <None Remove="Resources\Images\IconDeck.jpg" />
+    <None Remove="Resources\Images\Icon_Backup.jpg" />
+    <None Remove="Resources\Images\Icon_Currency.jpg" />
+    <None Remove="Resources\Images\Icon_db.jpg" />
+    <None Remove="Resources\Images\Icon_Lang.jpg" />
+    <None Remove="Resources\Images\Icon_Restore.jpg" />
+    <None Remove="Resources\Images\Icon_Update.jpg" />
+    <None Remove="Resources\Images\TickOff.jpg" />
+    <None Remove="Resources\Images\TickOn.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,10 +30,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\Images\Icon_Backup.jpg" />
+    <Resource Include="Resources\Images\Icon_Restore.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\Images\Corner.png" />
     <Resource Include="Resources\Images\document.png" />
     <Resource Include="Resources\Images\IconCard.jpg" />
     <Resource Include="Resources\Images\IconDeck.jpg" />
+    <Resource Include="Resources\Images\Icon_Currency.jpg" />
+    <Resource Include="Resources\Images\Icon_db.jpg" />
+    <Resource Include="Resources\Images\Icon_Lang.jpg" />
+    <Resource Include="Resources\Images\Icon_Update.jpg" />
     <Resource Include="Resources\Images\property-blue.png" />
   </ItemGroup>
 
@@ -44,6 +61,8 @@
 
   <ItemGroup>
     <Resource Include="Resources\Fonts\Magic_Symbols_2008.ttf" />
+    <Resource Include="Resources\Images\TickOff.jpg" />
+    <Resource Include="Resources\Images\TickOn.jpg" />
   </ItemGroup>
 
   <ItemGroup>

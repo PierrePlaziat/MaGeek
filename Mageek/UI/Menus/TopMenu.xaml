@@ -55,76 +55,119 @@
         <MenuItem Header="Layout">
             <MenuItem Header="Save"
                       Foreground="Black"
-                      Click="LayoutBackup_Click" />
+                      Click="LayoutBackup_Click">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Backup.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem Header="Load"
                       Foreground="Black"
-                      Click="LayoutRestore_Click" />
+                      Click="LayoutRestore_Click">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Restore.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
             <Separator />
         </MenuItem>
 
         <MenuItem Header="Options">
-        <MenuItem Header="Language"
-                  Foreground="Black">
-            <MenuItem Header="French"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-            <MenuItem Header="German"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-            <MenuItem Header="Italian"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-            <MenuItem Header="Spanish"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-            <MenuItem Header="Portuguese (Brazil)"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-            <MenuItem Header="Japanese"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-            <MenuItem Header="Korean"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-            <MenuItem Header="Chinese Simplified"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-            <MenuItem Header="Chinese Traditional"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-            <MenuItem Header="Russian"
-                      Foreground="Black"
-                      Click="ChangeLanguage" />
-        </MenuItem>
+        <MenuItem Header="Language" Name="LangBox"
+                      Foreground="Black">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Lang.jpg" />
+                </MenuItem.Icon>
+                <MenuItem Header="French"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+                <MenuItem Header="German"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+                <MenuItem Header="Italian"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+                <MenuItem Header="Spanish"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+                <MenuItem Header="Portuguese (Brazil)"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+                <MenuItem Header="Japanese"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+                <MenuItem Header="Korean"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+                <MenuItem Header="Chinese Simplified"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+                <MenuItem Header="Chinese Traditional"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+                <MenuItem Header="Russian"
+                          Foreground="Black"
+                          Click="ChangeLanguage">
+                </MenuItem>
+            </MenuItem>
 
-        <MenuItem Header="Currency"
-                  Foreground="Black">
-            <MenuItem Header="None"
-                      Foreground="Black"
-                      Click="ChangeCurrency" />
-            <MenuItem Header="Eur"
-                      Foreground="Black"
-                      Click="ChangeCurrency" />
-            <MenuItem Header="Usd"
-                      Foreground="Black"
-                      Click="ChangeCurrency" />
-        </MenuItem>
+            <MenuItem Header="Currency"
+                      Name="CurrencyBox"
+                      Foreground="Black">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Currency.jpg" />
+                </MenuItem.Icon>
+                <MenuItem Header="Eur"
+                          Foreground="Black"
+                          Click="ChangeCurrency">
+                </MenuItem>
+                <MenuItem Header="Usd"
+                          Foreground="Black"
+                          Click="ChangeCurrency">
+                </MenuItem>
+            </MenuItem>
             <MenuItem Header="Database"
                       Foreground="Black">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_db.jpg" />
+                </MenuItem.Icon>
                 <MenuItem Header="Force update cards and sets"
                           Foreground="Black"
-                          Click="UpdateCards" />
+                          Click="UpdateCards">
+                    <MenuItem.Icon>
+                        <Image Source="/Resources/Images/Icon_Update.jpg" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
                 <MenuItem Header="Backup DB"
                           Foreground="Black"
-                          Click="BackupCollection" />
+                          Click="BackupCollection">
+                    <MenuItem.Icon>
+                        <Image Source="/Resources/Images/Icon_Backup.jpg" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Header="Restore DB"
                           Foreground="Black"
-                          Click="RestoreCollection" />
+                          Click="RestoreCollection">
+                    <MenuItem.Icon>
+                        <Image Source="/Resources/Images/Icon_Restore.jpg" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
                 <MenuItem Header="Import got cards from previous mageek version"
                           Foreground="Black"
-                          Click="importOldUserData" />
+                          Click="importOldUserData">
+                    <MenuItem.Icon>
+                        <Image Source="/Resources/Images/IconCard.jpg" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
 
         </MenuItem>

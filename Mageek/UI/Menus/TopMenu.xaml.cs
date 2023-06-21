@@ -2,9 +2,12 @@
 using MaGeek.Framework.Utils;
 using MaGeek.UI.Windows.Importers;
 using MaGeek.UI.Windows.ImportExport;
+using SharpVectors.Dom.Css;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace MaGeek.UI.Menus
 {
@@ -15,6 +18,8 @@ namespace MaGeek.UI.Menus
         public TopMenu()
         {
             InitializeComponent();
+            UpdateLangIcons(App.Config.Settings[Setting.ForeignLanguage]);
+            UpdateCurrencyIcons(App.Config.Settings[Setting.Currency]);
         }
 
         #region Tools
@@ -119,12 +124,56 @@ namespace MaGeek.UI.Menus
             MenuItem item = sender as MenuItem;
             App.Config.ChangeSetting(Setting.ForeignLanguage, item.Header.ToString());
             App.Events.RaiseUpdateCardCollec();
+            UpdateLangIcons(item.Header.ToString());
+        }
+
+        private void UpdateLangIcons(string lang)
+        {
+            foreach (MenuItem v in LangBox.Items)
+            {
+                if (v.Header.ToString() == lang)
+                {
+                    v.Icon = new System.Windows.Controls.Image
+                    {
+                        Source = new BitmapImage(new Uri("/Resources/Images/TickOn.jpg", UriKind.Relative))
+                    };
+                }
+                else
+                {
+                    v.Icon = new System.Windows.Controls.Image
+                    {
+                        Source = new BitmapImage(new Uri("/Resources/Images/TickOff.jpg", UriKind.Relative))
+                    };
+                }
+            }
         }
 
         private void ChangeCurrency(object sender, RoutedEventArgs e)
         {
             MenuItem s = (MenuItem)sender;
             App.Config.ChangeSetting(Setting.Currency, s.Header.ToString());
+            UpdateCurrencyIcons(s.Header.ToString());
+        }
+
+        private void UpdateCurrencyIcons(string currency)
+        {
+            foreach (MenuItem v in CurrencyBox.Items)
+            {
+                if (v.Header.ToString() == currency)
+                {
+                    v.Icon = new System.Windows.Controls.Image
+                    {
+                        Source = new BitmapImage(new Uri("/Resources/Images/TickOn.jpg", UriKind.Relative))
+                    };
+                }
+                else
+                {
+                    v.Icon = new System.Windows.Controls.Image
+                    {
+                        Source = new BitmapImage(new Uri("/Resources/Images/TickOff.jpg", UriKind.Relative))
+                    };
+                }
+            }
         }
 
         #endregion

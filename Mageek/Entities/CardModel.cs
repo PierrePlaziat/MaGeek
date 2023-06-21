@@ -46,10 +46,10 @@ namespace MaGeek.Entities
                 int count = 0;
                 foreach (CardVariant variant in Variants)
                 {
-                    if (!string.IsNullOrEmpty(variant.ValueEur))
+                    if (!string.IsNullOrEmpty(variant.Value))
                     {
                         count++;
-                        total += float.Parse(variant.ValueEur);
+                        total += float.Parse(variant.Value);
                     }
                 }
                 if (count > 0) return (total / count).ToString("0.##");

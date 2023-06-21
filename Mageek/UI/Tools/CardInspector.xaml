@@ -156,7 +156,7 @@
 
                             </DockPanel>
 
-                            <Label Content="{Binding ValueEur}"  Grid.Column="1" HorizontalAlignment="Center"
+                            <Label Content="{Binding Value}"  Grid.Column="1" HorizontalAlignment="Center"
                                         Foreground="{Binding GetPriceColor}" 
                                         Margin="0,5,0,0" 
                                         Padding="0"/>

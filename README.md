@@ -17,6 +17,7 @@ I needed a tool to manage my MTG card collection on local drive, that reflect my
 -	Auto update card data
 -	IDE style movable panels
 -	Stats and tags
+-	support $ and € 
 
 ## TODO
 
@@ -25,8 +26,6 @@ I needed a tool to manage my MTG card collection on local drive, that reflect my
 ### Planned
 
 -	finish collection estimation
--	support $ currency (currently all €)
-- 	Menu Language and currency show currently selected
 -	Better proxy ux
 
 ### Maybe later

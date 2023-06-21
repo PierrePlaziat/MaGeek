@@ -80,7 +80,7 @@ namespace MaGeek.AppBusiness
             await Task.Run(() => {
                 foreach (var v in selectedDeck.DeckCards)
                 {
-                    float price = float.Parse(v.Card.ValueEur);
+                    float price = float.Parse(v.Card.Value);
                     total += v.Quantity * price;
                 }
             });
@@ -603,16 +603,16 @@ namespace MaGeek.AppBusiness
                     var gotLine = await DB.User_GotCards.Where(x => x.CardVariantId == card.Id).FirstOrDefaultAsync();
                     if (gotLine != null)
                     {
-                        if (!string.IsNullOrEmpty(card.ValueEur))
+                        if (!string.IsNullOrEmpty(card.Value))
                         {
-                            total += gotLine.got * float.Parse(card.ValueEur);
+                            total += gotLine.got * float.Parse(card.Value);
                         }
                         else
                         {
                             await MageekApi.RetrieveCardValues(card);
-                            if (!string.IsNullOrEmpty(card.ValueEur))
+                            if (!string.IsNullOrEmpty(card.Value))
                             {
-                                total += gotLine.got * float.Parse(card.ValueEur);
+                                total += gotLine.got * float.Parse(card.Value);
                             }
                             else if (!string.IsNullOrEmpty(card.Card.MeanPrice))
                             {
