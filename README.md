@@ -10,26 +10,23 @@ I needed a tool to manage my MTG card collection on local drive, that reflect my
 
 ## Functionalities
 
--	All paper cards support including fun
--	Decks/sets/lists gestion
--	Proxy print
--	Foreign language suport
--	Auto update card data
--	IDE style movable panels
--	Stats and tags
--	support $ and € 
+-	Advanced Search
+-	Collection gestion
+-	Proxy printing
+-	Price estimations
+-	Nice UI
 
 ## TODO
 
+-	Proxy : 
+	-	prevent null deck
+	-	last card wont appear
+	-	link checkboxes
 - 	Error hash access
-
-### Planned
-
 -	finish collection estimation
--	Better proxy ux
 
 ### Maybe later
 
--	Auto deck / Deck helper
 -	Recent cards/searches 
+-	Auto deck / Deck helper
 -	Better preco importer (waiting for mtgsqlive to furnish data)
