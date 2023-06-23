@@ -23,12 +23,15 @@
                 <Button Click="PreviousPageButton">Previous</Button>
                 <Label Content="{Binding CurrentPageP1}"></Label>
                 <Label Content="/"></Label>
-                <Label Content="{Binding PageCount}"></Label>
+                <Label Content="{Binding Pages.Count}"></Label>
                 <Button Click="NextPageButton">Next</Button>
             </DockPanel>
             <DockPanel>
-                <CheckBox Foreground="White">Include basic lands</CheckBox>
-                <CheckBox Foreground="White">Only missing</CheckBox>
+                <CheckBox Foreground="White"
+                          Unchecked="CheckBox_IncludeBasicLands"
+                          Checked="CheckBox_IncludeBasicLands">Include basic lands</CheckBox>
+                <CheckBox Foreground="White"
+                          Unchecked="CheckBox_OnlyMissing" Checked="CheckBox_OnlyMissing" >Only missing</CheckBox>
                 <Button Click="LaunchPrint">Launch print</Button>
             </DockPanel>
         </StackPanel>

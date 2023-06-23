@@ -1,13 +1,11 @@
-﻿using System.Windows.Controls;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using MaGeek.AppBusiness;
 using MaGeek.Entities;
 using MaGeek.UI.Controls;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Windows.Forms;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows.Controls;
 using PrintDialog = System.Windows.Controls.PrintDialog;
-using System.Windows.Forms.VisualStyles;
 
 namespace MaGeek.UI.Windows.ImportExport
 {
@@ -38,35 +36,18 @@ namespace MaGeek.UI.Windows.ImportExport
             get { return currentPage+1; }
         }
 
+        private bool IncludeBasicLands = false;
+        private bool OnlyMissing = false;
 
-        private int pageCount;
-        public int PageCount
-        {
-            get { return pageCount; }
-            set { pageCount = value; OnPropertyChanged(); }
-        }
 
         public ProxyPrint(Deck selectedDeck)
         {
             InitializeComponent();
             DataContext = this;
-            if (selectedDeck != null) 
+            if (selectedDeck != null)
             {
                 SelectedDeck = selectedDeck;
-                DetermineListOfCardsToPrint();
                 DelayLoad().ConfigureAwait(false);
-            }
-        }
-
-        private void DetermineListOfCardsToPrint()
-        {
-            ListOfCardsToPrint= new List<CardVariant>();
-            foreach(var v in selectedDeck.DeckCards)
-            {
-                for (int i = 0; i < v.Quantity; i++)
-                {
-                    ListOfCardsToPrint.Add(v.Card);
-                }
             }
         }
 
@@ -79,17 +60,34 @@ namespace MaGeek.UI.Windows.ImportExport
         private async Task Reload()
         {
             Pages.Clear();
+            ShowedPage.Children.Clear();
             CurrentPage = 0;
-            PageCount = SelectedDeck.CardCount / 9;
-            for (int page = 0; page <= PageCount; page++)
+            DetermineListOfCardsToPrint();
+            for (int page = 0; page <= ListOfCardsToPrint.Count / 9+1; page++)
             {
                 Pages.Add(await GeneratePage(page));
             }
             if (Pages.Count > 0)
             {
                 ShowedPage.Children.Add(Pages[0]);
-                //ShowedPage.InvalidateVisual();
-                //Pages[0].Refresh();
+            }
+        }
+
+        private void DetermineListOfCardsToPrint()
+        {
+            ListOfCardsToPrint= new List<CardVariant>();
+            foreach(var v in selectedDeck.DeckCards)
+            {
+                if (IncludeBasicLands || !v.Card.Card.Type.Contains("Basic Land"))
+                {
+                    if (!OnlyMissing || MageekCollection.GotCard_HaveOne(v.Card.Card).Result==0)
+                    {
+                        for (int i = 0; i < v.Quantity; i++)
+                        {
+                            ListOfCardsToPrint.Add(v.Card);
+                        }
+                    }
+                }
             }
         }
 
@@ -130,8 +128,6 @@ namespace MaGeek.UI.Windows.ImportExport
             {
                 ShowedPage.Children.Clear();
                 ShowedPage.Children.Add(Pages[CurrentPage]);
-                //ShowedPage.InvalidateVisual();
-                //Pages[CurrentPage].Refresh();
             }
         }
 
@@ -143,9 +139,19 @@ namespace MaGeek.UI.Windows.ImportExport
             {
                 ShowedPage.Children.Clear();
                 ShowedPage.Children.Add(Pages[CurrentPage]);
-                //ShowedPage.InvalidateVisual();
-                //Pages[CurrentPage].Refresh();
             }
+        }
+
+        private void CheckBox_IncludeBasicLands(object sender, System.Windows.RoutedEventArgs e)
+        {
+            IncludeBasicLands = ((CheckBox)sender).IsChecked.HasValue? ((CheckBox)sender).IsChecked.Value : false;
+            Reload().ConfigureAwait(false);
+        }
+
+        private void CheckBox_OnlyMissing(object sender, System.Windows.RoutedEventArgs e)
+        {
+            OnlyMissing = ((CheckBox)sender).IsChecked.HasValue ? ((CheckBox)sender).IsChecked.Value : false;
+            Reload().ConfigureAwait(false);
         }
     }
 
