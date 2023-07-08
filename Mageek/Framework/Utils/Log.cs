@@ -81,7 +81,7 @@ namespace MaGeek.Framework.Utils
             return response == MessageBoxResult.Yes;
         }
 
-        internal static string GetInpurFromUser(string reason, string preFill = null)
+        internal static string GetInputFromUser(string reason, string preFill = null)
         {
             Write("Input needed :" + reason);
             InputDialog inputDialog = new InputDialog(reason, preFill);

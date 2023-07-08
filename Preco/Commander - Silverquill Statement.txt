@@ -37,7 +37,7 @@ Silverquill Statement
 1 Stinging Study 
 1 Utter End
 
-1 Ambition’s Cost 
+1 Ambition's Cost 
 1 Incarnation Technique 
 1 Infernal Offering
 1 Promise of Loyalty
@@ -47,8 +47,8 @@ Silverquill Statement
 1 Citadel Siege 
 1 Cunning Rhetoric 
 1 Curse of Disturbance 
-1 Duelist’s Heritage 
-1 Debtors’ Knell 
+1 Duelist's Heritage 
+1 Debtors' Knell 
 1 Ghostly Prison 
 1 Martial Impetus 
 1 Parasitic Impetus
@@ -78,7 +78,7 @@ Silverquill Statement
 1 Myriad Landscape 
 1 Opal Palace 
 1 Orzhov Basilica 
-1 Rogue’s Passage
+1 Rogue's Passage
 1 Secluded Steppe 
 1 Silverquill Campus 
 1 Study Hall 

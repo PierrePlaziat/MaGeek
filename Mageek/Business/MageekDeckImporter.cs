@@ -31,7 +31,7 @@ namespace MaGeek.AppBusiness
 
         Timer timer;
 
-        static string SaveStatePath { get { return App.Config.Path_ImporterState; } }
+        //static string SaveStatePath { get { return App.Config.Path_ImporterState; } }
 
         #region UI
 
@@ -142,6 +142,8 @@ namespace MaGeek.AppBusiness
 
         private async Task DoImport()
         {
+            Log.Write("Deck import : " + CurrentImport.Value.Title);
+
             List<Card> importResult = new();
 
             while (State != ImporterState.Canceled && State == ImporterState.Pause) { };
@@ -159,7 +161,6 @@ namespace MaGeek.AppBusiness
                 Message = "Finalizing";
                 FinalizeImport();
             }
-
         }
 
         #region Work
@@ -188,7 +189,10 @@ namespace MaGeek.AppBusiness
                                     name = name.Split(" // ")[0];
                                     tuples.Add(new ImportLine() { Quantity = quantity, Name = name.Trim(), Side = side });
                                 }
-                                catch { };
+                                catch (Exception e) 
+                                {
+                                    Console.Write("ParseCardList Error : " + e.Message);
+                                };
 
                             }
                         }
@@ -211,8 +215,12 @@ namespace MaGeek.AppBusiness
 
         private void FinalizeImport()
         {
-            App.Events.RaiseUpdateCardCollec();
-            App.Events.RaiseUpdateDeckList();
+            if (PendingImport.Count==0)
+            {
+                App.Events.RaiseUpdateCardCollec();
+                App.Events.RaiseUpdateDeckList();
+            }
+            
             CurrentImport = null;
             WorkerProgress = 100;
             Message = "Done";

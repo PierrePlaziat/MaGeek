@@ -40,4 +40,5 @@ Sideboard (15)
 2 Crook of Condemnation 
 4 Duress 
 2 Chandra's Defeat 
-2 Magma Spray 1 Cast Out 
+2 Magma Spray 
+1 Cast Out 

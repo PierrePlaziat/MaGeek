@@ -27,7 +27,7 @@ Obscura Operation
 1 Shadowmage Infiltrator
 1 Thief of Sanity
 1 Daring Saboteur
-1 Looter Il-Kor
+1 Looter il-Kor
 1 Whirler Rogue
 1 Inkfathom Witch
 

@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS8603: Existence possible d'un retour de référence null.
+dotnet_diagnostic.CS8603.severity = suggestion

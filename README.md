@@ -18,12 +18,9 @@ I needed a tool to manage my MTG card collection on local drive, that reflect my
 
 ## TODO
 
--	Proxy : 
-	-	prevent null deck
-	-	last card wont appear
-	-	link checkboxes
-- 	Error hash access
 -	finish collection estimation
+-	got cards from variant wont work well if !onlythisvariant
+- 	
 
 ### Maybe later
 

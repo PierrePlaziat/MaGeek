@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using MaGeek.AppBusiness;
 using MaGeek.Framework.Data;

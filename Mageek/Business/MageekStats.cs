@@ -467,11 +467,14 @@ namespace MaGeek.AppBusiness
             await Task.Run(async () => {
                 foreach (var v in deck.DeckCards)
                 {
-                    total += v.Quantity;
-                    int got = await MageekCollection.GotCard_HaveOne(v.Card,false);
-                    int need = v.Quantity;
-                    int diff = need - got;
-                    if (diff > 0) miss += diff;
+                    if (!v.Card.Card.Type.Contains("Basic Land"))
+                    {
+                        total += v.Quantity;
+                        int got = await MageekCollection.GotCard_HaveOne(v.Card.Card);
+                        int need = v.Quantity;
+                        int diff = need - got;
+                        if (diff > 0) miss += diff;
+                    }
                 }
             });
 
@@ -487,10 +490,13 @@ namespace MaGeek.AppBusiness
             //await Task.Run(() => {
                 foreach (var v in deck.DeckCards)
                 {
-                    int got = await MageekCollection.GotCard_HaveOne(v.Card, false);
-                    int need = v.Quantity;
-                    int diff = need - got;
-                    if (diff > 0) missList += diff + " " + v.Card.Card.CardId + "\n";
+                    if (!v.Card.Card.Type.Contains("Basic Land"))
+                    {
+                        int got = await MageekCollection.GotCard_HaveOne(v.Card.Card);
+                        int need = v.Quantity;
+                        int diff = need - got;
+                        if (diff > 0) missList += diff + " " + v.Card.Card.CardId + "\n";
+                    }
                 }
             //});
             return missList;

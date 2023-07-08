@@ -1,0 +1,163 @@
+﻿<local:TemplatedUserControl x:Class="MaGeek.UI.CardSearcher"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:MaGeek.UI"
+    xmlns:controls="clr-namespace:MaGeek.UI.Controls"
+    mc:Ignorable="d" 
+    d:DesignHeight="450" d:DesignWidth="750">
+
+    <Grid Background="#222">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <!-- SEARCH -->
+
+        <Grid Grid.Row="0" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="X" ToolTip="Clear filter"
+                    Click="ResetFilters"/>
+            <Button Grid.Column="1" Content="V" ToolTip="Advanced search"
+                    Click="Button_AdvancedSearcher"
+                    Visibility="{Binding ShowNormal}"/>
+            <TextBox Grid.Column="2" Text="{Binding FilterName}" ToolTip="Search a card by its name"
+                     HorizontalAlignment="Stretch" MinWidth="200"
+                     KeyDown="FilterName_KeyDown"
+                     Visibility="{Binding ShowNormal}"/>
+            <Button Grid.Column="3" Content="Search" ToolTip="Launch search" 
+                    Click="Button_Search"/>
+
+        </Grid>
+
+        <!-- FILTERS -->
+
+        <UniformGrid Grid.Row="1" Margin="2" Visibility="{Binding ShowAdvanced}">
+
+            <DockPanel HorizontalAlignment="Center">
+                <Label Content="Type" 
+                       Width="50"
+                       HorizontalAlignment="Center"/>
+                <TextBox Text="{Binding FilterType}" 
+                         Width="150" 
+                         HorizontalAlignment="Stretch"/>
+            </DockPanel>
+            <DockPanel HorizontalAlignment="Center">
+                <Label Content="Keywords" 
+                       Width="70"
+                       HorizontalAlignment="Center"/>
+                <TextBox Text="{Binding FilterKeyword}"
+                         Width="130" 
+                         HorizontalAlignment="Stretch"/>
+            </DockPanel>
+            <DockPanel HorizontalAlignment="Center">
+                <Label Content="Text" 
+                       Width="50"
+                       HorizontalAlignment="Center"/>
+                <TextBox Text="{Binding FilterText}"
+                         Width="150" 
+                         HorizontalAlignment="Stretch"/>
+            </DockPanel>
+            
+            <DockPanel HorizontalAlignment="Center">
+                <Label Content="Colors"
+                       Width="50"
+                       HorizontalAlignment="Center"/>
+                <ComboBox Name="ColorComboBox" 
+                          SelectedItem="{Binding FilterColor, Mode=TwoWay}"
+                          FontFamily="{StaticResource MtgSymbols}"
+                          FontSize="16"
+                          Width="150" />
+            </DockPanel>
+            <DockPanel HorizontalAlignment="Center">
+                <Label Content="Tags"
+                       HorizontalAlignment="Center"
+                       Width="50"/>
+                <ComboBox ItemsSource="{Binding AvailableTags}" 
+                          SelectedItem="{Binding FilterTag, Mode=TwoWay}"
+                          DropDownOpened="FilterTag_DropDownOpened" 
+                          DisplayMemberPath="Tag"
+                          Width="150" />
+            </DockPanel>
+            
+            <DockPanel HorizontalAlignment="Left">
+                <CheckBox Margin="6" Foreground="#777" Content="Got only"
+                          IsChecked="{Binding OnlyGot}"
+                          Grid.Row="0" 
+                          HorizontalAlignment="Left"
+                          Width="200"/>
+            </DockPanel>
+
+        </UniformGrid>
+        
+        <!-- DATAGRID -->
+
+        <Grid Grid.Row="3" 
+              ScrollViewer.VerticalScrollBarVisibility="Visible"
+              ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+            
+            <DataGrid x:Name="CardGrid" 
+                      ItemsSource="{Binding CardList}" 
+                      CanUserAddRows="False"
+                      CanUserResizeRows="False"
+                      CanUserResizeColumns="True"
+                      CanUserReorderColumns="True"
+                      SelectionMode="Extended"
+                      CanUserSortColumns="True"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      MouseDoubleClick="CardGrid_MouseDoubleClick"
+                      RowHeaderWidth="0"
+                      AutoGenerateColumns="False">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />
+                    <DataGridTextColumn Header="| Name   " Binding="{Binding CardId}" />
+                    <DataGridTextColumn Header="| Foreign Name   " Binding="{Binding CardForeignName}" />
+                    <DataGridTemplateColumn Header="| ManaCost   ">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <local:ManaCost Cost="{Binding ManaCost}" HorizontalAlignment="Right"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="| Type   " Binding="{Binding Type}" />
+                    <DataGridTextColumn Header="| Power   " Binding="{Binding Power}" />
+                    <DataGridTextColumn Header="| Toughness   " Binding="{Binding Toughness}" />
+                    <DataGridTextColumn Header="| Cmc   " Binding="{Binding Cmc}" />
+                </DataGrid.Columns>
+
+                <DataGrid.Resources>
+                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="#555" />
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="To deck" Click="AddToDeck"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+
+            </DataGrid>
+
+        </Grid>
+
+        <!-- BusyLoader -->
+
+        <Grid Background="Black" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
+            <controls:BusyIndicator></controls:BusyIndicator>
+        </Grid>
+
+    </Grid>
+
+</local:TemplatedUserControl>

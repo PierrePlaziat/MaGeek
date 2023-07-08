@@ -43,7 +43,7 @@ Bedecked Brokers
 1 Urban Evolution
 
 1 Bant Charm
-1 Broker's Charm
+1 Brokers Charm
 1 Brokers Confluence
 1 Contractual Safeguard
 1 Exotic Pets
@@ -71,7 +71,7 @@ Bedecked Brokers
 
 1 Ash Barrens
 1 Bant Panorama
-1 Broker's Hideout
+1 Brokers Hideout
 1 Canopy Vista
 1 Command Tower
 1 Exotic Orchard

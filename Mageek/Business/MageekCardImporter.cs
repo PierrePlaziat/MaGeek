@@ -1,4 +1,5 @@
-﻿using MaGeek.Entities;
+﻿using AvalonDock.Properties;
+using MaGeek.Entities;
 using MaGeek.Framework.Extensions;
 using MaGeek.Framework.Utils;
 using Microsoft.Data.Sqlite;
@@ -70,7 +71,7 @@ namespace MaGeek.AppBusiness
             Log.Write("Checking cards update...");
             try
             {
-                bool? tooOld = FileUtils.IsFileOlder(App.Config.Path_MtgJsonDownload_OldHash, new TimeSpan(0, 23, 0, 0));
+                bool? tooOld = FileUtils.IsFileOlder(App.Config.Path_MtgJsonDownload_OldHash, new TimeSpan(3, 0, 0, 0));
                 // Dont check too often
                 if (tooOld.HasValue && !tooOld.Value)
                 {
@@ -116,10 +117,12 @@ namespace MaGeek.AppBusiness
                 using (var client = new HttpClient())
                 {
                     var hash = await client.GetStreamAsync(hashAddress);
-                    var fs_NewHash = new FileStream(App.Config.Path_MtgJsonDownload_NewHash, FileMode.Create);
-                    await hash.CopyToAsync(fs_NewHash);
+                    using (var fs_NewHash = new FileStream(App.Config.Path_MtgJsonDownload_NewHash, FileMode.Create))
+                    {
+                        await hash.CopyToAsync(fs_NewHash);
+                    }
                 }
-
+                Log.Write("> Hash Download done.");
             }
         }
 
@@ -142,7 +145,7 @@ namespace MaGeek.AppBusiness
                         await mtgjson_sqlite.CopyToAsync(fs_mtgjson_sqlite);
                     }
                     // Save Hash
-                    File.Copy(App.Config.Path_MtgJsonDownload_NewHash, App.Config.Path_MtgJsonDownload_OldHash);
+                    File.Copy(App.Config.Path_MtgJsonDownload_NewHash, App.Config.Path_MtgJsonDownload_OldHash,true);
                 }
                 catch (Exception e) { Log.Write(e, "DownloadBulkData : "); }
                 Log.Write("Done");
@@ -331,7 +334,11 @@ namespace MaGeek.AppBusiness
                                     }
                                 });
                             }
-                            catch (Exception e) { Log.Write(e); }
+                            catch (Exception e) { 
+                                Log.Write(e);
+                                File.Copy("Resources\\Images\\wut.svg", localFileName);
+                                // todo put placeholder svg
+                            }
                         }
                         if (File.Exists(localFileName)) filePath = localFileName;
                     }

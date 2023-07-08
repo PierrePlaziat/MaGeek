@@ -195,7 +195,7 @@ namespace MaGeek.AppBusiness
             try
             {
                 using var DB = App.DB.NewContext;
-                string deckTitle = Log.GetInpurFromUser("Please enter a title for this new deck", "");
+                string deckTitle = Log.GetInputFromUser("Please enter a title for this new deck", "");
                 if (deckTitle == null) return;
                 if (DB.Decks.Where(x => x.Title == deckTitle).Any())
                 {
@@ -232,6 +232,12 @@ namespace MaGeek.AppBusiness
                             card = DB.CardModels.Where(x => x.CardId == cardOccurence.Name)
                                                 .Include(x => x.Variants)
                                                 .FirstOrDefault();
+                            if (card == null)
+                            {
+                                card = DB.CardModels.Where(x => x.CardId.StartsWith(cardOccurence.Name + " // "))
+                                                    .Include(x => x.Variants)
+                                                    .FirstOrDefault();
+                            }
                             if (card != null)
                             {
                                 CardVariant variant = card.Variants[0];
@@ -256,8 +262,9 @@ namespace MaGeek.AppBusiness
                                 }
                                 deck.CardCount += cardOccurence.Quantity;
                             }
-                        DB.Entry(deck).State = EntityState.Modified;
-                        await DB.SaveChangesAsync();
+                            else Log.Write("Couldnt find card : " + cardOccurence.Name);
+                            DB.Entry(deck).State = EntityState.Modified;
+                            await DB.SaveChangesAsync();
                         }
                     }
                     else { 
@@ -272,7 +279,7 @@ namespace MaGeek.AppBusiness
         {
             using var DB = App.DB.  NewContext;
             if (deck == null) return;
-            string newTitle = Log.GetInpurFromUser("Please enter a title for the deck \"" + deck.Title + "\"", deck.Title);
+            string newTitle = Log.GetInputFromUser("Please enter a title for the deck \"" + deck.Title + "\"", deck.Title);
             if (newTitle == null || string.IsNullOrEmpty(newTitle)) return;
             if (DB.Decks.Where(x => x.Title == newTitle).Any())
             {
@@ -334,6 +341,7 @@ namespace MaGeek.AppBusiness
                 await DB.SaveChangesAsync();
                 App.Events.RaiseUpdateDeckList();
             }
+            Log.Write("Done");
         }
         
         public static async Task DeleteDecks(List<Deck> deckToDelete)
@@ -346,6 +354,7 @@ namespace MaGeek.AppBusiness
                 await DB.SaveChangesAsync();
                 App.Events.RaiseUpdateDeckList();
             }
+            Log.Write("Done");
         }
 
         public static async Task AddCardToDeck(CardModel card, Deck deck, int qty, int relation = 0)

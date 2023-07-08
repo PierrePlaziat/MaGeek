@@ -19,7 +19,7 @@ Mirror Mastery
 1 Vivid Creek
 1 Vivid Grove
 
-1 Æthersnipe
+1 Aethersnipe
 1 Animar, Soul of Elements
 1 Artisan of Kozilek
 1 Avatar of Fury
