@@ -16,9 +16,10 @@ namespace MtgSqliveSdk
     public static class Mageek
     {
 
-        public static Task Initialize()
+        public async static Task Initialize()
         {
-            throw new NotImplementedException();
+            await MageekSdk.MtgSqlive.MtgSqliveSdk.Initialize();
+            await CollectionSdk.Initialize();
         }
 
         #region Cards
@@ -204,7 +205,7 @@ namespace MtgSqliveSdk
             {
                 using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
                 {
-                    CardForeignData? cardForeignData = await DB.CardForeignData.Where(x => x.Uuid == cardUuid && x.Language == lang).FirstOrDefaultAsync();
+                    CardForeignData? cardForeignData = await DB.cardForeignData.Where(x => x.Uuid == cardUuid && x.Language == lang).FirstOrDefaultAsync();
                     return cardForeignData;
                 }
             }
@@ -224,7 +225,7 @@ namespace MtgSqliveSdk
         public static async Task<bool> CardHasType(string cardUuid, string typeFilter)
         {
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-            string type = await DB.Cards.Where(x => x.Uuid == cardUuid).Select(x=>x.Type).FirstOrDefaultAsync();
+            string type = await DB.cards.Where(x => x.Uuid == cardUuid).Select(x=>x.Type).FirstOrDefaultAsync();
             return type.Contains(typeFilter);
         }
 
@@ -288,7 +289,7 @@ namespace MtgSqliveSdk
             try
             {
                 using MtgSqliveDbContext DB2 = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-                string? scryfallId = DB2.CardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefault()?.ScryfallId;
+                string? scryfallId = DB2.cardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefault()?.ScryfallId;
                 if (scryfallId == null) return null;
                 Thread.Sleep(150);
                 string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + scryfallId);
@@ -617,7 +618,7 @@ namespace MtgSqliveSdk
                         case 2: result.AppendLine("Side:"); break;
                     }
                 }
-                Cards? card = await cardInfos.Cards.Where(x => x.Uuid == cardRelation.CardUuid).FirstOrDefaultAsync();
+                Cards? card = await cardInfos.cards.Where(x => x.Uuid == cardRelation.CardUuid).FirstOrDefaultAsync();
                 if(card!=null)
                 {
                     result.Append(cardRelation.Quantity);
@@ -798,7 +799,7 @@ namespace MtgSqliveSdk
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
             foreach (DeckCard card in deck)
             {
-                var c = DB.Cards.Where(x => x.Uuid == card.CardUuid).FirstOrDefault();
+                var c = DB.cards.Where(x => x.Uuid == card.CardUuid).FirstOrDefault();
                 if (c != null)
                 {
                     if (c.ColorIdentity.Contains(color)) return true;
@@ -820,7 +821,7 @@ namespace MtgSqliveSdk
             int devotion = 0;
             foreach (var card in deckCards)
             {
-                var c = DB.Cards.Where(x => x.Uuid == card.CardUuid).FirstOrDefault();
+                var c = DB.cards.Where(x => x.Uuid == card.CardUuid).FirstOrDefault();
                 devotion += Devotion(c.ManaCost, color);
             }
             return devotion;
@@ -982,7 +983,7 @@ namespace MtgSqliveSdk
             var manaCurve = new int[11] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             foreach (DeckCard c in content)
             {
-                Cards card = await DB2.Cards.Where(x => x.Uuid == c.CardUuid).FirstOrDefaultAsync();
+                Cards card = await DB2.cards.Where(x => x.Uuid == c.CardUuid).FirstOrDefaultAsync();
                 int manacost = int.Parse(card.ManaCost);
                 if (card != null && !card.Type.Contains("Land")) manaCurve[manacost <= 10 ? manacost : 10]++;
             }
@@ -1003,7 +1004,7 @@ namespace MtgSqliveSdk
             int miss = 0;
             foreach (var v in content)
             {
-                Cards card = await DB2.Cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
+                Cards card = await DB2.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
                 if (!card.Type.Contains("Basic Land"))
                 {
                     total += v.Quantity;
@@ -1030,7 +1031,7 @@ namespace MtgSqliveSdk
             string missList = "";
             foreach (var v in content)
             {
-                Cards card = await DB2.Cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
+                Cards card = await DB2.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
                 if (!card.Type.Contains("Basic Land"))
                 {
                     int got = await CollectedCard_HowMany(v.CardUuid, false);
@@ -1064,10 +1065,10 @@ namespace MtgSqliveSdk
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
             foreach (var v in await GetDeckContent(deck.DeckId))
             {
-                Cards card = await DB.Cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
+                Cards card = await DB.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
                 if (!card.Type.Contains("Basic Land"))
                 {
-                    CardLegalities cardLegalities = await DB.CardLegalities.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
+                    CardLegalities cardLegalities = await DB.cardLegalities.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
                     string legal = "";
                     switch (format)
                     {
@@ -1179,7 +1180,7 @@ namespace MtgSqliveSdk
                 {
                     using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
                     {
-                        cardUuids = await DB.Cards.Where(x => x.SetCode == setCode)
+                        cardUuids = await DB.cards.Where(x => x.SetCode == setCode)
                             .Select(p=>p.Uuid)
                             .ToListAsync();
                     }
@@ -1341,7 +1342,7 @@ namespace MtgSqliveSdk
                 if (!File.Exists(localFileName))
                 {
                     using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-                    var v =  await DB.CardIdentifiers.Where(x => x.Uuid == cardUuid).Select(x => x.ScryfallIllustrationId).FirstOrDefaultAsync();
+                    var v =  await DB.cardIdentifiers.Where(x => x.Uuid == cardUuid).Select(x => x.ScryfallIllustrationId).FirstOrDefaultAsync();
                     var httpClient = new HttpClient();
                     using var stream = await httpClient.GetStreamAsync(v);
                     using var fileStream = new FileStream(localFileName, FileMode.Create);
@@ -1359,7 +1360,7 @@ namespace MtgSqliveSdk
         public async static Task<string?> GetCardBack(string cardUuid)
         {
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-            return await DB.Cards.Where(x=>x.Uuid==cardUuid).Select(x=>x.OtherFaceIds).FirstOrDefaultAsync();
+            return await DB.cards.Where(x=>x.Uuid==cardUuid).Select(x=>x.OtherFaceIds).FirstOrDefaultAsync();
         }
 
         public async static Task<List<Cards>> NormalSearch(string lang, string filterName)
@@ -1374,12 +1375,12 @@ namespace MtgSqliveSdk
                 {
                         // Search in VO
                         var voResults = await DB.CardArchetypes.Where(x => x.ArchetypeId.ToLower().Contains(lowerFilterName)).ToListAsync();
-                        foreach (var vo in voResults) retour.AddRange(DB2.Cards.Where(x =>x.Uuid==vo.CardUuid));
+                        foreach (var vo in voResults) retour.AddRange(DB2.cards.Where(x =>x.Uuid==vo.CardUuid));
                         // Search in foreign
                         var tradResults = await DB.CardTraductions.Where(x => x.Language == lang && x.NormalizedTraduction.Contains(normalizedFilterName)).ToListAsync();
-                        foreach (var trad in tradResults) retour.AddRange(DB2.Cards.Where(x => x.Uuid == trad.CardUuid));
+                        foreach (var trad in tradResults) retour.AddRange(DB2.cards.Where(x => x.Uuid == trad.CardUuid));
                 }
-                else retour.AddRange(await DB2.Cards.ToArrayAsync());
+                else retour.AddRange(await DB2.cards.ToArrayAsync());
             }
             // Remove duplicata
             retour = retour.GroupBy(x => x.Name).Select(g => g.First()).ToList();
@@ -1399,7 +1400,7 @@ namespace MtgSqliveSdk
                 }
                 else
                 {
-                    retour.AddRange(await DB2.Cards.ToArrayAsync());
+                    retour.AddRange(await DB2.cards.ToArrayAsync());
                 }
             }
 
@@ -1481,7 +1482,7 @@ namespace MtgSqliveSdk
         {
             using (MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
             {
-                return DB.Sets.OrderBy(x => x.ReleaseDate).ToList();
+                return DB.sets.OrderBy(x => x.releaseDate).ToList();
             }
         }
 
@@ -1489,7 +1490,7 @@ namespace MtgSqliveSdk
         {
             using (MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
             {
-                return await DB.CardLegalities.Where(x => x.Uuid == selectedCard.CardUuid).ToListAsync();
+                return await DB.cardLegalities.Where(x => x.Uuid == selectedCard.CardUuid).ToListAsync();
             }
         }
 
@@ -1497,7 +1498,7 @@ namespace MtgSqliveSdk
         {
             using (MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
             {
-                return await DB.CardRulings.Where(x=>x.Uuid== selectedCard.CardUuid).ToListAsync();
+                return await DB.cardRulings.Where(x=>x.Uuid== selectedCard.CardUuid).ToListAsync();
             }
         }
 

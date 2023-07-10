@@ -16,21 +16,40 @@ namespace MageekSdk.MtgSqlive
             optionsBuilder.EnableSensitiveDataLogging();
         }
 
-        public DbSet<CardForeignData> CardForeignData { get; set; }
-        public DbSet<CardIdentifiers> CardIdentifiers { get; set; }
-        public DbSet<CardLegalities> CardLegalities { get; set; }
-        public DbSet<CardPurchaseUrls> CardPurchaseUrls { get; set; }
-        public DbSet<CardRulings> CardRulings { get; set; }
-        public DbSet<Cards> Cards { get; set; }
-        public DbSet<Meta> Meta { get; set; }
-        public DbSet<SetBoosterContents> SetBoosterContents { get; set; }
-        public DbSet<SetBoosterContentWeights> SetBoosterContentWeights { get; set; }
-        public DbSet<SetBoosterSheetCards> SetBoosterSheetCards { get; set; }
-        public DbSet<SetBoosterSheets> SetBoosterSheets { get; set; }
-        public DbSet<Sets> Sets { get; set; }
-        public DbSet<SetTranslations> SetTranslations { get; set; }
-        public DbSet<TokenIdentifiers> TokenIdentifiers { get; set; }
-        public DbSet<Tokens> Tokens { get; set; }
+        public DbSet<CardForeignData> cardForeignData { get; set; }
+        public DbSet<CardIdentifiers> cardIdentifiers { get; set; }
+        public DbSet<CardLegalities> cardLegalities { get; set; }
+        public DbSet<CardPurchaseUrls> cardPurchaseUrls { get; set; }
+        public DbSet<CardRulings> cardRulings { get; set; }
+        public DbSet<Cards> cards { get; set; }
+        public DbSet<Meta> meta { get; set; }
+        public DbSet<SetBoosterContents> setBoosterContents { get; set; }
+        public DbSet<SetBoosterContentWeights> setBoosterContentWeights { get; set; }
+        public DbSet<SetBoosterSheetCards> setBoosterSheetCards { get; set; }
+        public DbSet<SetBoosterSheets> setBoosterSheets { get; set; }
+        public DbSet<Sets> sets { get; set; }
+        public DbSet<SetTranslations> setTranslations { get; set; }
+        public DbSet<TokenIdentifiers> tokenIdentifiers { get; set; }
+        public DbSet<Tokens> tokens { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CardForeignData>().HasNoKey();
+            modelBuilder.Entity<CardIdentifiers>().HasNoKey();
+            modelBuilder.Entity<CardLegalities>().HasNoKey();
+            modelBuilder.Entity<CardPurchaseUrls>().HasNoKey();
+            modelBuilder.Entity<CardRulings>().HasNoKey();
+            modelBuilder.Entity<Cards>().HasNoKey();
+            modelBuilder.Entity<Meta>().HasNoKey();
+            modelBuilder.Entity<SetBoosterContents>().HasNoKey();
+            modelBuilder.Entity<SetBoosterContentWeights>().HasNoKey();
+            modelBuilder.Entity<SetBoosterSheetCards>().HasNoKey();
+            modelBuilder.Entity<SetBoosterSheets>().HasNoKey();
+            modelBuilder.Entity<Sets>().HasNoKey();
+            modelBuilder.Entity<SetTranslations>().HasNoKey();
+            modelBuilder.Entity<TokenIdentifiers>().HasNoKey();
+            modelBuilder.Entity<Tokens>().HasNoKey();
+        }
 
     }
 

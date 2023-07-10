@@ -2,28 +2,28 @@
 {
     public class Sets
     {
-        public int BaseSetSize { get; set; }
-        public string Block { get; set; }
-        public int CardsphereSetId { get; set; }
-        public string Code { get; set; }
-        public string Decks { get; set; }
-        public bool IsFoilOnly { get; set; }
-        public bool IsForeignOnly { get; set; }
-        public bool IsNonFoilOnly { get; set; }
-        public bool IsOnlineOnly { get; set; }
-        public bool IsPartialPreview { get; set; }
-        public string KeyruneCode { get; set; }
-        public string Languages { get; set; }
-        public int McmId { get; set; }
-        public int McmIdExtras { get; set; }
-        public string McmName { get; set; }
-        public string MtgoCode { get; set; }
-        public string Name { get; set; }
-        public string ParentCode { get; set; }
-        public string ReleaseDate { get; set; }
-        public int TcgplayerGroupId { get; set; }
+        public int baseSetSize { get; set; }
+        public string block { get; set; }
+        public int cardsphereSetId { get; set; }
+        public string code { get; set; }
+        public string decks { get; set; }
+        public bool isFoilOnly { get; set; }
+        public bool isForeignOnly { get; set; }
+        public bool isNonFoilOnly { get; set; }
+        public bool isOnlineOnly { get; set; }
+        public bool isPartialPreview { get; set; }
+        public string keyruneCode { get; set; }
+        public string languages { get; set; }
+        public int mcmId { get; set; }
+        public int mcmIdExtras { get; set; }
+        public string mcmName { get; set; }
+        public string mtgoCode { get; set; }
+        public string name { get; set; }
+        public string parentCode { get; set; }
+        public string releaseDate { get; set; }
+        public int tcgplayerGroupId { get; set; }
         public string tokenSetCode { get; set; }
-        public int TotalSetSize { get; set; }
-        public string Type { get; set; }
+        public int totalSetSize { get; set; }
+        public string type { get; set; }
     }
 }

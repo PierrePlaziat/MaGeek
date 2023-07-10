@@ -71,7 +71,7 @@ namespace MageekSdk.Collection
                 Console.WriteLine("MageekSdk : Update_Traductions > Parse...");
                 using (MtgSqliveDbContext mtgSqliveContext = await MtgSqlive.MtgSqliveSdk.GetContext())
                 {
-                    foreach (CardForeignData traduction in mtgSqliveContext.CardForeignData)
+                    foreach (CardForeignData traduction in mtgSqliveContext.cardForeignData)
                     {
                         traductions.Add(
                             new CardTraduction()
@@ -113,7 +113,7 @@ namespace MageekSdk.Collection
                 Console.WriteLine("MageekSdk : Update_Archetypes > Parse...");
                 using (MtgSqliveDbContext mtgSqliveContext = await MtgSqlive.MtgSqliveSdk.GetContext())
                 {
-                    foreach (Cards card in mtgSqliveContext.Cards)
+                    foreach (Cards card in mtgSqliveContext.cards)
                     {
                         archetypes.Add(
                             new ArchetypeCard()
