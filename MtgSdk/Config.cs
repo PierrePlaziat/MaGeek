@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MageekSdk
+﻿namespace MageekSdk
 {
     public class Config
     {
@@ -12,12 +6,13 @@ namespace MageekSdk
         public static string Url_MtgjsonHash { get; } = "https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256";
         public static string Url_MtgjsonData { get; } = "https://mtgjson.com/api/v5/AllPrintings.sqlite";
         public static string Path_RoamingFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
-        public static string Path_DbFolder { get; } = Path.Combine(Path_RoamingFolder, "DB");
+        public static string Path_SDK { get; } = Path.Combine(Path_RoamingFolder, "SDK");
+        public static string Path_DbFolder { get; } = Path.Combine(Path_SDK, "DB");
         public static string Path_Db { get; } = Path.Combine(Path_DbFolder, "MaGeek.db");
         public static string Path_MtgJsonDownload { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite");
         public static string Path_MtgJsonDownload_NewHash { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite.sha256");
         public static string Path_MtgJsonDownload_OldHash { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite.sha256_old");
-        public static string Path_IllustrationsFolder { get; } = Path.Combine(Path_RoamingFolder, "CardsIllus");
+        public static string Path_IllustrationsFolder { get; } = Path.Combine(Path_SDK, "CardsIllus");
 
         #region Debug
         // Here just in case,
@@ -38,6 +33,14 @@ namespace MageekSdk
             "CREATE TABLE \"User_GotCards\" (\r\n\t\"CardVariantId\"\tTEXT,\r\n\t\"CardModelId\"\tTEXT,\r\n\t\"Got\"\tINTEGER,\r\n\tPRIMARY KEY(\"CardVariantId\")\r\n);",
         };
 
+        internal static void InitFolders()
+        {
+            if (!File.Exists(Path_RoamingFolder)) Directory.CreateDirectory(Path_RoamingFolder);
+            if (!File.Exists(Path_SDK)) Directory.CreateDirectory(Path_SDK);
+            if (!File.Exists(Path_DbFolder)) Directory.CreateDirectory(Path_DbFolder);
+            if (!File.Exists(Path_IllustrationsFolder)) Directory.CreateDirectory(Path_IllustrationsFolder);
+        }
 
     }
+
 }

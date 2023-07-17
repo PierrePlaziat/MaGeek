@@ -327,8 +327,8 @@
 
                 </ListView>
 
-                <Label>Others :</Label>
-                <ListView ItemsSource="{Binding CurrentOthers}" 
+                <Label>Planeswalkers :</Label>
+                <ListView ItemsSource="{Binding CurrentPlaneswalkers}" 
                           BorderThickness="0"  
                           Background="#222" 
                           SelectionChanged="SelectionChanged"
@@ -375,56 +375,8 @@
 
                 </ListView>
 
-                <Label>Non basic Lands :</Label>
-                <ListView ItemsSource="{Binding CurrentNonBasicLands}" 
-                          BorderThickness="0"  
-                          Background="#222" 
-                          SelectionChanged="SelectionChanged"
-                          Grid.Row="3" 
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="Background" Value="#000"/>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set Commandant" Click="SetCommandant" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
-                            <MenuItem Header="To Side" Click="ToSide" CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="20" MouseWheel="ScrollViewer_MouseWheel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="White" Padding="4,1,1,1" Grid.Column="3" Content="{Binding Card.Card.CardForeignName}"></Label>
-
-                                <local:ManaCost Grid.Column="4" Cost="{Binding Card.Card.ManaCost}" HorizontalAlignment="Right"/>
-
-                                <Button Grid.Column="0" Height="20" Foreground="Black" Content="-" Click="LessCard"></Button>
-                                <Label  Grid.Column="1" Height="20"  Padding="2" Foreground="White" Content="{Binding Quantity}" HorizontalAlignment="Center"></Label>
-                                <Button Grid.Column="2" Height="20" Foreground="Black" Content="+" Click="MoreCard"></Button>
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-                <Label>Basic Lands :</Label>
-                <ListView ItemsSource="{Binding CurrentBasicLands}" 
+                <Label>Lands :</Label>
+                <ListView ItemsSource="{Binding CurrentLands}" 
                           BorderThickness="0"  
                           Background="#222" 
                           SelectionChanged="SelectionChanged"

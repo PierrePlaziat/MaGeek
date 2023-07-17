@@ -1,5 +1,4 @@
-﻿using MaGeek.Framework.Utils;
-using MaGeek.UI;
+﻿using MaGeek.UI;
 using MtgSqliveSdk;
 using System.Threading.Tasks;
 using System.Windows;
@@ -42,7 +41,7 @@ namespace MaGeek
             set { visibility_NewUpdate = value; OnPropertyChanged(); }
         }
         
-        private Visibility visibility_IsLoading = Visibility.Collapsed;
+        private Visibility visibility_IsLoading = Visibility.Visible;
         public Visibility Visibility_IsLoading
         {
             get { return visibility_IsLoading; }
@@ -68,39 +67,27 @@ namespace MaGeek
 
         private async Task Init()
         {
-            MageekMessage = "Init";
-            Log.Write("Init");
+            MageekMessage = "Check software update";
+            if (await App.IsUpdateAvailable()) await App.UpdateSoftware();
+            MageekMessage = "Check database update";
             await Mageek.Initialize();
-            Launch();   
+            MageekMessage = "Launching";
+            await Launch();
         }
 
-
-        private async Task UpdateCardDb(bool isFirst)
-        {
-            MageekMessage = "Init";
-            Log.Write("Init");
-            await Mageek.Initialize();
-            Launch();
-        }
-
-        private void Launch()
+        private async Task Launch()
         {
             Hide();
+            await Task.Delay(310);
             App.LaunchMainWin();
             Close();
         }
 
-        private void Button_UpdateCardDb(object sender, RoutedEventArgs e)
-        {
-            Visibility_NewCards = Visibility.Collapsed;
-            Visibility_IsLoading = Visibility.Visible;
-            UpdateCardDb(false).ConfigureAwait(false);
-        }
         private void Button_UpdateSoftware(object sender, RoutedEventArgs e)
         {
             Visibility_NewUpdate= Visibility.Collapsed;
             Visibility_IsLoading = Visibility.Visible;
-            App.UpdateSoftware();
+            App.UpdateSoftware().ConfigureAwait(false);
         }
         private void Button_Ignore(object sender, RoutedEventArgs e)
         {

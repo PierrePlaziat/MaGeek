@@ -1,6 +1,8 @@
-﻿using MtgSqliveSdk;
-using System.Threading.Tasks;
+﻿using MageekSdk.MtgSqlive.Entities;
+using MtgSqliveSdk;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace MaGeek.UI
@@ -9,97 +11,131 @@ namespace MaGeek.UI
     public partial class CardIllustration : TemplatedUserControl
     {
 
-        #region Dependancy Properties
+        #region Attributes
 
-        public static readonly DependencyProperty CardUuidProperty = DependencyProperty.Register(
-            "SelectedVariant", typeof(string), typeof(CardIllustration),
-            new FrameworkPropertyMetadata( null, OnDefectIdChanged )
+        #region Dependancy Property
+
+        public static readonly DependencyProperty CardProperty = DependencyProperty.Register(
+            "SelectedVariant", typeof(Cards), typeof(CardIllustration),
+            new FrameworkPropertyMetadata(null, OnDefectIdChanged)
         );
 
-        private static void OnDefectIdChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs) 
+        private static void OnDefectIdChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs)
         {
             CardIllustration control = _control as CardIllustration;
-            control.Reload(eventArgs.NewValue as string).ConfigureAwait(false);
+            control.SelectedVariant = eventArgs.NewValue as Cards;
         }
 
         #endregion
 
-        #region Attributes
+        #region Properties
 
-        private string cardUuid = null;
-        public string CardUuid
+
+        private Cards selectedVariant;
+        public Cards SelectedVariant
         {
-
-            get { return cardUuid; }
+            get { return selectedVariant; }
             set
             {
-                cardUuid = value;
+                selectedVariant = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(HasPower));
+                ShowBack = false;
+                OnPropertyChanged(nameof(HasBackFace));
+                SetValue(CardProperty, value);
+                if (SelectedVariant != null)
+                {
+                    LoadIllustration();
+                }
             }
         }
 
-        private string cardface = null;
-        public string CardFace
+        private async void LoadIllustration()
         {
-
-            get { return cardface; }
-            set
-            {
-                cardface = value;
-                OnPropertyChanged();
-            }
-        }
-        
-        private string cardBack = null;
-        public string CardBack
-        {
-
-            get { return cardBack; }
-            set
-            {
-                cardBack = value;
-                OnPropertyChanged();
-            }
+            cardImage = null;
+            var url = await MtgSqliveSdk.Mageek.RetrieveImage(selectedVariant.Uuid);
+            CardImage = new BitmapImage(url);
         }
 
-        private bool hasBack = false;
-        public bool HasBack
+        private void CardImage_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            get { return hasBack; }
-            set
-            {
-                hasBack = value;
-                OnPropertyChanged();
-            }
-        }
-        
-        private bool showingBack = false;
-        public bool ShowingBack
-        {
-            get { return showingBack; }
-            set
-            {
-                showingBack = value;
-                OnPropertyChanged();
-            }
+            OnPropertyChanged(nameof(CardImage));
         }
 
-        private BitmapImage cardImage = null;
+        //public CardModel SelectedCard { get { return SelectedVariant == null ? null : SelectedVariant.Card; } }
+
+        private BitmapImage cardImage;
         public BitmapImage CardImage
         {
             get { return cardImage; }
-            set { cardImage = value;OnPropertyChanged(); }
+            set
+            {
+                cardImage = value;
+                OnPropertyChanged(nameof(CardImage));
+            }
         }
+
+
+        private Visibility isHudVisible = Visibility.Collapsed;
+        public Visibility IsHudVisible
+        {
+            get { return isHudVisible; }
+            set { isHudVisible = value; OnPropertyChanged(); }
+        }
+
+        #endregion
+
+        #region Accessors
+
+        public Visibility HasPower
+        {
+            get
+            {
+                if (selectedVariant == null)
+                    return Visibility.Collapsed;
+                return selectedVariant.Type.ToLower().Contains("creature") ?
+                       Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        #endregion
+
+        #region Back Face
+
+        bool showBack = false;
+        public bool ShowBack
+        {
+            get { return showBack; }
+            set { showBack = value; OnPropertyChanged(); }
+        }
+
+        public Visibility HasBackFace
+        {
+            get
+            {
+                if (SelectedVariant== null) return Visibility.Collapsed;
+                return string.IsNullOrEmpty(SelectedVariant.OtherFaceIds) ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
+        #endregion
 
         #endregion
 
         #region CTOR
 
-        public CardIllustration(string cardUuid)
+        public CardIllustration(string uuid)
         {
             InitializeComponent();
             DataContext = this;
-            Reload(cardUuid).ConfigureAwait(false);
+            SelectedVariant = Mageek.FindCard_Data(uuid).Result;
+        }
+        
+        public CardIllustration(Cards card)
+        {
+            InitializeComponent();
+            DataContext = this;
+            SelectedVariant = card;
         }
 
         public CardIllustration()
@@ -110,48 +146,34 @@ namespace MaGeek.UI
 
         #endregion
 
-        #region Methods
+        #region Mouse Gestion
 
-        private async Task Reload(string cardUuid)
+        private void Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            SetValue(CardUuidProperty, cardUuid);
-            if (!string.IsNullOrEmpty(cardUuid))
-            {
-                string otherFaceUuid= await Mageek.GetCardBack(cardUuid);
-                if (!string.IsNullOrEmpty(otherFaceUuid))
-                {
-                    CardBack = otherFaceUuid;
-                    HasBack = true;
-                }
-                else
-                {
-                    CardBack = null;
-                    HasBack = false;
-                }
-            }
-            else
-            {
-                CardFace = null;
-                CardBack = null;
-                HasBack = false;
-            }
-            ShowingBack = false;
-            await ShowCard();
+            IsHudVisible = Visibility.Visible;
         }
+
+        private void Grid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            IsHudVisible = Visibility.Collapsed;
+        }
+
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (selectedVariant != null) App.Events.RaiseCardSelected(selectedVariant.Uuid);
+        }
+
+        #endregion
 
         private void SwitchFaceClic(object sender, RoutedEventArgs e)
         {
-            ShowingBack = !ShowingBack;
-            ShowCard().ConfigureAwait(false);
+            App.Events.RaiseCardSelected(SelectedVariant.OtherFaceIds);
         }
-        private async Task ShowCard()
+
+        public void ReLoad(Cards c)
         {
-            var url = await Mageek.RetrieveImage(ShowingBack ? CardBack : CardFace);
-            CardImage = new BitmapImage(url);
+            SelectedVariant = c;
         }
-
-
-        #endregion
 
     }
 

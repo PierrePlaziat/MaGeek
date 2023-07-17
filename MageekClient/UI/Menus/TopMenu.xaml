@@ -133,7 +133,7 @@
                           Click="ChangeCurrency">
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Database"
+            <!--<MenuItem Header="Database"
                       Foreground="Black">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/Icon_db.jpg" />
@@ -144,7 +144,7 @@
                     <MenuItem.Icon>
                         <Image Source="/Resources/Images/Icon_Update.jpg" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </MenuItem>-->
                 <!--<Separator />
                 <MenuItem Header="Backup DB"
                           Foreground="Black"
@@ -168,7 +168,7 @@
                         <Image Source="/Resources/Images/IconCard.jpg" />
                     </MenuItem.Icon>
                 </MenuItem>-->
-            </MenuItem>
+            <!--</MenuItem>-->
 
         </MenuItem>
 

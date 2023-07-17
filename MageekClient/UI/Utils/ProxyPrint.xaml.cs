@@ -94,7 +94,7 @@ namespace MaGeek.UI.Windows.ImportExport
 
         private async Task<PrintingPage> GeneratePage(int pageNb)
         {
-            PrintingPage printing = new PrintingPage();
+            PrintingPage printing = new();
             for (int emplacement = 0; emplacement < 9; emplacement++)
             {
                 string cardUuid = null;
@@ -104,7 +104,7 @@ namespace MaGeek.UI.Windows.ImportExport
             return printing;
         }
 
-        private async Task Print(PrintDialog printer)
+        private void Print(PrintDialog printer)
         {
             foreach (var page in Pages)
             {
@@ -112,12 +112,12 @@ namespace MaGeek.UI.Windows.ImportExport
             }
         }
 
-        private async void LaunchPrint(object sender, System.Windows.RoutedEventArgs e)
+        private void LaunchPrint(object sender, System.Windows.RoutedEventArgs e)
         {
-            PrintDialog printer = new PrintDialog();
+            PrintDialog printer = new();
             if (printer.ShowDialog() == true)
             {
-                await Print(printer);
+                Print(printer);
             }
         }
 
@@ -145,13 +145,13 @@ namespace MaGeek.UI.Windows.ImportExport
 
         private void CheckBox_IncludeBasicLands(object sender, System.Windows.RoutedEventArgs e)
         {
-            IncludeBasicLands = ((CheckBox)sender).IsChecked.HasValue? ((CheckBox)sender).IsChecked.Value : false;
+            IncludeBasicLands = ((CheckBox)sender).IsChecked ?? false;
             Reload().ConfigureAwait(false);
         }
 
         private void CheckBox_OnlyMissing(object sender, System.Windows.RoutedEventArgs e)
         {
-            OnlyMissing = ((CheckBox)sender).IsChecked.HasValue ? ((CheckBox)sender).IsChecked.Value : false;
+            OnlyMissing = ((CheckBox)sender).IsChecked ?? false;
             Reload().ConfigureAwait(false);
         }
     }

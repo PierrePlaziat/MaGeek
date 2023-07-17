@@ -10,10 +10,12 @@ namespace MaGeek.AppFramework.UI.Utils
 
         public static string SelectAFolder()
         {
-            var dlg = new FolderBrowserDialog();
-            dlg.InitialDirectory = Environment.SpecialFolder.Desktop.ToString();
-            dlg.AddToRecent = false;
-            dlg.ShowPinnedPlaces = true;
+            var dlg = new FolderBrowserDialog
+            {
+                InitialDirectory = Environment.SpecialFolder.Desktop.ToString(),
+                AddToRecent = false,
+                ShowPinnedPlaces = true
+            };
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if (Directory.Exists(dlg.SelectedPath)) return dlg.SelectedPath;
@@ -24,12 +26,14 @@ namespace MaGeek.AppFramework.UI.Utils
 
         public static string SelectAFile(string filter)
         {
-            var dlg = new OpenFileDialog();
-            dlg.InitialDirectory = Environment.SpecialFolder.Desktop.ToString();
-            dlg.AddToRecent = false;
-            dlg.ShowPinnedPlaces = true;
-            dlg.Filter = filter;
-            dlg.Multiselect = false;
+            var dlg = new OpenFileDialog
+            {
+                InitialDirectory = Environment.SpecialFolder.Desktop.ToString(),
+                AddToRecent = false,
+                ShowPinnedPlaces = true,
+                Filter = filter,
+                Multiselect = false
+            };
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if(File.Exists(dlg.FileName)) return dlg.FileName;

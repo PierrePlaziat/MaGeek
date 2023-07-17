@@ -1,74 +1,91 @@
-﻿using MaGeek.Framework.Data;
+﻿#pragma warning disable CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
+#pragma warning disable CS8602 // Déréférencement d'une éventuelle référence null.
+
 using MaGeek.Framework.Extensions;
 using MageekSdk.Collection.Entities;
 using MageekSdk.MtgSqlive;
 using MageekSdk.MtgSqlive.Entities;
+using MageekSdk.Tools;
 
 namespace MageekSdk.Collection
 {
 
+    /// <summary>
+    /// Mageek database
+    /// Call Initialize() first, then you can use GetContext()
+    /// to access data through entity framework.
+    /// </summary>
     public static class CollectionSdk
     {
 
-        public static bool IsInitialized = false;
+        public static bool IsInitialized { get; private set; } = false;
 
-        public static async Task<CollectionDbContext> GetContext()
+        /// <summary>
+        /// Handles Mageek database setup
+        /// </summary>
+        /// <returns>True if correclty initialized</returns>
+        public static async Task<bool> Initialize()
+        {
+            Logger.Log("Start");
+            try
+            {
+                if (IsInitialized)
+                {
+                    Logger.Log("Already called");
+                    return true;
+                }
+                Logger.Log("Initialisation...");
+                bool needsUpdate = await MtgSqlive.MtgSqliveSdk.Initialize();
+                if (needsUpdate) await Update();
+                IsInitialized = true;
+                Logger.Log(IsInitialized ? "Success!" : "Fail.");
+                return IsInitialized;
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e.Message, LogLvl.Error);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Call this when you need to access data
+        /// </summary>
+        /// <returns>An entity framework context representing Mageek database</returns>
+        public static async Task<CollectionDbContext?> GetContext()
         {
             if (!IsInitialized) await Initialize();
             return IsInitialized ? new CollectionDbContext(Config.Path_Db) : null;
         }
 
-        public static async Task<bool> Initialize()
-        {
-            Console.WriteLine("MageekSdk : Initialize");
-            try
-            {
-                if (IsInitialized)
-                {
-                    Console.WriteLine("MageekSdk : Initialize > Already initialized.");
-                    return true;
-                }
-                Console.WriteLine("MageekSdk : Initialize > Initialize MtgSqliveSdk");
-                bool needsUpdate = await MtgSqlive.MtgSqliveSdk.Initialize();
-                if (needsUpdate) await UpdateData();
-                IsInitialized = true;
-                Console.WriteLine(IsInitialized ? "MageekSdk : Initialize > Success." : "MageekSdk : Initialize > Fail.");
-                return IsInitialized;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("MageekSdk : Initialize > error :" + e.Message);
-                return false;
-            }
-        }
-
         #region Methods
 
-        public static async Task UpdateData()
+        private static async Task Update()
         {
-            Console.WriteLine("MageekSdk : UpdateData");
+            Logger.Log("Fetching MtgSqlite...");
             try
             {
-                List<Task> tasks = new List<Task>
+                List<Task> tasks = new() 
                 {
                     Update_Archetypes(),
                     Update_Traductions()
                 };
                 await Task.WhenAll(tasks);
+                Logger.Log("Done");
             }
             catch (Exception e)
             {
-                Console.WriteLine("MageekSdk : UpdateData > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
         }
 
         private static async Task Update_Traductions()
         {
-            Console.WriteLine("MageekSdk : Update_Traductions");
+            Logger.Log("Fetching Traductions...");
             try
             {
                 List<CardTraduction> traductions = new();
-                Console.WriteLine("MageekSdk : Update_Traductions > Parse...");
+                Logger.Log("Parsing...");
                 using (MtgSqliveDbContext mtgSqliveContext = await MtgSqlive.MtgSqliveSdk.GetContext())
                 {
                     foreach (CardForeignData traduction in mtgSqliveContext.cardForeignData)
@@ -86,7 +103,7 @@ namespace MageekSdk.Collection
                         );
                     }
                 }
-                Console.WriteLine("MageekSdk : Update_Traductions > Save...");
+                Logger.Log("Saving...");
                 using (CollectionDbContext collectionDbContext = await GetContext())
                 {
                     using var transaction = collectionDbContext.Database.BeginTransaction();
@@ -96,27 +113,27 @@ namespace MageekSdk.Collection
                     await collectionDbContext.SaveChangesAsync();
                     transaction.Commit();
                 }
-                Console.WriteLine("MageekSdk : Update_Traductions > Done.");
+                Logger.Log("Done");
             }
             catch (Exception e)
             {
-                Console.WriteLine("MageekSdk : Update_Traductions > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
         }
 
         private static async Task Update_Archetypes()
         {
-            Console.WriteLine("MageekSdk : Update_Archetypes");
+            Logger.Log("Fetching Archetypes...");
             try
             {
-                List<ArchetypeCard> archetypes = new();
-                Console.WriteLine("MageekSdk : Update_Archetypes > Parse...");
+                List<Entities.ArchetypeCard> archetypes = new();
+                Logger.Log("Parsing...");
                 using (MtgSqliveDbContext mtgSqliveContext = await MtgSqlive.MtgSqliveSdk.GetContext())
                 {
-                    foreach (Cards card in mtgSqliveContext.cards)
+                    foreach (MtgSqlive.Entities.Cards card in mtgSqliveContext.cards)
                     {
                         archetypes.Add(
-                            new ArchetypeCard()
+                            new Entities.ArchetypeCard()
                             {
                                 ArchetypeId = card.Name,
                                 CardUuid = card.Uuid
@@ -124,7 +141,7 @@ namespace MageekSdk.Collection
                         );
                     }
                 }
-                Console.WriteLine("MageekSdk : Update_Archetypes > Save...");
+                Logger.Log("Saving...");
                 using (CollectionDbContext collectionDbContext = await GetContext())
                 {
                     using var transaction = collectionDbContext.Database.BeginTransaction();
@@ -134,11 +151,11 @@ namespace MageekSdk.Collection
                     await collectionDbContext.SaveChangesAsync();
                     transaction.Commit();
                 }
-                Console.WriteLine("MageekSdk : Update_Archetypes > Done.");
+                Logger.Log("Done");
             }
             catch (Exception e)
             {
-                Console.WriteLine("MageekSdk : Update_Archetypes > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
         }
 

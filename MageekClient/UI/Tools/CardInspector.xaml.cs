@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using MaGeek.Framework.Utils;
 using MageekSdk.Collection.Entities;
 using MageekSdk.MtgSqlive.Entities;
 using MtgSqliveSdk;
+using MageekSdk.Tools;
 
 namespace MaGeek.UI
 {
@@ -26,8 +25,8 @@ namespace MaGeek.UI
             set { loadMsg = value; OnPropertyChanged(); }
         }
         
-        private ArchetypeCard selectedCard;
-        public ArchetypeCard SelectedCard
+        private MageekSdk.Collection.Entities.ArchetypeCard selectedCard;
+        public MageekSdk.Collection.Entities.ArchetypeCard SelectedCard
         {
             get { return selectedCard; }
             set
@@ -101,7 +100,7 @@ namespace MaGeek.UI
                     Task.Run(() =>
                     {
                         LoadMsg = "Finding card";
-                        SelectedCard = Mageek.GetCardRef(cardUuid).Result;
+                        SelectedCard = Mageek.FindCard_Ref(cardUuid).Result;
                     }).ConfigureAwait(false);
                 }
             }
@@ -143,7 +142,10 @@ namespace MaGeek.UI
                 });
                 IsLoading = Visibility.Collapsed;
             }
-            catch (Exception e) { Log.Write(e); }
+            catch (Exception e)
+            {
+                Logger.Log(e.Message, LogLvl.Error); 
+            }
         }
 
         #endregion
@@ -270,7 +272,7 @@ namespace MaGeek.UI
             {
                 if (obj.TagContent.ToLower().StartsWith(query.ToLower()))
                 {
-                    addItem(obj.TagContent);
+                    AddItem(obj.TagContent);
                     found = true;
                 }
             }
@@ -280,12 +282,14 @@ namespace MaGeek.UI
             }
         }
 
-        private void addItem(string text)
+        private void AddItem(string text)
         {
-            TextBlock block = new TextBlock();
-            block.Text = text;
-            block.Margin = new Thickness(2, 3, 2, 3);
-            block.Cursor = Cursors.Hand;
+            TextBlock block = new()
+            {
+                Text = text,
+                Margin = new Thickness(2, 3, 2, 3),
+                Cursor = Cursors.Hand
+            };
             block.MouseLeftButtonUp += (sender, e) =>
             {
                 NewTag.Text = (sender as TextBlock).Text;

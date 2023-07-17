@@ -16,19 +16,11 @@ namespace MaGeek
 
         public bool SeemToBeFirstLaunch { get; private set; } = false;
 
-        private static string Path_RoamingFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
-        public static string Path_DbFolder { get; } = Path.Combine(Path_RoamingFolder, "DB");
+        public static string Path_RoamingFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
         public string Path_IllustrationsFolder { get; } = Path.Combine(Path_RoamingFolder, "CardsIllus");
         public string Path_SetIconsFolder { get; } = Path.Combine(Path_RoamingFolder, "SetIcons");
-        private static string Path_Settings { get; } = Path.Combine(Path_RoamingFolder, "Settings.json");
-        public string Path_Db { get; } = Path.Combine(Path_DbFolder, "MaGeek.db");
-        public string Path_Db_ToRestore { get; } = Path.Combine(Path_DbFolder, ".tmp");
-        public string Path_MtgJsonDownload { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite");
-        public string Path_MtgJsonDownload_NewHash { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite.sha256");
-        public string Path_MtgJsonDownload_OldHash { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite.sha256_old");
-        public string Path_ImporterState { get; } = Path.Combine(Path_RoamingFolder, "ImporterState.json");
         public string Path_LayoutSave { get; } = Path.Combine(Path_RoamingFolder, "Layout.xml");
-        public string Path_Log { get; } = Path.Combine(Path_RoamingFolder, "Log.txt");
+        private static string Path_Settings { get; } = Path.Combine(Path_RoamingFolder, "Settings.json");
         public Dictionary<Setting, string> Settings { get; private set; } = new Dictionary<Setting, string>();
 
         #endregion
@@ -48,11 +40,10 @@ namespace MaGeek
 
         private void InitFolders()
         {
-            if ( !File.Exists(Path_Db))
+            if (!File.Exists(Path_RoamingFolder))
             {
                 SeemToBeFirstLaunch = true;
                 Directory.CreateDirectory(Path_RoamingFolder);
-                Directory.CreateDirectory(Path_DbFolder);
             }
             if (!File.Exists(Path_IllustrationsFolder)) Directory.CreateDirectory(Path_IllustrationsFolder);
             if (!File.Exists(Path_SetIconsFolder)) Directory.CreateDirectory(Path_SetIconsFolder);

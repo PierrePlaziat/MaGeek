@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows.Controls;
 using System.Collections.Generic;
-using MaGeek.UI.Windows.Importers;
 using System.Threading.Tasks;
 using MageekSdk.Collection.Entities;
 using MtgSqliveSdk;
@@ -44,7 +43,7 @@ namespace MaGeek.UI
         public IEnumerable<DeckCard> CurrentSorceries       { get; private set; }
         public IEnumerable<DeckCard> CurrentEnchantments    { get; private set; }
         public IEnumerable<DeckCard> CurrentArtifacts       { get; private set; }
-        public IEnumerable<DeckCard> CurrentPlaneswalker   { get; private set; }
+        public IEnumerable<DeckCard> CurrentPlaneswalkers   { get; private set; }
         public IEnumerable<DeckCard> CurrentLands           { get; private set; }
         public IEnumerable<DeckCard> CurrentSide            { get; private set; }
 
@@ -138,7 +137,7 @@ namespace MaGeek.UI
                 CurrentSorceries =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Sorcery"));
                 CurrentEnchantments =   await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Enchantment"));
                 CurrentArtifacts =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Artifact"));
-                CurrentPlaneswalker =   await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Planeswalker"));
+                CurrentPlaneswalkers =   await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Planeswalker"));
                 CurrentLands =          await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Land"));
                 OnPropertyChanged(nameof(CurrentCommanders));
                 OnPropertyChanged(nameof(CurrentSide));
@@ -147,7 +146,7 @@ namespace MaGeek.UI
                 OnPropertyChanged(nameof(CurrentSorceries));
                 OnPropertyChanged(nameof(CurrentEnchantments));
                 OnPropertyChanged(nameof(CurrentArtifacts));
-                OnPropertyChanged(nameof(CurrentPlaneswalker));
+                OnPropertyChanged(nameof(CurrentPlaneswalkers));
                 OnPropertyChanged(nameof(CurrentLands));
 
                 OnPropertyChanged(nameof(HasCommander));

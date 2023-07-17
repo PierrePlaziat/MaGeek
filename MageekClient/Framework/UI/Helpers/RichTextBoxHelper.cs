@@ -11,7 +11,7 @@ namespace MaGeek.AppFramework.UI.Utils
 
         public static string GetContent(RichTextBox rtb)
         {
-            TextRange textRange = new TextRange(
+            TextRange textRange = new(
                 rtb.Document.ContentStart,
                 rtb.Document.ContentEnd
             );
@@ -20,8 +20,8 @@ namespace MaGeek.AppFramework.UI.Utils
 
         internal static void SetContent(RichTextBox rtb,string prefill)
         {
-            FlowDocument flowDoc = new FlowDocument(); 
-            Paragraph paragraph = new Paragraph();
+            FlowDocument flowDoc = new(); 
+            Paragraph paragraph = new();
             paragraph.Inlines.Add(prefill);
             flowDoc.Blocks.Add(paragraph);
             rtb.Document = flowDoc;

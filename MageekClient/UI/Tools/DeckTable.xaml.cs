@@ -35,7 +35,7 @@ namespace MaGeek.UI
         public List<DeckCard> CardRelations_Side{ get; private set; }
         public List<DeckCard> CardRelations_Lands { get; private set; }
         public Visibility HasCommandant { get; private set; }
-        public Visibility HasContent{ get; private set; }
+        //public Visibility HasContent{ get; private set; }
         public Visibility HasSide { get; private set; }
         public Visibility HasLands { get; private set; }
         
@@ -145,7 +145,7 @@ namespace MaGeek.UI
             OnPropertyChanged(nameof(CardRelations_Lands));
             HasCommandant = CardRelations_Commandant.Count>0 ? Visibility.Visible : Visibility.Hidden;
             HasSide = CardRelations_Side.Count>0 ? Visibility.Visible : Visibility.Hidden;
-            HasContent= CardRelations_Content.Count>0 ? Visibility.Visible : Visibility.Hidden;
+            //HasContent= CardRelations_Content.Count>0 ? Visibility.Visible : Visibility.Hidden;
             HasLands = CardRelations_Lands.Count>0 ? Visibility.Visible : Visibility.Hidden;
             OnPropertyChanged(nameof(HasCommandant));
             OnPropertyChanged(nameof(HasSide));

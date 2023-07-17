@@ -87,19 +87,6 @@ namespace MaGeek.UI.Menus
 
         #endregion
 
-        #region Database
-
-        private void UpdateCards(object sender, RoutedEventArgs e)
-        {
-            if (Log.AskUser("App will restart, proposing a card update."))
-            {
-                File.Delete(App.Config.Path_MtgJsonDownload_OldHash);
-                App.Restart();
-            }
-        }
-
-        #endregion
-
         #region Settings
 
         private void ChangeLanguage(object sender, RoutedEventArgs e)

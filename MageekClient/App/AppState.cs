@@ -36,7 +36,7 @@ namespace MaGeek
 
         private void DoSelectCard(string cardUuid)
         {
-            selectedCard = Mageek.GetCardRef(cardUuid).Result;
+            selectedCard = Mageek.FindCard_Ref(cardUuid).Result;
         }
 
         #endregion

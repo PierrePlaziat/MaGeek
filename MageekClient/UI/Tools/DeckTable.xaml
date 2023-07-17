@@ -43,7 +43,7 @@
                           Margin="0" Padding="0" BorderThickness="0">
 
                                 <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
                           Margin="0" Padding="0" BorderThickness="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -99,8 +99,8 @@
                             <DataTemplate>
                                 <ContentControl>
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
                                                             Margin="0" Padding="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -151,8 +151,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
                                                             Margin="0" Padding="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -202,8 +202,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
                                                             Margin="0" Padding="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -253,8 +253,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
                                                             Margin="0" Padding="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -304,8 +304,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
                                                             Margin="0" Padding="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -355,8 +355,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
                                                             Margin="0" Padding="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -404,8 +404,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
                                                             Margin="0" Padding="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -455,8 +455,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                             Width="150" 
                                                             Margin="0" Padding="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -516,8 +516,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                        CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                         Width="150" 
                                                         Margin="0" Padding="0"
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -571,8 +571,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                        CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                         Width="150" 
                                                         Margin="0" Padding="0"
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -626,8 +626,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                        CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                         Width="150" 
                                                         Margin="0" Padding="0"
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -681,8 +681,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                        CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                         Width="150" 
                                                         Margin="0" Padding="0"
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -736,8 +736,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                        CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                         Width="150" 
                                                         Margin="0" Padding="0"
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -791,8 +791,8 @@
                                 <ContentControl
                           Margin="0" Padding="0" BorderThickness="0">
 
-                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                        CardUuid="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                    <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}"
+                                                            SelectedVariant="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
                                                         Width="150" 
                                                         Margin="0" Padding="0"
                                                         HorizontalAlignment="Left" VerticalAlignment="Top" />

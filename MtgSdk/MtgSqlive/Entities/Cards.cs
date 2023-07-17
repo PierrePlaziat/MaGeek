@@ -1,4 +1,8 @@
-﻿namespace MageekSdk.MtgSqlive.Entities
+﻿#pragma warning disable CS8618 // Un champ non-nullable doit contenir une valeur non-null lors de la fermeture du constructeur. Envisagez de déclarer le champ comme nullable.
+
+using System.ComponentModel.DataAnnotations;
+
+namespace MageekSdk.MtgSqlive.Entities
 {
     public class Cards
     {
@@ -45,7 +49,7 @@
         public bool IsTimeshifted { get; set; }
         public string Keywords { get; set; }
         public string Language { get; set; }
-        public string layout { get; set; }
+        public string Layout { get; set; }
         public string LeadershipSkills { get; set; }
         public string Life { get; set; }
         public string Loyalty { get; set; }
@@ -75,6 +79,7 @@
         public string Toughness { get; set; }
         public string Type { get; set; }
         public string Types { get; set; }
+        [Key]
         public string Uuid { get; set; }
         public string Variations { get; set; }
         public string Watermark { get; set; }

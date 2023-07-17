@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace MaGeek
@@ -12,7 +13,7 @@ namespace MaGeek
         public static AppEvents Events { get; private set; } 
         public static AppConfig Config { get; private set; }
         public static AppState State { get; private set; }
-        public static MageekDeckImporter Importer { get; private set; }
+        public static DeckImporter Importer { get; private set; }
 
         public App() {
             Events = new();
@@ -40,15 +41,13 @@ namespace MaGeek
             Current.Shutdown();
         }
 
-        internal static bool IsUpdateAvailable()
+        public static async Task<bool> IsUpdateAvailable() //TODO 
         {
-            //TODO UpdateSoftware
             return false;
         }
 
-        internal static void UpdateSoftware()
+        public static async Task UpdateSoftware()  //TODO 
         {
-            //TODO UpdateSoftware
         }
 
         #endregion

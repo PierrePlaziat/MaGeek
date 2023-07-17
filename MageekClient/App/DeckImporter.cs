@@ -1,5 +1,6 @@
 ﻿using MaGeek;
 using MaGeek.Framework.Utils;
+using MageekSdk.Tools;
 using MtgSqliveSdk;
 using ScryfallApi.Client.Models;
 using System;
@@ -18,7 +19,7 @@ namespace MaGeek
     /// Interacts with API, called regularly to get fresh data
     /// TODO : replace BackgroundWorker by a Task list 
     /// </summary>
-    public class MageekDeckImporter
+    public class DeckImporter
     {
 
         #region Attributes
@@ -59,9 +60,8 @@ namespace MaGeek
 
         #region CTOR
 
-        public MageekDeckImporter()
+        public DeckImporter()
         {
-            LoadState();
             ConfigureTimer();
             if (PendingCount > 0)
             {
@@ -127,7 +127,6 @@ namespace MaGeek
 
         private async Task CheckNextImport()
         {
-            SaveState();
             if (State == ImporterState.Play)
             {
                 if (PendingImport.Count > 0) CurrentImport = PendingImport.Dequeue();
@@ -143,16 +142,14 @@ namespace MaGeek
 
         private async Task DoImport()
         {
-            Log.Write("Deck import : " + CurrentImport.Value.Title);
-
-            List<Card> importResult = new();
+            Logger.Log("Deck import : " + CurrentImport.Value.Title);
 
             while (State != ImporterState.Canceled && State == ImporterState.Pause) { };
             if (State != ImporterState.Canceled)
             {
                 Message = "Making a deck";
                 WorkerProgress = 75;
-                await MakeADeck(CurrentImport.Value, importResult);
+                await MakeADeck(CurrentImport.Value);
             }
 
             while (State != ImporterState.Canceled && State == ImporterState.Pause) { };
@@ -192,21 +189,24 @@ namespace MaGeek
                                 }
                                 catch (Exception e)
                                 {
-                                    Console.Write("ParseCardList Error : " + e.Message);
-                                };
+                                    Logger.Log(e.Message, LogLvl.Error);
+                                }
 
                             }
                         }
                     }
                 });
             }
-            catch (Exception e) { Log.Write(e); }
+            catch (Exception e)
+            {
+                Logger.Log(e.Message, LogLvl.Error);
+            }
             return tuples;
         }
 
-        private async Task MakeADeck(PendingImport importing, List<Card> importResult)
+        private async Task MakeADeck(PendingImport importing)
         {
-            List<DeckLine> importLines = new();
+            List<DeckLine> importLines;
             importLines = await ParseCardList(importing.Content);
             await Mageek.CreateDeck_Contructed(
                 importing.Title ?? DateTime.Now.ToString(),
@@ -241,42 +241,6 @@ namespace MaGeek
         }
 
         #endregion
-
-        #endregion
-
-        #region SaveState
-
-        public void SaveState()
-        {
-            //try
-            //{
-            //    string jsonString = "";
-            //    var x = PendingImport.ToList();
-            //    if (CurrentImport != null) x.Add(CurrentImport.Value);
-            //    jsonString += JsonSerializer.Serialize(x);
-            //    File.WriteAllText(SaveStatePath, jsonString);
-            //}
-            //catch (Exception e) { Log.Write(e); }
-        }
-
-        public void LoadState()
-        {
-            //try
-            //{
-            //    if (!File.Exists(SaveStatePath)) return;
-            //    string jsonString = File.ReadAllText(SaveStatePath);
-            //    File.WriteAllText(SaveStatePath, "");
-            //    if (string.IsNullOrEmpty(jsonString)) return;
-            //    List<PendingImport> loadedImports = JsonSerializer.Deserialize<List<PendingImport>>(jsonString);
-            //    PendingImport = new Queue<PendingImport>();
-            //    foreach (var import in loadedImports) PendingImport.Enqueue(import);
-            //}
-            //catch (Exception e)
-            //{
-            //    File.WriteAllText(SaveStatePath, "");
-            //    Log.Write(e);
-            //}
-        }
 
         #endregion
 

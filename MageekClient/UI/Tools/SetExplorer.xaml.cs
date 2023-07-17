@@ -82,15 +82,15 @@ namespace MaGeek.UI
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetList = (Mageek.LoadSets().Result).Where(x => FilterBlock == "All blocks" || x.block == FilterBlock)
-                                .Where(x => FilterType == "All types" || x.type == FilterType)
-                                .OrderBy(x => x.releaseDate).ToList();
+            SetList = (Mageek.LoadSets().Result).Where(x => FilterBlock == "All blocks" || x.Block == FilterBlock)
+                                .Where(x => FilterType == "All types" || x.Type == FilterType)
+                                .OrderBy(x => x.ReleaseDate).ToList();
         }
 
         private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var s = ((ListView)sender).SelectedItem as Sets;
-            Variants = await Mageek.GetCardsFromSet(s.code);
+            Variants = await Mageek.GetCardsFromSet(s.Code);
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

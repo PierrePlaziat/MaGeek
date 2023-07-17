@@ -76,7 +76,7 @@ namespace MaGeek.UI
             App.Events.UpdateDeckListEvent += async () => { await Reload(); };
         }
 
-        private async Task DelayLoad()
+        private static async Task DelayLoad()
         {
             await Task.Delay(1);
             App.Events.RaiseUpdateDeckList();
@@ -103,10 +103,9 @@ namespace MaGeek.UI
         //    if (deck != null) App.Events.RaiseDeckSelect(deck);
         //}
 
-        private void decklistbox_SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Decklistbox_SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var deck = decklistbox.SelectedItem as Deck;
-            if (deck != null) App.Events.RaiseDeckSelect(deck.DeckId);
+            if (decklistbox.SelectedItem is Deck deck) App.Events.RaiseDeckSelect(deck.DeckId);
         }
 
         private async void AddDeck(object sender, RoutedEventArgs e)

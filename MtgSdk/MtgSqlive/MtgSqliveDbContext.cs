@@ -34,21 +34,6 @@ namespace MageekSdk.MtgSqlive
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CardForeignData>().HasNoKey();
-            modelBuilder.Entity<CardIdentifiers>().HasNoKey();
-            modelBuilder.Entity<CardLegalities>().HasNoKey();
-            modelBuilder.Entity<CardPurchaseUrls>().HasNoKey();
-            modelBuilder.Entity<CardRulings>().HasNoKey();
-            modelBuilder.Entity<Cards>().HasNoKey();
-            modelBuilder.Entity<Meta>().HasNoKey();
-            modelBuilder.Entity<SetBoosterContents>().HasNoKey();
-            modelBuilder.Entity<SetBoosterContentWeights>().HasNoKey();
-            modelBuilder.Entity<SetBoosterSheetCards>().HasNoKey();
-            modelBuilder.Entity<SetBoosterSheets>().HasNoKey();
-            modelBuilder.Entity<Sets>().HasNoKey();
-            modelBuilder.Entity<SetTranslations>().HasNoKey();
-            modelBuilder.Entity<TokenIdentifiers>().HasNoKey();
-            modelBuilder.Entity<Tokens>().HasNoKey();
         }
 
     }

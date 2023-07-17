@@ -18,7 +18,7 @@ namespace MaGeek.UI
                 string s = "";
                 try
                 {
-                    s += Log.Messages.LastOrDefault();
+                    //s += Log.Messages.LastOrDefault();
                 }
                 catch { }
                 
@@ -31,8 +31,8 @@ namespace MaGeek.UI
             get
             {
                 string s = "";
-                foreach (var ss in Log.Messages) s += "> " + ss + "\n";
-                if (s.Length>0) s = s.Remove(s.Length - 1);
+                //foreach (var ss in Log.Messages) s += "> " + ss + "\n";
+                //if (s.Length>0) s = s.Remove(s.Length - 1);
                 return s;
             }
         }

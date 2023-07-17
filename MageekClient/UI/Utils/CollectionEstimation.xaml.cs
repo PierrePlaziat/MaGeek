@@ -1,4 +1,5 @@
 ﻿using MaGeek.Framework.Utils;
+using MageekSdk.Tools;
 using MtgSqliveSdk;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace MaGeek.UI
         public float FinalEstimation { get; set; } = 0;
         public int MissingCount { get; set; } = 0;
 
-        List<string> missingList = new List<string>();
+        List<string> missingList = new();
         public List<string> MissingList
         { 
             get { return missingList; }
@@ -80,7 +81,10 @@ namespace MaGeek.UI
                 });
                 IsLoading = Visibility.Collapsed;
             }
-            catch (Exception e) { Log.Write(e); }
+            catch (Exception e)
+            {
+                Logger.Log(e.Message, LogLvl.Error);
+            }
         }
 
         private void AddManualEstimations(object sender, RoutedEventArgs e)

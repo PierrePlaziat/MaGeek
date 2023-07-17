@@ -1,79 +1,125 @@
-﻿using MtgSqliveSdk.Framework;
+﻿using MageekSdk.Tools;
+using MtgSqliveSdk.Framework;
 
 namespace MageekSdk.MtgSqlive
 {
 
+    /// <summary>
+    /// MtgSqlive Tooling for .net
+    /// Call Initialize() first, then you can use GetContext()
+    /// to access data through entity framework.
+    /// </summary>
     public class MtgSqliveSdk
     {
 
-        public static bool IsInitialized = false;
+        public static bool IsInitialized { get; private set; } = false;
 
-        public static async Task<MtgSqliveDbContext> GetContext()
-        {
-            if (!IsInitialized) await Initialize();
-            return IsInitialized ? new MtgSqliveDbContext(Config.Path_Db) : null;
-        }
-
+        /// <summary>
+        /// Handles retrieve of the last mtgsqlite database from web.
+        /// </summary>
+        /// <returns>True if the database has been updated.</returns>
         public static async Task<bool> Initialize()
         {
-            Console.WriteLine("MtgSqliveSdk : Initialize");
+            Logger.Log("Start");
             try
             {
                 if (IsInitialized)
                 {
-                    Console.WriteLine("MtgSqliveSdk : Initialize > Already initialized.");
+                    Logger.Log("Already called");
                     return false;
                 }
                 if (await NeedsUpdate())
                 {
-                    await DownloadData();
-                    Console.WriteLine("MtgSqliveSdk : Initialize > Updated.");
+                    Logger.Log("Updating...");
+                    await DatabaseDownload();
+                    Logger.Log("Updated!");
+                    HashSave();
                     IsInitialized = true;
                     return true;
                 }
                 else
                 {
                     IsInitialized = true;
-                    Console.WriteLine("MtgSqliveSdk : Initialize > No update.");
+                    Logger.Log("No Update");
                     return false;
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("MtgSqliveSdk : Initialize > error :" + e.Message);
+                Logger.Log(e.Message,LogLvl.Error);
                 return false;
             }
         }
 
+        /// <summary>
+        /// Call this when you need to access data
+        /// </summary>
+        /// <returns>An entity framework context representing MtgSqlive database or null if not initialized</returns>
+        public static async Task<MtgSqliveDbContext?> GetContext()
+        {
+            if (!IsInitialized) await Initialize();
+            return IsInitialized ? new MtgSqliveDbContext(Config.Path_MtgJsonDownload) : null;
+        }
+
+        #region Methods
+
         private static async Task<bool> NeedsUpdate()
         {
-            Console.WriteLine("MtgSqliveSdk : NeedsUpdate");
+            Logger.Log("Is update needed?");
             try
             {
                 bool? tooOld = FileUtils.IsFileOlder(Config.Path_MtgJsonDownload_OldHash, new TimeSpan(3, 0, 0, 0));
                 if (tooOld.HasValue && !tooOld.Value)
                 {
-                    Console.WriteLine("MtgSqliveSdk : NeedsUpdate > Already up to date.");
+                    Logger.Log("Already updated recently.");
                     return false;
                 }
-                Console.WriteLine("MtgSqliveSdk : NeedsUpdate > Checking...");
                 await HashDownload();
-                bool check = await HashCheck();
-                Console.WriteLine(check ? "MtgSqliveSdk : NeedsUpdate > Update available." : "MtgSqliveSdk : NeedsUpdate > Already up to date.");
+                bool check = HashCheck();
+                Logger.Log(check ? "Update available!" : "Already up to date!");
                 return check;
             }
             catch (Exception e)
             {
-                Console.WriteLine("MtgSqliveSdk : NeedsUpdate > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
                 return false;
             }
         }
-        private static async Task<bool> HashCheck()
+        
+        private static async Task HashDownload()
         {
-            Console.WriteLine("MtgSqliveSdk : HashCheck");
+            if (Config.bypass_Hash)
+            {
+                Logger.Log("Bypassed");
+                return;
+            }
             try
             {
-                await Task.Delay(1);
+                Logger.Log("Downloading...");
+                using (var client = new HttpClient())
+                {
+                    var hash = await client.GetStreamAsync(Config.Url_MtgjsonHash);
+                    using var fs_NewHash = new FileStream(Config.Path_MtgJsonDownload_NewHash, FileMode.Create);
+                    await hash.CopyToAsync(fs_NewHash);
+                }
+                Logger.Log("Done!");
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e.Message, LogLvl.Error);
+            }
+        }
+
+        private static bool HashCheck()
+        {
+            if (Config.bypass_Hash)
+            {
+                Logger.Log("Bypassed");
+                return true;
+            }
+            try
+            {
+                Logger.Log("Checking...");
                 bool check = true;
                 if (File.Exists(Config.Path_MtgJsonDownload_OldHash))
                 {
@@ -82,81 +128,60 @@ namespace MageekSdk.MtgSqlive
                         Config.Path_MtgJsonDownload_OldHash
                     );
                 }
-                Console.WriteLine(check ? "MtgSqliveSdk : HashCheck > Content differs." : "MtgSqliveSdk : HashCheck > Same content.");
+                Logger.Log("Done!");
                 return check;
             }
             catch (Exception e)
             {
-                Console.WriteLine("MtgSqliveSdk : HashCheck > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
                 return true;
             }
         }
 
-        private static async Task HashDownload()
+        private static void HashSave()
         {
-            Console.WriteLine("MtgSqliveSdk : HashDownload");
             if (Config.bypass_Hash)
             {
-                Console.WriteLine("MtgSqliveSdk : HashDownload > Bypassed.");
+                Logger.Log("Bypassed");
+                return;
             }
-            Console.WriteLine("MtgSqliveSdk : HashDownload > Downloading...");
             try
             {
-                using (var client = new HttpClient())
-                {
-                    var hash = await client.GetStreamAsync(Config.Url_MtgjsonHash);
-                    using (var fs_NewHash = new FileStream(Config.Path_MtgJsonDownload_NewHash, FileMode.Create))
-                    {
-                        await hash.CopyToAsync(fs_NewHash);
-                    }
-                }
-                Console.WriteLine("MtgSqliveSdk : HashDownload > Done.");
+                Logger.Log("Copying...");
+                File.Copy(Config.Path_MtgJsonDownload_NewHash, Config.Path_MtgJsonDownload_OldHash, true);
+                Logger.Log("Done!");
             }
             catch (Exception e)
             {
-                Console.WriteLine("MtgSqliveSdk : HashDownload > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
         }
 
-        private async static Task DownloadData()
+        private static async Task DatabaseDownload()
         {
-            Console.WriteLine("MtgSqliveSdk : DownloadData");
             if (Config.bypass_Data)
             {
-                Console.WriteLine("MtgSqliveSdk : DownloadData > Bypassed.");
+                Logger.Log("Bypassed");
+                return;
             }
             try
             {
-                // File Download
-                Console.WriteLine("MtgSqliveSdk : DownloadData > Downloading...");
+                Logger.Log("Downloading...");
                 using (var client = new HttpClient())
                 using (var mtgjson_sqlite = await client.GetStreamAsync(Config.Url_MtgjsonData))
                 {
                     using var fs_mtgjson_sqlite = new FileStream(Config.Path_MtgJsonDownload, FileMode.Create);
                     await mtgjson_sqlite.CopyToAsync(fs_mtgjson_sqlite);
                 }
-
-                if (!Config.bypass_Hash)
-                {
-                    try
-                    {
-                        // Save Hash
-                        Console.WriteLine("MtgSqliveSdk : DownloadData > SaveHash...");
-                        File.Copy(Config.Path_MtgJsonDownload_NewHash, Config.Path_MtgJsonDownload_OldHash, true);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("MtgSqliveSdk : DownloadData > error, couldnt save hash : " + e);
-                    }
-                }
-
-                Console.WriteLine("MtgSqliveSdk : DownloadData > Done.");
+                Logger.Log("Done!");
             }
             catch (Exception e)
             {
-                Console.WriteLine("MtgSqliveSdk : DownloadData > error : " + e);
+                Logger.Log(e.Message, LogLvl.Error);
             }
         }
+
+        #endregion
 
     }
 

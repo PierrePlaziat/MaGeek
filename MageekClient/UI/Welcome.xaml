@@ -101,8 +101,8 @@
                         BorderThickness="0"
                         Background="LightSeaGreen"
                         Height="50"
-                        Margin="5,10,10,10"
-                        Click="Button_UpdateCardDb">
+                        Margin="5,10,10,10">
+                    <!--Click="Button_UpdateCardDb"-->
 
                     <Button.Resources>
                         <Style TargetType="Border">

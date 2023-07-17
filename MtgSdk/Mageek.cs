@@ -1,4 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿#pragma warning disable CS8602 // Déréférencement d'une éventuelle référence null.
+#pragma warning disable CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
+#pragma warning disable CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
+#pragma warning disable CS8603 // Existence possible d'un retour de référence null.
+
+using Microsoft.EntityFrameworkCore;
 using MageekSdk.Collection.Entities;
 using MageekSdk.Collection;
 using MageekSdk.MtgSqlive.Entities;
@@ -9,23 +14,160 @@ using MaGeek.Framework.Data;
 using ScryfallApi.Client.Models;
 using MageekSdk;
 using MaGeek.Framework.Extensions;
+using MageekSdk.Tools;
 
 namespace MtgSqliveSdk
 {
 
+    /// <summary>
+    /// MTG BUSINESS
+    /// </summary>
     public static class Mageek
     {
 
+        /// <summary>
+        /// Call this first
+        /// </summary>
+        /// <returns></returns>
         public async static Task Initialize()
         {
-            await MageekSdk.MtgSqlive.MtgSqliveSdk.Initialize();
+            Config.InitFolders();
+            Logger.Log("Start");
             await CollectionSdk.Initialize();
+            Logger.Log("Done");
         }
 
         #region Cards
 
         /// <summary>
-        /// Get all card variants from an archetypal card name
+        /// Search cards by name
+        /// </summary>
+        /// <param name="lang"></param>
+        /// <param name="filterName"></param>
+        /// <returns>List of cards</returns>
+        public async static Task<List<MageekSdk.MtgSqlive.Entities.Cards>> NormalSearch(string lang, string filterName)
+        {
+            List<MageekSdk.MtgSqlive.Entities.Cards> retour = new();
+            string lowerFilterName = filterName.ToLower();
+            string normalizedFilterName = StringExtension.RemoveDiacritics(filterName).Replace('-', ' ').ToLower();
+            using (CollectionDbContext DB = await CollectionSdk.GetContext())
+            using (MtgSqliveDbContext DB2 = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
+            {
+                if (!string.IsNullOrEmpty(filterName))
+                {
+                    // Search in VO
+                    var voResults = await DB.CardArchetypes.Where(x => x.ArchetypeId.ToLower().Contains(lowerFilterName)).ToListAsync();
+                    foreach (var vo in voResults) retour.AddRange(DB2.cards.Where(x => x.Uuid == vo.CardUuid));
+                    // Search in foreign
+                    var tradResults = await DB.CardTraductions.Where(x => x.Language == lang && x.NormalizedTraduction.Contains(normalizedFilterName)).ToListAsync();
+                    foreach (var trad in tradResults) retour.AddRange(DB2.cards.Where(x => x.Uuid == trad.CardUuid));
+                }
+                else retour.AddRange(await DB2.cards.ToArrayAsync());
+            }
+            // Remove duplicata
+            retour = retour.GroupBy(x => x.Name).Select(g => g.First()).ToList();
+            return retour;
+        }
+
+        /// <summary>
+        /// Search cards by various parameters
+        /// </summary>
+        /// <param name="lang"></param>
+        /// <param name="filterName"></param>
+        /// <returns>List of cards</returns>
+        public async static Task<List<MageekSdk.MtgSqlive.Entities.Cards>> AdvancedSearch(string lang, string filterName, string filterType, string filterKeyword, string filterText, string filterColor, string filterTag, bool onlyGot)
+        {
+            List<MageekSdk.MtgSqlive.Entities.Cards> retour = new();
+
+            using (CollectionDbContext DB = await CollectionSdk.GetContext())
+            using (MtgSqliveDbContext DB2 = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
+            {
+                if (onlyGot)
+                {
+                    //retour.AddRange(await DB.CardModels.Where(x => x.Got > 0).ToArrayAsync());
+                }
+                else
+                {
+                    retour.AddRange(await DB2.cards.ToArrayAsync());
+                }
+            }
+
+            if (!string.IsNullOrEmpty(filterType))
+            {
+                string type = filterType.ToLower();
+                retour = retour.Where(x => x.Type.ToLower().Contains(type)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filterKeyword))
+            {
+                string keyword = filterKeyword.ToLower();
+                retour = retour.Where(x => x.Keywords.ToLower().Contains(keyword)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filterText))
+            {
+                string text = filterText.ToLower();
+                retour = retour.Where(x => x.Text.ToLower().Contains(filterKeyword.ToLower())).ToList();
+            }
+
+            if (filterColor != "_")
+            {
+                switch (filterColor)
+                {
+                    case "X": retour = retour.Where(x => string.IsNullOrEmpty(x.ColorIdentity)).ToList(); break;
+                    case "W": retour = retour.Where(x => x.ColorIdentity == "W").ToList(); break;
+                    case "B": retour = retour.Where(x => x.ColorIdentity == "B").ToList(); break;
+                    case "U": retour = retour.Where(x => x.ColorIdentity == "U").ToList(); break;
+                    case "G": retour = retour.Where(x => x.ColorIdentity == "G").ToList(); break;
+                    case "R": retour = retour.Where(x => x.ColorIdentity == "R").ToList(); break;
+                    case "GW": retour = retour.Where(x => x.ColorIdentity == "G,W").ToList(); break;
+                    case "WU": retour = retour.Where(x => x.ColorIdentity == "U,W").ToList(); break;
+                    case "BU": retour = retour.Where(x => x.ColorIdentity == "B,U").ToList(); break;
+                    case "RB": retour = retour.Where(x => x.ColorIdentity == "B,R").ToList(); break;
+                    case "GR": retour = retour.Where(x => x.ColorIdentity == "G,R").ToList(); break;
+                    case "GU": retour = retour.Where(x => x.ColorIdentity == "G,U").ToList(); break;
+                    case "WB": retour = retour.Where(x => x.ColorIdentity == "B,W").ToList(); break;
+                    case "RU": retour = retour.Where(x => x.ColorIdentity == "R,U").ToList(); break;
+                    case "GB": retour = retour.Where(x => x.ColorIdentity == "B,G").ToList(); break;
+                    case "RW": retour = retour.Where(x => x.ColorIdentity == "R,W").ToList(); break;
+                    case "GBW": retour = retour.Where(x => x.ColorIdentity == "B,G,W").ToList(); break;
+                    case "GWU": retour = retour.Where(x => x.ColorIdentity == "G,U,W").ToList(); break;
+                    case "WRU": retour = retour.Where(x => x.ColorIdentity == "R,U,W").ToList(); break;
+                    case "GRW": retour = retour.Where(x => x.ColorIdentity == "G,R,W").ToList(); break;
+                    case "WUB": retour = retour.Where(x => x.ColorIdentity == "B,U,W").ToList(); break;
+                    case "GUR": retour = retour.Where(x => x.ColorIdentity == "G,R,U").ToList(); break;
+                    case "GRB": retour = retour.Where(x => x.ColorIdentity == "B,G,R").ToList(); break;
+                    case "RUB": retour = retour.Where(x => x.ColorIdentity == "B,R,U").ToList(); break;
+                    case "BGU": retour = retour.Where(x => x.ColorIdentity == "B,G,U").ToList(); break;
+                    case "RWB": retour = retour.Where(x => x.ColorIdentity == "B,R,W").ToList(); break;
+                    case "BGUR": retour = retour.Where(x => x.ColorIdentity == "B,G,R,U").ToList(); break;
+                    case "GURW": retour = retour.Where(x => x.ColorIdentity == "G,R,U,W").ToList(); break;
+                    case "URWB": retour = retour.Where(x => x.ColorIdentity == "B,R,U,W").ToList(); break;
+                    case "RWBG": retour = retour.Where(x => x.ColorIdentity == "B,G,R,W").ToList(); break;
+                    case "WBGU": retour = retour.Where(x => x.ColorIdentity == "B,G,U,W").ToList(); break;
+                    case "WBGUR": retour = retour.Where(x => x.ColorIdentity == "B,G,R,U,W").ToList(); break;
+                }
+
+            }
+
+            if (filterTag != null)
+            {
+                var tagged = new List<MageekSdk.MtgSqlive.Entities.Cards>();
+                foreach (var card in retour)
+                {
+                    if (await Mageek.HasTag(card.Name, filterTag))
+                    {
+                        tagged.Add(card);
+                    }
+                }
+                retour = new List<MageekSdk.MtgSqlive.Entities.Cards>(tagged);
+            }
+
+            return retour;
+        }
+
+        /// <summary>
+        /// Get all card variant ids from an archetypal card name
         /// </summary>
         /// <param name="archetypeId"></param>
         /// <returns>a list of uuid</returns>
@@ -50,16 +192,32 @@ namespace MtgSqliveSdk
                 .Where(x => x.CardUuid == cardUuid)
                 .Select(p => p.ArchetypeId)
                 .FirstOrDefaultAsync();
-
         }
 
-        public static async Task<ArchetypeCard> GetCardRef(string cardUuid)
+        /// <summary>
+        /// get the uuid alongside its archetype id
+        /// </summary>
+        /// <param name="cardUuid"></param>
+        /// <returns>Archetype</returns>
+        public static async Task<MageekSdk.Collection.Entities.ArchetypeCard> FindCard_Ref(string cardUuid)
         {
             using CollectionDbContext DB = await CollectionSdk.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.CardUuid == cardUuid)
                 .FirstOrDefaultAsync();
-
+        }
+        
+        /// <summary>
+        /// get the gameplay data of the card
+        /// </summary>
+        /// <param name="cardUuid"></param>
+        /// <returns>Archetype</returns>
+        public static async Task<Cards> FindCard_Data(string cardUuid)
+        {
+            using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
+            return await DB.cards
+                .Where(x => x.Uuid == cardUuid)
+                .FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -188,7 +346,7 @@ namespace MtgSqliveSdk
                 var t = await DB.CardTraductions.Where(x => x.CardUuid == archetypeId && x.Language == lang).FirstOrDefaultAsync();
                 if (t != null) foreignName = t.Traduction;
             }
-            catch (Exception e) { Console.WriteLine("Mageek : GetTraduction > error : " + e.Message); }
+            catch (Exception e) { Logger.Log(e.Message, LogLvl.Error); }
             if (string.IsNullOrEmpty(foreignName)) foreignName = archetypeId;
             return foreignName;
         }
@@ -211,7 +369,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e) 
             {
-                Console.WriteLine("Mageek : GetTraductedData > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
                 return null;
             }
         }
@@ -225,7 +383,7 @@ namespace MtgSqliveSdk
         public static async Task<bool> CardHasType(string cardUuid, string typeFilter)
         {
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-            string type = await DB.cards.Where(x => x.Uuid == cardUuid).Select(x=>x.Type).FirstOrDefaultAsync();
+            string type = await DB.cards.Where(x => x.Uuid == cardUuid).Select(x => x.Type).FirstOrDefaultAsync();
             return type.Contains(typeFilter);
         }
 
@@ -238,7 +396,7 @@ namespace MtgSqliveSdk
         public static async Task<PriceLine> EstimateCardPrice(string cardUuid)
         {
             using CollectionDbContext DB = await CollectionSdk.GetContext();
-            PriceLine? price = DB.Prices.Where(x => x.cardUuid == cardUuid).FirstOrDefault();
+            PriceLine? price = DB.Prices.Where(x => x.CardUuid == cardUuid).FirstOrDefault();
             if (price != null)
             {
                 DateTime lastUpdate = DateTime.Parse(price.LastUpdate);
@@ -251,7 +409,7 @@ namespace MtgSqliveSdk
             {
                 price = new PriceLine()
                 {
-                    cardUuid = cardUuid,
+                    CardUuid = cardUuid,
                     LastUpdate = DateTime.Now.ToString(),
                     PriceEur = scryfallCard.Prices.Eur,
                     PriceUsd = scryfallCard.Prices.Usd,
@@ -262,7 +420,7 @@ namespace MtgSqliveSdk
             }
             else
             {
-                price.cardUuid = cardUuid;
+                price.CardUuid = cardUuid;
                 price.LastUpdate = DateTime.Now.ToString();
                 price.PriceEur = scryfallCard.Prices.Eur;
                 price.PriceUsd = scryfallCard.Prices.Usd;
@@ -284,6 +442,73 @@ namespace MtgSqliveSdk
             return manaCost.Length - manaCost.Replace(color.ToString(), "").Length;
         }
 
+        /// <summary>
+        /// Get the illustration of a card, save it locally if not already done
+        /// </summary>
+        /// <param name="cardUuid"></param>
+        /// <returns>a local url to a jpg</returns>
+        public async static Task<Uri> RetrieveImage(string cardUuid)
+        {
+            try
+            {
+                string localFileName = Path.Combine(Config.Path_IllustrationsFolder, cardUuid + ".png");
+                if (!File.Exists(localFileName))
+                {
+                    using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
+                    var v = await DB.cardIdentifiers.Where(x => x.Uuid == cardUuid).Select(x => x.ScryfallIllustrationId).FirstOrDefaultAsync();
+                    var httpClient = new HttpClient();
+                    using var stream = await httpClient.GetStreamAsync(v);
+                    using var fileStream = new FileStream(localFileName, FileMode.Create);
+                    await stream.CopyToAsync(fileStream);
+                }
+                return new("file://" + Path.GetFullPath(localFileName), UriKind.Absolute);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e.Message, LogLvl.Error);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// For double sided cards, get back uuid
+        /// </summary>
+        /// <param name="cardUuid"></param>
+        /// <returns>The card uuid of the back</returns>
+        public async static Task<string?> GetCardBack(string cardUuid)
+        {
+            using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
+            return await DB.cards.Where(x => x.Uuid == cardUuid).Select(x => x.OtherFaceIds).FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Get card legalities
+        /// </summary>
+        /// <param name="selectedCard"></param>
+        /// <returns>List of legalities</returns>
+        public async static Task<List<CardLegalities>> GetLegalities(MageekSdk.Collection.Entities.ArchetypeCard selectedCard)
+        {
+            using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
+            return await DB.cardLegalities.Where(x => x.Uuid == selectedCard.CardUuid).ToListAsync();
+        }
+
+        /// <summary>
+        /// get card rulings
+        /// </summary>
+        /// <param name="selectedCard"></param>
+        /// <returns>List of rulings</returns>
+        public async static Task<List<CardRulings>> GetRulings(MageekSdk.Collection.Entities.ArchetypeCard selectedCard)
+        {
+            using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
+            return await DB.cardRulings.Where(x => x.Uuid == selectedCard.CardUuid).ToListAsync();
+        }
+
+        /// <summary>
+        /// This will disappear when using mtgsqlive data,
+        /// get card data from scryfall from a card uuid
+        /// </summary>
+        /// <param name="cardUuid"></param>
+        /// <returns>A scryfall card</returns>
         private static async Task<Card?> GetScryfallCard(string cardUuid)
         {
             try
@@ -298,95 +523,10 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Console.WriteLine("ScryfallApi : RetrieveCardValues > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
                 return null;
             }
         }
-
-        #region Tags
-
-        /// <summary>
-        /// List all existing tags
-        /// </summary>
-        /// <returns>List of distinct tags</returns>
-        public static async Task<List<Tag>> GetTags()
-        {
-            List<Tag> tags = new();
-            using CollectionDbContext DB = await CollectionSdk.GetContext();
-            tags.Add(null);
-            tags.AddRange(
-                    DB.CardTags.GroupBy(x => x.TagContent).Select(x => x.First())
-            );
-            return tags;
-        }
-
-        ///// <summary>
-        ///// List tags of a card
-        ///// </summary>
-        ///// <returns>List of tags</returns>
-        //public static async Task<List<Tag>> GetTags(string archetypeId)
-        //{
-        //    List<Tag> tags = new();
-        //    using CollectionDbContext DB = await CollectionSdk.GetContext();
-        //    tags.Add(null);
-        //    tags.AddRange(
-        //            DB.CardTags.Where(x=>x.ArchetypeId==archetypeId).GroupBy(x => x.TagContent).Select(x => x.First())
-        //    );
-        //    return tags;
-        //}
-
-        /// <summary>
-        /// Does this card have this tag
-        /// </summary>
-        /// <param name="cardId"></param>
-        /// <param name="tagFilterSelected"></param>
-        /// <returns>true if this card has this tag</returns>
-        public static async Task<bool> HasTag(string cardId, string tagFilterSelected)
-        {
-            return (await GetTags(cardId)).Where(x => x.TagContent == tagFilterSelected).Any();
-        }
-
-        /// <summary>
-        /// Add a tag to a card
-        /// </summary>
-        /// <param name="archetypeId"></param>
-        /// <param name="text"></param>
-        public static async Task TagCard(string archetypeId, string text)
-        {
-            using CollectionDbContext DB = await CollectionSdk.GetContext();
-            DB.CardTags.Add(new Tag()
-            {
-                TagContent = text,
-                ArchetypeId = archetypeId
-            });
-            await DB.SaveChangesAsync();
-        }
-
-        /// <summary>
-        /// Remove a tag from a card
-        /// </summary>
-        /// <param name="cardTag"></param>
-        public static async Task UnTagCard(Tag cardTag)
-        {
-            using CollectionDbContext DB = await CollectionSdk.GetContext();
-            DB.CardTags.Remove(cardTag);
-            await DB.SaveChangesAsync();
-        }
-
-        /// <summary>
-        /// Find if this card has tags
-        /// </summary>
-        /// <param name="archetypeId"></param>
-        /// <returns>List of tags</returns>
-        public static async Task<List<Tag>> GetTags(string archetypeId)
-        {
-            List<Tag> tags = new();
-            using CollectionDbContext DB = await CollectionSdk.GetContext();
-            tags.AddRange(DB.CardTags.Where(x => x.ArchetypeId == archetypeId));
-            return tags;
-        }
-
-        #endregion
 
         #endregion
 
@@ -404,7 +544,7 @@ namespace MtgSqliveSdk
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
                 decks = await DB.Decks.ToListAsync();
             }
-            catch (Exception e) { Console.WriteLine("Mageek : GetDecks > error : " + e.Message); }
+            catch (Exception e) { Logger.Log(e.Message, LogLvl.Error); }
             return decks;
         }
 
@@ -418,12 +558,12 @@ namespace MtgSqliveSdk
             try
             {
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
-                Deck deck = await DB.Decks.FirstOrDefaultAsync();
+                Deck deck = await DB.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
                 return deck;
             }
             catch (Exception e) 
-            { 
-                Console.WriteLine("Mageek : GetDecks > error : " + e.Message);
+            {
+                Logger.Log(e.Message, LogLvl.Error); 
                 return null;
             }
         }
@@ -464,7 +604,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e) 
             {
-                Console.WriteLine("Mageek : CreateDeck_Empty > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
                 return null;
             }
         }
@@ -489,50 +629,39 @@ namespace MtgSqliveSdk
             {
                 try
                 {
-                    using (CollectionDbContext DB = await CollectionSdk.GetContext())
+                    using CollectionDbContext DB = await CollectionSdk.GetContext();
+                    foreach (DeckLine deckLine in deckLines)
                     {
-                        foreach (DeckLine deckLine in deckLines)
+                        if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.Uuid).Any())
                         {
-                            if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.Uuid).Any())
-                            {
-                                DB.DeckCards.Add(
-                                    new DeckCard() {
-                                        DeckId = deck.DeckId,
-                                        CardUuid = deckLine.Uuid,
-                                        Quantity = deckLine.Quantity,
-                                        RelationType = deckLine.Relation
-                                    }
-                                );
-                                deck.CardCount += deckLine.Quantity;
-                            }
-                            else
-                            {
-                                messages.Add("[CardNotFoud]" + deckLine.Uuid);
-                            }
+                            DB.DeckCards.Add(
+                                new DeckCard()
+                                {
+                                    DeckId = deck.DeckId,
+                                    CardUuid = deckLine.Uuid,
+                                    Quantity = deckLine.Quantity,
+                                    RelationType = deckLine.Relation
+                                }
+                            );
+                            deck.CardCount += deckLine.Quantity;
                         }
-
-                        await DB.SaveChangesAsync();
+                        else
+                        {
+                            messages.Add("[CardNotFoud]" + deckLine.Uuid);
+                        }
                     }
+
+                    await DB.SaveChangesAsync();
                 }
                 catch (Exception e)
                 {
                     messages.Add("[error]" + e.Message);
-                    Console.WriteLine("Mageek : CreateDeck_Contructed > error : " + e.Message);
+                    Logger.Log(e.Message, LogLvl.Error);
                 }
             }
             return messages;
         }
         
-        /// <summary>
-        /// Data to aggregate to represent a constructed deck
-        /// </summary>
-        public struct DeckLine
-        {
-            public string Uuid;
-            public int Quantity;
-            public int Relation;
-        }
-
         /// <summary>
         /// Rename a deck
         /// </summary>
@@ -618,17 +747,17 @@ namespace MtgSqliveSdk
                         case 2: result.AppendLine("Side:"); break;
                     }
                 }
-                Cards? card = await cardInfos.cards.Where(x => x.Uuid == cardRelation.CardUuid).FirstOrDefaultAsync();
+                MageekSdk.MtgSqlive.Entities.Cards? card = await cardInfos.cards.Where(x => x.Uuid == cardRelation.CardUuid).FirstOrDefaultAsync();
                 if(card!=null)
                 {
                     result.Append(cardRelation.Quantity);
                     if (withSetCode)
                     {
-                        result.Append("{");
+                        result.Append('{');
                         result.Append(card.SetCode);
-                        result.Append("}");
+                        result.Append('}');
                     }
-                    result.Append(" ");
+                    result.Append(' ');
                     result.Append(card.Name);
                     result.AppendLine();
                 }
@@ -686,33 +815,31 @@ namespace MtgSqliveSdk
             if (string.IsNullOrEmpty(cardUuid) || deck == null) return;
             try
             {
-                using (CollectionDbContext DB = await CollectionSdk.GetContext())
+                using CollectionDbContext DB = await CollectionSdk.GetContext();
+                var cardRelation = await DB.DeckCards.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+                if (cardRelation == null)
                 {
-                    var cardRelation = await DB.DeckCards.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-                    if (cardRelation == null)
+                    cardRelation = new DeckCard()
                     {
-                        cardRelation = new DeckCard()
-                        {
-                            CardUuid = cardUuid,
-                            DeckId = deck.DeckId,
-                            Quantity = qty,
-                            RelationType = relation
-                        };
-                        DB.Entry(cardRelation).State = EntityState.Added;
-                    }
-                    else
-                    {
-                        cardRelation.Quantity += qty;
-                        DB.Entry(cardRelation).State = EntityState.Modified;
-                    }
-                    deck.CardCount += qty;
-                    DB.Entry(deck).State = EntityState.Modified;
-                    await DB.SaveChangesAsync();
+                        CardUuid = cardUuid,
+                        DeckId = deck.DeckId,
+                        Quantity = qty,
+                        RelationType = relation
+                    };
+                    DB.Entry(cardRelation).State = EntityState.Added;
                 }
+                else
+                {
+                    cardRelation.Quantity += qty;
+                    DB.Entry(cardRelation).State = EntityState.Modified;
+                }
+                deck.CardCount += qty;
+                DB.Entry(deck).State = EntityState.Modified;
+                await DB.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                Console.WriteLine("Mageek : AddCardToDeck > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
         }
 
@@ -727,21 +854,19 @@ namespace MtgSqliveSdk
             if (string.IsNullOrEmpty(cardUuid) || deck == null) return;
             try
             {
-                using (CollectionDbContext DB = await CollectionSdk.GetContext())
-                {
-                    var cardRelation = await DB.DeckCards.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-                    if (cardRelation == null) return;
-                    cardRelation.Quantity -= qty;
-                    if (cardRelation.Quantity <= 0) DB.Entry(cardRelation).State = EntityState.Deleted;
-                    else DB.Entry(cardRelation).State = EntityState.Modified;
-                    deck.CardCount -= qty;
-                    DB.Entry(deck).State = EntityState.Modified;
-                    await DB.SaveChangesAsync();
-                }
+                using CollectionDbContext DB = await CollectionSdk.GetContext();
+                var cardRelation = await DB.DeckCards.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+                if (cardRelation == null) return;
+                cardRelation.Quantity -= qty;
+                if (cardRelation.Quantity <= 0) DB.Entry(cardRelation).State = EntityState.Deleted;
+                else DB.Entry(cardRelation).State = EntityState.Modified;
+                deck.CardCount -= qty;
+                DB.Entry(deck).State = EntityState.Modified;
+                await DB.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                Console.WriteLine("Mageek : RemoveCardFromDeck > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
         }
 
@@ -752,12 +877,10 @@ namespace MtgSqliveSdk
         /// <param name="type"></param>
         public static async Task ChangeDeckRelationType(DeckCard relation, int type)
         {
-            using (CollectionDbContext DB = await CollectionSdk.GetContext())
-            {
-                relation.RelationType = type;
-                DB.Entry(relation).State = EntityState.Modified;
-                await DB.SaveChangesAsync();
-            }
+            using CollectionDbContext DB = await CollectionSdk.GetContext();
+            relation.RelationType = type;
+            DB.Entry(relation).State = EntityState.Modified;
+            await DB.SaveChangesAsync();
         }
 
         /// <summary>
@@ -794,7 +917,14 @@ namespace MtgSqliveSdk
             }
             return retour;
         }
-        private static async Task<bool> DeckHasThisColorIdentity(List<DeckCard> deck, char color)
+
+        /// <summary>
+        /// Find if a deck has a card with this color identity
+        /// </summary>
+        /// <param name="deck"></param>
+        /// <param name="color"></param>
+        /// <returns>true if true</returns>
+        public static async Task<bool> DeckHasThisColorIdentity(List<DeckCard> deck, char color)
         {
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
             foreach (DeckCard card in deck)
@@ -843,8 +973,8 @@ namespace MtgSqliveSdk
                 var price = await EstimateCardPrice(deckCard.CardUuid);
                 if (price != null)
                 {
-                    if (currency == "Eur") total += price.PriceEur.HasValue ? price.PriceEur.Value : 0;
-                    if (currency == "Usd") total += price.PriceUsd.HasValue ? price.PriceUsd.Value : 0;
+                    if (currency == "Eur") total += price.PriceEur ?? 0;
+                    if (currency == "Usd") total += price.PriceUsd ?? 0;
                     if (currency == "Edh") total += price.EdhrecScore;
                 }
                 else missingList.Add(deckCard.CardUuid);
@@ -919,7 +1049,7 @@ namespace MtgSqliveSdk
         /// <returns>The deck cards</returns>
         public static async Task<List<DeckCard>> GetDeckContent_Related(int deckId, int relationType)
         {
-            List<DeckCard> rels = new List<DeckCard>();
+            List<DeckCard> rels = new();
             using CollectionDbContext DB = await CollectionSdk.GetContext();
             var d = await GetDeckContent(deckId);
             foreach (DeckCard card in d)
@@ -938,7 +1068,7 @@ namespace MtgSqliveSdk
         /// <returns>The deck cards</returns>
         public static async Task<List<DeckCard>> GetDeckContent_Typed(int deckId, string typeFilter)
         {
-            List<DeckCard> rels = new List<DeckCard>();
+            List<DeckCard> rels = new();
             using CollectionDbContext DB = await CollectionSdk.GetContext();
             var d = await GetDeckContent(deckId);
             foreach (DeckCard card in d)
@@ -983,7 +1113,7 @@ namespace MtgSqliveSdk
             var manaCurve = new int[11] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             foreach (DeckCard c in content)
             {
-                Cards card = await DB2.cards.Where(x => x.Uuid == c.CardUuid).FirstOrDefaultAsync();
+                MageekSdk.MtgSqlive.Entities.Cards card = await DB2.cards.Where(x => x.Uuid == c.CardUuid).FirstOrDefaultAsync();
                 int manacost = int.Parse(card.ManaCost);
                 if (card != null && !card.Type.Contains("Land")) manaCurve[manacost <= 10 ? manacost : 10]++;
             }
@@ -1004,7 +1134,7 @@ namespace MtgSqliveSdk
             int miss = 0;
             foreach (var v in content)
             {
-                Cards card = await DB2.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
+                MageekSdk.MtgSqlive.Entities.Cards card = await DB2.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
                 if (!card.Type.Contains("Basic Land"))
                 {
                     total += v.Quantity;
@@ -1031,7 +1161,7 @@ namespace MtgSqliveSdk
             string missList = "";
             foreach (var v in content)
             {
-                Cards card = await DB2.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
+                MageekSdk.MtgSqlive.Entities.Cards card = await DB2.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
                 if (!card.Type.Contains("Basic Land"))
                 {
                     int got = await CollectedCard_HowMany(v.CardUuid, false);
@@ -1065,7 +1195,7 @@ namespace MtgSqliveSdk
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
             foreach (var v in await GetDeckContent(deck.DeckId))
             {
-                Cards card = await DB.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
+                MageekSdk.MtgSqlive.Entities.Cards card = await DB.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
                 if (!card.Type.Contains("Basic Land"))
                 {
                     CardLegalities cardLegalities = await DB.cardLegalities.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
@@ -1111,53 +1241,68 @@ namespace MtgSqliveSdk
             return "OK";
         }
 
+        /// <summary>
+        /// Get the minimum cards in a deck for a given format
+        /// </summary>
+        /// <param name="format"></param>
+        /// <returns>The number</returns>
         private static int GetMinCardInFormat(string format)
         {
-            switch (format)
+            return format switch
             {
-                case "Alchemy": return 60;
-                case "Brawl": return 60;
-                case "Commander": return 100;
-                case "Duel": return 60;
-                case "Explorer": return 60;
-                case "Future": return 60;
-                case "Gladiator": return 60;
-                case "Historic": return 60;
-                case "Historicbrawl": return 60;
-                case "Legacy": return 60;
-                case "Modern": return 60;
-                case "Oathbreaker": return 60;
-                case "Oldschool": return 60;
-                case "Pauper": return 60;
-                case "Paupercommander": return 100;
-                case "Penny": return 60;
-                case "Pioneer": return 60;
-                case "Predh": return 60;
-                case "Premodern": return 60;
-                case "Standard": return 60;
-                case "Vintage": return 60;
-            }
-            return 60;
+                "Alchemy" => 60,
+                "Brawl" => 60,
+                "Commander" => 100,
+                "Duel" => 60,
+                "Explorer" => 60,
+                "Future" => 60,
+                "Gladiator" => 60,
+                "Historic" => 60,
+                "Historicbrawl" => 60,
+                "Legacy" => 60,
+                "Modern" => 60,
+                "Oathbreaker" => 60,
+                "Oldschool" => 60,
+                "Pauper" => 60,
+                "Paupercommander" => 100,
+                "Penny" => 60,
+                "Pioneer" => 60,
+                "Predh" => 60,
+                "Premodern" => 60,
+                "Standard" => 60,
+                "Vintage" => 60,
+                _ => 60,
+            };
         }
 
+        /// <summary>
+        /// Get the maximum cards in a deck for a given format
+        /// </summary>
+        /// <param name="format"></param>
+        /// <returns>The number</returns>
         private static int GetMaxCardInFormat(string format)
         {
-            switch (format)
+            return format switch
             {
-                case "Commander": return 100;
-                case "Paupercommander": return 100;
-                case "Explorer": return 250;
-                default: return -1;
-            }
+                "Commander" => 100,
+                "Paupercommander" => 100,
+                "Explorer" => 250,
+                _ => -1,
+            };
         }
 
+        /// <summary>
+        /// Get the maximum occurences of a cards in a deck for a given format
+        /// </summary>
+        /// <param name="format"></param>
+        /// <returns>The number</returns>
         private static int GetMaxOccurenceInFormat(string format)
         {
-            switch (format)
+            return format switch
             {
-                case "commander": return 1;
-                default: return 4;
-            }
+                "commander" => 1,
+                _ => 4,
+            };
         }
 
         #endregion
@@ -1165,6 +1310,16 @@ namespace MtgSqliveSdk
         #endregion
 
         #region Sets
+
+        /// <summary>
+        /// Get all sets
+        /// </summary>
+        /// <returns>List of sets</returns>
+        public async static Task<List<Sets>> LoadSets()
+        {
+            using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
+            return DB.sets.OrderBy(x => x.ReleaseDate).ToList();
+        }
 
         /// <summary>
         /// Get cards in a set
@@ -1187,7 +1342,7 @@ namespace MtgSqliveSdk
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Mageek : GetCardsFromSet > error : " + e.Message);
+                    Logger.Log(e.Message, LogLvl.Error);
                 }
             }
             return cardUuids;
@@ -1205,19 +1360,87 @@ namespace MtgSqliveSdk
             try
             {
                 var cardUuids = await GetCardsFromSet(setCode);
-                using (CollectionDbContext DB = await CollectionSdk.GetContext())
+                using CollectionDbContext DB = await CollectionSdk.GetContext();
+                foreach (var cardUuid in cardUuids)
                 {
-                    foreach (var cardUuid in cardUuids)
-                    {
-                        if (await CollectedCard_HowMany(cardUuid, strict) > 0) nb++;
-                    }
+                    if (await CollectedCard_HowMany(cardUuid, strict) > 0) nb++;
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Mageek : GetMtgSetCompletion > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
             return nb;
+        }
+
+        #endregion
+
+        #region Tags
+
+        /// <summary>
+        /// List all existing tags
+        /// </summary>
+        /// <returns>List of distinct tags</returns>
+        public static async Task<List<Tag>> GetTags()
+        {
+            List<Tag> tags = new();
+            using CollectionDbContext DB = await CollectionSdk.GetContext();
+            tags.Add(null);
+            tags.AddRange(
+                    DB.CardTags.GroupBy(x => x.TagContent).Select(x => x.First())
+            );
+            return tags;
+        }
+
+        /// <summary>
+        /// Does this card have this tag
+        /// </summary>
+        /// <param name="cardId"></param>
+        /// <param name="tagFilterSelected"></param>
+        /// <returns>true if this card has this tag</returns>
+        public static async Task<bool> HasTag(string cardId, string tagFilterSelected)
+        {
+            return (await GetTags(cardId)).Where(x => x.TagContent == tagFilterSelected).Any();
+        }
+
+        /// <summary>
+        /// Add a tag to a card
+        /// </summary>
+        /// <param name="archetypeId"></param>
+        /// <param name="text"></param>
+        public static async Task TagCard(string archetypeId, string text)
+        {
+            using CollectionDbContext DB = await CollectionSdk.GetContext();
+            DB.CardTags.Add(new Tag()
+            {
+                TagContent = text,
+                ArchetypeId = archetypeId
+            });
+            await DB.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Remove a tag from a card
+        /// </summary>
+        /// <param name="cardTag"></param>
+        public static async Task UnTagCard(Tag cardTag)
+        {
+            using CollectionDbContext DB = await CollectionSdk.GetContext();
+            DB.CardTags.Remove(cardTag);
+            await DB.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Find if this card has tags
+        /// </summary>
+        /// <param name="archetypeId"></param>
+        /// <returns>List of tags</returns>
+        public static async Task<List<Tag>> GetTags(string archetypeId)
+        {
+            List<Tag> tags = new();
+            using CollectionDbContext DB = await CollectionSdk.GetContext();
+            tags.AddRange(DB.CardTags.Where(x => x.ArchetypeId == archetypeId));
+            return tags;
         }
 
         #endregion
@@ -1238,7 +1461,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Console.WriteLine("Mageek : GetTotalOwned > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
             return total;
         }
@@ -1256,7 +1479,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Console.WriteLine("Mageek : GetTotalDiffGot > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
                 return 0;
             }
         }
@@ -1274,7 +1497,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Console.WriteLine("Mageek : GetTotalDiffGot > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
                 return 0;
             }
         }
@@ -1296,7 +1519,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Console.WriteLine("Mageek : GetTotalDiffExist > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
             return total;
         }
@@ -1318,190 +1541,36 @@ namespace MtgSqliveSdk
                     var price = await EstimateCardPrice(collectedCard.CardUuid);
                     if (price!=null)
                     {
-                        if (currency=="Eur") total += price.PriceEur.HasValue ? price.PriceEur.Value : 0;
-                        if (currency=="Usd") total += price.PriceUsd.HasValue ? price.PriceUsd.Value : 0;
-                        if (currency=="Edh") total += price.EdhrecScore;
+                        if (currency == "Eur") total += price.PriceEur ?? 0;
+                        if (currency == "Usd") total += price.PriceUsd ?? 0;
+                        if (currency == "Edh") total += price.EdhrecScore;
                     }
                     else missingList.Add(collectedCard.CardUuid);
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Mageek : AutoEstimatePrices > error : " + e.Message);
+                Logger.Log(e.Message, LogLvl.Error);
             }
             return new Tuple<decimal, List<string>>(total, missingList);
         }
 
         #endregion
 
-        public async static Task<Uri> RetrieveImage(string cardUuid)
-        {
-            try
-            {
-                string localFileName = Path.Combine(Config.Path_IllustrationsFolder, cardUuid + ".png");
-                if (!File.Exists(localFileName))
-                {
-                    using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-                    var v =  await DB.cardIdentifiers.Where(x => x.Uuid == cardUuid).Select(x => x.ScryfallIllustrationId).FirstOrDefaultAsync();
-                    var httpClient = new HttpClient();
-                    using var stream = await httpClient.GetStreamAsync(v);
-                    using var fileStream = new FileStream(localFileName, FileMode.Create);
-                    await stream.CopyToAsync(fileStream);
-                }
-                return new("file://" + Path.GetFullPath(localFileName), UriKind.Absolute);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Mageek : RetrieveImage > error : " + e.Message);
-                return null;
-            }
-        }
-
-        public async static Task<string?> GetCardBack(string cardUuid)
-        {
-            using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-            return await DB.cards.Where(x=>x.Uuid==cardUuid).Select(x=>x.OtherFaceIds).FirstOrDefaultAsync();
-        }
-
-        public async static Task<List<Cards>> NormalSearch(string lang, string filterName)
-        {
-            List<Cards> retour = new List<Cards>();
-            string lowerFilterName = filterName.ToLower();
-            string normalizedFilterName = StringExtension.RemoveDiacritics(filterName).Replace('-', ' ').ToLower();
-            using (CollectionDbContext DB = await CollectionSdk.GetContext())
-            using (MtgSqliveDbContext DB2 = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
-            {
-                if (!string.IsNullOrEmpty(filterName))
-                {
-                        // Search in VO
-                        var voResults = await DB.CardArchetypes.Where(x => x.ArchetypeId.ToLower().Contains(lowerFilterName)).ToListAsync();
-                        foreach (var vo in voResults) retour.AddRange(DB2.cards.Where(x =>x.Uuid==vo.CardUuid));
-                        // Search in foreign
-                        var tradResults = await DB.CardTraductions.Where(x => x.Language == lang && x.NormalizedTraduction.Contains(normalizedFilterName)).ToListAsync();
-                        foreach (var trad in tradResults) retour.AddRange(DB2.cards.Where(x => x.Uuid == trad.CardUuid));
-                }
-                else retour.AddRange(await DB2.cards.ToArrayAsync());
-            }
-            // Remove duplicata
-            retour = retour.GroupBy(x => x.Name).Select(g => g.First()).ToList();
-            return retour;
-        }
-
-        public async static Task<List<Cards>> AdvancedSearch(string lang, string filterName, string filterType, string filterKeyword, string filterText, string filterColor, string filterTag, bool onlyGot)
-        {
-            List<Cards> retour = new();
-
-            using (CollectionDbContext DB = await CollectionSdk.GetContext())
-            using (MtgSqliveDbContext DB2 = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
-            {
-                if (onlyGot)
-                {
-                    //retour.AddRange(await DB.CardModels.Where(x => x.Got > 0).ToArrayAsync());
-                }
-                else
-                {
-                    retour.AddRange(await DB2.cards.ToArrayAsync());
-                }
-            }
-
-            if (!string.IsNullOrEmpty(filterType))
-            {
-                string type = filterType.ToLower();
-                retour = retour.Where(x => x.Type.ToLower().Contains(type)).ToList();
-            }
-
-            if (!string.IsNullOrEmpty(filterKeyword))
-            {
-                string keyword = filterKeyword.ToLower();
-                retour = retour.Where(x => x.Keywords.ToLower().Contains(keyword)).ToList();
-            }
-
-            if (!string.IsNullOrEmpty(filterText))
-            {
-                string text = filterText.ToLower();
-                retour = retour.Where(x => x.Text.ToLower().Contains(filterKeyword.ToLower())).ToList();
-            }
-
-            if (filterColor != "_")
-            {
-                switch (filterColor)
-                {
-                    case "X": retour = retour.Where(x => string.IsNullOrEmpty(x.ColorIdentity)).ToList(); break;
-                    case "W": retour = retour.Where(x => x.ColorIdentity == "W").ToList(); break;
-                    case "B": retour = retour.Where(x => x.ColorIdentity == "B").ToList(); break;
-                    case "U": retour = retour.Where(x => x.ColorIdentity == "U").ToList(); break;
-                    case "G": retour = retour.Where(x => x.ColorIdentity == "G").ToList(); break;
-                    case "R": retour = retour.Where(x => x.ColorIdentity == "R").ToList(); break;
-                    case "GW": retour = retour.Where(x => x.ColorIdentity == "G,W").ToList(); break;
-                    case "WU": retour = retour.Where(x => x.ColorIdentity == "U,W").ToList(); break;
-                    case "BU": retour = retour.Where(x => x.ColorIdentity == "B,U").ToList(); break;
-                    case "RB": retour = retour.Where(x => x.ColorIdentity == "B,R").ToList(); break;
-                    case "GR": retour = retour.Where(x => x.ColorIdentity == "G,R").ToList(); break;
-                    case "GU": retour = retour.Where(x => x.ColorIdentity == "G,U").ToList(); break;
-                    case "WB": retour = retour.Where(x => x.ColorIdentity == "B,W").ToList(); break;
-                    case "RU": retour = retour.Where(x => x.ColorIdentity == "R,U").ToList(); break;
-                    case "GB": retour = retour.Where(x => x.ColorIdentity == "B,G").ToList(); break;
-                    case "RW": retour = retour.Where(x => x.ColorIdentity == "R,W").ToList(); break;
-                    case "GBW": retour = retour.Where(x => x.ColorIdentity == "B,G,W").ToList(); break;
-                    case "GWU": retour = retour.Where(x => x.ColorIdentity == "G,U,W").ToList(); break;
-                    case "WRU": retour = retour.Where(x => x.ColorIdentity == "R,U,W").ToList(); break;
-                    case "GRW": retour = retour.Where(x => x.ColorIdentity == "G,R,W").ToList(); break;
-                    case "WUB": retour = retour.Where(x => x.ColorIdentity == "B,U,W").ToList(); break;
-                    case "GUR": retour = retour.Where(x => x.ColorIdentity == "G,R,U").ToList(); break;
-                    case "GRB": retour = retour.Where(x => x.ColorIdentity == "B,G,R").ToList(); break;
-                    case "RUB": retour = retour.Where(x => x.ColorIdentity == "B,R,U").ToList(); break;
-                    case "BGU": retour = retour.Where(x => x.ColorIdentity == "B,G,U").ToList(); break;
-                    case "RWB": retour = retour.Where(x => x.ColorIdentity == "B,R,W").ToList(); break;
-                    case "BGUR": retour = retour.Where(x => x.ColorIdentity == "B,G,R,U").ToList(); break;
-                    case "GURW": retour = retour.Where(x => x.ColorIdentity == "G,R,U,W").ToList(); break;
-                    case "URWB": retour = retour.Where(x => x.ColorIdentity == "B,R,U,W").ToList(); break;
-                    case "RWBG": retour = retour.Where(x => x.ColorIdentity == "B,G,R,W").ToList(); break;
-                    case "WBGU": retour = retour.Where(x => x.ColorIdentity == "B,G,U,W").ToList(); break;
-                    case "WBGUR": retour = retour.Where(x => x.ColorIdentity == "B,G,R,U,W").ToList(); break;
-                }
-
-            }
-
-            if (filterTag != null)
-            {
-                var tagged = new List<Cards>();
-                foreach (var card in retour)
-                {
-                    if (await Mageek.HasTag(card.Name, filterTag))
-                    {
-                        tagged.Add(card);
-                    }
-                }
-                retour = new List<Cards>(tagged);
-            }
-
-            return retour;
-        }
-
-        public async static Task<List<Sets>> LoadSets()
-        {
-            using (MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
-            {
-                return DB.sets.OrderBy(x => x.releaseDate).ToList();
-            }
-        }
-
-        public async static Task<List<CardLegalities>> GetLegalities(ArchetypeCard selectedCard)
-        {
-            using (MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
-            {
-                return await DB.cardLegalities.Where(x => x.Uuid == selectedCard.CardUuid).ToListAsync();
-            }
-        }
-
-        public async static Task<List<CardRulings>> GetRulings(ArchetypeCard selectedCard)
-        {
-            using (MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
-            {
-                return await DB.cardRulings.Where(x=>x.Uuid== selectedCard.CardUuid).ToListAsync();
-            }
-        }
-
     }
+
+    #region Data formats
+
+    /// <summary>
+    /// Data to aggregate to represent a constructed deck
+    /// </summary>
+    public struct DeckLine
+    {
+        public string Uuid;
+        public int Quantity;
+        public int Relation;
+    }
+
+    #endregion
 
 }
