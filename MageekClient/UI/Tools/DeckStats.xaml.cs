@@ -81,7 +81,7 @@ namespace MaGeek.UI
             App.Events.UpdateDeckEvent += HandleDeckModified;
         }
 
-        void HandleDeckSelected(int deckId)
+        void HandleDeckSelected(string deckId)
         {
             CurrentDeck = Mageek.GetDeck(deckId).Result;
         }
@@ -112,11 +112,11 @@ namespace MaGeek.UI
                 ArtifactCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Artifact"); 
                 BasicLandCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Planeswalker"); 
                 BasicLandCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Land"); 
-                DevotionB = await Mageek.Devotion(currentDeck.DeckId, 'B');
-                DevotionW = await Mageek.Devotion(currentDeck.DeckId, 'W'); 
-                DevotionU = await Mageek.Devotion(currentDeck.DeckId, 'U'); 
-                DevotionG = await Mageek.Devotion(currentDeck.DeckId, 'G'); 
-                DevotionR = await Mageek.Devotion(currentDeck.DeckId, 'R'); 
+                DevotionB = await Mageek.DeckDevotion(currentDeck.DeckId, 'B');
+                DevotionW = await Mageek.DeckDevotion(currentDeck.DeckId, 'W'); 
+                DevotionU = await Mageek.DeckDevotion(currentDeck.DeckId, 'U'); 
+                DevotionG = await Mageek.DeckDevotion(currentDeck.DeckId, 'G'); 
+                DevotionR = await Mageek.DeckDevotion(currentDeck.DeckId, 'R'); 
                 StandardOk = await Mageek.DeckValidity(currentDeck, "Standard");
                 CommanderOk = await Mageek.DeckValidity(currentDeck, "Commander");
                 OwnedRatio = await Mageek.OwnedRatio(currentDeck.DeckId);
@@ -180,7 +180,7 @@ namespace MaGeek.UI
         {
             CurveStart = new Point(0,0);
             CurvePoints = null;
-            PointCollection Points = new PointCollection();
+            PointCollection Points = new();
             if (CurrentDeck != null)
             { 
                 int manaMax = manaCurve.ToList().Max();
@@ -208,7 +208,7 @@ namespace MaGeek.UI
 
         List<int> alreadyDrawed;
 
-        Random random = new Random();
+        readonly Random random = new();
 
         private void DrawNewHand()
         {

@@ -14,7 +14,7 @@ namespace MaGeek
 
         #region CTOR
 
-        SqliteDbInfos dbData;
+        readonly SqliteDbInfos dbData;
 
         public AppDbContext(SqliteDbInfos dbData) { this.dbData = dbData; }
 

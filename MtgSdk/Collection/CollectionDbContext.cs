@@ -17,14 +17,20 @@ namespace MageekSdk.Collection
         }
 
         public DbSet<ArchetypeCard> CardArchetypes { get; set; }
-        public DbSet<Tag> CardTags { get; set; }
+        public DbSet<Tag> Tag { get; set; }
         public DbSet<CardTraduction> CardTraductions { get; set; }
         public DbSet<Deck> Decks { get; set; }
         public DbSet<DeckCard> DeckCards { get; set; }
         public DbSet<Param> Params { get; set; }
         public DbSet<FavVariant> FavCards { get; set; }
         public DbSet<CollectedCard> CollectedCards { get; set; }
-        public DbSet<PriceLine> Prices { get; set; }
+        public DbSet<PriceLine> PriceLine { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CardTraduction>().HasKey(m => new { m.CardUuid, m.Language});
+            modelBuilder.Entity<DeckCard>().HasKey(m => new { m.DeckId, m.CardUuid});
+        }
 
     }
 

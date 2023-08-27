@@ -19,7 +19,7 @@ namespace MaGeek
         public static string Path_RoamingFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
         public string Path_IllustrationsFolder { get; } = Path.Combine(Path_RoamingFolder, "CardsIllus");
         public string Path_SetIconsFolder { get; } = Path.Combine(Path_RoamingFolder, "SetIcons");
-        public string Path_LayoutSave { get; } = Path.Combine(Path_RoamingFolder, "Layout.xml");
+        public string Path_LayoutFolder { get; } = Path.Combine(Path_RoamingFolder, "Layout");
         private static string Path_Settings { get; } = Path.Combine(Path_RoamingFolder, "Settings.json");
         public Dictionary<Setting, string> Settings { get; private set; } = new Dictionary<Setting, string>();
 
@@ -47,6 +47,7 @@ namespace MaGeek
             }
             if (!File.Exists(Path_IllustrationsFolder)) Directory.CreateDirectory(Path_IllustrationsFolder);
             if (!File.Exists(Path_SetIconsFolder)) Directory.CreateDirectory(Path_SetIconsFolder);
+            if (!File.Exists(Path_LayoutFolder)) Directory.CreateDirectory(Path_LayoutFolder);
         }
 
         private void DefaultSettings()

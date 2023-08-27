@@ -30,7 +30,7 @@
             App.Events.SelectDeckEvent += STATE_SelectDeckEvent; ;
         }
 
-        private void STATE_SelectDeckEvent(int deckId)
+        private void STATE_SelectDeckEvent(string deckId)
         {
             OnPropertyChanged(nameof(SelectedDeckString));
         }

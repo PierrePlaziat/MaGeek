@@ -34,7 +34,6 @@ namespace MageekSdk.Collection
                     Logger.Log("Already called");
                     return true;
                 }
-                Logger.Log("Initialisation...");
                 bool needsUpdate = await MtgSqlive.MtgSqliveSdk.Initialize();
                 if (needsUpdate) await Update();
                 IsInitialized = true;
@@ -54,11 +53,11 @@ namespace MageekSdk.Collection
         /// <returns>An entity framework context representing Mageek database</returns>
         public static async Task<CollectionDbContext?> GetContext()
         {
-            if (!IsInitialized) await Initialize();
-            return IsInitialized ? new CollectionDbContext(Config.Path_Db) : null;
+            await Task.Delay(0);
+            return new CollectionDbContext(Config.Path_Db);
         }
 
-        #region Methods
+        #region Method s
 
         private static async Task Update()
         {
@@ -81,7 +80,6 @@ namespace MageekSdk.Collection
 
         private static async Task Update_Traductions()
         {
-            Logger.Log("Fetching Traductions...");
             try
             {
                 List<CardTraduction> traductions = new();
@@ -89,18 +87,35 @@ namespace MageekSdk.Collection
                 using (MtgSqliveDbContext mtgSqliveContext = await MtgSqlive.MtgSqliveSdk.GetContext())
                 {
                     foreach (CardForeignData traduction in mtgSqliveContext.cardForeignData)
-                    {
-                        traductions.Add(
-                            new CardTraduction()
-                            {
-                                CardUuid = traduction.Uuid,
-                                Language = traduction.Language,
-                                Traduction = traduction.FaceName,
-                                NormalizedTraduction = traduction.Language != "Korean" && traduction.Language != "Arabic"
-                                    ? StringExtension.RemoveDiacritics(traduction.FaceName).Replace('-', ' ').ToLower()
-                                    : traduction.FaceName
-                            }
-                        );
+                     {
+                        if (traduction.FaceName == null)
+                        {
+                            traductions.Add(
+                                new CardTraduction()
+                                {
+                                    CardUuid = traduction.Uuid,
+                                    Language = traduction.Language,
+                                    Traduction = traduction.Name,
+                                    NormalizedTraduction = traduction.Language != "Korean" && traduction.Language != "Arabic"
+                                        ? StringExtension.RemoveDiacritics(traduction.Name).Replace('-', ' ').ToLower()
+                                        : traduction.Name
+                                }
+                            );
+                        }
+                        else
+                        {
+                            traductions.Add(
+                                new CardTraduction()
+                                {
+                                    CardUuid = traduction.Uuid,
+                                    Language = traduction.Language,
+                                    Traduction = traduction.FaceName,
+                                    NormalizedTraduction = traduction.Language != "Korean" && traduction.Language != "Arabic"
+                                        ? StringExtension.RemoveDiacritics(traduction.FaceName).Replace('-', ' ').ToLower()
+                                        : traduction.FaceName
+                                }
+                            );
+                        }
                     }
                 }
                 Logger.Log("Saving...");
@@ -123,19 +138,26 @@ namespace MageekSdk.Collection
 
         private static async Task Update_Archetypes()
         {
-            Logger.Log("Fetching Archetypes...");
             try
             {
-                List<Entities.ArchetypeCard> archetypes = new();
+                List<ArchetypeCard> archetypes = new();
                 Logger.Log("Parsing...");
                 using (MtgSqliveDbContext mtgSqliveContext = await MtgSqlive.MtgSqliveSdk.GetContext())
                 {
-                    foreach (MtgSqlive.Entities.Cards card in mtgSqliveContext.cards)
+                    foreach (Cards card in mtgSqliveContext.cards)
                     {
+                        if (card.Name == null)
+                        {
+
+                        }
+                        if (card.Uuid == null)
+                        {
+
+                        }
                         archetypes.Add(
-                            new Entities.ArchetypeCard()
+                            new ArchetypeCard()
                             {
-                                ArchetypeId = card.Name,
+                                ArchetypeId = card.Name != null ? card.Name : string.Empty,
                                 CardUuid = card.Uuid
                             }
                         );

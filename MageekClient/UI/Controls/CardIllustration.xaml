@@ -75,14 +75,14 @@
 
             <Label Grid.Column="0"
                    Grid.Row="0"
-                   Content="{Binding SelectedCard.CardId}"
+                   Content="{Binding SelectedVariant.CardId}"
                    Foreground="White"
                    FontSize="15"
                    FontWeight="Black" />
 
             <ui:ManaCost Grid.Column="1"
                          Grid.Row="0"
-                         Cost="{Binding SelectedCard.ManaCost}" />
+                         Cost="{Binding SelectedVariant.ManaCost}" />
 
             <Button Grid.Row="1"
                     Grid.ColumnSpan="2"
@@ -94,7 +94,7 @@
             <Label Grid.Column="0"
                    Grid.Row="2"
                    Grid.ColumnSpan="2"
-                   Content="{Binding SelectedCard.Type}"
+                   Content="{Binding SelectedVariant.Type}"
                    Foreground="White"
                    FontSize="10"
                    FontWeight="Black" />
@@ -103,7 +103,7 @@
                        Grid.Row="3"
                        Grid.ColumnSpan="2"
                        Margin="5"
-                       Text="{Binding SelectedCard.Text}"
+                       Text="{Binding SelectedVariant.Text}"
                        FontSize="10"
                        Foreground="White"
                        TextWrapping="WrapWithOverflow" />
@@ -112,12 +112,12 @@
                        Grid.Row="4"
                        HorizontalAlignment="Right"
                        VerticalAlignment="Bottom">
-                <Label Content="{Binding SelectedCard.Power}"
+                <Label Content="{Binding SelectedVariant.Power}"
                        Foreground="White" />
                 <Label Content="/"
                        Visibility="{Binding HasPower}"
                        Foreground="White" />
-                <Label Content="{Binding SelectedCard.Toughness}"
+                <Label Content="{Binding SelectedVariant.Toughness}"
                        Foreground="White" />
             </DockPanel>
 

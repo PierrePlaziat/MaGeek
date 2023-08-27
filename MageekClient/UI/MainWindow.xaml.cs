@@ -1,111 +1,122 @@
 ﻿using AvalonDock.Layout;
 using AvalonDock.Layout.Serialization;
-using MaGeek.Framework.Utils;
 using MaGeek.UI;
+using MageekSdk.Tools;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Xaml;
+using static MaGeek.AppEvents;
 
 namespace MaGeek
 {
 
+    /// <summary>
+    /// This MainWindow uses the AvalonDock like so:
+    /// It wraps given "TemplatedUserControl" into AnchorablePanes, 
+    /// so the user will be able to manage those here said AppPanels into layout.
+    /// There is currently no use of the avalon document logic.
+    /// </summary>
     public partial class MainWindow : TemplatedWindow
     {
 
-        private Visibility preventActionVisibility = Visibility.Hidden;
-        public Visibility PreventActionVisibility { 
-            get {  return preventActionVisibility; }
-            set { preventActionVisibility = value; OnPropertyChanged(); } 
-        }
-        
-        private string reason= "";
-        public string Reason
-        { 
-            get {  return reason; }
-            set { reason = value; OnPropertyChanged(); } 
-        }
+        /// <summary>
+        /// Declare available app panels here
+        /// </summary>
+        private readonly List<TemplatedUserControl> AppPanels = new()
+        {
+            new CardInspector(),
+            new CardSearcher(),
+            new DeckContent(),
+            new DeckList(),
+            new DeckStats(),
+            new DeckTable(),
+            new SetExplorer(),
+        };
 
         public MainWindow()
         {
-            DataContext = this;
-            App.Events.LayoutActionEvent += HandleLayoutAction;
-            App.Events.PreventUIActionEvent += STATE_PreventUIActionEvent;
             Application.Current.MainWindow = this;
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
+            App.Events.LayoutActionEvent += HandleLayoutActionEvent;
+            DataContext = this;
             InitializeComponent();
         }
 
-        
-
-        private void STATE_PreventUIActionEvent(bool on, string reason)
+        private void HandleLayoutActionEvent(LayoutEventArgs args)
         {
-            if (on) { PreventActionVisibility = Visibility.Visible; Reason = reason; }
-            else { PreventActionVisibility = Visibility.Collapsed; }
-        }
-
-        void HandleLayoutAction(LayoutEventType type)
-        {
-            switch(type)
+            switch(args.EventType)
             {
-                case LayoutEventType.Save: SaveLayout(); break;
-                case LayoutEventType.Load: LoadLayout(); break;
-                case LayoutEventType.Open_CardInspector: CI.Show(); break;
-                case LayoutEventType.Open_CardSearcher: CS.Show(); break;
-                case LayoutEventType.Open_DeckContent: DC.Show(); break;
-                case LayoutEventType.Open_DeckList: DL.Show(); break;
-                case LayoutEventType.Open_DeckStats: DS.Show(); break;
-                case LayoutEventType.Open_DeckTable: DT.Show(); break;
-                case LayoutEventType.Open_SetExplorer: SE.Show(); break;
+                case LayoutEventType.OpenPanel: OpenPanel(args.information); break;
+                case LayoutEventType.Save: SaveLayout(args.information); break;
+                case LayoutEventType.Load: LoadLayout(args.information); break;
                 default: break;
             }
         }
 
-        private void SaveLayout()
+        private void OpenPanel(string controlName)
+        {
+            // Guard from an already openned panel
+            foreach (var item in RootLayout.RootPanel.Children)
+            {
+                if (((LayoutAnchorablePane)item).Name == controlName) return;
+            }
+            // Find corresponding control
+            TemplatedUserControl control = AppPanels.Find(tool => tool.ControlName == controlName);
+            if (control == null) return; 
+            // Open the control in Avalon
+            var panel = new LayoutAnchorablePane
+            {
+                Name = controlName,
+                Children = {
+                    new LayoutAnchorable() {
+                        Content = control ,
+                        Title = controlName
+                    }
+                },
+                DockWidth = new GridLength(200)
+            };
+            RootLayout.RootPanel.Children.Add(panel);
+        }
+
+        private void SaveLayout(string layoutName)
         {
             string xmlLayoutString = "";
             using (StringWriter fs = new StringWriter())
             {
-                XmlLayoutSerializer xmlLayout = new XmlLayoutSerializer(dockingManager);
+                XmlLayoutSerializer xmlLayout = new XmlLayoutSerializer(DockingManager);
                 xmlLayout.Serialize(fs);
                 xmlLayoutString = fs.ToString();
             }
-            File.WriteAllText(App.Config.Path_LayoutSave, xmlLayoutString);
+            File.WriteAllText(GetLayoutPath(layoutName), xmlLayoutString);
         }
 
-        private void LoadLayout()
+        private void LoadLayout(string layoutName)
         {
-            var serializer = new XmlLayoutSerializer(dockingManager);
-            serializer.LayoutSerializationCallback += (s, args) => {};
-            serializer.Deserialize(App.Config.Path_LayoutSave);
-            foreach (var element in dockingManager.Layout.Descendents().OfType<LayoutAnchorable>())
+            try
             {
-                switch (element.Title)
+                var serializer = new XmlLayoutSerializer(DockingManager);
+                serializer.LayoutSerializationCallback += (s, args) => { };
+                serializer.Deserialize(GetLayoutPath(layoutName));
+                foreach (var element in DockingManager.Layout.Descendents().OfType<LayoutAnchorable>())
                 {
-                    case "Deck List": element.Content = new DeckList(); break;
-                    case "Deck Content": element.Content = new DeckContent(); break;
-                    case "Deck Stats": element.Content = new DeckStats(); break;
-                    case "Deck Table": element.Content = new DeckTable(); break;
-                    case "Card Inspector": element.Content = new CardInspector(); break;
-                    case "Card Searcher": element.Content = new CardSearcher(); break;
-                    case "Set Explorer": element.Content = new SetExplorer(); break;
+                    var panel = AppPanels.Find(control => control.ControlName == element.Title);
+                    if (panel != null)
+                    {
+                        element.Content = panel;
+                    }
                 }
             }
+            catch (Exception e) { Logger.Log(e.Message,LogLvl.Debug); }
         }
 
-    }
+        private string GetLayoutPath(string layoutName)
+        {
+            return App.Config.Path_LayoutFolder + "\\" + layoutName + ".avalonXml";
+        }
 
-    public enum LayoutEventType
-    {
-        Save,
-        Load,
-        Open_CardSearcher,
-        Open_CardInspector,
-        Open_DeckList,
-        Open_DeckContent,
-        Open_DeckTable,
-        Open_DeckStats,
-        Open_SetExplorer,
-        ResetLayout,
     }
 
 }

@@ -79,7 +79,7 @@
 
                 </ItemsControl>
 
-                <Label FontWeight="Bold" FontSize="20" Visibility="{Binding HasNonLands}">Non lands</Label>
+                <Label FontWeight="Bold" FontSize="20">Non lands</Label>
 
                 <DockPanel Margin="0">
 
@@ -498,7 +498,7 @@
 
                 <DockPanel>
 
-                    <ItemsControl ItemsSource="{Binding CardRelations_Lands_B}"
+                    <ItemsControl ItemsSource="{Binding CardRelations_Lands}"
                               Background="Transparent" 
                                   HorizontalAlignment="Left"
                               Margin="0" Padding="0" MaxWidth="150">
@@ -553,7 +553,7 @@
 
                     </ItemsControl>
 
-                    <ItemsControl ItemsSource="{Binding CardRelations_Lands_W}"
+                    <!--<ItemsControl ItemsSource="{Binding CardRelations_Lands_W}"
                               Background="Transparent" MaxWidth="150"
                                   HorizontalAlignment="Left"
                               Margin="0" Padding="0">
@@ -826,7 +826,7 @@
 
                         </ItemsControl.ItemTemplate>
 
-                    </ItemsControl>
+                    </ItemsControl>-->
 
                     <Label></Label>
 

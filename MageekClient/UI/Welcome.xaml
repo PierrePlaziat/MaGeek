@@ -6,7 +6,7 @@
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      xmlns:controls="clr-namespace:MaGeek.UI.Controls"
                      mc:Ignorable="d"
-                     Title="Welcome"
+                     Title="WelcomePopup"
                      Width="350"
                      Height="350"
                      Background="Transparent"
@@ -36,14 +36,14 @@
                Source="/Resources/Images/splash.png"
                MouseDown="Window_MouseDown" />
         <!-- Welcome -->
-        <Label Grid.Column="1" 
-               Foreground="Black" FontWeight="ExtraLight" 
-               HorizontalAlignment="Center"  VerticalAlignment="Center"
+        <Label Grid.Column="1"
+               Foreground="Black"
+               FontWeight="ExtraLight"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
                Margin="0,120,0,0"
-               MouseDown="Window_MouseDown" >
-            WELCOME
-        </Label>
-
+               Content="WELCOME"
+               MouseDown="Window_MouseDown" />
 
         <!-- BODY -->
         <Grid Grid.Row="1"

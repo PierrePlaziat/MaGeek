@@ -22,7 +22,7 @@
 
         <local:CardIllustration Width="255" Height="360" Margin="0" 
                                 HorizontalAlignment="Left" VerticalAlignment="Top"
-                                SelectedVariant="{Binding SelectedCard.CardUuid, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
+                                SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
         <Grid Grid.Row="1" Background="#333">
             <Grid.RowDefinitions>
@@ -44,12 +44,16 @@
                         <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Column="0" HorizontalAlignment="Center" Content="{Binding SelectedCard.Got}"
+                    <Label Grid.Column="0"
+                           HorizontalAlignment="Center"
+                           Content="{Binding SelectedVariant.Got}"
                            />
-                    <Label Grid.Column="1" HorizontalAlignment="Center" Content="{Binding SelectedCard.MeanPrice}"/>
+                    <Label Grid.Column="1"
+                           HorizontalAlignment="Center"
+                           Content="{Binding SelectedVariant.MeanPrice}"/>
                     <DockPanel Grid.Column="2" HorizontalAlignment="Center" >
                         <Label Content="("/>
-                        <Label Content="{Binding SelectedCard.Variants.Count}"/>
+                        <Label Content="{Binding SelectedVariant.Variants.Count}"/>
                         <Label Content=")"/>
                     </DockPanel>
 
@@ -58,11 +62,12 @@
                 <Separator Height="1" Margin="0" Background="#111"></Separator>
 
             </StackPanel>
-
+            
+            <!--SelectedItem="{Binding SelectedVariant}"-->
             <ListView Grid.Row="1" BorderThickness="0" 
                       Name="VariantListBox"
-                          ItemsSource="{Binding SelectedCard.Variants}" 
-                          SelectedItem="{Binding SelectedVariant}"
+                      ItemsSource="{Binding Variants}" 
+                          
                           SelectionMode="Single"
                           HorizontalAlignment="Stretch"
                           Background="Black"
@@ -192,7 +197,7 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <ListView Visibility="{Binding ShowRelateds}" 
+            <ListView 
                       MaxHeight="100" MinHeight="0" Margin="0" Padding="0" 
                       Grid.Row="3"  
                       Width="255"

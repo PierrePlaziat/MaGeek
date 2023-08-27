@@ -9,6 +9,7 @@ using MageekSdk.Collection.Entities;
 using MageekSdk.MtgSqlive.Entities;
 using MtgSqliveSdk;
 using MageekSdk.Tools;
+using System.Linq;
 
 namespace MaGeek.UI
 {
@@ -25,23 +26,32 @@ namespace MaGeek.UI
             set { loadMsg = value; OnPropertyChanged(); }
         }
         
-        private MageekSdk.Collection.Entities.ArchetypeCard selectedCard;
-        public MageekSdk.Collection.Entities.ArchetypeCard SelectedCard
+        private ArchetypeCard selectedCard;
+        public ArchetypeCard SelectedCard
         {
             get { return selectedCard; }
             set
             {
-                selectedCard = value;
-                if (value != null) ReloadCard().ConfigureAwait(false);
-                //UpdateButton.Visibility = Visibility.Visible;
+                if (value != null)
+                {
+                    selectedCard = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
+        private Cards selectedvariant;
+        public Cards SelectedVariant
+        {
+            get { return selectedvariant; }
+            set { selectedvariant = value; OnPropertyChanged(); }
+        }
 
-        public List<CardLegalities> Legalities { get; private set; }
-        public List<CardRulings> Rulings { get; private set; }
-        //public List<CardRelation> RelatedCards { get; private set; }
-        public List<Tag> Tags { get; private set; }
+        public List<Cards> Variants { get; private set; } = new();
+        public List<CardLegalities> Legalities { get; private set; } = new();
+        public List<CardRulings> Rulings { get; private set; } = new();
+        public List<Cards> RelatedCards { get; private set; } = new();
+        public List<Tag> Tags { get; private set; } = new();
 
         #region Visibilities
 
@@ -57,11 +67,11 @@ namespace MaGeek.UI
             get { return SelectedCard == null ? Visibility.Visible : Visibility.Collapsed; }
         }
 
-        //public Visibility ShowRelateds
-        //{
-        //    get { return RelatedCards == null || RelatedCards.Count>0 ? Visibility.Visible : Visibility.Collapsed; }
-        //}
-        
+        public Visibility ShowRelateds
+        {
+            get { return RelatedCards == null || RelatedCards.Count > 0 ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
         public Visibility ShowRules
         {
             get { return Rulings == null || Rulings.Count>0 ? Visibility.Visible : Visibility.Collapsed; }
@@ -91,55 +101,66 @@ namespace MaGeek.UI
 
         void HandleCardSelected(string cardUuid)
         {
-            //if (!isPinned)
-            {
-                if (string.IsNullOrEmpty(null)) SelectedCard = null;
-                else
-                {
-                    IsLoading = Visibility.Visible;
-                    Task.Run(() =>
-                    {
-                        LoadMsg = "Finding card";
-                        SelectedCard = Mageek.FindCard_Ref(cardUuid).Result;
-                    }).ConfigureAwait(false);
-                }
-            }
+            if (Variants.Where(x => x.Uuid == cardUuid).Any()) 
+                ChangeVariant(cardUuid).ConfigureAwait(false);
+            else 
+                ReloadCard(cardUuid).ConfigureAwait(false);
         }
 
         #endregion
 
         #region Async Reload
 
-        private async Task ReloadCard()
+        private async Task ChangeVariant(string cardUuid)
+        {
+        }
+
+        private async Task ReloadCard(string cardUuid)
         {
             try
             {
                 IsLoading = Visibility.Visible; 
-                await Task.Run(async () => {
-                    await AutoSelectVariant();
-                    LoadMsg = "Loading legalities";
-                    Legalities = await Mageek.GetLegalities(SelectedCard);
-                    LoadMsg = "Loading rulings";
-                    Rulings =  await Mageek.GetRulings(SelectedCard);
-                    LoadMsg = "Loading prices";
-                    foreach (var v in await Mageek.FindCard_Variants(selectedCard.ArchetypeId)) 
-                        await Mageek.EstimateCardPrice(v);
-                    LoadMsg = "Loading relateds";
-                    //RelatedCards = await MageekApi.GetRelatedCards(SelectedCard);
-                    LoadMsg = "Loading tags";
-                    Tags = await GetTags();
-                    LoadMsg = "Updating";
-                    //OnPropertyChanged(nameof(SelectedCard.Variants));
-                    OnPropertyChanged(nameof(Legalities));
-                    OnPropertyChanged(nameof(Tags));
-                    OnPropertyChanged(nameof(Rulings));
-                    //OnPropertyChanged(nameof(RelatedCards));
-                    //OnPropertyChanged(nameof(ShowRelateds));
-                    OnPropertyChanged(nameof(ShowRules));
-                    OnPropertyChanged(nameof(SelectedCard));
-                    OnPropertyChanged(nameof(IsActive));
-                    await AutoSelectVariant();
-                });
+                await Task.Run(
+                    async () => {
+
+                        LoadMsg = "Finding card";
+                        SelectedCard = await Mageek.FindCard_Ref(cardUuid);
+                        Variants = null;
+                        Variants = new List<Cards>();
+                        foreach (var v in await Mageek.FindCard_Variants(SelectedCard.ArchetypeId))
+                        {
+                            Variants.Add(await Mageek.FindCard_Data(v));
+                            if (v==cardUuid) selectedvariant = Variants.Last();
+                        }
+                        OnPropertyChanged(nameof(Variants));
+
+                        LoadMsg = "Loading legalities";
+                        Legalities = new();
+                        Legalities = await Mageek.GetLegalities(SelectedCard);
+                        OnPropertyChanged(nameof(Legalities));
+                        LoadMsg = "Loading rulings";
+                        Rulings = new();
+                        Rulings =  await Mageek.GetRulings(SelectedCard);
+                        OnPropertyChanged(nameof(Rulings));
+                        OnPropertyChanged(nameof(ShowRules));
+                        LoadMsg = "Loading relateds";
+                        RelatedCards = new();
+                        RelatedCards = await Mageek.FindCard_Related(SelectedVariant);
+                        OnPropertyChanged(nameof(RelatedCards));
+                        OnPropertyChanged(nameof(ShowRelateds));
+                        LoadMsg = "Loading tags";
+                        Tags = new();
+                        Tags = await GetTags();
+                        OnPropertyChanged(nameof(Tags));
+
+                        LoadMsg = "Loading prices";
+                        foreach (var v in await Mageek.FindCard_Variants(selectedCard.ArchetypeId)) 
+                            await Mageek.EstimateCardPrice(v);
+
+                        LoadMsg = "Done";
+                        OnPropertyChanged(nameof(IsActive));
+                    }
+                );
                 IsLoading = Visibility.Collapsed;
             }
             catch (Exception e)

@@ -34,6 +34,7 @@ namespace MageekSdk.MtgSqlive
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CardForeignData>().HasKey(m => new { m.Uuid, m.Language });
         }
 
     }

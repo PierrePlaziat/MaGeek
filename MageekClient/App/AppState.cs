@@ -29,7 +29,7 @@ namespace MaGeek
 
         #region Methods
 
-        private void DoSelectDeck(int deckId)
+        private void DoSelectDeck(string deckId)
         {
             selectedDeck = Mageek.GetDeck(deckId).Result;
         }

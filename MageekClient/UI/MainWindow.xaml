@@ -20,76 +20,15 @@
 
         <menus:TopMenu Grid.Row="0" />
 
-        <avalonDock:DockingManager Grid.Row="1" x:Name="dockingManager" >
+        <avalonDock:DockingManager Grid.Row="1" x:Name="DockingManager" >
 
             <avalonDock:DockingManager.Theme>
                 <avalonDock:ExpressionDarkTheme/>
             </avalonDock:DockingManager.Theme>
 
-            <avalonDock:LayoutRoot>
+            <avalonDock:LayoutRoot x:Name="RootLayout">
 
-                <avalonDock:LayoutPanel>
-
-                    <LayoutAnchorablePane DockMinWidth="300" DockWidth="10" FloatingWidth="300">
-
-                        <avalonDock:LayoutAnchorable x:Name="DL" Title="Deck List">
-                            <local:DeckList/>
-                        </avalonDock:LayoutAnchorable>
-
-                    </LayoutAnchorablePane>
-
-                    <LayoutAnchorablePane DockMinWidth="300" DockWidth="10" FloatingWidth="300">
-
-                        <avalonDock:LayoutAnchorable x:Name="DC" Title="Deck Content" >
-                            <local:DeckContent/>
-                        </avalonDock:LayoutAnchorable>
-
-                    </LayoutAnchorablePane>
-
-                    <avalonDock:LayoutPanel Orientation="Vertical" DockWidth="30*">
-
-                        <LayoutAnchorablePane>
-
-                            <avalonDock:LayoutAnchorable x:Name="CS"
-                                                         Title="Card Searcher">
-                                <local:CardSearcher />
-                            </avalonDock:LayoutAnchorable>
-
-                            <avalonDock:LayoutAnchorable x:Name="SE"
-                                                         Title="Set Explorer">
-                                <local:SetExplorer />
-                            </avalonDock:LayoutAnchorable>
-
-                        </LayoutAnchorablePane>
-
-                        <avalonDock:LayoutPanel>
-
-                            <LayoutAnchorablePane >
-
-                                <avalonDock:LayoutAnchorable x:Name="DS" Title="Deck Stats">
-                                    <local:DeckStats/>
-                                </avalonDock:LayoutAnchorable>
-
-                                <avalonDock:LayoutAnchorable x:Name="DT" Title="Deck Table">
-                                    <local:DeckTable/>
-                                </avalonDock:LayoutAnchorable>
-
-                            </LayoutAnchorablePane>
-
-                        </avalonDock:LayoutPanel>
-
-                    </avalonDock:LayoutPanel>
-
-                    <LayoutAnchorablePane DockMinWidth="255" DockWidth="*" FloatingWidth="255" ResizableAbsoluteDockWidth="255">
-
-                        <avalonDock:LayoutAnchorable x:Name="CI" Title="Card Inspector" 
-                                                     AutoHideMinWidth="255" AutoHideWidth="255" FloatingWidth="255">
-                            <local:CardInspector/>
-                        </avalonDock:LayoutAnchorable>
-
-                    </LayoutAnchorablePane>
-
-                </avalonDock:LayoutPanel>
+                <avalonDock:LayoutPanel />
 
             </avalonDock:LayoutRoot>
 
@@ -97,14 +36,6 @@
 
         <menus:StateBar Grid.Row="3"></menus:StateBar>
 
-        <Grid Grid.RowSpan="2" Background="#000" Opacity=".8" Visibility="{Binding PreventActionVisibility}">
-            <StackPanel VerticalAlignment="Center">
-                <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="20">Please wait</Label>
-                <controls:BusyIndicator></controls:BusyIndicator>
-                <Label HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="20" Content="{Binding Reason}"></Label>
-            </StackPanel>
-        </Grid>
-        
     </Grid>
     
 </local:TemplatedWindow>

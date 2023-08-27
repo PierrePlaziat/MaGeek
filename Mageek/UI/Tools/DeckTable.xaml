@@ -498,7 +498,7 @@
 
                 <DockPanel>
 
-                    <ItemsControl ItemsSource="{Binding CardRelations_Lands_B}"
+                    <ItemsControl ItemsSource="{Binding CardRelations_Lands}"
                               Background="Transparent" 
                                   HorizontalAlignment="Left"
                               Margin="0" Padding="0" MaxWidth="150">

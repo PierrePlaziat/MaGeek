@@ -1,8 +1,6 @@
-﻿using MaGeek.Framework.Utils;
-using MaGeek.UI.Windows.Importers;
+﻿using MaGeek.UI.Windows.Importers;
 using MaGeek.UI.Windows.ImportExport;
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -24,37 +22,79 @@ namespace MaGeek.UI.Menus
 
         private void SetExplorer_Click(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.Open_SetExplorer);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.OpenPanel,
+                    information = "SetExplorer"
+                }
+            );
         }
         
         private void CardSearcher_Click(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.Open_CardSearcher);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.OpenPanel,
+                    information = "CardSearcher"
+                }
+            );
         }
 
         private void DeckList_Click(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.Open_DeckList);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.OpenPanel,
+                    information = "DeckList"
+                }
+            );
         }
 
         private void DeckContent_Click(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.Open_DeckContent);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.OpenPanel,
+                    information = "DeckContent"
+                }
+            );
         }
 
         private void DeckTable_Click(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.Open_DeckTable);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.OpenPanel,
+                    information = "DeckTable"
+                }
+            );
         }
 
         private void DeckStats_Click(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.Open_DeckStats);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.OpenPanel,
+                    information = "DeckStats"
+                }
+            );
         }
 
         private void CardInspector_Click(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.Open_CardInspector);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.OpenPanel,
+                    information = "CardInspector"
+                }
+            );
         }
 
         #endregion
@@ -152,16 +192,34 @@ namespace MaGeek.UI.Menus
 
         private void LayoutBackup_Click(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.Save);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.Save,
+                    information = "User"
+                }
+            );
         }
         private void LayoutRestore_Click(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.Load);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.Load,
+                    information = "User"
+                }
+            );
         }
 
         private void ResetDefaultLayout(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseLayoutAction(LayoutEventType.ResetLayout);
+            App.Events.RaiseLayoutAction(
+                new AppEvents.LayoutEventArgs()
+                {
+                    EventType = AppEvents.LayoutEventType.Load,
+                    information = "Default"
+                }
+            );
         }
 
         #endregion

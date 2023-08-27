@@ -11,7 +11,7 @@ namespace MageekSdk.Collection.Entities
     {
 
         [Key, Column(Order = 0)]
-        public int DeckId { get; set; }
+        public string DeckId { get; set; }
         [Key, Column(Order = 1)]
         public string CardUuid { get; set; }
         public int Quantity { get; set; }

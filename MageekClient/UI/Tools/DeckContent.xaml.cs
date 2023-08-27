@@ -104,7 +104,7 @@ namespace MaGeek.UI
             App.Events.UpdateDeckEvent += HandleDeckModif;
         }
 
-        void HandleDeckSelected(int deck)
+        void HandleDeckSelected(string deck)
         {
             CurrentDeck = Mageek.GetDeck(deck).Result;
         }

@@ -1,4 +1,7 @@
-﻿namespace MageekSdk
+﻿using Microsoft.Data.Sqlite;
+using System.IO;
+
+namespace MageekSdk
 {
     public class Config
     {
@@ -23,14 +26,15 @@
         #endregion
 
         public static string[] TablesCreationString { get; } = new string[] {
-            "CREATE TABLE \"CardModels\" (\r\n\t\"CardId\"\tTEXT,\r\n\t\"Type\"\tTEXT,\r\n\t\"ManaCost\"\tREAL,\r\n\t\"Cmc\"\tNUMERIC,\r\n\t\"ColorIdentity\"\tTEXT,\r\n\t\"DevotionB\"\tINTEGER,\r\n\t\"DevotionW\"\tINTEGER,\r\n\t\"DevotionU\"\tINTEGER,\r\n\t\"DevotionR\"\tINTEGER,\r\n\t\"DevotionG\"\tINTEGER,\r\n\t\"Text\"\tTEXT,\r\n\t\"Keywords\"\tTEXT,\r\n\t\"Power\"\tTEXT,\r\n\t\"Toughness\"\tTEXT,\r\n\t\"FavouriteVariant\"\tTEXT,\r\n\t\"Got\"\tINTEGER\r\n);",
-            "CREATE TABLE \"CardTags\" (\r\n\t\"Id\"\tINTEGER,\r\n\t\"Tag\"\tTEXT,\r\n\t\"CardId\"\tINTEGER,\r\n\tPRIMARY KEY(\"Id\")\r\n);",
-            "CREATE TABLE \"CardTraductions\" (\r\n\t\"TraductionId\"\tINTEGER,\r\n\t\"CardId\"\tTEXT,\r\n\t\"Language\"\tTEXT,\r\n\t\"TraductedName\"\tTEXT,\r\n\t\"Normalized\"\tTEXT,\r\n\tPRIMARY KEY(\"TraductionId\")\r\n);",
-            "CREATE TABLE \"DeckCards\" (\r\n\t\"DeckId\"\tINTEGER,\r\n\t\"CardId\"\tTEXT,\r\n\t\"Quantity\"\tINTEGER,\r\n\t\"RelationType\"\tINTEGER,\r\n\tPRIMARY KEY(\"CardId\",\"DeckId\")\r\n);",
-            "CREATE TABLE \"Decks\" (\r\n\t\"DeckId\"\tINTEGER,\r\n\t\"Title\"\tTEXT,\r\n\t\"Description\"\tTEXT,\r\n\t\"DeckColors\"\tTEXT,\r\n\t\"CardCount\"\tINTEGER,\r\n\tPRIMARY KEY(\"DeckId\")\r\n);",
-            "CREATE TABLE \"Params\" (\r\n\t\"ParamName\"\tTEXT,\r\n\t\"ParamValue\"\tTEXT\r\n);",
-            "CREATE TABLE \"User_FavCards\" (\r\n\t\"CardModelId\"\tTEXT,\r\n\t\"CardVariantId\"\tTEXT,\r\n\tPRIMARY KEY(\"CardModelId\")\r\n);",
-            "CREATE TABLE \"User_GotCards\" (\r\n\t\"CardVariantId\"\tTEXT,\r\n\t\"CardModelId\"\tTEXT,\r\n\t\"Got\"\tINTEGER,\r\n\tPRIMARY KEY(\"CardVariantId\")\r\n);",
+            "CREATE TABLE \"CardArchetypes\" (\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"ArchetypeId\"\tTEXT\r\n);",
+            "CREATE TABLE \"CardTraductions\" (\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"Language\"\tTEXT,\r\n\t\"Traduction\"\tTEXT,\r\n\t\"NormalizedTraduction\"\tTEXT\r\n);",
+            "CREATE TABLE \"CollectedCard\" (\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"Collected\"\tINTEGER\r\n);",
+            "CREATE TABLE \"Decks\" (\r\n\t\"DeckId\"\tTEXT,\r\n\t\"Title\"\tTEXT,\r\n\t\"Description\"\tTEXT,\r\n\t\"DeckColors\"\tTEXT,\r\n\t\"CardCount\"\tINTEGER\r\n);",
+            "CREATE TABLE \"DeckCard\" (\r\n\t\"DeckId\"\tTEXT,\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"Quantity\"\tINTEGER,\r\n\t\"RelationType\"\tINTEGER\r\n);",
+            "CREATE TABLE \"FavVariant\" (\r\n\t\"ArchetypeId\"\tTEXT,\r\n\t\"FavUuid\"\tTEXT\r\n);",
+            "CREATE TABLE \"Param\" (\r\n\t\"ParamName\"\tTEXT,\r\n\t\"ParamValue\"\tTEXT\r\n);",
+            "CREATE TABLE \"PriceLine\" (\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"LastUpdate\"\tTEXT,\r\n\t\"PriceEur\"\tTEXT,\r\n\t\"PriceUsd\"\tTEXT,\r\n\t\"EdhrecScore\"\tINTEGER\r\n);",
+            "CREATE TABLE \"Tag\" (\r\n\t\"TagId\"\tTEXT,\r\n\t\"TagContent\"\tTEXT,\r\n\t\"ArchetypeId\"\tTEXT\r\n);"
         };
 
         internal static void InitFolders()
@@ -39,6 +43,20 @@
             if (!File.Exists(Path_SDK)) Directory.CreateDirectory(Path_SDK);
             if (!File.Exists(Path_DbFolder)) Directory.CreateDirectory(Path_DbFolder);
             if (!File.Exists(Path_IllustrationsFolder)) Directory.CreateDirectory(Path_IllustrationsFolder);
+        }
+
+        internal static void InitDb()
+        {
+            if (!File.Exists(Path_Db))
+                CreateDb();
+        }
+
+        private static void CreateDb()
+        {
+            SqliteConnection dbCo = new SqliteConnection("Data Source = " + Path_Db);
+            dbCo.Open();
+            foreach (string instruction in TablesCreationString) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
+            dbCo.Close();
         }
 
     }
