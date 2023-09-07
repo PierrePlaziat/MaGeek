@@ -23,7 +23,7 @@ namespace MageekSdk.Collection
         public DbSet<DeckCard> DeckCards { get; set; }
         public DbSet<Param> Params { get; set; }
         public DbSet<FavVariant> FavCards { get; set; }
-        public DbSet<CollectedCard> CollectedCards { get; set; }
+        public DbSet<CollectedCard> CollectedCard { get; set; }
         public DbSet<PriceLine> PriceLine { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

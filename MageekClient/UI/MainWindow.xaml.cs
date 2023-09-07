@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Xaml;
 using static MaGeek.AppEvents;
 
 namespace MaGeek
@@ -39,10 +38,11 @@ namespace MaGeek
         public MainWindow()
         {
             Application.Current.MainWindow = this;
-            Application.Current.MainWindow.WindowState = WindowState.Maximized;
+            //Application.Current.MainWindow.WindowState = WindowState.Maximized;
             App.Events.LayoutActionEvent += HandleLayoutActionEvent;
             DataContext = this;
             InitializeComponent();
+            LoadLayout("User");
         }
 
         private void HandleLayoutActionEvent(LayoutEventArgs args)
@@ -61,24 +61,32 @@ namespace MaGeek
             // Guard from an already openned panel
             foreach (var item in RootLayout.RootPanel.Children)
             {
-                if (((LayoutAnchorablePane)item).Name == controlName) return;
+                if (item is LayoutAnchorablePane &&((LayoutAnchorablePane)item).Name == controlName) return;
             }
             // Find corresponding control
             TemplatedUserControl control = AppPanels.Find(tool => tool.ControlName == controlName);
-            if (control == null) return; 
+            if (control == null) return;
             // Open the control in Avalon
+
+            var anch = new LayoutAnchorable()
+            {
+                IsSelected = true,
+                Content = control,
+                Title = controlName,
+                FloatingHeight = 500,
+                FloatingWidth = 300,
+            };
             var panel = new LayoutAnchorablePane
             {
                 Name = controlName,
                 Children = {
-                    new LayoutAnchorable() {
-                        Content = control ,
-                        Title = controlName
-                    }
+                    anch
                 },
-                DockWidth = new GridLength(200)
+                DockMinWidth = 200,
+                DockMinHeight = 100,
             };
             RootLayout.RootPanel.Children.Add(panel);
+            
         }
 
         private void SaveLayout(string layoutName)

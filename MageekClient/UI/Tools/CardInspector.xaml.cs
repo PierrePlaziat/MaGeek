@@ -10,6 +10,8 @@ using MageekSdk.MtgSqlive.Entities;
 using MtgSqliveSdk;
 using MageekSdk.Tools;
 using System.Linq;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace MaGeek.UI
 {
@@ -40,14 +42,14 @@ namespace MaGeek.UI
             }
         }
 
-        private Cards selectedvariant;
-        public Cards SelectedVariant
+        private CardVariant selectedvariant;
+        public CardVariant SelectedVariant
         {
             get { return selectedvariant; }
             set { selectedvariant = value; OnPropertyChanged(); }
         }
 
-        public List<Cards> Variants { get; private set; } = new();
+        public List<CardVariant> Variants { get; private set; } = new();
         public List<CardLegalities> Legalities { get; private set; } = new();
         public List<CardRulings> Rulings { get; private set; } = new();
         public List<Cards> RelatedCards { get; private set; } = new();
@@ -101,7 +103,7 @@ namespace MaGeek.UI
 
         void HandleCardSelected(string cardUuid)
         {
-            if (Variants.Where(x => x.Uuid == cardUuid).Any()) 
+            if (Variants.Where(x => x.Card.Uuid == cardUuid).Any()) 
                 ChangeVariant(cardUuid).ConfigureAwait(false);
             else 
                 ReloadCard(cardUuid).ConfigureAwait(false);
@@ -126,11 +128,20 @@ namespace MaGeek.UI
                         LoadMsg = "Finding card";
                         SelectedCard = await Mageek.FindCard_Ref(cardUuid);
                         Variants = null;
-                        Variants = new List<Cards>();
-                        foreach (var v in await Mageek.FindCard_Variants(SelectedCard.ArchetypeId))
+                        Variants = new List<CardVariant>();
+                        foreach (var variant in await Mageek.FindCard_Variants(SelectedCard.ArchetypeId))
                         {
-                            Variants.Add(await Mageek.FindCard_Data(v));
-                            if (v==cardUuid) selectedvariant = Variants.Last();
+                            var x = await Mageek.FindCard_Data(variant);
+                            if (x != null)
+                            {
+                                CardVariant v = new();
+                                v.Card = x;
+                                v.Collected = await Mageek.CollectedCard_HowMany(x.Uuid);
+                                v.PriceValue = await Mageek.EstimateCardPrice(x.Uuid);
+                                v.Set = await Mageek.RetrieveSet(x.SetCode);
+                                Variants.Add(v);
+                                if (x.Uuid==cardUuid) selectedvariant = Variants.Last();
+                            }
                         }
                         OnPropertyChanged(nameof(Variants));
 
@@ -145,7 +156,7 @@ namespace MaGeek.UI
                         OnPropertyChanged(nameof(ShowRules));
                         LoadMsg = "Loading relateds";
                         RelatedCards = new();
-                        RelatedCards = await Mageek.FindCard_Related(SelectedVariant);
+                        RelatedCards = await Mageek.FindCard_Related(SelectedVariant.Card);
                         OnPropertyChanged(nameof(RelatedCards));
                         OnPropertyChanged(nameof(ShowRelateds));
                         LoadMsg = "Loading tags";
@@ -153,10 +164,10 @@ namespace MaGeek.UI
                         Tags = await GetTags();
                         OnPropertyChanged(nameof(Tags));
 
-                        LoadMsg = "Loading prices";
-                        foreach (var v in await Mageek.FindCard_Variants(selectedCard.ArchetypeId)) 
-                            await Mageek.EstimateCardPrice(v);
-
+                        LoadMsg = "Loading Details";
+                        foreach (var v in Variants)
+                        {
+                        }
                         LoadMsg = "Done";
                         OnPropertyChanged(nameof(IsActive));
                     }
@@ -309,7 +320,7 @@ namespace MaGeek.UI
             {
                 Text = text,
                 Margin = new Thickness(2, 3, 2, 3),
-                Cursor = Cursors.Hand
+                //Cursor = Cursors.Hand
             };
             block.MouseLeftButtonUp += (sender, e) =>
             {
@@ -335,6 +346,42 @@ namespace MaGeek.UI
 
         #endregion
 
+    }
+
+    public class CardVariant/* : INotifyPropertyChanged */
+    {
+
+        //public event PropertyChangedEventHandler PropertyChanged;
+
+        //public void OnPropertyChanged([CallerMemberName] string name = null)
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        //}
+
+
+        Cards card;
+        public Cards Card { get; set; }
+
+        int collected;
+        public int Collected { get; set; }
+
+        Sets set;
+        public Sets Set { get; set; }
+
+        PriceLine priceValue;
+        public PriceLine PriceValue{ get; set; }
+
+        public Brush GetPriceColor { get { return Brushes.Gray; } }
+        public Brush GetRarityColor { get { return Brushes.Black; } }
+        public string  GetPrice
+        { 
+            get 
+            {
+                if (PriceValue == null) return "";
+                if (PriceValue.PriceEur == null) return "";
+                return PriceValue.PriceEur.ToString();
+            } 
+        } //TODO multi monaie
     }
 
 }

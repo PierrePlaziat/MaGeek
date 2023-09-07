@@ -157,7 +157,7 @@ namespace MtgSqliveSdk
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
                 foreach (var v in retour)
                 {
-                    if (!DB.CollectedCards.Where(x => x.CardUuid == v.Uuid).Any())
+                    if (!DB.CollectedCard.Where(x => x.CardUuid == v.Uuid).Any())
                     {
                         retour.Remove(v);
                     }
@@ -236,11 +236,11 @@ namespace MtgSqliveSdk
         {
             if (string.IsNullOrEmpty(cardUuid)) return;
             using CollectionDbContext DB = await CollectionSdk.GetContext();
-            var collectedCard = await DB.CollectedCards.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+            var collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
             if (collectedCard == null)
             {
                 // Create
-                DB.CollectedCards.Add(new CollectedCard()
+                DB.CollectedCard.Add(new CollectedCard()
                 {
                     CardUuid = cardUuid,
                     Collected = 1
@@ -264,7 +264,7 @@ namespace MtgSqliveSdk
             if (string.IsNullOrEmpty(cardUuid)) return;
             using CollectionDbContext DB = await CollectionSdk.GetContext();
 
-            var collectedCard = await DB.CollectedCards.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+            var collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
             if (collectedCard != null && collectedCard.Collected > 0) 
             {
                 // Update
@@ -282,17 +282,25 @@ namespace MtgSqliveSdk
         /// <returns>The count</returns>
         public static async Task<int> CollectedCard_HowMany(string cardUuid, bool onlyThisVariant = true)
         {
-            if (string.IsNullOrEmpty(cardUuid)) return 0;
-            using CollectionDbContext DB = await CollectionSdk.GetContext();
-            if (onlyThisVariant)
+            try
             {
-                CollectedCard? collectedCard = await DB.CollectedCards.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-                return collectedCard != null ? collectedCard.Collected : 0;
+                if (string.IsNullOrEmpty(cardUuid)) return 0;
+                using CollectionDbContext DB = await CollectionSdk.GetContext();
+                if (onlyThisVariant)
+                {
+                    CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+                    return collectedCard != null ? collectedCard.Collected : 0;
+                }
+                else
+                {
+                    string archetypeId = DB.CardArchetypes.Where(x => x.CardUuid == cardUuid).First().ArchetypeId;
+                    return await CollectedCard_HowManyArchetypal(archetypeId);
+                }
             }
-            else
+            catch(Exception e)
             {
-                string archetypeId = DB.CardArchetypes.Where(x => x.CardUuid == cardUuid).First().ArchetypeId;
-                return await CollectedCard_HowManyArchetypal(archetypeId);
+                Logger.Log(e.Message);
+                return -1;
             }
         }
 
@@ -355,7 +363,7 @@ namespace MtgSqliveSdk
                 if (t != null) foreignName = t.Traduction;
             }
             catch (Exception e) { Logger.Log(e.Message, LogLvl.Error); }
-            if (string.IsNullOrEmpty(foreignName)) foreignName = archetypeId;
+            if (string.IsNullOrEmpty(foreignName)) foreignName = string.Empty;
             return foreignName;
         }
 
@@ -1321,6 +1329,12 @@ namespace MtgSqliveSdk
 
         #region Sets
 
+        public async static Task<Sets> RetrieveSet(string setCode)
+        {
+            using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
+            return await DB.sets.FirstOrDefaultAsync(x=>x.Code==setCode);
+        }
+
         /// <summary>
         /// Get all sets
         /// </summary>
@@ -1467,7 +1481,7 @@ namespace MtgSqliveSdk
             try
             {
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
-                total = DB.CollectedCards.Sum(x => x.Collected);
+                total = DB.CollectedCard.Sum(x => x.Collected);
             }
             catch (Exception e)
             {
@@ -1485,7 +1499,7 @@ namespace MtgSqliveSdk
             try
             {
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
-                return DB.CollectedCards.Count();
+                return DB.CollectedCard.Count();
             }
             catch (Exception e)
             {
@@ -1503,7 +1517,7 @@ namespace MtgSqliveSdk
             try
             {
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
-                return DB.CollectedCards.Count(); //TODO this is wrong
+                return DB.CollectedCard.Count(); //TODO this is wrong
             }
             catch (Exception e)
             {
@@ -1545,7 +1559,7 @@ namespace MtgSqliveSdk
             try
             {
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
-                var allGot = await DB.CollectedCards.Where(x => x.Collected > 0).ToListAsync();
+                var allGot = await DB.CollectedCard.Where(x => x.Collected > 0).ToListAsync();
                 foreach (CollectedCard collectedCard in allGot)
                 {
                     var price = await EstimateCardPrice(collectedCard.CardUuid);

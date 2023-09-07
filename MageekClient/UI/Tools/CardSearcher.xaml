@@ -120,21 +120,26 @@
                       AutoGenerateColumns="False">
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="| Got   " Binding="{Binding Got}" />
+                    <DataGridTextColumn Header="| Got   " Binding="{Binding Collected}" />
                     <DataGridTextColumn Header="| Foreign Name   " Binding="{Binding CardForeignName}" />
-                    <DataGridTextColumn Header="| Name   " Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="| Name   " Binding="{Binding Card.Name}" />
                     <DataGridTemplateColumn Header="| ManaCost   ">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <local:ManaCost Cost="{Binding ManaCost}" HorizontalAlignment="Right"/>
+                                <local:ManaCost Cost="{Binding Card.ManaCost}" HorizontalAlignment="Right"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="| Type   " Binding="{Binding Type}" />
-                    <DataGridTextColumn Header="| Power   " Binding="{Binding Power}" />
-                    <DataGridTextColumn Header="| Toughness   " Binding="{Binding Toughness}" />
-                    <DataGridTextColumn Header="| Cmc   " Binding="{Binding ManaValue}" />
-                    <DataGridTextColumn Header="| Keywords   " Binding="{Binding Keywords}" />
+                    <DataGridTextColumn Header="| Type   "
+                                        Binding="{Binding Card.Type}" />
+                    <DataGridTextColumn Header="| Power   "
+                                        Binding="{Binding Card.Power}" />
+                    <DataGridTextColumn Header="| Toughness   "
+                                        Binding="{Binding Card.Toughness}" />
+                    <DataGridTextColumn Header="| Cmc   "
+                                        Binding="{Binding Card.ManaValue}" />
+                    <DataGridTextColumn Header="| Keywords   "
+                                        Binding="{Binding Card.Keywords}" />
                 </DataGrid.Columns>
 
                 <DataGrid.Resources>

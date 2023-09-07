@@ -5,7 +5,7 @@ using System.Windows.Controls;
 
 namespace MaGeek.UI
 {
-    public class TemplatedUserControl : UserControl, INotifyPropertyChanged
+    public class TemplatedUserControl : UserControl, INotifyPropertyChanged 
     {
 
         public string ControlName 

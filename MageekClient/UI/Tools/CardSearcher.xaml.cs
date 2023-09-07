@@ -6,16 +6,48 @@ using System;
 using MageekSdk.MtgSqlive.Entities;
 using MageekSdk.Collection.Entities;
 using MtgSqliveSdk;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace MaGeek.UI
 {
+
+
+    public class CardSearchResult : INotifyPropertyChanged
+    {
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        Cards card ;
+        public Cards Card
+        {
+            get { return card ; }
+            set { card = value ; OnPropertyChanged(); }
+        }
+
+        public int Collected
+        {
+            get { return Mageek.CollectedCard_HowMany(Card.Uuid, false).Result; }
+        }
+        
+        public string CardForeignName
+        {
+            get { return Mageek.GetTraduction(Card.Uuid, App.Config.Settings[Setting.ForeignLanguage]).Result; }
+        }
+
+    }
 
     public partial class CardSearcher : TemplatedUserControl
     {
 
         #region Attributes
 
-        public List<Cards> CardList { get; private set; }
+        public List<CardSearchResult> CardList { get; private set; }
 
         private List<Tag> availableTags; 
         public List<Tag> AvailableTags
@@ -123,16 +155,17 @@ namespace MaGeek.UI
             IsLoading = Visibility.Visible;
             await Task.Run(async () =>
             {
+                List<Cards> v;
                 if (ShowAdvanced == Visibility.Collapsed)
                 {
-                    CardList = await Mageek.NormalSearch(
+                    v = await Mageek.NormalSearch(
                         App.Config.Settings[Setting.ForeignLanguage],
                         FilterName
                     );
                 }
                 else
                 {
-                    CardList = await Mageek.AdvancedSearch(
+                   v = await Mageek.AdvancedSearch(
                         App.Config.Settings[Setting.ForeignLanguage],
                         FilterName,
                         FilterType,
@@ -142,7 +175,12 @@ namespace MaGeek.UI
                         FilterTag.TagContent, OnlyGot
                     );
                 }
-                OnPropertyChanged(nameof(CardList));
+                CardList = new List<CardSearchResult>();
+                foreach(var vv in v )
+                {
+                    CardList.Add(new CardSearchResult() { Card = vv  });
+                }
+            OnPropertyChanged(nameof(CardList));
                 await Task.Delay(50);
             });
             IsLoading = Visibility.Collapsed;
@@ -197,7 +235,7 @@ namespace MaGeek.UI
 
         private void CardGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (CardGrid.SelectedItem is Cards card) App.Events.RaiseCardSelected(card.Uuid);
+            if (CardGrid.SelectedItem is CardSearchResult card) App.Events.RaiseCardSelected(card.Card.Uuid);
         }
 
         private void AddToDeck(object sender, RoutedEventArgs e)
@@ -221,6 +259,12 @@ namespace MaGeek.UI
 
         #endregion
 
+    }
+
+    public class SearchCards
+    {
+        public CollectedCard collected;
+        public Cards cards;
     }
 
     public enum MtgColorFilter

@@ -4,8 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MageekSdk.MtgSqlive.Entities
 {
+
     public class Cards
     {
+
         public string? Artist { get; set; }
         public string? AsciiName { get; set; }
         public string? AttractionLights { get; set; }
