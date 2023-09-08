@@ -43,18 +43,22 @@ namespace MaGeek.UI
                 ShowBack = false;
                 OnPropertyChanged(nameof(HasBackFace));
                 SetValue(CardProperty, value);
-                if (SelectedVariant != null)
-                {
-                    LoadIllustration();
-                }
+                if (SelectedVariant != null) LoadIllustration();
+                else UnloadIllustration();
             }
         }
 
         private async void LoadIllustration()
         {
             cardImage = null;
-            var url = await MtgSqliveSdk.Mageek.RetrieveImage(selectedVariant.Uuid);
+            var url = await Mageek.RetrieveImage(selectedVariant.Uuid,CardImageType.png);
+            if (url == null) return;
             CardImage = new BitmapImage(url);
+        }
+        private async void UnloadIllustration()
+        {
+            cardImage = null;
+            CardImage = null;
         }
 
         private void CardImage_PropertyChanged(object sender, PropertyChangedEventArgs e)

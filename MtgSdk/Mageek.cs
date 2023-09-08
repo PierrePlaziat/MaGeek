@@ -15,6 +15,7 @@ using ScryfallApi.Client.Models;
 using MageekSdk;
 using MaGeek.Framework.Extensions;
 using MageekSdk.Tools;
+using System;
 
 namespace MtgSqliveSdk
 {
@@ -463,17 +464,17 @@ namespace MtgSqliveSdk
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>a local url to a jpg</returns>
-        public async static Task<Uri> RetrieveImage(string cardUuid)
+        public async static Task<Uri> RetrieveImage(string cardUuid, CardImageType type)
         {
             try
             {
-                string localFileName = Path.Combine(Config.Path_IllustrationsFolder, cardUuid + ".png");
+                string localFileName = Path.Combine(Config.Path_IllustrationsFolder, cardUuid + "_" + type.ToString() + ".png");
                 if (!File.Exists(localFileName))
                 {
-                    using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-                    var v = await DB.cardIdentifiers.Where(x => x.Uuid == cardUuid).Select(x => x.ScryfallIllustrationId).FirstOrDefaultAsync();
+                    var scryData = await GetScryfallCard(cardUuid);
                     var httpClient = new HttpClient();
-                    using var stream = await httpClient.GetStreamAsync(v);
+                    var uri = scryData.ImageUris[type.ToString()];
+                    using var stream = await httpClient.GetStreamAsync(uri);
                     using var fileStream = new FileStream(localFileName, FileMode.Create);
                     await stream.CopyToAsync(fileStream);
                 }
@@ -1581,6 +1582,11 @@ namespace MtgSqliveSdk
 
         #endregion
 
+    }
+
+    public enum CardImageType
+    {
+        small,large,medium,png,art_crop,border_crop
     }
 
     #region Data formats

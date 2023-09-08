@@ -7,8 +7,7 @@
                             xmlns:controls="clr-namespace:MaGeek.UI.Controls"
                             mc:Ignorable="d">
 
-    <Grid Width="255"
-          Background="Black">
+    <Grid Background="Black">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -22,9 +21,9 @@
         <local:CardIllustration Width="255"
                                 Height="360"
                                 Margin="0"
-                                HorizontalAlignment="Left"
+                                HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
-                                SelectedVariant="{Binding SelectedVariant, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
+                                SelectedVariant="{Binding SelectedVariant.Card, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
         <Grid Grid.Row="1"
               Background="#333">

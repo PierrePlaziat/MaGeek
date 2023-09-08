@@ -40,19 +40,13 @@
 
         <Grid HorizontalAlignment="Center"
               VerticalAlignment="Center">
-            <!-- Results -->
-            <!--
-            <Label Content="Loading"
-                   Visibility="{Binding CardImage.IsSuccessfullyCompleted, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
-            <!-- Error details -->
-            <Label Content="Couldnt find illustration"
-                   Visibility="{Binding CardImage.IsFaulted, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
         </Grid>
 
         <!-- Illustration -->
 
         <StackPanel>
-            <Image Source="{Binding CardImage.Result}"></Image>
+            <Image Source="{Binding CardImage}"></Image>
         </StackPanel>
 
         <!-- HUD -->

@@ -10,8 +10,6 @@ using MageekSdk.MtgSqlive.Entities;
 using MtgSqliveSdk;
 using MageekSdk.Tools;
 using System.Linq;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace MaGeek.UI
 {
@@ -122,6 +120,7 @@ namespace MaGeek.UI
             try
             {
                 IsLoading = Visibility.Visible; 
+                SelectedVariant = null;
                 await Task.Run(
                     async () => {
 
@@ -144,6 +143,7 @@ namespace MaGeek.UI
                             }
                         }
                         OnPropertyChanged(nameof(Variants));
+                        OnPropertyChanged(nameof(SelectedVariant));
 
                         LoadMsg = "Loading legalities";
                         Legalities = new();
