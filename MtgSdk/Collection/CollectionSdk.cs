@@ -1,11 +1,19 @@
 ﻿#pragma warning disable CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
 #pragma warning disable CS8602 // Déréférencement d'une éventuelle référence null.
 
+using MaGeek.Framework.Data;
 using MaGeek.Framework.Extensions;
 using MageekSdk.Collection.Entities;
 using MageekSdk.MtgSqlive;
 using MageekSdk.MtgSqlive.Entities;
 using MageekSdk.Tools;
+using ScryfallApi.Client.Models;
+using System;
+using System.Linq.Expressions;
+using System.Net;
+using System.Text.Json;
+using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MageekSdk.Collection
 {
@@ -67,9 +75,52 @@ namespace MageekSdk.Collection
                 List<Task> tasks = new() 
                 {
                     Update_Archetypes(),
-                    Update_Traductions()
+                    Update_Traductions(),
+                    Update_SetIcons()
                 };
                 await Task.WhenAll(tasks);
+                Logger.Log("Done");
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+        }
+
+        private static async Task Update_Archetypes()
+        {
+            try
+            {
+                List<ArchetypeCard> archetypes = new();
+                Logger.Log("Parsing...");
+                using (MtgSqliveDbContext mtgSqliveContext = await MtgSqlive.MtgSqliveSdk.GetContext())
+                {
+                    foreach (Cards card in mtgSqliveContext.cards)
+                    {
+                        archetypes.Add(
+                            new ArchetypeCard()
+                            {
+                                ArchetypeId = card.Name != null ? card.Name : string.Empty,
+                                CardUuid = card.Uuid
+                            }
+                        );
+                    }
+                }
+                Logger.Log("Saving...");
+                using (CollectionDbContext collectionDbContext = await GetContext())
+                {
+                    using var transaction = collectionDbContext.Database.BeginTransaction();
+                    collectionDbContext.CardArchetypes.RemoveRange(collectionDbContext.CardArchetypes);
+                    await collectionDbContext.SaveChangesAsync();
+                    transaction.Commit();
+                }
+                using (CollectionDbContext collectionDbContext = await GetContext())
+                {
+                    using var transaction = collectionDbContext.Database.BeginTransaction();
+                    await collectionDbContext.CardArchetypes.AddRangeAsync(archetypes);
+                    await collectionDbContext.SaveChangesAsync();
+                    transaction.Commit();
+                }
                 Logger.Log("Done");
             }
             catch (Exception e)
@@ -136,49 +187,25 @@ namespace MageekSdk.Collection
             }
         }
 
-        private static async Task Update_Archetypes()
+        public static string Path_RoamingFolder { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
+        public static string Path_SetIconsFolder { get; } = Path.Combine(Path.Combine(Path_RoamingFolder, "SDK"), "SetIcons");
+        private static async Task Update_SetIcons()
         {
             try
             {
-                List<ArchetypeCard> archetypes = new();
-                Logger.Log("Parsing...");
-                using (MtgSqliveDbContext mtgSqliveContext = await MtgSqlive.MtgSqliveSdk.GetContext())
+                string json_data = await HttpUtils.Get("https://api.scryfall.com/sets/");
+                var Setz = JsonSerializer.Deserialize<ResultList<Set>>(json_data);
+                foreach(Set set in Setz.Data)
                 {
-                    foreach (Cards card in mtgSqliveContext.cards)
+                    var uri = set.IconSvgUri;
+                    string localFileName = Path.Combine(Path_SetIconsFolder, set.Code.ToUpper() + ".svg");
+                    using (WebClient client = new WebClient())
                     {
-                        if (card.Name == null)
-                        {
-
-                        }
-                        if (card.Uuid == null)
-                        {
-
-                        }
-                        archetypes.Add(
-                            new ArchetypeCard()
-                            {
-                                ArchetypeId = card.Name != null ? card.Name : string.Empty,
-                                CardUuid = card.Uuid
-                            }
-                        );
+                        client.DownloadFileAsync(uri, localFileName);
                     }
                 }
-                Logger.Log("Saving...");
-                using (CollectionDbContext collectionDbContext = await GetContext())
-                {
-                    using var transaction = collectionDbContext.Database.BeginTransaction();
-                    collectionDbContext.CardArchetypes.RemoveRange(collectionDbContext.CardArchetypes);
-                    await collectionDbContext.SaveChangesAsync();
-                    await collectionDbContext.CardArchetypes.AddRangeAsync(archetypes);
-                    await collectionDbContext.SaveChangesAsync();
-                    transaction.Commit();
-                }
-                Logger.Log("Done");
             }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
+            catch (Exception e){Logger.Log(e);}
         }
 
         #endregion
