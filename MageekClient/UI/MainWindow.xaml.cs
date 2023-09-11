@@ -117,7 +117,7 @@ namespace MaGeek
                     }
                 }
             }
-            catch (Exception e) { Logger.Log(e.Message,LogLvl.Debug); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         private string GetLayoutPath(string layoutName)

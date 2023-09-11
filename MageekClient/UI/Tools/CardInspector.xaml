@@ -5,6 +5,7 @@
                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                             xmlns:controls="clr-namespace:MaGeek.UI.Controls"
+                            xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
                             mc:Ignorable="d">
 
     <Grid Background="Black">
@@ -12,12 +13,12 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="360"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
+        <Grid />
         <local:CardIllustration Width="255"
                                 Height="360"
                                 Margin="0"
@@ -25,37 +26,38 @@
                                 VerticalAlignment="Top"
                                 SelectedVariant="{Binding SelectedVariant.Card, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" />
 
-        <Grid Grid.Row="1"
-              Background="#333">
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="*" ></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="3"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <StackPanel Background="Black">
+            <!-- Totals and means -->
+            <StackPanel Grid.Row="0">
 
                 <Grid  Margin="7,0,7,0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="72"></ColumnDefinition>
+                        <ColumnDefinition Width="40"></ColumnDefinition>
                         <ColumnDefinition Width="100"></ColumnDefinition>
-                        <ColumnDefinition Width="50"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Column="0"
                            HorizontalAlignment="Center"
-                           Content="{Binding SelectedVariant.Got}" />
+                           Content="{Binding TotalGot}" />
                     <Label Grid.Column="1"
                            HorizontalAlignment="Center"
-                           Content="{Binding SelectedVariant.MeanPrice}" />
+                           Content="{Binding MeanPrice}" />
                     <DockPanel Grid.Column="2"
-                               HorizontalAlignment="Center">
+                               HorizontalAlignment="Right">
                         <Label Content="(" />
-                        <Label Content="{Binding SelectedVariant.Variants.Count}" />
+                        <Label Content="{Binding VariantCount}" />
                         <Label Content=")" />
                     </DockPanel>
 
@@ -67,14 +69,13 @@
 
             </StackPanel>
 
-            <!--SelectedItem="{Binding SelectedVariant}"-->
+            <!-- Variants -->
             <ListView Grid.Row="1"
                       BorderThickness="0"
                       Name="VariantListBox"
                       ItemsSource="{Binding Variants}"
                       SelectionMode="Single"
                       HorizontalAlignment="Stretch"
-                      Background="Black"
                       Margin="0"
                       Padding="0">
 
@@ -91,14 +92,13 @@
 
                     <DataTemplate>
 
-                        <Grid Height="25"
-                              Margin="0"
-                              Width="243">
+                        <Grid Height="25" Margin="0">
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120"></ColumnDefinition>
+                                <ColumnDefinition Width="auto"></ColumnDefinition>
+                                <ColumnDefinition Width="40"></ColumnDefinition>
                                 <ColumnDefinition Width="50"></ColumnDefinition>
-                                <ColumnDefinition Width="103"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <DockPanel Grid.Column="0"
@@ -109,7 +109,7 @@
                                         Height="25"
                                         Margin="0,0,0,0"
                                         Padding="0"
-                                        Background="#222"
+                                        Background="#000"
                                         Foreground="#444"
                                         Click="SubstractCardFromCollection"
                                         Content="-"
@@ -136,7 +136,7 @@
                                         Height="25"
                                         Margin="0,0,0,0"
                                         Padding="0"
-                                        Background="#222"
+                                        Background="#000"
                                         Foreground="#666"
                                         HorizontalAlignment="Right"
                                         Click="AddCardToCollection"
@@ -150,11 +150,7 @@
                                         </Style>
                                     </Button.Resources>
                                 </Button>
-
-                                <!-- TODO make a control  -->
-                                <Label Content="{Binding Set.Code}" />
-                                <Label Content="{Binding Set.Name}" />
-
+                                
                             </DockPanel>
 
                             <Label Content="{Binding GetPrice}"
@@ -164,11 +160,27 @@
                                    Margin="0,5,0,0"
                                    Padding="0" />
 
-                            <Label Grid.Column="2"
-                                   Content="{Binding Set.Name}"
-                                   Foreground="{Binding GetRarityColor}"
-                                   Margin="0,5,0,0"
-                                   Padding="0" />
+                            <Border Background="{Binding GetRarityColor}"
+                                    Margin="0" Width="25"
+                                    Grid.Column="2">
+
+                                <Border.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius"
+                                                Value="20" />
+                                    </Style>
+                                </Border.Resources>
+
+                            </Border>
+                            <svg:SvgViewbox Grid.Column="2"
+                                            Source="{Binding Set.Svg}"
+                                            Margin="5"
+                                            Grid.RowSpan="2"
+                                            Width="15"
+                                            Height="15" />
+
+                            <Label Grid.Column="3" 
+                                   Content="{Binding Set.Name}" />
 
                         </Grid>
 
@@ -178,36 +190,39 @@
 
             </ListView>
 
-            <ListView Background="#111"
-                      MaxHeight="100"
-                      MinHeight="0"
-                      Grid.Row="2"
-                      ItemsSource="{Binding Legalities}"
-                      Width="255">
+            <!-- Legalities -->
+            <ListView Grid.Row="2" 
+                      Background="#000"
+                      ItemsSource="{Binding Legalities}">
+                
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="3"
-                                     Width="235" />
+                        <UniformGrid />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
+                
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <DockPanel>
-                            <Label Margin="0"
-                                   Padding="0"
-                                   Content="{Binding Format}"
-                                   Foreground="{Binding IsLegalColor}"></Label>
-                        </DockPanel>
+                        <Border Background="{Binding IsLegalColor}"
+                                BorderThickness="0"
+                                CornerRadius="8">
+                            <DockPanel Width="100"
+                                       Height="20">
+                                <Label Margin="0"
+                                       Padding="0"
+                                       Content="{Binding Format}" />
+                            </DockPanel>
+                        </Border>
+
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                
             </ListView>
 
-            <ListView MaxHeight="100"
-                      MinHeight="0"
+            <!-- Relateds -->
+            <ListView Grid.Row="3" 
                       Margin="0"
                       Padding="0"
-                      Grid.Row="3"
-                      Width="255"
                       ItemsSource="{Binding RelatedCards}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -219,11 +234,12 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <ListView Background="#333"
+            <!-- Rulings -->
+            <ListView Grid.Row="4"
+                      Background="#000"
                       Visibility="{Binding ShowRules}"
                       MaxHeight="100"
                       MinHeight="0"
-                      Grid.Row="4"
                       ItemsSource="{Binding Rulings}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -245,19 +261,31 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <StackPanel MaxHeight="100"
-                        MinHeight="100"
-                        Grid.Row="5"
-                        Background="Black">
-                <DockPanel>
-                    <TextBox Name="NewTag"
-                             Width="180"
+            <Grid Background="#333" Grid.Row="5"></Grid>
+            
+            <!-- Tags -->
+            <StackPanel Grid.Row="6">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"></RowDefinition>
+                        <RowDefinition Height="auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBox Grid.Column="0" 
+                             Name="NewTag"
+                             HorizontalAlignment="Stretch"
                              KeyUp="NewTag_KeyUp"
                              LostFocus="NewTag_LostFocus"></TextBox>
-                    <Button Click="AddTag">Add Tag</Button>
-                </DockPanel>
-
-                <Border Width="298"
+                    <Button Grid.Column="1"
+                            Width="100"
+                            Click="AddTag">Add Tag</Button>
+                    
+                <Border Width="298" Grid.Row="1"
                         BorderBrush="Black"
                         BorderThickness="1"
                         Name="sugestions"
@@ -267,7 +295,8 @@
                     </ScrollViewer>
                 </Border>
 
-                <ItemsControl ItemsSource="{Binding Tags}">
+                    <ItemsControl ItemsSource="{Binding Tags}"
+                                  Grid.Row="2">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />
@@ -299,9 +328,12 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
+                </Grid>
+
             </StackPanel>
 
-            <Grid Grid.Row="6">
+            <!-- Links -->
+            <Grid Grid.Row="7">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>

@@ -15,7 +15,6 @@ using ScryfallApi.Client.Models;
 using MageekSdk;
 using MaGeek.Framework.Extensions;
 using MageekSdk.Tools;
-using System;
 
 namespace MtgSqliveSdk
 {
@@ -363,7 +362,7 @@ namespace MtgSqliveSdk
                 var t = await DB.CardTraductions.Where(x => x.CardUuid == archetypeId && x.Language == lang).FirstOrDefaultAsync();
                 if (t != null) foreignName = t.Traduction;
             }
-            catch (Exception e) { Logger.Log(e.Message, LogLvl.Error); }
+            catch (Exception e) { Logger.Log(e); }
             if (string.IsNullOrEmpty(foreignName)) foreignName = string.Empty;
             return foreignName;
         }
@@ -386,7 +385,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e) 
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
                 return null;
             }
         }
@@ -482,7 +481,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
                 return null;
             }
         }
@@ -542,7 +541,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
                 return null;
             }
         }
@@ -563,7 +562,7 @@ namespace MtgSqliveSdk
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
                 decks = await DB.Decks.ToListAsync();
             }
-            catch (Exception e) { Logger.Log(e.Message, LogLvl.Error); }
+            catch (Exception e) { Logger.Log(e); }
             return decks;
         }
 
@@ -582,7 +581,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e) 
             {
-                Logger.Log(e.Message, LogLvl.Error); 
+                Logger.Log(e); 
                 return null;
             }
         }
@@ -623,7 +622,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e) 
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
                 return null;
             }
         }
@@ -675,7 +674,7 @@ namespace MtgSqliveSdk
                 catch (Exception e)
                 {
                     messages.Add("[error]" + e.Message);
-                    Logger.Log(e.Message, LogLvl.Error);
+                    Logger.Log(e);
                 }
             }
             return messages;
@@ -858,7 +857,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
         }
 
@@ -885,7 +884,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
         }
 
@@ -1343,7 +1342,7 @@ namespace MtgSqliveSdk
         public async static Task<List<Sets>> LoadSets()
         {
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-            return DB.sets.OrderBy(x => x.ReleaseDate).ToList();
+            return DB.sets.OrderByDescending(x => x.ReleaseDate).ToList();
         }
 
         /// <summary>
@@ -1367,7 +1366,7 @@ namespace MtgSqliveSdk
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(e.Message, LogLvl.Error);
+                    Logger.Log(e);
                 }
             }
             return cardUuids;
@@ -1393,7 +1392,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
             return nb;
         }
@@ -1486,7 +1485,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
             return total;
         }
@@ -1504,7 +1503,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
                 return 0;
             }
         }
@@ -1522,7 +1521,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
                 return 0;
             }
         }
@@ -1544,7 +1543,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
             return total;
         }
@@ -1575,7 +1574,7 @@ namespace MtgSqliveSdk
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
             return new Tuple<decimal, List<string>>(total, missingList);
         }

@@ -144,6 +144,7 @@ namespace MaGeek.UI
             InitializeComponent();
             FillColorFilterCombo();
             App.Events.UpdateCardCollecEvent += async () => { await ReloadData(); };
+            ReloadData().ConfigureAwait(false);
         }
 
         #endregion

@@ -42,7 +42,7 @@ namespace MageekSdk.Collection
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
                 return false;
             }
         }
@@ -74,7 +74,7 @@ namespace MageekSdk.Collection
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
         }
 
@@ -132,7 +132,7 @@ namespace MageekSdk.Collection
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
         }
 
@@ -177,7 +177,7 @@ namespace MageekSdk.Collection
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
         }
 

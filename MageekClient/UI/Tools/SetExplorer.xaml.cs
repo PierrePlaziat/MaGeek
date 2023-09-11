@@ -83,8 +83,7 @@ namespace MaGeek.UI
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SetList = (Mageek.LoadSets().Result).Where(x => FilterBlock == "All blocks" || x.Block == FilterBlock)
-                                .Where(x => FilterType == "All types" || x.Type == FilterType)
-                                .OrderBy(x => x.ReleaseDate).ToList();
+                                .Where(x => FilterType == "All types" || x.Type == FilterType).ToList();
         }
 
         private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

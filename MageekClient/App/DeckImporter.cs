@@ -189,7 +189,7 @@ namespace MaGeek
                                 }
                                 catch (Exception e)
                                 {
-                                    Logger.Log(e.Message, LogLvl.Error);
+                                    Logger.Log(e);
                                 }
 
                             }
@@ -199,7 +199,7 @@ namespace MaGeek
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
             return tuples;
         }

@@ -7,6 +7,14 @@ namespace MageekSdk.MtgSqlive.Entities
     public class Sets
     {
 
+        public string Svg
+        {
+            get 
+            {
+                return Path.Combine(Config.Path_SetIconFolder, Code+".svg"); 
+            }
+        }
+
         [Key]
         public string Code { get; set; }
         public string Name { get; set; }

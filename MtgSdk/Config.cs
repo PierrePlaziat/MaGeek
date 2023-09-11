@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using System.IO;
 
 namespace MageekSdk
 {
@@ -16,6 +15,7 @@ namespace MageekSdk
         public static string Path_MtgJsonDownload_NewHash { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite.sha256");
         public static string Path_MtgJsonDownload_OldHash { get; } = Path.Combine(Path_DbFolder, "mtgjson.sqlite.sha256_old");
         public static string Path_IllustrationsFolder { get; } = Path.Combine(Path_SDK, "CardsIllus");
+        public static string Path_SetIconFolder { get; } = Path.Combine(Path_SDK, "SetIcons");
 
         #region Debug
         // Here just in case,
@@ -43,6 +43,7 @@ namespace MageekSdk
             if (!File.Exists(Path_SDK)) Directory.CreateDirectory(Path_SDK);
             if (!File.Exists(Path_DbFolder)) Directory.CreateDirectory(Path_DbFolder);
             if (!File.Exists(Path_IllustrationsFolder)) Directory.CreateDirectory(Path_IllustrationsFolder);
+            if (!File.Exists(Path_SetIconFolder)) Directory.CreateDirectory(Path_SetIconFolder);
         }
 
         internal static void InitDb()

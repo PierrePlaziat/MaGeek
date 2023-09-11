@@ -46,7 +46,7 @@ namespace MageekSdk.MtgSqlive
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message,LogLvl.Error);
+                Logger.Log(e);
                 return false;
             }
         }
@@ -68,7 +68,7 @@ namespace MageekSdk.MtgSqlive
             Logger.Log("Is update needed?");
             try
             {
-                bool? tooOld = FileUtils.IsFileOlder(Config.Path_MtgJsonDownload_OldHash, new TimeSpan(3, 0, 0, 0));
+                bool? tooOld = FileUtils.IsFileOlder(Config.Path_MtgJsonDownload_OldHash, new TimeSpan(0, 0, 1, 0));
                 if (tooOld.HasValue && !tooOld.Value)
                 {
                     Logger.Log("Already updated recently.");
@@ -81,7 +81,7 @@ namespace MageekSdk.MtgSqlive
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
                 return false;
             }
         }
@@ -106,7 +106,7 @@ namespace MageekSdk.MtgSqlive
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
         }
 
@@ -133,7 +133,7 @@ namespace MageekSdk.MtgSqlive
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
                 return true;
             }
         }
@@ -153,7 +153,7 @@ namespace MageekSdk.MtgSqlive
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
         }
 
@@ -177,7 +177,7 @@ namespace MageekSdk.MtgSqlive
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
         }
 

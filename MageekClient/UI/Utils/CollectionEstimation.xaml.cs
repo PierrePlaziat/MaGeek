@@ -83,7 +83,7 @@ namespace MaGeek.UI
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error);
+                Logger.Log(e);
             }
         }
 

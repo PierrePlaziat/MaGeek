@@ -52,6 +52,10 @@ namespace MaGeek.UI
         public List<CardRulings> Rulings { get; private set; } = new();
         public List<Cards> RelatedCards { get; private set; } = new();
         public List<Tag> Tags { get; private set; } = new();
+        
+        public int TotalGot { get { return Variants.Sum(x => x.Collected); } }
+        public decimal MeanPrice { get { return Variants.Count == 0 ? 0 : Variants.Where(x => x.GetPrice.HasValue).Sum(x => x.GetPrice.Value) / Variants.Count; } }
+        public int VariantCount { get { return Variants.Count; } }
 
         #region Visibilities
 
@@ -163,12 +167,10 @@ namespace MaGeek.UI
                         Tags = new();
                         Tags = await GetTags();
                         OnPropertyChanged(nameof(Tags));
-
-                        LoadMsg = "Loading Details";
-                        foreach (var v in Variants)
-                        {
-                        }
                         LoadMsg = "Done";
+                        OnPropertyChanged(nameof(TotalGot));
+                        OnPropertyChanged(nameof(MeanPrice));
+                        OnPropertyChanged(nameof(VariantCount));
                         OnPropertyChanged(nameof(IsActive));
                     }
                 );
@@ -176,7 +178,7 @@ namespace MaGeek.UI
             }
             catch (Exception e)
             {
-                Logger.Log(e.Message, LogLvl.Error); 
+                Logger.Log(e); 
             }
         }
 
@@ -348,40 +350,66 @@ namespace MaGeek.UI
 
     }
 
-    public class CardVariant/* : INotifyPropertyChanged */
+    public class CardVariant
     {
-
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-        //public void OnPropertyChanged([CallerMemberName] string name = null)
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        //}
-
-
-        Cards card;
         public Cards Card { get; set; }
-
-        int collected;
         public int Collected { get; set; }
-
-        Sets set;
         public Sets Set { get; set; }
-
-        PriceLine priceValue;
         public PriceLine PriceValue{ get; set; }
 
-        public Brush GetPriceColor { get { return Brushes.Gray; } }
-        public Brush GetRarityColor { get { return Brushes.Black; } }
-        public string  GetPrice
+        public Brush GetPriceColor 
         { 
             get 
             {
-                if (PriceValue == null) return "";
-                if (PriceValue.PriceEur == null) return "";
-                return PriceValue.PriceEur.ToString();
+                if (PriceValue==null) return Brushes.Black;
+                if (!PriceValue.PriceEur.HasValue) return Brushes.Black;
+
+                decimal? price;
+                switch (App.Config.Settings[Setting.Currency])
+                {
+                    case "Eur" : price = PriceValue.PriceEur; break;
+                    case "Usd" : price = PriceValue.PriceUsd; break;
+                    default: return Brushes.Black; 
+                }
+                if (!price.HasValue) return Brushes.Black;
+
+                if ((float)price <= .1) return Brushes.DarkGray;
+                else if (price <= 1) return Brushes.LightGray;
+                else if (price <= 2) return Brushes.White;
+                else if (price <= 5) return Brushes.Green;
+                else if (price <= 10) return Brushes.Blue;
+                else if (price <= 20) return Brushes.Red;
+                else if (price <= 50) return Brushes.Yellow;
+                else if (price <= 100) return Brushes.Cyan;
+                else return Brushes.Purple;
+            }
+        }
+
+        public Brush GetRarityColor
+        { 
+            get 
+            { 
+                switch(Card.Rarity)
+                {
+                    case "common": return Brushes.White;
+                    case "uncommon": return Brushes.Gray;
+                    case "rare": return Brushes.Gold;
+                    case "mythic": return Brushes.Orange;
+                    case "bonus": return Brushes.Cyan;
+                    default:  return Brushes.Purple;
+                }
             } 
-        } //TODO multi monaie
+        }
+
+        public decimal?  GetPrice
+        { 
+            get 
+            {
+                if (PriceValue == null) return null;
+                if (PriceValue.PriceEur == null) return null;
+                return PriceValue.PriceEur;
+            } 
+        } //TODO multi monaie & colors
     }
 
 }
