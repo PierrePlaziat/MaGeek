@@ -304,7 +304,7 @@ namespace MaGeek.UI
             resultStack.Children.Clear();
             foreach (var obj in data)
             {
-                if (obj.TagContent.ToLower().StartsWith(query.ToLower()))
+                if (obj !=null && obj.TagContent.ToLower().StartsWith(query.ToLower()))
                 {
                     AddItem(obj.TagContent);
                     found = true;

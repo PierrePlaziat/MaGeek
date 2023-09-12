@@ -61,8 +61,8 @@ namespace MaGeek.UI
             }
         }
 
-        List<string> variants = new();
-        public List<string> Variants
+        List<Cards> variants = new();
+        public List<Cards> Variants
         {
             get { return variants; }
             set { variants = value; OnPropertyChanged(); }
@@ -89,7 +89,8 @@ namespace MaGeek.UI
         private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var s = ((ListView)sender).SelectedItem as Sets;
-            Variants = await Mageek.GetCardsFromSet(s.Code);
+            Variants = null;
+            Variants =await  Mageek.GetCardsFromSet(s.Code);
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

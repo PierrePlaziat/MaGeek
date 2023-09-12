@@ -4,6 +4,7 @@
                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:local="clr-namespace:MaGeek.UI"
                          xmlns:converter="clr-namespace:MaGeek.Framework.Converters"
                          xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
                          mc:Ignorable="d"
@@ -179,18 +180,32 @@
                   SelectionMode="Single">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="| Rarity   "
-                                    Binding="{Binding Rarity}" />
                 <DataGridTextColumn Header="| Got   "
-                                    Binding="{Binding Got}" />
+                                    Binding="{Binding Collected}" />
+                <DataGridTextColumn Header="| Foreign Name   "
+                                    Binding="{Binding CardForeignName}" />
                 <DataGridTextColumn Header="| Name   "
-                                    Binding="{Binding Card.CardId}" />
+                                    Binding="{Binding Name}" />
+                <DataGridTemplateColumn Header="| ManaCost   ">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <local:ManaCost Cost="{Binding ManaCost}"
+                                            HorizontalAlignment="Right" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="| Type   "
-                                    Binding="{Binding Card.Type}" />
-                <DataGridTextColumn Header="| ManaCost   "
-                                    Binding="{Binding Card.ManaCost}" />
+                                    Binding="{Binding Type}" />
+                <DataGridTextColumn Header="| Power   "
+                                    Binding="{Binding Power}" />
+                <DataGridTextColumn Header="| Toughness   "
+                                    Binding="{Binding Toughness}" />
+                <DataGridTextColumn Header="| Cmc   "
+                                    Binding="{Binding ManaValue}" />
+                <DataGridTextColumn Header="| Keywords   "
+                                    Binding="{Binding Keywords}" />
             </DataGrid.Columns>
-            
+
             <DataGrid.Resources>
                 <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"
                        TargetType="{x:Type DataGridColumnHeader}">
