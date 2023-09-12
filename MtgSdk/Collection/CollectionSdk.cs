@@ -185,6 +185,7 @@ namespace MageekSdk.Collection
         public static string Path_SetIconsFolder { get; } = Path.Combine(Path.Combine(Path_RoamingFolder, "SDK"), "SetIcons");
         private static async Task Update_SetIcons()
         {
+            Logger.Log("Start");
             try
             {
                 string json_data = await HttpUtils.Get("https://api.scryfall.com/sets/");
@@ -193,13 +194,17 @@ namespace MageekSdk.Collection
                 {
                     var uri = set.IconSvgUri;
                     string localFileName = Path.Combine(Path_SetIconsFolder, set.Code.ToUpper() + ".svg");
-                    using (WebClient client = new WebClient())
+                    if(!File.Exists(localFileName))
                     {
-                        client.DownloadFileAsync(uri, localFileName);
+                        using (WebClient client = new WebClient())
+                        {
+                            await client.DownloadFileTaskAsync(uri, localFileName);
+                        }
                     }
                 }
             }
-            catch (Exception e){Logger.Log(e);}
+            catch (Exception e){Logger.Log(e); }
+            Logger.Log("Done");
         }
 
         #endregion
