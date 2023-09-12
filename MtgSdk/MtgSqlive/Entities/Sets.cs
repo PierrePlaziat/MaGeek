@@ -11,7 +11,9 @@ namespace MageekSdk.MtgSqlive.Entities
         {
             get 
             {
-                return Path.Combine(Config.Path_SetIconFolder, Code+".svg"); 
+                string s = Path.Combine(Config.Path_SetIconFolder, Code + ".svg");
+                if (File.Exists(s)) return s;
+                else return @"\Resources\wut.svg";
             }
         }
 

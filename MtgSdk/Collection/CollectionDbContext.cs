@@ -30,6 +30,7 @@ namespace MageekSdk.Collection
         {
             modelBuilder.Entity<CardTraduction>().HasKey(m => new { m.CardUuid, m.Language});
             modelBuilder.Entity<DeckCard>().HasKey(m => new { m.DeckId, m.CardUuid});
+            modelBuilder.Entity<Tag>().Property(e => e.TagId).ValueGeneratedOnAdd();
         }
 
     }

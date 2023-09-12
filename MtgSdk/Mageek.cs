@@ -1350,17 +1350,16 @@ namespace MtgSqliveSdk
         /// </summary>
         /// <param name="setCode"></param>
         /// <returns>Uuid list of cards in set</returns>
-        public async static Task<List<string>> GetCardsFromSet(string setCode)
+        public async static Task<List<Cards>> GetCardsFromSet(string setCode)
         {
-            List<string> cardUuids = new();
-            if (string.IsNullOrEmpty(setCode))
+            List<Cards> cards = new();
+            if (!string.IsNullOrEmpty(setCode))
             {
                 try
                 {
                     using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
                     {
-                        cardUuids = await DB.cards.Where(x => x.SetCode == setCode)
-                            .Select(p=>p.Uuid)
+                        cards = await DB.cards.Where(x => x.SetCode == setCode)
                             .ToListAsync();
                     }
                 }
@@ -1369,7 +1368,7 @@ namespace MtgSqliveSdk
                     Logger.Log(e);
                 }
             }
-            return cardUuids;
+            return cards;
         }
 
         /// <summary>
@@ -1385,9 +1384,9 @@ namespace MtgSqliveSdk
             {
                 var cardUuids = await GetCardsFromSet(setCode);
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
-                foreach (var cardUuid in cardUuids)
+                foreach (var card in cardUuids)
                 {
-                    if (await CollectedCard_HowMany(cardUuid, strict) > 0) nb++;
+                    if (await CollectedCard_HowMany(card.Uuid, strict) > 0) nb++;
                 }
             }
             catch (Exception e)

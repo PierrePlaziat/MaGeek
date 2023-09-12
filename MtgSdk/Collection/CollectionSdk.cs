@@ -7,6 +7,7 @@ using MageekSdk.Collection.Entities;
 using MageekSdk.MtgSqlive;
 using MageekSdk.MtgSqlive.Entities;
 using MageekSdk.Tools;
+using Microsoft.EntityFrameworkCore;
 using ScryfallApi.Client.Models;
 using System;
 using System.Linq.Expressions;
@@ -109,13 +110,7 @@ namespace MageekSdk.Collection
                 Logger.Log("Saving...");
                 using (CollectionDbContext collectionDbContext = await GetContext())
                 {
-                    using var transaction = collectionDbContext.Database.BeginTransaction();
-                    collectionDbContext.CardArchetypes.RemoveRange(collectionDbContext.CardArchetypes);
-                    await collectionDbContext.SaveChangesAsync();
-                    transaction.Commit();
-                }
-                using (CollectionDbContext collectionDbContext = await GetContext())
-                {
+                    await collectionDbContext.CardArchetypes.ExecuteDeleteAsync();
                     using var transaction = collectionDbContext.Database.BeginTransaction();
                     await collectionDbContext.CardArchetypes.AddRangeAsync(archetypes);
                     await collectionDbContext.SaveChangesAsync();
@@ -172,9 +167,8 @@ namespace MageekSdk.Collection
                 Logger.Log("Saving...");
                 using (CollectionDbContext collectionDbContext = await GetContext())
                 {
+                    await collectionDbContext.CardTraductions.ExecuteDeleteAsync();
                     using var transaction = collectionDbContext.Database.BeginTransaction();
-                    collectionDbContext.CardTraductions.RemoveRange(collectionDbContext.CardTraductions);
-                    await collectionDbContext.SaveChangesAsync();
                     await collectionDbContext.CardTraductions.AddRangeAsync(traductions);
                     await collectionDbContext.SaveChangesAsync();
                     transaction.Commit();

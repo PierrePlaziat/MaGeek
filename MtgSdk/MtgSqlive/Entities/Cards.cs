@@ -1,5 +1,7 @@
 ﻿#pragma warning disable CS8618 // Un champ non-nullable doit contenir une valeur non-null lors de la fermeture du constructeur. Envisagez de déclarer le champ comme nullable.
 
+using MtgSqliveSdk;
+using ScryfallApi.Client.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace MageekSdk.MtgSqlive.Entities
@@ -7,6 +9,20 @@ namespace MageekSdk.MtgSqlive.Entities
 
     public class Cards
     {
+        public int Collected
+        {
+            get { return Mageek.CollectedCard_HowMany(Uuid, false).Result; }
+        }
+
+        public string CardForeignName
+        {
+            get 
+            {
+                string lang = "French";
+                return Mageek.GetTraduction(Uuid, lang).Result;
+            }
+        }
+
 
         public string? Artist { get; set; }
         public string? AsciiName { get; set; }
