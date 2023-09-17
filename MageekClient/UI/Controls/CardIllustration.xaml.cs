@@ -1,4 +1,5 @@
-﻿using MageekSdk.MtgSqlive.Entities;
+﻿using MageekSdk;
+using MageekSdk.MtgSqlive.Entities;
 using MtgSqliveSdk;
 using System.ComponentModel;
 using System.Windows;
@@ -51,7 +52,7 @@ namespace MaGeek.UI
         private async void LoadIllustration()
         {
             cardImage = null;
-            var url = await Mageek.RetrieveImage(selectedVariant.Uuid,CardImageType.png);
+            var url = await Mageek.RetrieveImage(selectedVariant.Uuid,CardImageFormat.png);
             if (url == null) return;
             CardImage = new BitmapImage(url);
         }

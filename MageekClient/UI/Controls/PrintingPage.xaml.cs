@@ -1,4 +1,5 @@
-﻿using MtgSqliveSdk;
+﻿using MageekSdk;
+using MtgSqliveSdk;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -82,7 +83,7 @@ namespace MaGeek.UI.Controls
 
         public async Task SetCard(string cardUuid, int emplacement)
         {
-            BitmapImage bmp = new BitmapImage(await Mageek.RetrieveImage(cardUuid,CardImageType.png));
+            BitmapImage bmp = new BitmapImage(await Mageek.RetrieveImage(cardUuid,CardImageFormat.png));
             switch (emplacement)
             {
                 case 0: Card0 = bmp; break;

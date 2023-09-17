@@ -201,11 +201,37 @@ namespace MtgSqliveSdk
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>Archetype</returns>
-        public static async Task<MageekSdk.Collection.Entities.ArchetypeCard> FindCard_Ref(string cardUuid)
+        public static async Task<ArchetypeCard> FindCard_Ref(string cardUuid)
         {
             using CollectionDbContext DB = await CollectionSdk.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.CardUuid == cardUuid)
+                .FirstOrDefaultAsync();
+        }
+        
+        /// <summary>
+        /// get the gameplay data of the card
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>Archetype</returns>
+        public static async Task<Cards> FindCard_ArchetypeData(string name)
+        {
+            using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
+            return await DB.cards
+                .Where(x => x.Name == name)
+                .FirstOrDefaultAsync();
+        }
+          
+        /// <summary>
+        /// get the gameplay data of the card
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>Archetype</returns>
+        public static async Task<Tokens> FindToken(string name)
+        {
+            using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
+            return await DB.tokens
+                .Where(x => x.Name == name)
                 .FirstOrDefaultAsync();
         }
         
@@ -222,10 +248,55 @@ namespace MtgSqliveSdk
                 .FirstOrDefaultAsync();
         }
 
-        public static async Task<List<Cards>> FindCard_Related(Cards selectedVariant)
+        public static async Task<List<CardCardRelation>> FindCard_Related(Cards inputCard) 
         {
-            return new List<Cards>();
-            throw new NotImplementedException();
+            // TODO cache data
+            List<CardCardRelation> outputCards = new();
+            if (inputCard == null) return outputCards;
+            var scryCard = await GetScryfallCard(inputCard.Uuid);
+            try
+            {
+                foreach(var part in scryCard.AllParts)
+                {
+                    part.TryGetValue("component", out string component);
+                    part.TryGetValue("name", out string archetype);
+                    if (!string.IsNullOrEmpty(component) && !string.IsNullOrEmpty(archetype))
+                    {
+                        if (archetype!=inputCard.Name)
+                        {
+                            CardCardRelationRole? role = null;
+                            switch(component)
+                            {
+                                case "token": role = CardCardRelationRole.token; break;
+                                case "meld_part": role = CardCardRelationRole.meld_part; break;
+                                case "meld_result": role = CardCardRelationRole.meld_result; break;
+                                case "combo_piece": role = CardCardRelationRole.combo_piece; break;
+                            }
+                            if (role.HasValue)
+                            {
+                                Cards cRes = null;
+                                Tokens tRes = null;
+                                if(role.Value == CardCardRelationRole.token)
+                                {
+                                    tRes = await FindToken(archetype);
+                                }
+                                else
+                                {
+                                    cRes = await FindCard_ArchetypeData(archetype);
+                                }
+                                outputCards.Add(new CardCardRelation() 
+                                { 
+                                    Role = role.Value, 
+                                    Card = cRes,
+                                    Token = tRes
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e) { Logger.Log(e); }
+            return outputCards;
         }
 
         /// <summary>
@@ -463,7 +534,7 @@ namespace MtgSqliveSdk
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>a local url to a jpg</returns>
-        public async static Task<Uri> RetrieveImage(string cardUuid, CardImageType type)
+        public async static Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type)
         {
             try
             {
@@ -502,10 +573,10 @@ namespace MtgSqliveSdk
         /// </summary>
         /// <param name="selectedCard"></param>
         /// <returns>List of legalities</returns>
-        public async static Task<List<CardLegalities>> GetLegalities(MageekSdk.Collection.Entities.ArchetypeCard selectedCard)
+        public async static Task<CardLegalities> GetLegalities(string CardUuid)
         {
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-            return await DB.cardLegalities.Where(x => x.Uuid == selectedCard.CardUuid).ToListAsync();
+            return await DB.cardLegalities.Where(x => x.Uuid == CardUuid).FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -513,10 +584,10 @@ namespace MtgSqliveSdk
         /// </summary>
         /// <param name="selectedCard"></param>
         /// <returns>List of rulings</returns>
-        public async static Task<List<CardRulings>> GetRulings(MageekSdk.Collection.Entities.ArchetypeCard selectedCard)
+        public async static Task<List<CardRulings>> GetRulings(string CardUuid)
         {
             using MtgSqliveDbContext DB = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext();
-            return await DB.cardRulings.Where(x => x.Uuid == selectedCard.CardUuid).ToListAsync();
+            return await DB.cardRulings.Where(x => x.Uuid == CardUuid).ToListAsync();
         }
 
         /// <summary>
@@ -1581,24 +1652,5 @@ namespace MtgSqliveSdk
         #endregion
 
     }
-
-    public enum CardImageType
-    {
-        small,large,medium,png,art_crop,border_crop
-    }
-
-    #region Data formats
-
-    /// <summary>
-    /// Data to aggregate to represent a constructed deck
-    /// </summary>
-    public struct DeckLine
-    {
-        public string Uuid;
-        public int Quantity;
-        public int Relation;
-    }
-
-    #endregion
 
 }

@@ -33,7 +33,6 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="3"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
@@ -77,7 +76,8 @@
                       SelectionMode="Single"
                       HorizontalAlignment="Stretch"
                       Margin="0"
-                      Padding="0">
+                      Padding="0" 
+                      SelectedItem="{Binding SelectedVariant}">
 
                 <ListView.ContextMenu>
                     <ContextMenu>
@@ -130,7 +130,7 @@
                                         Padding="5"
                                         Background="#111"
                                         Margin="0,0,0,0"
-                                        Content="{Binding Collected}" />
+                                        Content="{Binding Card.Collected}" />
 
                                 <Button Width="16"
                                         Height="25"
@@ -173,14 +173,14 @@
 
                             </Border>
                             <svg:SvgViewbox Grid.Column="2"
-                                            Source="{Binding Set.Svg}"
+                                            Source="{Binding Card.Set.Svg}"
                                             Margin="5"
                                             Grid.RowSpan="2"
                                             Width="15"
                                             Height="15" />
 
-                            <Label Grid.Column="3" 
-                                   Content="{Binding Set.Name}" />
+                            <Label Grid.Column="3"
+                                   Content="{Binding Card.Set.Name}" />
 
                         </Grid>
 
@@ -191,45 +191,165 @@
             </ListView>
 
             <!-- Legalities -->
-            <ListView Grid.Row="2" 
-                      Background="#000"
-                      ItemsSource="{Binding Legalities}">
-                
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Background="{Binding IsLegalColor}"
-                                BorderThickness="0"
-                                CornerRadius="8">
-                            <DockPanel Width="100"
-                                       Height="20">
-                                <Label Margin="0"
-                                       Padding="0"
-                                       Content="{Binding Format}" />
-                            </DockPanel>
-                        </Border>
+            <ScrollViewer Grid.Row="2"
+                         Background="#000">
+                <StackPanel>
+                    
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Standard" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Standard}" />
+                    </DockPanel>
 
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Legacy" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Legacy}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Vintage" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Vintage}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Duel" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Duel}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Commander" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Commander}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Brawl" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Brawl}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Explorer" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Explorer}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Future" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Future}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Gladiator" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Gladiator}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Historic" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Historic}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Historicbrawl" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Historicbrawl}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Modern" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Modern}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Oathbreaker" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Oathbreaker}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Oldschool" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Oldschool}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Pauper" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Pauper}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Paupercommander" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Paupercommander}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Penny" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Penny}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Pioneer" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Pioneer}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Predh" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Predh}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Premodern" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Premodern}" />
+                    </DockPanel>
+
+                    <DockPanel Width="100" Height="20" HorizontalAlignment="Left">
+                        <Label Margin="0" Padding="0" Content="Alchemy" />
+                        <Label Margin="0" Padding="0" Content=" : " /> 
+                        <Label Margin="0" Padding="0" Content="{Binding Legalities.Alchemy}" />
+                    </DockPanel>
                 
-            </ListView>
+                </StackPanel>
+            </ScrollViewer>
 
             <!-- Relateds -->
-            <ListView Grid.Row="3" 
+            <ListView Grid.Row="3"
                       Margin="0"
                       Padding="0"
-                      ItemsSource="{Binding RelatedCards}">
+                      BorderThickness="0"
+                      HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding RelatedCards}"
+                      MouseDoubleClick="GoToRelated">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Button Margin="0"
-                                Width="225"
-                                Click="GotoRelated"
-                                Content="{Binding Description}"></Button>
+                        <Grid Height="25"
+                            Margin="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"></ColumnDefinition>
+                                <ColumnDefinition Width="15"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0"
+                                   Content="{Binding Role}"></Label>
+                            <Label Grid.Column="1"
+                                   Content=":"></Label>
+                            <Label Grid.Column="2"
+                                   Content="{Binding Card.Name}"></Label>
+                            <Label Grid.Column="2"
+                                   Content="{Binding Token.Name}"></Label>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -244,27 +364,24 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <DockPanel Margin="0"
-                                   ToolTip="{Binding Comment}"
-                                   Width="225">
+                                   ToolTip="{Binding Comment}">
                             <Label Margin="0"
                                    Padding="0"
-                                   Content="{Binding Source}"></Label>
+                                   Content="{Binding Date}"></Label>
                             <Label Margin="0"
                                    Padding="0"
                                    Content=" : "></Label>
                             <Label Margin="0"
                                    Padding="0"
                                    Foreground="White"
-                                   Content="{Binding Comment}"></Label>
+                                   Content="{Binding Text}"></Label>
                         </DockPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
 
-            <Grid Background="#333" Grid.Row="5"></Grid>
-            
             <!-- Tags -->
-            <StackPanel Grid.Row="6">
+            <StackPanel Grid.Row="5">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -314,7 +431,7 @@
                                         <ColumnDefinition></ColumnDefinition>
                                         <ColumnDefinition></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
-                                    <Label Content="{Binding Tag}"
+                                    <Label Content="{Binding TagContent}"
                                            Foreground="White" />
                                     <Button Click="DeleteTag"
                                             Grid.Column="1"

@@ -1,5 +1,6 @@
 ﻿using MaGeek;
 using MaGeek.Framework.Utils;
+using MageekSdk;
 using MageekSdk.Tools;
 using MtgSqliveSdk;
 using ScryfallApi.Client.Models;
