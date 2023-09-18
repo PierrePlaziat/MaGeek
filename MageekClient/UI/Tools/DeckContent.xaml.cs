@@ -128,31 +128,27 @@ namespace MaGeek.UI
         private async Task ReloadAsync()
         {
             IsLoading = Visibility.Visible;
-            await Task.Run(async () =>
-            {
-                CurrentCommanders =     await ApplyFilter(await Mageek.GetDeckContent_Related(CurrentDeck.DeckId,1));
-                CurrentSide =           await ApplyFilter(await Mageek.GetDeckContent_Related(CurrentDeck.DeckId,2));
-                CurrentCreatures =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Creature"));
-                CurrentInstants =       await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Instant"));
-                CurrentSorceries =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Sorcery"));
-                CurrentEnchantments =   await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Enchantment"));
-                CurrentArtifacts =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Artifact"));
-                CurrentPlaneswalkers =   await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Planeswalker"));
-                CurrentLands =          await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Land"));
-                OnPropertyChanged(nameof(CurrentCommanders));
-                OnPropertyChanged(nameof(CurrentSide));
-                OnPropertyChanged(nameof(CurrentCreatures));
-                OnPropertyChanged(nameof(CurrentInstants));
-                OnPropertyChanged(nameof(CurrentSorceries));
-                OnPropertyChanged(nameof(CurrentEnchantments));
-                OnPropertyChanged(nameof(CurrentArtifacts));
-                OnPropertyChanged(nameof(CurrentPlaneswalkers));
-                OnPropertyChanged(nameof(CurrentLands));
-
-                OnPropertyChanged(nameof(HasCommander));
-                OnPropertyChanged(nameof(HasSide));
-                IsLoading = Visibility.Collapsed;
-            });
+            CurrentCommanders =     await ApplyFilter(await Mageek.GetDeckContent_Related(CurrentDeck.DeckId,1));
+            CurrentSide =           await ApplyFilter(await Mageek.GetDeckContent_Related(CurrentDeck.DeckId,2));
+            CurrentCreatures =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Creature"));
+            CurrentInstants =       await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Instant"));
+            CurrentSorceries =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Sorcery"));
+            CurrentEnchantments =   await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Enchantment"));
+            CurrentArtifacts =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Artifact"));
+            CurrentPlaneswalkers =   await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Planeswalker"));
+            CurrentLands =          await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Land"));
+            OnPropertyChanged(nameof(CurrentCommanders));
+            OnPropertyChanged(nameof(CurrentSide));
+            OnPropertyChanged(nameof(CurrentCreatures));
+            OnPropertyChanged(nameof(CurrentInstants));
+            OnPropertyChanged(nameof(CurrentSorceries));
+            OnPropertyChanged(nameof(CurrentEnchantments));
+            OnPropertyChanged(nameof(CurrentArtifacts));
+            OnPropertyChanged(nameof(CurrentPlaneswalkers));
+            OnPropertyChanged(nameof(CurrentLands));
+            OnPropertyChanged(nameof(HasCommander));
+            OnPropertyChanged(nameof(HasSide));
+            IsLoading = Visibility.Collapsed;
         }
 
         #endregion

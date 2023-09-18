@@ -405,6 +405,7 @@
                 <Border Width="298" Grid.Row="1"
                         BorderBrush="Black"
                         BorderThickness="1"
+                        Background="Gray"
                         Name="sugestions"
                         Visibility="Collapsed">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">

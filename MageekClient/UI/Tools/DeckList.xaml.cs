@@ -112,6 +112,7 @@ namespace MaGeek.UI
         {
             string title = Log.GetInpurFromUser("What title?","New title");
             await Mageek.CreateDeck_Empty(title,"");
+            await Reload();
         }
         
         private async void RenameDeck(object sender, RoutedEventArgs e)
