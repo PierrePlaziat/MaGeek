@@ -664,8 +664,16 @@ namespace MtgSqliveSdk
         /// <returns>A list of deck-card relations</returns>
         public static async Task<List<DeckCard>> GetDeckContent(string deckId)
         {
-            using CollectionDbContext DB = await CollectionSdk.GetContext();
-            return await DB.DeckCards.Where(x => x.DeckId == deckId).ToListAsync();
+            try
+            {
+                using CollectionDbContext DB = await CollectionSdk.GetContext();
+                return await DB.DeckCard.Where(x => x.DeckId == deckId).ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return new List<DeckCard>();
+            }
         }
 
         /// <summary>
@@ -723,7 +731,7 @@ namespace MtgSqliveSdk
                     {
                         if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.Uuid).Any())
                         {
-                            DB.DeckCards.Add(
+                            DB.DeckCard.Add(
                                 new DeckCard()
                                 {
                                     DeckId = deck.DeckId,
@@ -782,9 +790,9 @@ namespace MtgSqliveSdk
             if(newDeck == null) return;
             
             using CollectionDbContext DB = await CollectionSdk.GetContext();
-            foreach (DeckCard relation in DB.DeckCards.Where(x=>x.DeckId==deckToCopy.DeckId))
+            foreach (DeckCard relation in DB.DeckCard.Where(x=>x.DeckId==deckToCopy.DeckId))
             {
-                DB.DeckCards.Add(
+                DB.DeckCard.Add(
                     new DeckCard()
                     {
                         CardUuid = relation.CardUuid,
@@ -905,7 +913,7 @@ namespace MtgSqliveSdk
             try
             {
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
-                var cardRelation = await DB.DeckCards.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+                var cardRelation = await DB.DeckCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
                 if (cardRelation == null)
                 {
                     cardRelation = new DeckCard()
@@ -944,7 +952,7 @@ namespace MtgSqliveSdk
             try
             {
                 using CollectionDbContext DB = await CollectionSdk.GetContext();
-                var cardRelation = await DB.DeckCards.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+                var cardRelation = await DB.DeckCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
                 if (cardRelation == null) return;
                 cardRelation.Quantity -= qty;
                 if (cardRelation.Quantity <= 0) DB.Entry(cardRelation).State = EntityState.Deleted;

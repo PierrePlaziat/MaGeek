@@ -20,7 +20,7 @@ namespace MageekSdk.Collection
         public DbSet<Tag> Tag { get; set; }
         public DbSet<CardTraduction> CardTraductions { get; set; }
         public DbSet<Deck> Decks { get; set; }
-        public DbSet<DeckCard> DeckCards { get; set; }
+        public DbSet<DeckCard> DeckCard { get; set; }
         public DbSet<Param> Params { get; set; }
         public DbSet<FavVariant> FavCards { get; set; }
         public DbSet<CollectedCard> CollectedCard { get; set; }
@@ -31,6 +31,7 @@ namespace MageekSdk.Collection
             modelBuilder.Entity<CardTraduction>().HasKey(m => new { m.CardUuid, m.Language});
             modelBuilder.Entity<DeckCard>().HasKey(m => new { m.DeckId, m.CardUuid});
             modelBuilder.Entity<Tag>().Property(e => e.TagId).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Deck>().Property(e => e.DeckId).ValueGeneratedOnAdd();
         }
 
     }
