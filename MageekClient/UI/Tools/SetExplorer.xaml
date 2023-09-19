@@ -164,7 +164,8 @@
 
         </ListView>
 
-        <DataGrid Grid.Column="1"
+        <DataGrid Name="CardGrid"
+                  Grid.Column="1"
                   Grid.RowSpan="2"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
@@ -213,6 +214,13 @@
                             Value="#555" />
                 </Style>
             </DataGrid.Resources>
+
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="To deck"
+                              Click="AddToDeck" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
 
         </DataGrid>
 

@@ -180,7 +180,15 @@ namespace MaGeek.UI
 
         private async void AddToCurrentDeck(object sender, RoutedEventArgs e)
         {
-            await Mageek.AddCardToDeck(SelectedVariant.Card.Uuid, App.State.SelectedDeck,1);
+            try
+            {
+                await Mageek.AddCardToDeck(SelectedVariant.Card.Uuid, App.State.SelectedDeck, 1);
+                App.Events.RaiseUpdateDeck();
+            }
+            catch(Exception ex)
+            {
+                Logger.Log(ex);
+            }
         }
 
         private async void SetFav(object sender, RoutedEventArgs e)

@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Linq;
 using MageekSdk.MtgSqlive.Entities;
 using MtgSqliveSdk;
+using System.Windows;
 
 namespace MaGeek.UI
 {
@@ -103,6 +104,19 @@ namespace MaGeek.UI
             if (v.SelectedItem == null) return;
             App.Events.RaiseCardSelected((v.SelectedItem as Cards).Uuid);
         }
+
+
+        private async void AddToDeck(object sender, RoutedEventArgs e)
+        {
+            foreach (Cards c in CardGrid.SelectedItems)
+            {
+                await Mageek.AddCardToDeck(c.Uuid, App.State.SelectedDeck, 1);
+            }
+            App.Events.RaiseUpdateDeck();
+        }
+
+
+
     }
 
 }

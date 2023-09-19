@@ -6,8 +6,6 @@ using System;
 using MageekSdk.MtgSqlive.Entities;
 using MageekSdk.Collection.Entities;
 using MtgSqliveSdk;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace MaGeek.UI
 {
@@ -205,13 +203,13 @@ namespace MaGeek.UI
             if (CardGrid.SelectedItem is Cards card) App.Events.RaiseCardSelected(card.Uuid);
         }
 
-        private void AddToDeck(object sender, RoutedEventArgs e)
+        private async void AddToDeck(object sender, RoutedEventArgs e)
         {
             foreach (Cards c in CardGrid.SelectedItems)
             {
-                Mageek.AddCardToDeck(c.Uuid, App.State.SelectedDeck,1)
-                    .ConfigureAwait(true);
+                await Mageek.AddCardToDeck(c.Uuid, App.State.SelectedDeck,1);
             }
+            App.Events.RaiseUpdateDeck();
         }
 
         private void FilterTag_DropDownOpened(object sender, System.EventArgs e)

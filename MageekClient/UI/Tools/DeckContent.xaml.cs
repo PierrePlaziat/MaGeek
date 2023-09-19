@@ -171,6 +171,7 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as DeckCard;
             Mageek.RemoveCardFromDeck(cr.CardUuid, CurrentDeck).ConfigureAwait(true);
+            App.Events.RaiseUpdateDeck();
         }
 
         private void MoreCard(object sender, RoutedEventArgs e)
@@ -178,30 +179,35 @@ namespace MaGeek.UI
             var b = (Button)sender;
             var cr = b.DataContext as DeckCard;
             Mageek.AddCardToDeck(cr.CardUuid, CurrentDeck,1).ConfigureAwait(true);
+            App.Events.RaiseUpdateDeck();
         }
 
         private void SetCommandant(object sender, RoutedEventArgs e)
         {
             DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
             Mageek.ChangeDeckRelationType(cardRel, 1).ConfigureAwait(true);
+            App.Events.RaiseUpdateDeck();
         }
 
         private void UnsetCommandant(object sender, RoutedEventArgs e)
         {
             DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
             Mageek.ChangeDeckRelationType(cardRel,0).ConfigureAwait(true);
+            App.Events.RaiseUpdateDeck();
         }
 
         private void ToSide(object sender, RoutedEventArgs e)
         {
             DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
             Mageek.ChangeDeckRelationType(cardRel, 2).ConfigureAwait(true);
+            App.Events.RaiseUpdateDeck();
         }
 
         private void ToDeck(object sender, RoutedEventArgs e)
         {
             DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
             Mageek.ChangeDeckRelationType(cardRel, 0).ConfigureAwait(true);
+            App.Events.RaiseUpdateDeck();
         }
 
         #region UI LINK
