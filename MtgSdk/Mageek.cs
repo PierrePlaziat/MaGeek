@@ -254,6 +254,7 @@ namespace MtgSqliveSdk
             List<CardCardRelation> outputCards = new();
             if (inputCard == null) return outputCards;
             var scryCard = await GetScryfallCard(inputCard.Uuid);
+            if (scryCard.AllParts == null) return outputCards;
             try
             {
                 foreach(var part in scryCard.AllParts)
@@ -397,25 +398,31 @@ namespace MtgSqliveSdk
         /// <param name="cardUuid"></param>
         public static async Task SetFav(string archetypeId, string cardUuid)
         {
-            if (string.IsNullOrEmpty(archetypeId)) return;
-            using CollectionDbContext DB = await CollectionSdk.GetContext();
-            FavVariant? favCard = await DB.FavCards.Where(x => x.ArchetypeId == archetypeId).FirstOrDefaultAsync();
-            if (favCard == null)
-            {
-                // Create
-                DB.FavCards.Add(new FavVariant()
+            try {
+                if (string.IsNullOrEmpty(archetypeId)) return;
+                using CollectionDbContext DB = await CollectionSdk.GetContext();
+                FavVariant? favCard = await DB.FavVariant.Where(x => x.ArchetypeId == archetypeId).FirstOrDefaultAsync();
+                if (favCard == null)
                 {
-                    ArchetypeId = archetypeId,
-                    FavUuid = cardUuid
-                });
+                    // Create
+                    DB.FavVariant.Add(new FavVariant()
+                    {
+                        ArchetypeId = archetypeId,
+                        FavUuid = cardUuid
+                    });
+                }
+                else
+                {
+                    // Update
+                    favCard.FavUuid = cardUuid;
+                    DB.Entry(favCard).State = EntityState.Modified;
+                }
+                await DB.SaveChangesAsync();
             }
-            else
+            catch(Exception e)
             {
-                // Update
-                favCard.FavUuid = cardUuid;
-                DB.Entry(favCard).State = EntityState.Modified;
+                Logger.Log(e);
             }
-            await DB.SaveChangesAsync();
         }
 
         /// <summary>

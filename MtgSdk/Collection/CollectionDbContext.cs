@@ -22,7 +22,7 @@ namespace MageekSdk.Collection
         public DbSet<Deck> Decks { get; set; }
         public DbSet<DeckCard> DeckCard { get; set; }
         public DbSet<Param> Params { get; set; }
-        public DbSet<FavVariant> FavCards { get; set; }
+        public DbSet<FavVariant> FavVariant { get; set; }
         public DbSet<CollectedCard> CollectedCard { get; set; }
         public DbSet<PriceLine> PriceLine { get; set; }
 

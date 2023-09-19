@@ -117,14 +117,17 @@ namespace MaGeek.UI
         
         private async void RenameDeck(object sender, RoutedEventArgs e)
         {
+            if (App.State.SelectedDeck == null) return;
             string title = Log.GetInpurFromUser("What title?", "New title");
             await Mageek.RenameDeck(App.State.SelectedDeck.DeckId, title);
+            await Reload();
         }
 
         private async void DuplicateDeck(object sender, RoutedEventArgs e)
         {
             if (decklistbox.SelectedIndex == -1) return;
             await Mageek.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
+            await Reload();
         }
 
         private async void DeleteDeck(object sender, RoutedEventArgs e)
@@ -134,6 +137,7 @@ namespace MaGeek.UI
             List<Deck> v2 = new();
             foreach (var vv in v) v2.Add((Deck)vv);
             await Mageek.DeleteDecks(v2);
+            await Reload();
         }
 
         private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
