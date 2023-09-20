@@ -8,7 +8,16 @@ namespace MageekSdk.MtgSqlive.Entities
 
     public class Cards
     {
+
         public int Collected
+        {
+            get 
+            {
+                return Mageek.CollectedCard_HowMany(Uuid, false).Result;
+            }
+        }
+        
+        public int VariantCollected
         {
             get 
             {

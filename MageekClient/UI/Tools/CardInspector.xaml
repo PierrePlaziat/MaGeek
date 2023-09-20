@@ -130,7 +130,7 @@
                                         Padding="5"
                                         Background="#111"
                                         Margin="0,0,0,0"
-                                        Content="{Binding Card.Collected}" />
+                                        Content="{Binding Card.VariantCollected}" />
 
                                 <Button Width="16"
                                         Height="25"

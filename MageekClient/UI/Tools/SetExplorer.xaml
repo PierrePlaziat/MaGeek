@@ -182,6 +182,8 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="| Got   "
+                                    Binding="{Binding VariantCollected}" />
+                <DataGridTextColumn Header="| Got(other set)   "
                                     Binding="{Binding Collected}" />
                 <DataGridTextColumn Header="| Foreign Name   "
                                     Binding="{Binding CardForeignName}" />

@@ -366,16 +366,16 @@ namespace MaGeek.UI
         public Brush GetRarityColor
         { 
             get 
-            { 
-                switch(Card.Rarity)
+            {
+                return Card.Rarity switch
                 {
-                    case "common": return Brushes.White;
-                    case "uncommon": return Brushes.Gray;
-                    case "rare": return Brushes.Gold;
-                    case "mythic": return Brushes.Orange;
-                    case "bonus": return Brushes.Cyan;
-                    default:  return Brushes.Purple;
-                }
+                    "common" => Brushes.White,
+                    "uncommon" => Brushes.Gray,
+                    "rare" => Brushes.Gold,
+                    "mythic" => Brushes.Orange,
+                    "bonus" => Brushes.Cyan,
+                    _ => Brushes.Purple,
+                };
             } 
         }
         public decimal?  GetPrice

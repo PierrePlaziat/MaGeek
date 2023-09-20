@@ -125,7 +125,6 @@ namespace MaGeek.UI
             IsLoading = Visibility.Visible;
             await Task.Run(async () =>
             {
-                List<Cards> v;
                 if (ShowAdvanced == Visibility.Collapsed)
                 {
                     CardList = await Mageek.NormalSearch(

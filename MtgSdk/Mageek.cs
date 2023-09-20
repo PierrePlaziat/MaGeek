@@ -25,6 +25,31 @@ namespace MtgSqliveSdk
     public static class Mageek
     {
 
+        public async static Task ConvertCollectedFromScryfallIdToUuid()
+        {
+                Logger.Log("start!");
+            using (CollectionDbContext DB = await CollectionSdk.GetContext())
+            using (MtgSqliveDbContext DB2 = await MageekSdk.MtgSqlive.MtgSqliveSdk.GetContext())
+            {
+                int i = 0;
+                foreach(var v in DB.CollectedCard)
+                {
+                    Logger.Log(i++.ToString());
+                    string newuuid = (await DB2.cardIdentifiers.Where(x => x.ScryfallId == v.CardUuid).FirstOrDefaultAsync()).Uuid;
+                    int q = v.Collected;
+                    DB.Entry(v).State = EntityState.Deleted;
+                    DB.CollectedCard.Add(new CollectedCard()
+                    {
+                        CardUuid = newuuid,
+                        Collected = q,
+                    });
+                }
+                await DB.SaveChangesAsync();
+            }
+            Logger.Log("end!");
+        }
+
+
         /// <summary>
         /// Call this first
         /// </summary>

@@ -1,5 +1,6 @@
 ﻿using MaGeek.UI.Windows.Importers;
 using MaGeek.UI.Windows.ImportExport;
+using MtgSqliveSdk;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -229,6 +230,10 @@ namespace MaGeek.UI.Menus
             App.HyperLink("https://github.com/PierrePlaziat/MaGeek");
         }
 
+        private async void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            await Mageek.ConvertCollectedFromScryfallIdToUuid();
+        }
     }
 
 }
