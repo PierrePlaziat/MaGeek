@@ -68,7 +68,7 @@ namespace MageekSdk.MtgSqlive
             Logger.Log("Is update needed?");
             try
             {
-                bool? tooOld = FileUtils.IsFileOlder(Config.Path_MtgJsonDownload_OldHash, new TimeSpan(0, 2, 0, 0));
+                bool? tooOld = FileUtils.IsFileOlder(Config.Path_MtgJsonDownload_OldHash, new TimeSpan(2, 0, 0, 0));
                 if (tooOld.HasValue && !tooOld.Value)
                 {
                     Logger.Log("Already updated recently.");

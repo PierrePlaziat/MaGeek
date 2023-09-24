@@ -30,10 +30,10 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="*" ></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="auto" MaxHeight="100"></RowDefinition>
+                <RowDefinition Height="auto" MaxHeight="100"></RowDefinition>
+                <RowDefinition Height="auto" MaxHeight="100"></RowDefinition>
+                <RowDefinition Height="*" MaxHeight="100"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
 
