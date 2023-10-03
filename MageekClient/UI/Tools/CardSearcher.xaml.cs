@@ -113,7 +113,7 @@ namespace MaGeek.UI
             InitializeComponent();
             FillColorFilterCombo();
             App.Events.UpdateCardCollecEvent += async () => { await ReloadData(); };
-            ReloadData().ConfigureAwait(false);
+            //ReloadData().ConfigureAwait(false); // TODO option
         }
 
         #endregion
@@ -123,30 +123,31 @@ namespace MaGeek.UI
         private async Task ReloadData()
         {
             IsLoading = Visibility.Visible;
-            await Task.Run(async () =>
+            if (ShowAdvanced == Visibility.Collapsed)
             {
-                if (ShowAdvanced == Visibility.Collapsed)
-                {
-                    CardList = await Mageek.NormalSearch(
-                        App.Config.Settings[Setting.ForeignLanguage],
-                        FilterName
-                    );
-                }
-                else
-                {
-                    CardList = await Mageek.AdvancedSearch(
-                        App.Config.Settings[Setting.ForeignLanguage],
-                        FilterName,
-                        FilterType,
-                        FilterKeyword,
-                        FilterText,
-                        FilterColor.ToString(),
-                        FilterTag.TagContent, OnlyGot
-                    );
-                }
+                CardList = await Mageek.NormalSearch(
+                    App.Config.Settings[Setting.ForeignLanguage],
+                    FilterName
+                );
+            }
+            else
+            {
+                var lang = App.Config.Settings[Setting.ForeignLanguage];
+                var color = FilterColor.ToString();
+                string tagz = "";// FilterTag.TagContent;
+                CardList = await Mageek.AdvancedSearch(
+                    lang,
+                    FilterName,
+                    FilterType,
+                    FilterKeyword,
+                    FilterText,
+                    color,
+                    tagz, 
+                    OnlyGot
+                );
+            }
             OnPropertyChanged(nameof(CardList));
-                await Task.Delay(50);
-            });
+            await Task.Delay(50);
             IsLoading = Visibility.Collapsed;
         }
 

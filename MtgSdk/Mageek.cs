@@ -105,90 +105,99 @@ namespace MtgSqliveSdk
         {
             List<Cards> retour = await NormalSearch(lang, filterName);
 
-            if (!string.IsNullOrEmpty(filterType))
+            try
             {
-                string type = filterType.ToLower();
-                retour = retour.Where(x => x.Type.ToLower().Contains(type)).ToList();
-            }
 
-            if (!string.IsNullOrEmpty(filterKeyword))
-            {
-                string keyword = filterKeyword.ToLower();
-                retour = retour.Where(x => x.Keywords.ToLower().Contains(keyword)).ToList();
-            }
-
-            if (!string.IsNullOrEmpty(filterText))
-            {
-                string text = filterText.ToLower();
-                retour = retour.Where(x => x.Text.ToLower().Contains(filterKeyword.ToLower())).ToList();
-            }
-
-            if (filterColor != "_")
-            {
-                switch (filterColor)
+                if (!string.IsNullOrEmpty(filterType))
                 {
-                    case "X": retour = retour.Where(x => string.IsNullOrEmpty(x.ColorIdentity)).ToList(); break;
-                    case "W": retour = retour.Where(x => x.ColorIdentity == "W").ToList(); break;
-                    case "B": retour = retour.Where(x => x.ColorIdentity == "B").ToList(); break;
-                    case "U": retour = retour.Where(x => x.ColorIdentity == "U").ToList(); break;
-                    case "G": retour = retour.Where(x => x.ColorIdentity == "G").ToList(); break;
-                    case "R": retour = retour.Where(x => x.ColorIdentity == "R").ToList(); break;
-                    case "GW": retour = retour.Where(x => x.ColorIdentity == "G,W").ToList(); break;
-                    case "WU": retour = retour.Where(x => x.ColorIdentity == "U,W").ToList(); break;
-                    case "BU": retour = retour.Where(x => x.ColorIdentity == "B,U").ToList(); break;
-                    case "RB": retour = retour.Where(x => x.ColorIdentity == "B,R").ToList(); break;
-                    case "GR": retour = retour.Where(x => x.ColorIdentity == "G,R").ToList(); break;
-                    case "GU": retour = retour.Where(x => x.ColorIdentity == "G,U").ToList(); break;
-                    case "WB": retour = retour.Where(x => x.ColorIdentity == "B,W").ToList(); break;
-                    case "RU": retour = retour.Where(x => x.ColorIdentity == "R,U").ToList(); break;
-                    case "GB": retour = retour.Where(x => x.ColorIdentity == "B,G").ToList(); break;
-                    case "RW": retour = retour.Where(x => x.ColorIdentity == "R,W").ToList(); break;
-                    case "GBW": retour = retour.Where(x => x.ColorIdentity == "B,G,W").ToList(); break;
-                    case "GWU": retour = retour.Where(x => x.ColorIdentity == "G,U,W").ToList(); break;
-                    case "WRU": retour = retour.Where(x => x.ColorIdentity == "R,U,W").ToList(); break;
-                    case "GRW": retour = retour.Where(x => x.ColorIdentity == "G,R,W").ToList(); break;
-                    case "WUB": retour = retour.Where(x => x.ColorIdentity == "B,U,W").ToList(); break;
-                    case "GUR": retour = retour.Where(x => x.ColorIdentity == "G,R,U").ToList(); break;
-                    case "GRB": retour = retour.Where(x => x.ColorIdentity == "B,G,R").ToList(); break;
-                    case "RUB": retour = retour.Where(x => x.ColorIdentity == "B,R,U").ToList(); break;
-                    case "BGU": retour = retour.Where(x => x.ColorIdentity == "B,G,U").ToList(); break;
-                    case "RWB": retour = retour.Where(x => x.ColorIdentity == "B,R,W").ToList(); break;
-                    case "BGUR": retour = retour.Where(x => x.ColorIdentity == "B,G,R,U").ToList(); break;
-                    case "GURW": retour = retour.Where(x => x.ColorIdentity == "G,R,U,W").ToList(); break;
-                    case "URWB": retour = retour.Where(x => x.ColorIdentity == "B,R,U,W").ToList(); break;
-                    case "RWBG": retour = retour.Where(x => x.ColorIdentity == "B,G,R,W").ToList(); break;
-                    case "WBGU": retour = retour.Where(x => x.ColorIdentity == "B,G,U,W").ToList(); break;
-                    case "WBGUR": retour = retour.Where(x => x.ColorIdentity == "B,G,R,U,W").ToList(); break;
+                    string type = filterType.ToLower();
+                    retour = retour.Where(x => x.Type.ToLower().Contains(type)).ToList();
                 }
 
-            }
-
-            if (filterTag != null)
-            {
-                var tagged = new List<Cards>();
-                foreach (var card in retour)
+                if (!string.IsNullOrEmpty(filterKeyword))
                 {
-                    if (await Mageek.HasTag(card.Name, filterTag))
+                    string[] keywords = filterKeyword.Split(' ');
+                    foreach (string keyword in keywords)
                     {
-                        tagged.Add(card);
+                        retour = retour.Where(x => x.Keywords != null && x.Keywords.ToLower().Contains(keyword)).ToList();
                     }
                 }
-                retour = new List<Cards>(tagged);
-            }
 
-            // TODO test
-            if (onlyGot)
-            {
-                using CollectionDbContext DB = await CollectionSdk.GetContext();
-                foreach (var v in retour)
+                if (!string.IsNullOrEmpty(filterText))
                 {
-                    if (!DB.CollectedCard.Where(x => x.CardUuid == v.Uuid).Any())
+                    string text = filterText.ToLower();
+                    retour = retour.Where(x => x.Text != null && x.Text.ToLower().Contains(text)).ToList();
+                }
+
+                if (filterColor != "_")
+                {
+                    switch (filterColor)
                     {
-                        retour.Remove(v);
+                        case "X": retour = retour.Where(x => string.IsNullOrEmpty(x.ColorIdentity)).ToList(); break;
+                        case "W": retour = retour.Where(x => x.ColorIdentity == "W").ToList(); break;
+                        case "B": retour = retour.Where(x => x.ColorIdentity == "B").ToList(); break;
+                        case "U": retour = retour.Where(x => x.ColorIdentity == "U").ToList(); break;
+                        case "G": retour = retour.Where(x => x.ColorIdentity == "G").ToList(); break;
+                        case "R": retour = retour.Where(x => x.ColorIdentity == "R").ToList(); break;
+                        case "GW": retour = retour.Where(x => x.ColorIdentity == "G, W").ToList(); break;
+                        case "WU": retour = retour.Where(x => x.ColorIdentity == "U, W").ToList(); break;
+                        case "BU": retour = retour.Where(x => x.ColorIdentity == "B, U").ToList(); break;
+                        case "RB": retour = retour.Where(x => x.ColorIdentity == "B, R").ToList(); break;
+                        case "GR": retour = retour.Where(x => x.ColorIdentity == "G, R").ToList(); break;
+                        case "GU": retour = retour.Where(x => x.ColorIdentity == "G, U").ToList(); break;
+                        case "WB": retour = retour.Where(x => x.ColorIdentity == "B, W").ToList(); break;
+                        case "RU": retour = retour.Where(x => x.ColorIdentity == "R, U").ToList(); break;
+                        case "GB": retour = retour.Where(x => x.ColorIdentity == "B, G").ToList(); break;
+                        case "RW": retour = retour.Where(x => x.ColorIdentity == "R, W").ToList(); break;
+                        case "GBW": retour = retour.Where(x => x.ColorIdentity == "B, G, W").ToList(); break;
+                        case "GWU": retour = retour.Where(x => x.ColorIdentity == "G, U, W").ToList(); break;
+                        case "WRU": retour = retour.Where(x => x.ColorIdentity == "R, U, W").ToList(); break;
+                        case "GRW": retour = retour.Where(x => x.ColorIdentity == "G, R, W").ToList(); break;
+                        case "WUB": retour = retour.Where(x => x.ColorIdentity == "B, U, W").ToList(); break;
+                        case "GUR": retour = retour.Where(x => x.ColorIdentity == "G, R, U").ToList(); break;
+                        case "GRB": retour = retour.Where(x => x.ColorIdentity == "B, G, R").ToList(); break;
+                        case "RUB": retour = retour.Where(x => x.ColorIdentity == "B, R, U").ToList(); break;
+                        case "BGU": retour = retour.Where(x => x.ColorIdentity == "B, G, U").ToList(); break;
+                        case "RWB": retour = retour.Where(x => x.ColorIdentity == "B, R, W").ToList(); break;
+                        case "BGUR": retour = retour.Where(x => x.ColorIdentity == "B, G, R, U").ToList(); break;
+                        case "GURW": retour = retour.Where(x => x.ColorIdentity == "G, R, U, W").ToList(); break;
+                        case "URWB": retour = retour.Where(x => x.ColorIdentity == "B, R, U, W").ToList(); break;
+                        case "RWBG": retour = retour.Where(x => x.ColorIdentity == "B, G, R, W").ToList(); break;
+                        case "WBGU": retour = retour.Where(x => x.ColorIdentity == "B, G, U, W").ToList(); break;
+                        case "WBGUR": retour = retour.Where(x => x.ColorIdentity == "B, G, R, U, W").ToList(); break;
+                    }
+
+                }
+
+                if (!string.IsNullOrEmpty(filterTag))
+                {
+                    var tagged = new List<Cards>();
+                    foreach (var card in retour)
+                    {
+                        if (await Mageek.HasTag(card.Name, filterTag))
+                        {
+                            tagged.Add(card);
+                        }
+                    }
+                    retour = new List<Cards>(tagged);
+                }
+
+                // TODO test
+                if (onlyGot)
+                {
+                    using CollectionDbContext DB = await CollectionSdk.GetContext();
+                    foreach (var v in retour)
+                    {
+                        if (!DB.CollectedCard.Where(x => x.CardUuid == v.Uuid).Any())
+                        {
+                            retour.Remove(v);
+                        }
                     }
                 }
+
             }
 
+            catch (Exception e) { Logger.Log(e); }
 
             return retour;
         }
@@ -570,7 +579,7 @@ namespace MtgSqliveSdk
         {
             try
             {
-                string localFileName = Path.Combine(Config.Path_IllustrationsFolder, cardUuid + "_" + type.ToString() + ".png");
+                string localFileName = Path.Combine(Config.Path_IllustrationsFolder, cardUuid + "_" + type.ToString());
                 if (!File.Exists(localFileName))
                 {
                     var scryData = await GetScryfallCard(cardUuid);
@@ -1179,12 +1188,16 @@ namespace MtgSqliveSdk
         public static async Task<List<DeckCard>> GetDeckContent_Related(string deckId, int relationType)
         {
             List<DeckCard> rels = new();
-            using CollectionDbContext DB = await CollectionSdk.GetContext();
-            var d = await GetDeckContent(deckId);
-            foreach (DeckCard card in d)
-            {
-                if (card.RelationType == relationType) rels.Add(card);
+            try {
+                using CollectionDbContext DB = await CollectionSdk.GetContext();
+                var d = await GetDeckContent(deckId);
+                foreach (DeckCard card in d)
+                {
+                    if (card.RelationType == relationType) 
+                        rels.Add(card);
+                }
             }
+            catch (Exception e) { Logger.Log(e); }
             return rels;
         }
 
@@ -1198,12 +1211,16 @@ namespace MtgSqliveSdk
         public static async Task<List<DeckCard>> GetDeckContent_Typed(string deckId, string typeFilter)
         {
             List<DeckCard> rels = new();
-            using CollectionDbContext DB = await CollectionSdk.GetContext();
-            var d = await GetDeckContent(deckId);
-            foreach (DeckCard card in d)
+            try
             {
-                if (await CardHasType(card.CardUuid, typeFilter)) rels.Add(card);
+                using CollectionDbContext DB = await CollectionSdk.GetContext();
+                var d = await GetDeckContent(deckId);
+                foreach (DeckCard card in d)
+                {
+                    if (await CardHasType(card.CardUuid, typeFilter)) rels.Add(card);
+                }
             }
+            catch (Exception e) { Logger.Log(e); }
             return rels;
         }
 

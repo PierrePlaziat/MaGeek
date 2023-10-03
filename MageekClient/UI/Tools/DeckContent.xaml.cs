@@ -22,30 +22,42 @@ namespace MaGeek.UI
             {
                 currentDeck = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(IsActive));
-                Reload();
+                HardReloadAsync().ConfigureAwait(false);
             }
         }
+
+        private List<DeckCard> deckCards = new List<DeckCard>(); 
+        public List<DeckCard> DeckCards 
+        {
+            get { return ApplyFilter(deckCards); }
+            set { deckCards = value; }
+        }
+
+        public IEnumerable<DeckCard> CurrentCommanders      { get { return DeckCards.Where(card => card.RelationType == 1); } }
+        public IEnumerable<DeckCard> CurrentCreatures       { get { return DeckCards.Where(card => card.RelationType == 0 && card.Card.Type.Contains("Creature")); } }
+        public IEnumerable<DeckCard> CurrentInstants        { get { return DeckCards.Where(card => card.RelationType == 0 && card.Card.Type.Contains("Instant")); } }
+        public IEnumerable<DeckCard> CurrentSorceries       { get { return DeckCards.Where(card => card.RelationType == 0 && card.Card.Type.Contains("Sorcery")); } }
+        public IEnumerable<DeckCard> CurrentEnchantments    { get { return DeckCards.Where(card => card.RelationType == 0 && card.Card.Type.Contains("Enchantment")); } }
+        public IEnumerable<DeckCard> CurrentArtifacts       { get { return DeckCards.Where(card => card.RelationType == 0 && card.Card.Type.Contains("Artifact")); } }
+        public IEnumerable<DeckCard> CurrentPlaneswalkers   { get { return DeckCards.Where(card => card.RelationType == 0 && card.Card.Type.Contains("Planeswalker")); } }
+        public IEnumerable<DeckCard> CurrentLands           { get { return DeckCards.Where(card => card.RelationType == 0 && card.Card.Type.Contains("Land")); } }
+        public IEnumerable<DeckCard> CurrentSide            { get { return DeckCards.Where(card => card.RelationType == 2); } }
+
+        #region Filter
 
         private string filterString = string.Empty;
-        public string FilterString {
+        public string FilterString
+        {
             get { return filterString; }
-            set { 
+            set
+            {
                 filterString = value;
-                OnPropertyChanged(nameof(FilterString));
-                Reload();
+                OnPropertyChanged();
+                SoftReloadAsync().ConfigureAwait(false);
             }
         }
 
-        public IEnumerable<DeckCard> CurrentCommanders      { get; private set; }
-        public IEnumerable<DeckCard> CurrentCreatures       { get; private set; }
-        public IEnumerable<DeckCard> CurrentInstants        { get; private set; }
-        public IEnumerable<DeckCard> CurrentSorceries       { get; private set; }
-        public IEnumerable<DeckCard> CurrentEnchantments    { get; private set; }
-        public IEnumerable<DeckCard> CurrentArtifacts       { get; private set; }
-        public IEnumerable<DeckCard> CurrentPlaneswalkers   { get; private set; }
-        public IEnumerable<DeckCard> CurrentLands           { get; private set; }
-        public IEnumerable<DeckCard> CurrentSide            { get; private set; }
+        #endregion
 
         #region Visibilities
 
@@ -119,24 +131,13 @@ namespace MaGeek.UI
         #endregion
         
         #region Reload
-
-        private void Reload()
-        {
-            ReloadAsync().ConfigureAwait(false);
-        }
-
-        private async Task ReloadAsync()
+        
+        private async Task HardReloadAsync()
         {
             IsLoading = Visibility.Visible;
-            CurrentCommanders =     await ApplyFilter(await Mageek.GetDeckContent_Related(CurrentDeck.DeckId,1));
-            CurrentSide =           await ApplyFilter(await Mageek.GetDeckContent_Related(CurrentDeck.DeckId,2));
-            CurrentCreatures =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Creature"));
-            CurrentInstants =       await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Instant"));
-            CurrentSorceries =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Sorcery"));
-            CurrentEnchantments =   await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Enchantment"));
-            CurrentArtifacts =      await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Artifact"));
-            CurrentPlaneswalkers =   await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Planeswalker"));
-            CurrentLands =          await ApplyFilter(await Mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Land"));
+            OnPropertyChanged(nameof(IsActive));
+            await Task.Delay(100);
+            DeckCards = await Mageek.GetDeckContent(CurrentDeck.DeckId);
             OnPropertyChanged(nameof(CurrentCommanders));
             OnPropertyChanged(nameof(CurrentSide));
             OnPropertyChanged(nameof(CurrentCreatures));
@@ -151,19 +152,35 @@ namespace MaGeek.UI
             IsLoading = Visibility.Collapsed;
         }
 
+        private async Task SoftReloadAsync()
+        {
+            IsLoading = Visibility.Visible;
+            await Task.Delay(100);
+            OnPropertyChanged(nameof(FilterString));
+            OnPropertyChanged(nameof(CurrentCommanders));
+            OnPropertyChanged(nameof(CurrentSide));
+            OnPropertyChanged(nameof(CurrentCreatures));
+            OnPropertyChanged(nameof(CurrentInstants));
+            OnPropertyChanged(nameof(CurrentSorceries));
+            OnPropertyChanged(nameof(CurrentEnchantments));
+            OnPropertyChanged(nameof(CurrentArtifacts));
+            OnPropertyChanged(nameof(CurrentPlaneswalkers));
+            OnPropertyChanged(nameof(CurrentLands));
+            OnPropertyChanged(nameof(HasCommander));
+            OnPropertyChanged(nameof(HasSide));
+            IsLoading = Visibility.Collapsed;
+        }
+        
         #endregion
 
         #region Methods
 
-        private async Task<IEnumerable<DeckCard>> ApplyFilter(IEnumerable<DeckCard> enumerable)
+        private List<DeckCard> ApplyFilter(List<DeckCard> cards)
         {
-            /*IEnumerable<DeckCard> rels = new List<DeckCard>();
-            await Task.Run(() => {
-                rels = enumerable.Where(x =>
-                    x.Card.Card.CardId.ToLower().Contains(FilterString.ToLower())
-                 || x.Card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower()));
-            });*/
-            return enumerable;
+            return cards.Where(
+                    card => card.Card.Name.ToLower().Contains(FilterString.ToLower())
+                         || card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())
+            ).ToList();
         }
 
         private void LessCard(object sender, RoutedEventArgs e)

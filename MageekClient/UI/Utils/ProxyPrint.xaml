@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MaGeek.UI.Windows.ImportExport" xmlns:ui="clr-namespace:MaGeek.UI"
         mc:Ignorable="d"
         Title="ProxyPrint"
-                    Width="820" Height="900" Background="Black">
+        Width="820" Height="900" Background="Black">
 
     <Grid Width="820">
         <Grid.RowDefinitions>

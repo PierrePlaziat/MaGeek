@@ -63,7 +63,7 @@ namespace MaGeek.UI.Windows.ImportExport
             ShowedPage.Children.Clear();
             CurrentPage = 0;
             await DetermineListOfCardsToPrint();
-            for (int page = 0; page <= ListOfCardsToPrint.Count / 9+1; page++)
+            for (int page = 0; page <= ListOfCardsToPrint.Count / 9 + 1; page++)
             {
                 Pages.Add(await GeneratePage(page));
             }

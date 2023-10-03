@@ -9,7 +9,6 @@ namespace MageekSdk.MtgSqlive.Entities
         public string CardKingdomEtchedId { get; set; }
         public string CardKingdomFoilId { get; set; }
         public string CardKingdomId { get; set; }
-        public string CardsphereId { get; set; }
         public string McmId { get; set; }
         public string McmMetaId { get; set; }
         public string MtgArenaId { get; set; }

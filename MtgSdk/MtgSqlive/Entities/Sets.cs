@@ -25,7 +25,6 @@ namespace MageekSdk.MtgSqlive.Entities
         public int BaseSetSize { get; set; }
         
         public string? Block { get; set; }
-        public int? CardsphereSetId { get; set; }
         public bool? IsFoilOnly { get; set; }
         public bool? IsForeignOnly { get; set; }
         public bool? IsNonFoilOnly { get; set; }
