@@ -16,6 +16,16 @@ namespace MaGeek.UI
 
         #region Attributes
 
+        List<string> historic = new();
+        public List<MenuItem> Historic
+        {
+            get { 
+                List<MenuItem> list = new List<MenuItem>();
+                foreach (var item in historic) { list.Add(new MenuItem() { Header = item }); }
+                return list;
+            }
+        }
+
         public List<Cards> CardList { get; private set; }
 
         private List<Tag> availableTags; 
@@ -123,6 +133,14 @@ namespace MaGeek.UI
         private async Task ReloadData()
         {
             IsLoading = Visibility.Visible;
+
+            if (!string.IsNullOrEmpty(FilterName) && !historic.Contains(FilterName))
+            {
+                historic.Add(FilterName);
+                if (historic.Count > 30) historic.RemoveAt(0);
+                OnPropertyChanged(nameof(Historic));
+            }
+
             if (ShowAdvanced == Visibility.Collapsed)
             {
                 CardList = await Mageek.NormalSearch(
@@ -224,6 +242,10 @@ namespace MaGeek.UI
 
         #endregion
 
+        private void ContextMenu_Click(object sender, RoutedEventArgs e)
+        {
+            FilterName = ((MenuItem)e.OriginalSource).Header.ToString();
+        }
     }
 
     public enum MtgColorFilter
