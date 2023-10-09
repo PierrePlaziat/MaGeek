@@ -28,15 +28,13 @@
             <Button Grid.Column="0" Content="X" ToolTip="Clear filter"
                     Click="ResetFilters"/>
             <Button Grid.Column="1" Content="V" ToolTip="Advanced search"
-                    Click="Button_AdvancedSearcher"
-                    Visibility="{Binding ShowNormal}"/>
+                    Click="Button_AdvancedSearcher"/>
             <TextBox Grid.Column="2"
                      Text="{Binding FilterName}"
                      ToolTip="Search a card by its name"
                      HorizontalAlignment="Stretch"
                      MinWidth="200"
-                     KeyDown="FilterName_KeyDown"
-                     Visibility="{Binding ShowNormal}">
+                     KeyDown="FilterName_KeyDown" >
                 <TextBox.ContextMenu>
                     <ContextMenu ItemsSource="{Binding Path=Historic, UpdateSourceTrigger=PropertyChanged}"
                                  MenuItem.Click="ContextMenu_Click">
