@@ -1,5 +1,10 @@
 ﻿using MaGeek.UI;
-using MtgSqliveSdk;
+using MageekSdk;
+using MageekSdk.Data.Collection;
+using MageekSdk.Data.Mtg;
+using MageekSdk.Tools;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -70,9 +75,48 @@ namespace MaGeek
             MageekMessage = "Check software update";
             if (await App.IsUpdateAvailable()) await App.UpdateSoftware();
             MageekMessage = "Check database update";
-            await Mageek.Initialize();
+            await InitializeMageekServer();
             MageekMessage = "Launching";
             await Launch();
+        }
+
+        private async Task InitializeMageekServer()
+        {
+            MageekFolders.InitFolders();
+            if (!File.Exists(MageekFolders.DB)) CollectionDbManager.CreateDb();
+
+            try
+            {
+
+                bool mtgUpdated = false;
+                try
+                {
+                    if (await MtgDbManager.NeedsUpdate())
+                    {
+                        Logger.Log("Updating...");
+                        await MtgDbManager.DatabaseDownload();
+                        Logger.Log("Updated!");
+                        MtgDbManager.HashSave();
+                        mtgUpdated = true;
+                    }
+                    else
+                    {
+                        Logger.Log("No Update");
+                        mtgUpdated = false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    mtgUpdated = false;
+                }
+
+                if (mtgUpdated) await CollectionDbManager.FetchMtg();
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
         }
 
         private async Task Launch()

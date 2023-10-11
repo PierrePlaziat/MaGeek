@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
-using MtgSqliveSdk;
-using MageekSdk.Collection.Entities;
 using MaGeek.Framework.Utils;
+using MageekSdk;
+using MageekSdk.Data.Collection.Entities;
 
 namespace MaGeek.UI
 {
@@ -91,7 +91,7 @@ namespace MaGeek.UI
             IsLoading = Visibility.Visible;
             await Task.Run(async () =>
             {
-                Decks = FilterDeckEnumerator(await Mageek.GetDecks());
+                Decks = FilterDeckEnumerator(await MageekService.GetDecks());
                 OnPropertyChanged(nameof(Decks));
                 IsLoading = Visibility.Collapsed;
             });
@@ -111,7 +111,7 @@ namespace MaGeek.UI
         private async void AddDeck(object sender, RoutedEventArgs e)
         {
             string title = Log.GetInpurFromUser("What title?","New title");
-            await Mageek.CreateDeck_Empty(title,"");
+            await MageekService.CreateDeck_Empty(title,"");
             await Reload();
         }
         
@@ -119,14 +119,14 @@ namespace MaGeek.UI
         {
             if (App.State.SelectedDeck == null) return;
             string title = Log.GetInpurFromUser("What title?", "New title");
-            await Mageek.RenameDeck(App.State.SelectedDeck.DeckId, title);
+            await MageekService.RenameDeck(App.State.SelectedDeck.DeckId, title);
             await Reload();
         }
 
         private async void DuplicateDeck(object sender, RoutedEventArgs e)
         {
             if (decklistbox.SelectedIndex == -1) return;
-            await Mageek.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
+            await MageekService.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
             await Reload();
         }
 
@@ -136,14 +136,14 @@ namespace MaGeek.UI
             var v = decklistbox.SelectedItems;
             List<Deck> v2 = new();
             foreach (var vv in v) v2.Add((Deck)vv);
-            await Mageek.DeleteDecks(v2);
+            await MageekService.DeleteDecks(v2);
             await Reload();
         }
 
         private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
         {
             if (App.State.SelectedDeck == null) return;
-            var totalPrice = await Mageek.EstimateDeckPrice(App.State.SelectedDeck.DeckId, App.Config.Settings[Setting.Currency]);
+            var totalPrice = await MageekService.EstimateDeckPrice(App.State.SelectedDeck.DeckId, App.Config.Settings[Setting.Currency]);
 
             MessageBox.Show("Estimation : " + totalPrice.Item1 + " €"+"\n"+
                             "Missing : " + totalPrice.Item2);
@@ -153,7 +153,7 @@ namespace MaGeek.UI
 
         private async void GetAsTxtList(object sender, RoutedEventArgs e)
         {
-            string txt = await Mageek.DeckToTxt(((Deck)decklistbox.SelectedItem).DeckId);
+            string txt = await MageekService.DeckToTxt(((Deck)decklistbox.SelectedItem).DeckId);
             new TxtImporter(txt).Show();
         }
     }

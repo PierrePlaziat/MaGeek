@@ -1,16 +1,12 @@
-﻿using MaGeek;
-using MaGeek.Framework.Utils;
-using MageekSdk;
+﻿using MageekSdk;
+using MageekSdk.Data;
 using MageekSdk.Tools;
-using MtgSqliveSdk;
-using ScryfallApi.Client.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using static MtgSqliveSdk.Mageek;
 using Timer = System.Timers.Timer;
 
 namespace MaGeek
@@ -209,7 +205,7 @@ namespace MaGeek
         {
             List<DeckLine> importLines;
             importLines = await ParseCardList(importing.Content);
-            await Mageek.CreateDeck_Contructed(
+            await MageekService.CreateDeck_Contructed(
                 importing.Title ?? DateTime.Now.ToString(),
                 "",
                 importLines

@@ -3,7 +3,7 @@ using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace MaGeek.Framework.Extensions
+namespace MageekSdk.Tools
 {
     public abstract class StringExtension
     {

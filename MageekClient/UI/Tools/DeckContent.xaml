@@ -39,8 +39,8 @@
                 <Label>Commander:</Label>
                 <ListView ItemsSource="{Binding CurrentCommanders}" 
                           BorderThickness="0"   
-                          Background="DarkOrange" 
-                          SelectionChanged="SelectionChanged" 
+                          Background="DarkOrange"
+                          MouseDoubleClick="SelectionChanged" 
                           Grid.Row="2"
                           Visibility="{Binding HasCommander}"
                           SelectionMode="Single">
@@ -91,8 +91,8 @@
                 <Label>Creatures :</Label>
                 <ListView ItemsSource="{Binding CurrentCreatures}" 
                           BorderThickness="0"  
-                          Background="#222" 
-                          SelectionChanged="SelectionChanged"
+                          Background="#222"
+                          MouseDoubleClick="SelectionChanged"
                           SelectionMode="Single">
 
                     <ListView.ItemContainerStyle>
@@ -138,8 +138,8 @@
                 <Label>Instants :</Label>
                 <ListView ItemsSource="{Binding CurrentInstants}" 
                           BorderThickness="0"  
-                          Background="#222" 
-                          SelectionChanged="SelectionChanged"
+                          Background="#222"
+                          MouseDoubleClick="SelectionChanged"
                           Grid.Row="3" 
                           SelectionMode="Single">
 
@@ -186,8 +186,8 @@
                 <Label>Sorceries :</Label>
                 <ListView ItemsSource="{Binding CurrentSorceries}" 
                           BorderThickness="0"  
-                          Background="#222" 
-                          SelectionChanged="SelectionChanged"
+                          Background="#222"
+                          MouseDoubleClick="SelectionChanged"
                           Grid.Row="3" 
                           SelectionMode="Single">
 
@@ -234,8 +234,8 @@
                 <Label>Enchantments :</Label>
                 <ListView ItemsSource="{Binding CurrentEnchantments}" 
                           BorderThickness="0"  
-                          Background="#222" 
-                          SelectionChanged="SelectionChanged"
+                          Background="#222"
+                          MouseDoubleClick="SelectionChanged"
                           Grid.Row="3" 
                           SelectionMode="Single">
 
@@ -282,8 +282,8 @@
                 <Label>Artifacts :</Label>
                 <ListView ItemsSource="{Binding CurrentArtifacts}" 
                           BorderThickness="0"  
-                          Background="#222" 
-                          SelectionChanged="SelectionChanged"
+                          Background="#222"
+                          MouseDoubleClick="SelectionChanged"
                           Grid.Row="3" 
                           SelectionMode="Single">
 
@@ -330,8 +330,8 @@
                 <Label>Planeswalkers :</Label>
                 <ListView ItemsSource="{Binding CurrentPlaneswalkers}" 
                           BorderThickness="0"  
-                          Background="#222" 
-                          SelectionChanged="SelectionChanged"
+                          Background="#222"
+                          MouseDoubleClick="SelectionChanged"
                           Grid.Row="3" 
                           SelectionMode="Single">
 
@@ -378,8 +378,8 @@
                 <Label>Lands :</Label>
                 <ListView ItemsSource="{Binding CurrentLands}" 
                           BorderThickness="0"  
-                          Background="#222" 
-                          SelectionChanged="SelectionChanged"
+                          Background="#222"
+                          MouseDoubleClick="SelectionChanged"
                           Grid.Row="3" 
                           SelectionMode="Single">
 
@@ -426,8 +426,8 @@
                 <Label>Side :</Label>
                 <ListView ItemsSource="{Binding CurrentSide}" 
                           BorderThickness="0" 
-                          Background="#222" 
-                          SelectionChanged="SelectionChanged" 
+                          Background="#222"
+                          MouseDoubleClick="SelectionChanged" 
                           SelectionMode="Single">
 
                     <ListView.ItemContainerStyle>

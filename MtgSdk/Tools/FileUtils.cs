@@ -1,9 +1,8 @@
-﻿using MageekSdk.Tools;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 
-namespace MtgSqliveSdk.Framework
+namespace MageekSdk.Tools
 {
     public static class FileUtils
     {
@@ -15,7 +14,7 @@ namespace MtgSqliveSdk.Framework
         {
             if (File.Exists(fileName))
             {
-                var lastWrite =  File.GetLastWriteTime(fileName);
+                var lastWrite = File.GetLastWriteTime(fileName);
                 var diff = DateTime.Now.Subtract(lastWrite);
                 return diff > thresholdAge;
             }

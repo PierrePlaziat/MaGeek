@@ -1,5 +1,5 @@
-﻿using MageekSdk.Collection.Entities;
-using MtgSqliveSdk;
+﻿using MageekSdk;
+using MageekSdk.Data.Collection.Entities;
 
 namespace MaGeek
 {
@@ -31,12 +31,12 @@ namespace MaGeek
 
         private void DoSelectDeck(string deckId)
         {
-            selectedDeck = Mageek.GetDeck(deckId).Result;
+            selectedDeck = MageekService.GetDeck(deckId).Result;
         }
 
         private void DoSelectCard(string cardUuid)
         {
-            selectedCard = Mageek.FindCard_Ref(cardUuid).Result;
+            selectedCard = MageekService.FindCard_Ref(cardUuid).Result;
         }
 
         #endregion

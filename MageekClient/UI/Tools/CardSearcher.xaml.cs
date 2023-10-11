@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System;
-using MageekSdk.MtgSqlive.Entities;
-using MageekSdk.Collection.Entities;
-using MtgSqliveSdk;
+using MageekSdk;
+using MageekSdk.Data.Collection.Entities;
+using MageekSdk.Data.Mtg.Entities;
 
 namespace MaGeek.UI
 {
@@ -123,7 +123,6 @@ namespace MaGeek.UI
             InitializeComponent();
             FillColorFilterCombo();
             App.Events.UpdateCardCollecEvent += async () => { await ReloadData(); };
-            //ReloadData().ConfigureAwait(false); // TODO option
         }
 
         #endregion
@@ -143,7 +142,7 @@ namespace MaGeek.UI
 
             if (ShowAdvanced == Visibility.Collapsed)
             {
-                CardList = await Mageek.NormalSearch(
+                CardList = await MageekService.NormalSearch(
                     App.Config.Settings[Setting.ForeignLanguage],
                     FilterName
                 );
@@ -153,7 +152,7 @@ namespace MaGeek.UI
                 var lang = App.Config.Settings[Setting.ForeignLanguage];
                 var color = FilterColor.ToString();
                 string tagz = "";// FilterTag.TagContent;
-                CardList = await Mageek.AdvancedSearch(
+                CardList = await MageekService.AdvancedSearch(
                     lang,
                     FilterName,
                     FilterType,
@@ -225,7 +224,7 @@ namespace MaGeek.UI
         {
             foreach (Cards c in CardGrid.SelectedItems)
             {
-                await Mageek.AddCardToDeck(c.Uuid, App.State.SelectedDeck,1);
+                await MageekService.AddCardToDeck(c.Uuid, App.State.SelectedDeck,1);
             }
             App.Events.RaiseUpdateDeck();
         }

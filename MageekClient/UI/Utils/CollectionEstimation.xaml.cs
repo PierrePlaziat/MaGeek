@@ -1,6 +1,5 @@
-﻿using MaGeek.Framework.Utils;
+﻿using MageekSdk;
 using MageekSdk.Tools;
-using MtgSqliveSdk;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -66,10 +65,10 @@ namespace MaGeek.UI
             {
                 IsLoading = Visibility.Visible;
                 await Task.Run(async () => {
-                    TotalDiffExist = await Mageek.GetTotal_ExistingArchetypes();
-                    TotalDiffGot = await Mageek.GetTotal_CollectedArchetype();
-                    TotalGot = await Mageek.GetTotal_CollectedDiff();
-                    var est = await Mageek.AutoEstimatePrices(App.Config.Settings[Setting.ForeignLanguage]);
+                    TotalDiffExist = await MageekService.GetTotal_ExistingArchetypes();
+                    TotalDiffGot = await MageekService.GetTotal_CollectedArchetype();
+                    TotalGot = await MageekService.GetTotal_CollectedDiff();
+                    var est = await MageekService.AutoEstimatePrices(App.Config.Settings[Setting.ForeignLanguage]);
                     AutoEstimation = est.Item1;
                     MissingList = est.Item2;
                     OnPropertyChanged(nameof(TotalDiffExist));

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Linq;
-using MageekSdk.MtgSqlive.Entities;
-using MtgSqliveSdk;
 using System.Windows;
+using MageekSdk;
+using MageekSdk.Data.Mtg.Entities;
 
 namespace MaGeek.UI
 {
@@ -78,12 +78,12 @@ namespace MaGeek.UI
 
         private async void LoadSets()
         {
-            SetList = await Mageek.LoadSets();
+            SetList = await MageekService.LoadSets();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetList = (Mageek.LoadSets().Result).Where(x => FilterBlock == "All blocks" || x.Block == FilterBlock)
+            SetList = (MageekService.LoadSets().Result).Where(x => FilterBlock == "All blocks" || x.Block == FilterBlock)
                                 .Where(x => FilterType == "All types" || x.Type == FilterType).ToList();
         }
 
@@ -91,7 +91,7 @@ namespace MaGeek.UI
         {
             var s = ((ListView)sender).SelectedItem as Sets;
             Variants = null;
-            Variants =await  Mageek.GetCardsFromSet(s.Code);
+            Variants =await  MageekService.GetCardsFromSet(s.Code);
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -110,7 +110,7 @@ namespace MaGeek.UI
         {
             foreach (Cards c in CardGrid.SelectedItems)
             {
-                await Mageek.AddCardToDeck(c.Uuid, App.State.SelectedDeck, 1);
+                await MageekService.AddCardToDeck(c.Uuid, App.State.SelectedDeck, 1);
             }
             App.Events.RaiseUpdateDeck();
         }

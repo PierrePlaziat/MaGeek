@@ -1,5 +1,5 @@
-﻿using MageekSdk.Collection.Entities;
-using MtgSqliveSdk;
+﻿using MageekSdk;
+using MageekSdk.Data.Collection.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,7 +83,7 @@ namespace MaGeek.UI
 
         void HandleDeckSelected(string deckId)
         {
-            CurrentDeck = Mageek.GetDeck(deckId).Result;
+            CurrentDeck = MageekService.GetDeck(deckId).Result;
         }
 
         void HandleDeckModified()
@@ -104,46 +104,41 @@ namespace MaGeek.UI
         {
             if (CurrentDeck == null) return;
             IsLoading = Visibility.Visible;
-            await Task.Run(async () => {
-                CreatureCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Creature");
-                InstantCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Instant");
-                SorceryCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Sorcery"); 
-                EnchantmentCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Enchantment");
-                ArtifactCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Artifact"); 
-                BasicLandCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Planeswalker"); 
-                BasicLandCount = await Mageek.Count_Typed(CurrentDeck.DeckId, "Land"); 
-                DevotionB = await Mageek.DeckDevotion(currentDeck.DeckId, 'B');
-                DevotionW = await Mageek.DeckDevotion(currentDeck.DeckId, 'W'); 
-                DevotionU = await Mageek.DeckDevotion(currentDeck.DeckId, 'U'); 
-                DevotionG = await Mageek.DeckDevotion(currentDeck.DeckId, 'G'); 
-                DevotionR = await Mageek.DeckDevotion(currentDeck.DeckId, 'R'); 
-                StandardOk = await Mageek.DeckValidity(currentDeck, "Standard");
-                CommanderOk = await Mageek.DeckValidity(currentDeck, "Commander");
-                OwnedRatio = await Mageek.OwnedRatio(currentDeck.DeckId);
-                OnPropertyChanged(nameof(CreatureCount));
-                OnPropertyChanged(nameof(InstantCount));
-                OnPropertyChanged(nameof(SorceryCount));
-                OnPropertyChanged(nameof(EnchantmentCount));
-                OnPropertyChanged(nameof(ArtifactCount));
-                OnPropertyChanged(nameof(BasicLandCount));
-                OnPropertyChanged(nameof(SpecialLandCount));
-                OnPropertyChanged(nameof(OtherCount));
-                OnPropertyChanged(nameof(StandardOk));
-                OnPropertyChanged(nameof(CommanderOk));
-                OnPropertyChanged(nameof(DevotionB));
-                OnPropertyChanged(nameof(DevotionW));
-                OnPropertyChanged(nameof(DevotionU));
-                OnPropertyChanged(nameof(DevotionG));
-                OnPropertyChanged(nameof(DevotionR));
-                OnPropertyChanged(nameof(OwnedRatio));
-            });
-            int[] manacurve = await Mageek.GetManaCurve(CurrentDeck.DeckId);
-            DrawNewHand();
+            CreatureCount = await MageekService.Count_Typed(CurrentDeck.DeckId, "Creature");
+            InstantCount = await MageekService.Count_Typed(CurrentDeck.DeckId, "Instant");
+            SorceryCount = await MageekService.Count_Typed(CurrentDeck.DeckId, "Sorcery"); 
+            EnchantmentCount = await MageekService.Count_Typed(CurrentDeck.DeckId, "Enchantment");
+            ArtifactCount = await MageekService.Count_Typed(CurrentDeck.DeckId, "Artifact"); 
+            BasicLandCount = await MageekService.Count_Typed(CurrentDeck.DeckId, "Planeswalker"); 
+            BasicLandCount = await MageekService.Count_Typed(CurrentDeck.DeckId, "Land"); 
+            DevotionB = await MageekService.DeckDevotion(currentDeck.DeckId, 'B');
+            DevotionW = await MageekService.DeckDevotion(currentDeck.DeckId, 'W'); 
+            DevotionU = await MageekService.DeckDevotion(currentDeck.DeckId, 'U'); 
+            DevotionG = await MageekService.DeckDevotion(currentDeck.DeckId, 'G'); 
+            DevotionR = await MageekService.DeckDevotion(currentDeck.DeckId, 'R'); 
+            StandardOk = await MageekService.DeckValidity(currentDeck, "Standard");
+            CommanderOk = await MageekService.DeckValidity(currentDeck, "Commander");
+            OwnedRatio = await MageekService.OwnedRatio(currentDeck.DeckId);
+            OnPropertyChanged(nameof(CreatureCount));
+            OnPropertyChanged(nameof(InstantCount));
+            OnPropertyChanged(nameof(SorceryCount));
+            OnPropertyChanged(nameof(EnchantmentCount));
+            OnPropertyChanged(nameof(ArtifactCount));
+            OnPropertyChanged(nameof(BasicLandCount));
+            OnPropertyChanged(nameof(SpecialLandCount));
+            OnPropertyChanged(nameof(OtherCount));
+            OnPropertyChanged(nameof(StandardOk));
+            OnPropertyChanged(nameof(CommanderOk));
+            OnPropertyChanged(nameof(DevotionB));
+            OnPropertyChanged(nameof(DevotionW));
+            OnPropertyChanged(nameof(DevotionU));
+            OnPropertyChanged(nameof(DevotionG));
+            OnPropertyChanged(nameof(DevotionR));
+            OnPropertyChanged(nameof(OwnedRatio));
+            int[] manacurve = await MageekService.GetManaCurve(CurrentDeck.DeckId);
+            //DrawNewHand();
             DrawManacurve(manacurve);
-            await Task.Run(() =>
-            {
-                IsLoading = Visibility.Collapsed;
-            });
+            IsLoading = Visibility.Collapsed;
         }
 
         #endregion
@@ -152,7 +147,7 @@ namespace MaGeek.UI
 
         private async void ListMissing(object sender, RoutedEventArgs e)
         {
-            string missList = await Mageek.ListMissingCards(CurrentDeck.DeckId);
+            string missList = await MageekService.ListMissingCards(CurrentDeck.DeckId);
             if (!string.IsNullOrEmpty(missList))
             {
                 var window = new TxtImporter(missList);

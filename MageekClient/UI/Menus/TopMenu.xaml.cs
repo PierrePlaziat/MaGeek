@@ -1,6 +1,6 @@
 ﻿using MaGeek.UI.Windows.Importers;
 using MaGeek.UI.Windows.ImportExport;
-using MtgSqliveSdk;
+using MageekSdk;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -232,7 +232,7 @@ namespace MaGeek.UI.Menus
 
         private async void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            await Mageek.ConvertCollectedFromScryfallIdToUuid();
+            await MageekService.ConvertCollectedFromScryfallIdToUuid();
         }
     }
 
