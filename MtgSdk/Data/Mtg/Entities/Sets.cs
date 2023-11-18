@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekSdk.Data.Mtg.Entities
+namespace MageekService.Data.Mtg.Entities
 {
     public class Sets
     {
@@ -11,7 +11,7 @@ namespace MageekSdk.Data.Mtg.Entities
         {
             get
             {
-                string s = Path.Combine(MageekFolders.SetIcon, Code + ".svg");
+                string s = Path.Combine(Folders.SetIcon, Code + ".svg");
                 if (File.Exists(s)) return s;
                 else return @"\Resources\wut.svg";
             }

@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaGeek", "Mageek\MaGeek.csp
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "MaGeekSetup", "MaGeekSetup\MaGeekSetup.wixproj", "{57D6E241-DC89-4B7E-A719-790EB6E10E5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MageekSdk", "MtgSdk\MageekSdk.csproj", "{7645C52B-3317-46D9-A583-42234F13C114}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MageekService", "MtgSdk\MageekService.csproj", "{7645C52B-3317-46D9-A583-42234F13C114}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaGeekClient", "MageekClient\MaGeekClient.csproj", "{14CD381F-9EF6-4A2E-B38B-5CAE51CA7DCC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OriginalMonolith", "OriginalMonolith", "{FF834229-EA51-4711-84CB-2BA02595D539}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MageekGrpc", "GrpcService1\MageekGrpc.csproj", "{4C061659-4E11-4977-8741-8C6D77A43FCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,14 @@ Global
 		{14CD381F-9EF6-4A2E-B38B-5CAE51CA7DCC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{14CD381F-9EF6-4A2E-B38B-5CAE51CA7DCC}.Release|x86.ActiveCfg = Release|Any CPU
 		{14CD381F-9EF6-4A2E-B38B-5CAE51CA7DCC}.Release|x86.Build.0 = Release|Any CPU
+		{4C061659-4E11-4977-8741-8C6D77A43FCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C061659-4E11-4977-8741-8C6D77A43FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C061659-4E11-4977-8741-8C6D77A43FCE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4C061659-4E11-4977-8741-8C6D77A43FCE}.Debug|x86.Build.0 = Debug|Any CPU
+		{4C061659-4E11-4977-8741-8C6D77A43FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C061659-4E11-4977-8741-8C6D77A43FCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C061659-4E11-4977-8741-8C6D77A43FCE}.Release|x86.ActiveCfg = Release|Any CPU
+		{4C061659-4E11-4977-8741-8C6D77A43FCE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace MageekSdk.Tools
+namespace MageekService.Tools
 {
 
     public static class Logger

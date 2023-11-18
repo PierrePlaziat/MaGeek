@@ -6,11 +6,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Linq;
-using MageekSdk;
-using MageekSdk.Data.Collection.Entities;
-using MageekSdk.Data.Mtg.Entities;
-using MageekSdk.Data;
-using MageekSdk.Tools;
+using MageekService;
+using MageekService.Data.Collection.Entities;
+using MageekService.Data.Mtg.Entities;
+using MageekService.Data;
+using MageekService.Tools;
 
 namespace MaGeek.UI
 {
@@ -102,25 +102,25 @@ namespace MaGeek.UI
             {
                 LoadMsg = "...";
                 IsLoading = Visibility.Visible; 
-                string cardArchetype = await MageekService.FindCard_Archetype(variantUuid);
+                string cardArchetype = await MageekService.MageekService.FindCard_Archetype(variantUuid);
 
                 LoadMsg = "Finding variants";
                 SelectedVariant = null;
                 Variants = null;
                 Variants = new List<CardVariant>();
 
-                foreach (string variant in await MageekService.FindCard_Variants(cardArchetype))
+                foreach (string variant in await MageekService.MageekService.FindCard_Variants(cardArchetype))
                 {
-                    var x = await MageekService.FindCard_Data(variant);
+                    var x = await MageekService.MageekService.FindCard_Data(variant);
                     if (x != null)
                     {
                         CardVariant v = new()
                         {
                             Card = x,
-                            PriceValue = await MageekService.EstimateCardPrice(x.Uuid)
+                            PriceValue = await MageekService.MageekService.EstimateCardPrice(x.Uuid)
                         };
                         Variants.Add(v);
-                        if (x.Uuid==variantUuid) selectedvariant = v;
+                        if (x.Uuid == variantUuid) selectedvariant = v;
                     }
                 }
                 OnPropertyChanged(nameof(Variants));
@@ -128,18 +128,18 @@ namespace MaGeek.UI
 
                 LoadMsg = "Loading legalities";
                 Legalities = new();
-                Legalities = await MageekService.GetLegalities(variantUuid);
+                Legalities = await MageekService.MageekService.GetLegalities(variantUuid);
                 OnPropertyChanged(nameof(Legalities));
 
                 LoadMsg = "Loading rulings";
                 Rulings = new();
-                Rulings = await MageekService.GetRulings(variantUuid);
+                Rulings = await MageekService.MageekService.GetRulings(variantUuid);
                 OnPropertyChanged(nameof(Rulings));
                 OnPropertyChanged(nameof(ShowRules));
 
                 LoadMsg = "Loading relateds";
                 RelatedCards = new();
-                RelatedCards = await MageekService.FindCard_Related(SelectedVariant.Card);
+                RelatedCards = await MageekService.MageekService.FindCard_Related(SelectedVariant.Card);
                 OnPropertyChanged(nameof(RelatedCards));
                 OnPropertyChanged(nameof(ShowRelateds));
 
@@ -167,14 +167,14 @@ namespace MaGeek.UI
         private async void AddCardToCollection(object sender, RoutedEventArgs e)
         {
             CardVariant variant = (CardVariant) ((Button)sender).DataContext;
-            await MageekService.CollectedCard_Add(variant.Card.Uuid);
+            await MageekService.MageekService.CollecMove(variant.Card.Uuid,1);
             SelectCard(variant.Card.Uuid);
         }
 
         private async void SubstractCardFromCollection(object sender, RoutedEventArgs e)
         {
             CardVariant variant = (CardVariant)((Button)sender).DataContext;
-            await MageekService.CollectedCard_Remove(variant.Card.Uuid);
+            await MageekService.MageekService.CollecMove(variant.Card.Uuid, -1);
             SelectCard(variant.Card.Uuid);
         }
 
@@ -182,7 +182,7 @@ namespace MaGeek.UI
         {
             try
             {
-                await MageekService.AddCardToDeck(SelectedVariant.Card.Uuid, App.State.SelectedDeck, 1);
+                await MageekService.MageekService.AddCardToDeck(SelectedVariant.Card.Uuid, App.State.SelectedDeck, 1);
                 App.Events.RaiseUpdateDeck();
             }
             catch(Exception ex)
@@ -193,7 +193,7 @@ namespace MaGeek.UI
 
         private async void SetFav(object sender, RoutedEventArgs e)
         {
-            await MageekService.SetFav(SelectedVariant.Card.Name, SelectedVariant.Card.Uuid);
+            await MageekService.MageekService.SetFav(SelectedVariant.Card.Name, SelectedVariant.Card.Uuid);
         }
 
         #region Tags
@@ -201,14 +201,14 @@ namespace MaGeek.UI
         private async Task<List<Tag>> GetTags()
         {
             if (SelectedVariant == null) return null;
-            return await MageekService.GetTags(SelectedVariant.Card.Name);
+            return await MageekService.MageekService.GetTags(SelectedVariant.Card.Name);
         }
 
         private async void AddTag(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(NewTag.Text))
             {
-                await MageekService.TagCard(SelectedVariant.Card.Name, NewTag.Text);
+                await MageekService.MageekService.TagCard(SelectedVariant.Card.Name, NewTag.Text);
                 OnPropertyChanged(nameof(Tags));
                 NewTag.Text = "";
                 sugestions.Visibility = Visibility.Collapsed;
@@ -219,7 +219,7 @@ namespace MaGeek.UI
         private async void DeleteTag(object sender, RoutedEventArgs e)
         {
             Tag cardTag = (Tag)((Button)sender).DataContext;
-            await MageekService.UnTagCard(cardTag);
+            await MageekService.MageekService.UnTagCard(cardTag);
             OnPropertyChanged(nameof(Tags));
             sugestions.Visibility = Visibility.Collapsed;
             SelectCard(SelectedVariant.Card.Uuid);
@@ -229,7 +229,7 @@ namespace MaGeek.UI
         {
             bool found = false;
             var border = (resultStack.Parent as ScrollViewer).Parent as Border;
-            var data = await MageekService.GetTags();
+            var data = await MageekService.MageekService.GetTags();
             string query = (sender as TextBox).Text;
             if (query.Length == 0)
             {

@@ -1,6 +1,6 @@
-﻿using MageekSdk.Data.Mtg.Entities;
+﻿using MageekService.Data.Mtg.Entities;
 
-namespace MageekSdk.Data
+namespace MageekService.Data
 {
 
     /// <summary>

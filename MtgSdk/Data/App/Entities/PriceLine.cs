@@ -2,12 +2,15 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekSdk.Data.Collection.Entities
+namespace MageekService.Data.Collection.Entities
 {
-    public class CollectedCard
+    public class PriceLine
     {
         [Key]
         public string CardUuid { get; set; }
-        public int Collected { get; set; }
+        public string LastUpdate { get; set; }
+        public decimal? PriceEur { get; set; }
+        public decimal? PriceUsd { get; set; }
+        public int EdhrecScore { get; set; }
     }
 }

@@ -2,12 +2,13 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekSdk.Data.Collection.Entities
+namespace MageekService.Data.Collection.Entities
 {
-    public class Param
+    public class Tag
     {
         [Key]
-        public string ParamName { get; set; }
-        public string ParamValue { get; set; }
+        public string TagId { get; set; }
+        public string TagContent { get; set; }
+        public string ArchetypeId { get; set; }
     }
 }

@@ -2,12 +2,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekService.Data.Mtg.Entities
+namespace MageekService.Data.Collection.Entities
 {
-    public class Meta
+    public class Param
     {
-        public string Date { get; set; }
         [Key]
-        public string Version { get; set; }
+        public string ParamName { get; set; }
+        public string ParamValue { get; set; }
     }
 }

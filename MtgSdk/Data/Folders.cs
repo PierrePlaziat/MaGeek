@@ -1,11 +1,12 @@
-﻿namespace MageekSdk
+﻿namespace MageekService
 {
-
-    public static class MageekFolders
+ 
+    public static class Folders
     {
 
         private static string Roaming { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
         private static string SDK { get; } = Path.Combine(Roaming, "SDK");
+
         private static string DbFolder { get; } = Path.Combine(SDK, "DB");
         public static string DB { get; } = Path.Combine(DbFolder, "MaGeek.db");
         public static string MtgJson_DB { get; } = Path.Combine(DbFolder, "mtgjson.sqlite");

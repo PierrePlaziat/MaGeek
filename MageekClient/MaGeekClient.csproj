@@ -59,7 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MtgSdk\MageekSdk.csproj" />
+    <ProjectReference Include="..\MtgSdk\MageekService.csproj" />
   </ItemGroup>
 
 

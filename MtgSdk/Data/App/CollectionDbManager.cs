@@ -1,17 +1,17 @@
 ﻿#pragma warning disable CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
 #pragma warning disable CS8602 // Déréférencement d'une éventuelle référence null.
 
-using MageekSdk.Data.Collection.Entities;
-using MageekSdk.Data.Mtg;
-using MageekSdk.Data.Mtg.Entities;
-using MageekSdk.Tools;
+using MageekService.Data.Collection.Entities;
+using MageekService.Data.Mtg;
+using MageekService.Data.Mtg.Entities;
+using MageekService.Tools;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ScryfallApi.Client.Models;
 using System.Net;
 using System.Text.Json;
 
-namespace MageekSdk.Data.Collection
+namespace MageekService.Data.Collection
 {
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace MageekSdk.Data.Collection
         public static async Task<CollectionDbContext?> GetContext()
         {
             await Task.Delay(0);
-            return new CollectionDbContext(MageekFolders.DB);
+            return new CollectionDbContext(Folders.DB);
         }
 
         private static string[] MageekDbDescription { get; } = new string[] {
@@ -42,7 +42,7 @@ namespace MageekSdk.Data.Collection
 
         public static void CreateDb()
         {
-            SqliteConnection dbCo = new SqliteConnection("Data Source = " + MageekFolders.DB);
+            SqliteConnection dbCo = new SqliteConnection("Data Source = " + Folders.DB);
             dbCo.Open();
             foreach (string instruction in MageekDbDescription) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
             dbCo.Close();
@@ -171,7 +171,7 @@ namespace MageekSdk.Data.Collection
                 foreach (Set set in Setz.Data)
                 {
                     var uri = set.IconSvgUri;
-                    string localFileName = Path.Combine(MageekFolders.SetIcon, set.Code.ToUpper() + ".svg");
+                    string localFileName = Path.Combine(Folders.SetIcon, set.Code.ToUpper() + ".svg");
                     if (!File.Exists(localFileName))
                     {
                         using (WebClient client = new WebClient())

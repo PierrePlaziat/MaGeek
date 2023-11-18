@@ -1,9 +1,7 @@
 ﻿using System.Globalization;
-using System;
 using System.Text;
-using System.Text.RegularExpressions;
 
-namespace MageekSdk.Tools
+namespace MageekService.Tools
 {
     public abstract class StringExtension
     {

@@ -2,13 +2,14 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekSdk.Data.Collection.Entities
+namespace MageekService.Data.Collection.Entities
 {
-    public class Tag
+
+    public class ArchetypeCard
     {
         [Key]
-        public string TagId { get; set; }
-        public string TagContent { get; set; }
+        public string CardUuid { get; set; }
         public string ArchetypeId { get; set; }
     }
+
 }

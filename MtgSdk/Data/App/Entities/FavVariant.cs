@@ -2,14 +2,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekSdk.Data.Collection.Entities
+namespace MageekService.Data.Collection.Entities
 {
-
-    public class ArchetypeCard
+    public class FavVariant
     {
         [Key]
-        public string CardUuid { get; set; }
         public string ArchetypeId { get; set; }
+        public string FavUuid { get; set; }
     }
-
 }

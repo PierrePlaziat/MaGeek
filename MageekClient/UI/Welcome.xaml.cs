@@ -1,8 +1,8 @@
 ﻿using MaGeek.UI;
-using MageekSdk;
-using MageekSdk.Data.Collection;
-using MageekSdk.Data.Mtg;
-using MageekSdk.Tools;
+using MageekService.Data;
+using MageekService.Data.Collection;
+using MageekService.Data.Mtg;
+using MageekService.Tools;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -82,8 +82,8 @@ namespace MaGeek
 
         private async Task InitializeMageekServer()
         {
-            MageekFolders.InitFolders();
-            if (!File.Exists(MageekFolders.DB)) CollectionDbManager.CreateDb();
+            Folders.InitFolders();
+            if (!File.Exists(Folders.DB)) CollectionDbManager.CreateDb();
 
             try
             {

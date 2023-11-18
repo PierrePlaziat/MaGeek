@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace MageekSdk.Tools
+namespace MageekService.Tools
 {
 
     public static class HttpUtils

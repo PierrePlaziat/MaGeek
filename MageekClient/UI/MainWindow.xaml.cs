@@ -1,7 +1,7 @@
 ﻿using AvalonDock.Layout;
 using AvalonDock.Layout.Serialization;
 using MaGeek.UI;
-using MageekSdk.Tools;
+using MageekService.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;

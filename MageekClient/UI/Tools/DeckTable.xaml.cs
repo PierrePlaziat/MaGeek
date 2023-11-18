@@ -1,7 +1,7 @@
-﻿using MageekSdk;
-using MageekSdk.Data.Collection.Entities;
-using MageekSdk.Data.Mtg.Entities;
-using MageekSdk.Tools;
+﻿using MageekService;
+using MageekService.Data.Collection.Entities;
+using MageekService.Data.Mtg.Entities;
+using MageekService.Tools;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -103,7 +103,7 @@ namespace MaGeek.UI
 
         void HandleDeckSelected(string deck)
         {
-            CurrentDeck = MageekService.GetDeck(deck).Result;
+            CurrentDeck = MageekService.MageekService.GetDeck(deck).Result;
         }
 
         void HandleDeckModified()
@@ -134,10 +134,10 @@ namespace MaGeek.UI
             { 
                 IsLoading = Visibility.Visible;
                 OnPropertyChanged(nameof(IsActive));
-                CardRelations_Content = await MageekService.GetDeckContent_Related(CurrentDeck.DeckId,0);
-                CardRelations_Commandant = await MageekService.GetDeckContent_Related(CurrentDeck.DeckId,1);
-                CardRelations_Side = await MageekService.GetDeckContent_Related(CurrentDeck.DeckId,2);
-                CardRelations_Lands = await MageekService.GetDeckContent_Typed(CurrentDeck.DeckId, "Land");
+                CardRelations_Content = await MageekService.MageekService.GetDeckContent_Related(CurrentDeck.DeckId,0);
+                CardRelations_Commandant = await MageekService.MageekService.GetDeckContent_Related(CurrentDeck.DeckId,1);
+                CardRelations_Side = await MageekService.MageekService.GetDeckContent_Related(CurrentDeck.DeckId,2);
+                CardRelations_Lands = await MageekService.MageekService.GetDeckContent_Typed(CurrentDeck.DeckId, "Land");
                 OnPropertyChanged(nameof(CardRelations_Content));
                 OnPropertyChanged(nameof(CardRelations_Commandant));
                 OnPropertyChanged(nameof(CardRelations_Side));
@@ -181,7 +181,7 @@ namespace MaGeek.UI
             cardRelations.AddRange(CardRelations_Commandant);
             foreach(var cardRelation in cardRelations)
             {
-                var data = await MageekService.FindCard_Data(cardRelation.CardUuid);
+                var data = await MageekService.MageekService.FindCard_Data(cardRelation.CardUuid);
                 cardData.Add(cardRelation,data);
             }
         }
@@ -223,35 +223,35 @@ namespace MaGeek.UI
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as DeckCard;
-            await MageekService.ChangeDeckRelationType(cr, 1);
+            await MageekService.MageekService.ChangeDeckRelationType(cr, 1);
         }
 
         private async void UnsetCommandant_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as DeckCard;
-            await MageekService.ChangeDeckRelationType(cr, 0);
+            await MageekService.MageekService.ChangeDeckRelationType(cr, 0);
         }
 
         private async void ToSide_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as DeckCard;
-            await MageekService.ChangeDeckRelationType(cr, 2);
+            await MageekService.MageekService.ChangeDeckRelationType(cr, 2);
         }
 
         private async void AddOne_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as DeckCard;
-            await MageekService.AddCardToDeck(cr.CardUuid, CurrentDeck,1);
+            await MageekService.MageekService.AddCardToDeck(cr.CardUuid, CurrentDeck, 1);
         }
 
         private async void RemoveOne_Click(object sender, RoutedEventArgs e)
         {
             var b = (MenuItem)sender;
             var cr = b.DataContext as DeckCard;
-            await MageekService.RemoveCardFromDeck(cr.CardUuid, CurrentDeck);
+            await MageekService.MageekService.RemoveCardFromDeck(cr.CardUuid, CurrentDeck);
         }
 
     }

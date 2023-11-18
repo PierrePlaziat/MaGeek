@@ -3,8 +3,8 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MageekSdk;
-using MageekSdk.Data.Collection.Entities;
+using MageekService;
+using MageekService.Data.Collection.Entities;
 
 namespace MaGeek.UI
 {
@@ -118,7 +118,7 @@ namespace MaGeek.UI
 
         void HandleDeckSelected(string deck)
         {
-            CurrentDeck = MageekService.GetDeck(deck).Result;
+            CurrentDeck = MageekService.MageekService.GetDeck(deck).Result;
         }
 
         void HandleDeckModif()
@@ -137,7 +137,7 @@ namespace MaGeek.UI
             IsLoading = Visibility.Visible;
             OnPropertyChanged(nameof(IsActive));
             await Task.Delay(100);
-            DeckCards = await MageekService.GetDeckContent(CurrentDeck.DeckId);
+            DeckCards = await MageekService.MageekService.GetDeckContent(CurrentDeck.DeckId);
             OnPropertyChanged(nameof(CurrentCommanders));
             OnPropertyChanged(nameof(CurrentSide));
             OnPropertyChanged(nameof(CurrentCreatures));
@@ -187,7 +187,7 @@ namespace MaGeek.UI
         {
             var b = (Button)sender;
             var cr = b.DataContext as DeckCard;
-            MageekService.RemoveCardFromDeck(cr.CardUuid, CurrentDeck).ConfigureAwait(true);
+            MageekService.MageekService.RemoveCardFromDeck(cr.CardUuid, CurrentDeck).ConfigureAwait(true);
             App.Events.RaiseUpdateDeck();
         }
 
@@ -195,35 +195,35 @@ namespace MaGeek.UI
         {
             var b = (Button)sender;
             var cr = b.DataContext as DeckCard;
-            MageekService.AddCardToDeck(cr.CardUuid, CurrentDeck,1).ConfigureAwait(true);
+            MageekService.MageekService.AddCardToDeck(cr.CardUuid, CurrentDeck, 1).ConfigureAwait(true);
             App.Events.RaiseUpdateDeck();
         }
 
         private void SetCommandant(object sender, RoutedEventArgs e)
         {
             DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
-            MageekService.ChangeDeckRelationType(cardRel, 1).ConfigureAwait(true);
+            MageekService.MageekService.ChangeDeckRelationType(cardRel, 1).ConfigureAwait(true);
             App.Events.RaiseUpdateDeck();
         }
 
         private void UnsetCommandant(object sender, RoutedEventArgs e)
         {
             DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
-            MageekService.ChangeDeckRelationType(cardRel,0).ConfigureAwait(true);
+            MageekService.MageekService.ChangeDeckRelationType(cardRel, 0).ConfigureAwait(true);
             App.Events.RaiseUpdateDeck();
         }
 
         private void ToSide(object sender, RoutedEventArgs e)
         {
             DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
-            MageekService.ChangeDeckRelationType(cardRel, 2).ConfigureAwait(true);
+            MageekService.MageekService.ChangeDeckRelationType(cardRel, 2).ConfigureAwait(true);
             App.Events.RaiseUpdateDeck();
         }
 
         private void ToDeck(object sender, RoutedEventArgs e)
         {
             DeckCard cardRel = GetListView(sender).SelectedItem as DeckCard;
-            MageekService.ChangeDeckRelationType(cardRel, 0).ConfigureAwait(true);
+            MageekService.MageekService.ChangeDeckRelationType(cardRel, 0).ConfigureAwait(true);
             App.Events.RaiseUpdateDeck();
         }
 

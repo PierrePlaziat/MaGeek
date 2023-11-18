@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekSdk.Data.Collection.Entities
+namespace MageekService.Data.Collection.Entities
 {
     public class Deck
     {

@@ -1,6 +1,6 @@
-﻿using MageekSdk;
-using MageekSdk.Data;
-using MageekSdk.Data.Mtg.Entities;
+﻿using MageekService;
+using MageekService.Data;
+using MageekService.Data.Mtg.Entities;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
@@ -52,7 +52,7 @@ namespace MaGeek.UI
         private async void LoadIllustration()
         {
             cardImage = null;
-            var url = await MageekService.RetrieveImage(selectedVariant.Uuid,CardImageFormat.png);
+            var url = await MageekService.MageekService.RetrieveImage(selectedVariant.Uuid, CardImageFormat.png);
             if (url == null) return;
             CardImage = new BitmapImage(url);
         }
@@ -133,7 +133,7 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            SelectedVariant = MageekService.FindCard_Data(uuid).Result;
+            SelectedVariant = MageekService.MageekService.FindCard_Data(uuid).Result;
         }
         
         public CardIllustration(Cards card)

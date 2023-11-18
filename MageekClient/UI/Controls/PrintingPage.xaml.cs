@@ -1,5 +1,5 @@
-﻿using MageekSdk;
-using MageekSdk.Data;
+﻿using MageekService;
+using MageekService.Data;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
@@ -82,7 +82,7 @@ namespace MaGeek.UI.Controls
 
         public async Task SetCard(string cardUuid, int emplacement)
         {
-            BitmapImage bmp = new BitmapImage(await MageekService.RetrieveImage(cardUuid,CardImageFormat.png));
+            BitmapImage bmp = new BitmapImage(await MageekService.MageekService.RetrieveImage(cardUuid, CardImageFormat.png));
             switch (emplacement)
             {
                 case 0: Card0 = bmp; break;

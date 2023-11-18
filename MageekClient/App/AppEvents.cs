@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using System;
-using MageekSdk;
-using MageekSdk.Data.Collection.Entities;
+using MageekService;
+using MageekService.Data.Collection.Entities;
 
 namespace MaGeek
 {
@@ -84,7 +84,7 @@ namespace MaGeek
         public async void Execute(object parameter)
         {
             string variant = (string)parameter; //TODO test
-            await MageekService.SwitchCardInDeck(relation, variant);
+            await MageekService.MageekService.SwitchCardInDeck(relation, variant);
         }
 
         #pragma warning disable CS0067 // L'événement 'ChangeCardRelationVariantCommand.CanExecuteChanged' n'est jamais utilisé

@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekSdk.Data.Mtg.Entities
+namespace MageekService.Data.Mtg.Entities
 {
     public class CardPurchaseUrls
     {

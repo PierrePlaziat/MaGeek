@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekSdk.Data.Mtg.Entities
+namespace MageekService.Data.Mtg.Entities
 {
 
     public class Cards
@@ -12,7 +12,7 @@ namespace MageekSdk.Data.Mtg.Entities
         {
             get
             {
-                return MageekService.CollectedCard_HowMany(Uuid, false).Result;
+                return MageekService.Collected(Uuid, false).Result;
             }
         }
 
@@ -20,7 +20,7 @@ namespace MageekSdk.Data.Mtg.Entities
         {
             get
             {
-                return MageekService.CollectedCard_HowMany(Uuid, true).Result;
+                return MageekService.Collected(Uuid, true).Result;
             }
         }
 

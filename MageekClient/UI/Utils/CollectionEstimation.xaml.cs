@@ -1,5 +1,5 @@
-﻿using MageekSdk;
-using MageekSdk.Tools;
+﻿using MageekService;
+using MageekService.Tools;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

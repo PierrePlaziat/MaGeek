@@ -1,6 +1,6 @@
-﻿using MageekSdk;
-using MageekSdk.Data;
-using MageekSdk.Tools;
+﻿using MageekService;
+using MageekService.Data;
+using MageekService.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -205,7 +205,7 @@ namespace MaGeek
         {
             List<DeckLine> importLines;
             importLines = await ParseCardList(importing.Content);
-            await MageekService.CreateDeck_Contructed(
+            await MageekService.MageekService.CreateDeck_Contructed(
                 importing.Title ?? DateTime.Now.ToString(),
                 "",
                 importLines

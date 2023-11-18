@@ -1,6 +1,6 @@
 ﻿using MaGeek.UI.Controls;
-using MageekSdk;
-using MageekSdk.Data.Collection.Entities;
+using MageekService;
+using MageekService.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -76,12 +76,12 @@ namespace MaGeek.UI.Windows.ImportExport
         private async Task DetermineListOfCardsToPrint()
         {
             ListOfCardsToPrint= new List<string>();
-            foreach(var v in await MageekService.GetDeckContent(selectedDeck.DeckId))
+            foreach(var v in await MageekService.MageekService.GetDeckContent(selectedDeck.DeckId))
             {
                 ;
-                if (IncludeBasicLands || !await MageekService.CardHasType(v.CardUuid, "Basic Land"))
+                if (IncludeBasicLands || !await MageekService.MageekService.CardHasType(v.CardUuid, "Basic Land"))
                 {
-                    if (!OnlyMissing || await MageekService.CollectedCard_HowMany(v.CardUuid)==0)
+                    if (!OnlyMissing || await MageekService.MageekService.Collected(v.CardUuid)==0)
                     {
                         for (int i = 0; i < v.Quantity; i++)
                         {
