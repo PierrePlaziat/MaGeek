@@ -17,8 +17,51 @@ using MageekService.Tools;
 namespace MageekService
 {
 
+    /// <summary>
+    /// Functional core
+    /// </summary>
     public static class MageekService
     {
+
+        public static async Task InitializeService()
+        {
+
+            Folders.InitFolders();
+            if (!File.Exists(Folders.DB)) CollectionDbManager.CreateDb();
+
+            try
+            {
+
+                bool mtgUpdated = false;
+                try
+                {
+                    if (await MtgDbManager.NeedsUpdate())
+                    {
+                        Logger.Log("Updating...");
+                        await MtgDbManager.DatabaseDownload();
+                        Logger.Log("Updated!");
+                        MtgDbManager.HashSave();
+                        mtgUpdated = true;
+                    }
+                    else
+                    {
+                        Logger.Log("No Update");
+                        mtgUpdated = false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    mtgUpdated = false;
+                }
+
+                if (mtgUpdated) await CollectionDbManager.FetchMtg();
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+        }
 
         #region Cards
 
@@ -322,81 +365,6 @@ namespace MageekService
 
 
         /// <summary>
-        /// Add or remove card in the collection
-        /// </summary>
-        /// <param name="cardUuid">from mtgjson</param>
-        /// <param name="quantityModification">how many</param>
-        /// <returns></returns>
-        public static async Task CollecMove(string cardUuid, int quantityModification)
-        {
-            // Guard
-            if (string.IsNullOrEmpty(cardUuid)) return;
-            if (quantityModification == 0) return;
-            // Get or create collected card
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
-            CollectedCard collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-            if (collectedCard == null)
-            {
-                collectedCard = new CollectedCard() { CardUuid = cardUuid, Collected = 0 };
-                DB.CollectedCard.Add(collectedCard);
-                DB.Entry(collectedCard).State = EntityState.Added;
-            }
-            else
-            {
-                DB.Entry(collectedCard).State = EntityState.Modified;
-            }
-            // Make the move
-            collectedCard.Collected += quantityModification;
-            if (collectedCard.Collected < 0) collectedCard.Collected = 0;
-            await DB.SaveChangesAsync();
-        }
-
-        /// <summary>
-        /// Counts how many cards collected variably
-        /// </summary>
-        /// <param name="cardUuid"></param>
-        /// <param name="onlyThisVariant">set to false if you want to perform archetypal search from this card variant</param>
-        /// <returns>The count</returns>
-        public static async Task<int> Collected(string cardUuid, bool onlyThisVariant = true)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(cardUuid)) return 0;
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
-                if (onlyThisVariant)
-                {
-                    CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-                    return collectedCard != null ? collectedCard.Collected : 0;
-                }
-                else
-                {
-                    string archetypeId = DB.CardArchetypes.Where(x => x.CardUuid == cardUuid).First().ArchetypeId;
-                    return await CollectedCard_HowManyArchetypal(archetypeId);
-                }
-            }
-            catch(Exception e)
-            {
-                Logger.Log(e.Message);
-                return -1;
-            }
-        }
-
-        /// <summary>
-        /// Counts how many cards collected archetypaly
-        /// </summary>
-        /// <param name="archetypeId"></param>
-        /// <returns>The count</returns>
-        private static async Task<int> CollectedCard_HowManyArchetypal(string archetypeId)
-        {
-            if (string.IsNullOrEmpty(archetypeId)) return 0;
-            int count = 0;
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
-            List<string> uuids = await DB.CardArchetypes.Where(x => x.ArchetypeId == archetypeId).Select(p=>p.CardUuid).ToListAsync();
-            foreach (string uuid in uuids) count += await Collected(uuid);
-            return count;
-        }
-
-        /// <summary>
         /// Determine favorite card variant for a card archetype
         /// </summary>
         /// <param name="archetypeId"></param>
@@ -655,6 +623,193 @@ namespace MageekService
 
         #endregion
 
+        #region Collec
+
+        /// <summary>
+        /// Add or remove card in the collection
+        /// </summary>
+        /// <param name="cardUuid">from mtgjson</param>
+        /// <param name="quantityModification">how many</param>
+        /// <returns>Quantity in collec before and after the move</returns>
+        public static async Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification)
+        {
+            // Guard
+            if (string.IsNullOrEmpty(cardUuid)) return new Tuple<int, int>(0, 0);
+            // Get or create collected card
+            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            CollectedCard collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+            if (collectedCard == null)
+            {
+                collectedCard = new CollectedCard() { CardUuid = cardUuid, Collected = 0 };
+                DB.CollectedCard.Add(collectedCard);
+                DB.Entry(collectedCard).State = EntityState.Added;
+            }
+            else
+            {
+                DB.Entry(collectedCard).State = EntityState.Modified;
+            }
+            // Make the move
+            int quantityBeforeMove = collectedCard.Collected;
+            collectedCard.Collected += quantityModification;
+            if (collectedCard.Collected < 0) collectedCard.Collected = 0;
+            int quantityAfterMove = collectedCard.Collected;
+            await DB.SaveChangesAsync();
+            return new Tuple<int, int>(quantityBeforeMove, quantityAfterMove);
+        }
+
+        /// <summary>
+        /// Counts how many cards collected variably
+        /// </summary>
+        /// <param name="cardUuid"></param>
+        /// <param name="onlyThisVariant">set to false if you want to perform archetypal search from this card variant</param>
+        /// <returns>The count</returns>
+        public static async Task<int> Collected(string cardUuid, bool onlyThisVariant = true)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(cardUuid)) return 0;
+                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                if (onlyThisVariant)
+                {
+                    CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+                    return collectedCard != null ? collectedCard.Collected : 0;
+                }
+                else
+                {
+                    string archetypeId = DB.CardArchetypes.Where(x => x.CardUuid == cardUuid).First().ArchetypeId;
+                    return await Collected_AllVariants(archetypeId);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e.Message);
+                return -1;
+            }
+        }
+        private static async Task<int> Collected_AllVariants(string archetypeId)
+        {
+            if (string.IsNullOrEmpty(archetypeId)) return 0;
+            int count = 0;
+            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            List<string> uuids = await DB.CardArchetypes.Where(x => x.ArchetypeId == archetypeId).Select(p => p.CardUuid).ToListAsync();
+            foreach (string uuid in uuids) count += await Collected(uuid);
+            return count;
+        }
+
+        #region Stats
+
+        /// <summary>
+        /// Totality of cards including their quantity
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<int> GetTotal_Collected()
+        {
+            int total = 0;
+            try
+            {
+                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                total = DB.CollectedCard.Sum(x => x.Collected);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// Totality of cards variants but doesnt sur their quantity
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<int> GetTotal_CollectedDiff()
+        {
+            try
+            {
+                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                return DB.CollectedCard.Count();
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Totality of different archetypes
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<int> GetTotal_CollectedArchetype()
+        {
+            try
+            {
+                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                return DB.CollectedCard.Count(); //TODO this is wrong
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Totality of different existing card archetypes
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<int> GetTotal_ExistingArchetypes()
+        {
+            int total = 0;
+            try
+            {
+                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                total = DB.CardArchetypes
+                    .GroupBy(x => x.ArchetypeId)
+                    .Select(grp => grp.First())
+                    .Count();
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// Auto estimate collection
+        /// </summary>
+        /// <returns>Estimated price and a list of missing estimations</returns>
+        public static async Task<Tuple<decimal, List<string>>> AutoEstimatePrices(string currency)
+        {
+            decimal total = 0;
+            List<string> missingList = new();
+            try
+            {
+                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                var allGot = await DB.CollectedCard.Where(x => x.Collected > 0).ToListAsync();
+                foreach (CollectedCard collectedCard in allGot)
+                {
+                    var price = await EstimateCardPrice(collectedCard.CardUuid);
+                    if (price != null)
+                    {
+                        if (currency == "Eur") total += price.PriceEur ?? 0;
+                        if (currency == "Usd") total += price.PriceUsd ?? 0;
+                        if (currency == "Edh") total += price.EdhrecScore;
+                    }
+                    else missingList.Add(collectedCard.CardUuid);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+            return new Tuple<decimal, List<string>>(total, missingList);
+        }
+
+        #endregion
+
+        #endregion
+
         #region Decks
 
         /// <summary>
@@ -906,6 +1061,18 @@ namespace MageekService
         public static async Task DeleteDeck(Deck deck)
         {
             using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            DB.Decks.Remove(deck);
+            await DB.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Delete a deck
+        /// </summary>
+        /// <param name="deck"></param>
+        public static async Task DeleteDeck(string deckId)
+        {
+            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            var deck = await GetDeck(deckId);
             DB.Decks.Remove(deck);
             await DB.SaveChangesAsync();
         }
@@ -1594,118 +1761,6 @@ namespace MageekService
             using CollectionDbContext DB = await CollectionDbManager.GetContext();
             tags.AddRange(DB.Tag.Where(x => x.ArchetypeId == archetypeId));
             return tags;
-        }
-
-        #endregion
-
-        #region Collection
-
-        /// <summary>
-        /// Totality of cards including their quantity
-        /// </summary>
-        /// <returns></returns>
-        public static async Task<int> GetTotal_Collected()
-        {
-            int total = 0;
-            try
-            {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
-                total = DB.CollectedCard.Sum(x => x.Collected);
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
-            return total;
-        }
-
-        /// <summary>
-        /// Totality of cards variants but doesnt sur their quantity
-        /// </summary>
-        /// <returns></returns>
-        public static async Task<int> GetTotal_CollectedDiff()
-        {
-            try
-            {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
-                return DB.CollectedCard.Count();
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// Totality of different archetypes
-        /// </summary>
-        /// <returns></returns>
-        public static async Task<int> GetTotal_CollectedArchetype()
-        {
-            try
-            {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
-                return DB.CollectedCard.Count(); //TODO this is wrong
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// Totality of different existing card archetypes
-        /// </summary>
-        /// <returns></returns>
-        public static async Task<int> GetTotal_ExistingArchetypes()
-        {
-            int total = 0;
-            try
-            {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
-                total = DB.CardArchetypes
-                    .GroupBy(x => x.ArchetypeId)
-                    .Select(grp => grp.First())
-                    .Count();
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
-            return total;
-        }
-
-        /// <summary>
-        /// Auto estimate collection
-        /// </summary>
-        /// <returns>Estimated price and a list of missing estimations</returns>
-        public static async Task<Tuple<decimal, List<string>>> AutoEstimatePrices(string currency)
-        {
-            decimal total = 0;
-            List<string> missingList = new();
-            try
-            {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
-                var allGot = await DB.CollectedCard.Where(x => x.Collected > 0).ToListAsync();
-                foreach (CollectedCard collectedCard in allGot)
-                {
-                    var price = await EstimateCardPrice(collectedCard.CardUuid);
-                    if (price!=null)
-                    {
-                        if (currency == "Eur") total += price.PriceEur ?? 0;
-                        if (currency == "Usd") total += price.PriceUsd ?? 0;
-                        if (currency == "Edh") total += price.EdhrecScore;
-                    }
-                    else missingList.Add(collectedCard.CardUuid);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
-            return new Tuple<decimal, List<string>>(total, missingList);
         }
 
         #endregion

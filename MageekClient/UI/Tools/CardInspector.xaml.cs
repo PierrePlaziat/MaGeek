@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Linq;
-using MageekService;
 using MageekService.Data.Collection.Entities;
 using MageekService.Data.Mtg.Entities;
 using MageekService.Data;
