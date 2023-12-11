@@ -2,20 +2,15 @@
 
 namespace MageekMaui
 {
-    public partial class MainPage : ContentPage
+
+    public interface IMageekClient
+    {
+        public Task<string> SayHello();
+    }
+    public class MageekClient : IMageekClient
     {
 
-        public MainPage()
-        {
-            InitializeComponent();
-        }
-
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            CounterBtn.Text = ConnectGrpc().Result;
-        }
-
-        private async Task<string> ConnectGrpc()
+        public async Task<string> SayHello()
         {
             try
             {

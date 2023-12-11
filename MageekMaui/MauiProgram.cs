@@ -1,14 +1,17 @@
 ﻿using CommunityToolkit.Maui;
+using MageekMaui.ViewModels;
+using MageekMaui.Views;
 using Microsoft.Extensions.Logging;
 
 namespace MageekMaui
 {
     public static class MauiProgram
     {
+
         public static MauiApp CreateMauiApp()
         {
-            var builder = MauiApp.CreateBuilder();
-            builder
+
+            var builder = MauiApp.CreateBuilder()
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
@@ -18,10 +21,30 @@ namespace MageekMaui
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+            builder.Services.AddSingleton<IMageekClient, MageekClient>();
+
+            builder.Services.AddSingleton<DeckView>();
+            builder.Services.AddSingleton<CollecView>();
+            builder.Services.AddSingleton<GameView>();
+            
+            builder.Services.AddSingleton<DeckViewModel>();
+            builder.Services.AddSingleton<CollecViewModel>();
+            builder.Services.AddSingleton<GameViewModel>();
+
+            var app = builder.Build();
+            ServiceHelper.Initialize(app.Services);
+            return app;
         }
     }
+
+    public static class ServiceHelper
+    {
+        public static IServiceProvider Services { get; private set; }
+        public static void Initialize(IServiceProvider services) => Services = services;
+        public static T GetService<T>() => Services.GetService<T>();
+    }
+
 }

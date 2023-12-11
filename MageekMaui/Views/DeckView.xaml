@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MageekMaui.Views.DeckView"
+             xmlns:vm="clr-namespace:MageekMaui.ViewModels"
+             x:DataType="vm:DeckViewModel"
+             Title="Deck"
+             Background="LightGray">
+
+    <Grid RowDefinitions="*,auto">
+        
+        <!--<ListView ItemsSource="{Binding DeckList}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,auto">
+                        <Label Text="{Binding DeckTitle}" />
+                        <StackLayout Orientation="Horizontal" IsVisible="{Binding EditMode}">
+                            <Button Text="Rename" />
+                            <Button Text="Duplicate" />
+                            <Button Text="Delete" />
+                        </StackLayout>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>-->
+        
+        <Button Grid.Row="1" Text="New deck" />
+    
+        </Grid>
+    
+</ContentPage>

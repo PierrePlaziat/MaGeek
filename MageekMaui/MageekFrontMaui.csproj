@@ -67,26 +67,26 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Update="Pages\CollecPage.xaml.cs">
-	    <DependentUpon>CollecPage.xaml</DependentUpon>
+	  <Compile Update="Views\CollecView.xaml.cs">
+	    <DependentUpon>CollecView.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\GamePage.xaml.cs">
-	    <DependentUpon>GamePage.xaml</DependentUpon>
+	  <Compile Update="Views\DeckView.xaml.cs">
+	    <DependentUpon>DeckView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\GameView.xaml.cs">
+	    <DependentUpon>GameView.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 	<ItemGroup>
-	  <MauiXaml Update="Pages\CollecPage.xaml">
+	  <MauiXaml Update="Views\CollecView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\GamePage.xaml">
+	  <MauiXaml Update="Views\GameView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\DeckPage.xaml">
+	  <MauiXaml Update="Views\DeckView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Template\" />
 	</ItemGroup>
 
 </Project>

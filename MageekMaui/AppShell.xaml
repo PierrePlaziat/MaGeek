@@ -4,15 +4,17 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MageekMaui"
-    xmlns:pages="clr-namespace:MageekMaui.Pages"
+    xmlns:pages="clr-namespace:MageekMaui.Views"
     Shell.FlyoutBehavior="Disabled"
     Title="Mageek">
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
         <ShellContent Title="Collec" 
-                      ContentTemplate="{DataTemplate pages:CollecPage}" />
+                      ContentTemplate="{DataTemplate pages:CollecView}" />
+        <ShellContent Title="Deck"
+                      ContentTemplate="{DataTemplate pages:DeckView}" />
         <ShellContent Title="Game"
-                      ContentTemplate="{DataTemplate pages:DeckPage}" />
+                      ContentTemplate="{DataTemplate pages:GameView}" />
     </FlyoutItem>
     
 </Shell>
