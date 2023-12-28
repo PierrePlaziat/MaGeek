@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace MageekService.Tools
 {
@@ -9,32 +8,22 @@ namespace MageekService.Tools
 
         public static void Log(string log, [CallerFilePath] string fileName = "", [CallerMemberName] string memberName = "")
         {
-            string start = "";
-            string tolog = string.Concat(
-                "     [",
-                DateTime.Now,
-                "]",
-                start,
-                fileName.Split('\\').Last().Split(".cs").First(), " :: ",
+            string msg = string.Concat(
+                fileName.Split('/').Last().Split(".cs").First(), " :: ",
                 memberName, " : ",
                 log
             );
-            System.Diagnostics.Debug.WriteLine(tolog);
+            Console.WriteLine(msg);
         }
 
         public static void Log(Exception e, [CallerFilePath] string fileName = "", [CallerMemberName] string memberName = "")
         {
-            string start = "";
-            string tolog = string.Concat(
-                "     [",
-                DateTime.Now,
-                "]",
-                start,
+            string msg = string.Concat(
                 fileName.Split('\\').Last().Split(".cs").First(), " :: ",
                 memberName, " : /!\\ ERROR /!\\ ",
                 e.Message
             );
-            System.Diagnostics.Debug.WriteLine(tolog);
+            Console.WriteLine(msg);
         }
 
     }

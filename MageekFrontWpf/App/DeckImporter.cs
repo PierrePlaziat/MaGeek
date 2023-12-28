@@ -1,5 +1,6 @@
 ﻿using MageekService;
 using MageekService.Data;
+using MageekService.Data.Collection.Entities;
 using MageekService.Tools;
 using System;
 using System.Collections.Generic;
@@ -160,9 +161,9 @@ namespace MaGeek
 
         #region Work
 
-        private async Task<List<DeckLine>> ParseCardList(string cardlist)
+        private async Task<List<DeckCard>> ParseCardList(string cardlist)
         {
-            List<DeckLine> tuples = new();
+            List<DeckCard> tuples = new();
             try
             {
                 await Task.Run(() =>
@@ -182,7 +183,7 @@ namespace MaGeek
                                     int quantity = int.Parse(line.Split(" ")[0]);
                                     string name = line[(line.IndexOf(' ') + 1)..];
                                     name = name.Split(" // ")[0];
-                                    tuples.Add(new DeckLine() { Quantity = quantity, Uuid = name.Trim(), Relation = side?2:0 });
+                                    tuples.Add(new DeckCard() { Quantity = quantity, CardUuid = name.Trim(), RelationType = side?2:0 });
                                 }
                                 catch (Exception e)
                                 {
@@ -203,7 +204,7 @@ namespace MaGeek
 
         private async Task MakeADeck(PendingImport importing)
         {
-            List<DeckLine> importLines;
+            List<DeckCard> importLines;
             importLines = await ParseCardList(importing.Content);
             await MageekService.MageekService.CreateDeck_Contructed(
                 importing.Title ?? DateTime.Now.ToString(),

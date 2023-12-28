@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MageekBackServer", "MageekBackServer\MageekBackServer.csproj", "{9F4BACA7-9C04-4AA6-8A6D-860A8B85F5C4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MageekFrontMaui", "MageekFrontMaui\MageekFrontMaui.csproj", "{AB21D5D1-B1B2-4579-9140-F4C9EA1154B8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MageekFrontWpf", "MageekFrontWpf\MageekFrontWpf.csproj", "{048129BA-5372-4DD2-A20F-637E612286FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MageekService", "MageekService\MageekService.csproj", "{D9582DDD-73B7-4F05-84CF-4C1540F7EB96}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MageekServer", "MageekServer\MageekServer.csproj", "{6B0510E2-16C4-4E35-A00F-B9517898391E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9F4BACA7-9C04-4AA6-8A6D-860A8B85F5C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F4BACA7-9C04-4AA6-8A6D-860A8B85F5C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F4BACA7-9C04-4AA6-8A6D-860A8B85F5C4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9F4BACA7-9C04-4AA6-8A6D-860A8B85F5C4}.Debug|x86.Build.0 = Debug|Any CPU
-		{9F4BACA7-9C04-4AA6-8A6D-860A8B85F5C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F4BACA7-9C04-4AA6-8A6D-860A8B85F5C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9F4BACA7-9C04-4AA6-8A6D-860A8B85F5C4}.Release|x86.ActiveCfg = Release|Any CPU
-		{9F4BACA7-9C04-4AA6-8A6D-860A8B85F5C4}.Release|x86.Build.0 = Release|Any CPU
 		{AB21D5D1-B1B2-4579-9140-F4C9EA1154B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB21D5D1-B1B2-4579-9140-F4C9EA1154B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB21D5D1-B1B2-4579-9140-F4C9EA1154B8}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -55,6 +47,14 @@ Global
 		{D9582DDD-73B7-4F05-84CF-4C1540F7EB96}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9582DDD-73B7-4F05-84CF-4C1540F7EB96}.Release|x86.ActiveCfg = Release|Any CPU
 		{D9582DDD-73B7-4F05-84CF-4C1540F7EB96}.Release|x86.Build.0 = Release|Any CPU
+		{6B0510E2-16C4-4E35-A00F-B9517898391E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B0510E2-16C4-4E35-A00F-B9517898391E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B0510E2-16C4-4E35-A00F-B9517898391E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6B0510E2-16C4-4E35-A00F-B9517898391E}.Debug|x86.Build.0 = Debug|Any CPU
+		{6B0510E2-16C4-4E35-A00F-B9517898391E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B0510E2-16C4-4E35-A00F-B9517898391E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B0510E2-16C4-4E35-A00F-B9517898391E}.Release|x86.ActiveCfg = Release|Any CPU
+		{6B0510E2-16C4-4E35-A00F-B9517898391E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

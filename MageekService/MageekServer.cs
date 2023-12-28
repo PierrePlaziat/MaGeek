@@ -1,4 +1,6 @@
-﻿namespace MageekService
+﻿using MageekService.Data.Collection.Entities;
+
+namespace MageekService
 {
 
     public interface IMageekServer
@@ -7,22 +9,18 @@
         abstract Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification);
         abstract Task<int> Collected(string cardUuid, bool onlyThisVariant);
 
-        #region Later
+        abstract Task<IEnumerable<Deck>> GetDecks();
+        abstract Task<Deck> GetDeckInfo(string deckId);
+        abstract Task<IEnumerable<DeckCard>> GetDeckContent(string deckId);
+        abstract Task CreateDeck(string title, string description, IEnumerable<DeckCard> content);
+        abstract Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content);
+        abstract Task DeleteDeck(string deckId);
 
-        //abstract IEnumerable<Deck> GetDecks();
-        //abstract Deck GetDeckInfo(string deckId);
-        //abstract IEnumerable<DeckCard> GetDeckContent(string deckId);
-        //abstract void CreateDeck(string title, string description, IEnumerable<DeckCard> content);
-        //abstract void UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content);
-        //abstract void DeleteDeck(string deckId);
-
-        //abstract IEnumerable<Tag> GetExistingTags();
-        //abstract IEnumerable<Tag> GetCardTags(string archetypeId);
-        //abstract void TagCard(string archetypeId, string tag);
-        //abstract void UnTagCard(string archetypeId, string tag);
-        //abstract bool HasTag(string archetypeId, string tag);
-
-        #endregion
+        abstract Task<IEnumerable<Tag>> GetExistingTags();
+        abstract Task<IEnumerable<Tag>> GetCardTags(string archetypeId);
+        abstract Task TagCard(string archetypeId, string tag);
+        abstract Task UnTagCard(string archetypeId, string tag);
+        abstract Task<bool> HasTag(string archetypeId, string tag);
 
     }
 
@@ -38,55 +36,51 @@
             return await MageekService.Collected(cardUuid, onlyThisVariant);
         }
 
-        #region Later
+        public async Task CreateDeck(string title, string description, IEnumerable<DeckCard> content)
+        {
+            await MageekService.CreateDeck_Contructed(title, description, content);
+        }
+        public async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
+        {
+            await MageekService.UpdateDeck(deckId, title, description, content);
+        }
+        public async Task DeleteDeck(string deckId)
+        {
+            await MageekService.DeleteDeck(deckId);
+        }
+        public async Task<IEnumerable<Tag>> GetCardTags(string archetypeId)
+        {
+            return await MageekService.GetTags(archetypeId);
+        }
+        public async Task<IEnumerable<DeckCard>> GetDeckContent(string deckId)
+        {
+            return await MageekService.GetDeckContent(deckId);
+        }
+        public async Task<Deck> GetDeckInfo(string deckId)
+        {
+            return await MageekService.GetDeck(deckId);
+        }
+        public async Task<IEnumerable<Deck>> GetDecks()
+        {
+            return await MageekService.GetDecks();
+        }
 
-        //public void CreateDeck(string title, string description, IEnumerable<DeckCard> content)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public void DeleteDeck(string deckId)
-        //{
-        //    MageekService.DeleteDeck(deckId).ConfigureAwait(false);
-        //}
-        //public IEnumerable<Tag> GetCardTags(string archetypeId)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public IEnumerable<DeckCard> GetDeckContent(string deckId)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public Deck GetDeckInfo(string deckId)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public IEnumerable<Deck> GetDecks()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public IEnumerable<Tag> GetExistingTags()
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public bool HasTag(string archetypeId, string tag)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public void TagCard(string archetypeId, string tag)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public void UnTagCard(string archetypeId, string tag)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //public void UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        #endregion
+        public async Task<IEnumerable<Tag>> GetExistingTags()
+        {
+            return await MageekService.GetTags();
+        }
+        public async Task<bool> HasTag(string archetypeId, string tag)
+        {
+            return await MageekService.HasTag(archetypeId,tag);
+        }
+        public async Task TagCard(string archetypeId, string tag)
+        {
+            await MageekService.TagCard(archetypeId, tag);
+        }
+        public async Task UnTagCard(string archetypeId, string tag)
+        {
+            await MageekService.UnTagCard(archetypeId, tag);
+        }
 
     }
 

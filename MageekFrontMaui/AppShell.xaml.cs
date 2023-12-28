@@ -1,4 +1,6 @@
-﻿namespace MageekMaui
+﻿using MageekMaui.Views;
+
+namespace MageekMaui
 {
 
     public partial class AppShell : Shell
@@ -6,14 +8,26 @@
 
         public AppShell()
         {
-            bool success = GrpcCo().Result;
-            if(!success) { Environment.Exit(0); }
             InitializeComponent();
+            Routing.RegisterRoute(nameof(WelcomeView),typeof(WelcomeView));
+            Routing.RegisterRoute(nameof(CollecView), typeof(CollecView));
+            Routing.RegisterRoute(nameof(DeckView), typeof(DeckView));
+            Routing.RegisterRoute(nameof(GameView), typeof(GameView));
         }
 
-        private async Task<bool> GrpcCo()
+        protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
         {
-            return await ServiceHelper.GetService<IMageekClient>().SayHello();
+            base.OnNavigatedFrom(args);
+        }
+
+        protected override void OnNavigating(ShellNavigatingEventArgs args)
+        {
+            base.OnNavigating(args);
+        }
+
+        protected override void OnNavigatedTo(NavigatedToEventArgs args)
+        {
+            base.OnNavigatedTo(args);
         }
 
     }

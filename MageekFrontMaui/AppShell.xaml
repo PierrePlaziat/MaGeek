@@ -8,13 +8,16 @@
     Shell.FlyoutBehavior="Disabled"
     Title="Mageek">
 
-    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+    <ShellContent ContentTemplate="{DataTemplate pages:WelcomeView}"
+                  Route="Welcome"/>
+    
+    <!--<FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
         <ShellContent Title="Collec" 
                       ContentTemplate="{DataTemplate pages:CollecView}" />
         <ShellContent Title="Deck"
                       ContentTemplate="{DataTemplate pages:DeckView}" />
         <ShellContent Title="Game"
                       ContentTemplate="{DataTemplate pages:GameView}" />
-    </FlyoutItem>
+    </FlyoutItem>-->
     
 </Shell>

@@ -64,6 +64,12 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Update="Controls\PlayerControl.xaml.cs">
+	    <DependentUpon>PlayerControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\WelcomeView.xaml.cs">
+	    <DependentUpon>WelcomeView.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\CollecView.xaml.cs">
 	    <DependentUpon>CollecView.xaml</DependentUpon>
 	  </Compile>
@@ -75,6 +81,15 @@
 	  </Compile>
 	</ItemGroup>
 	<ItemGroup>
+	  <MauiXaml Update="Controls\PlayerControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="NewPage1.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\WelcomeView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\CollecView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -1,5 +1,4 @@
-﻿using MageekService;
-using MageekService.Tools;
+﻿using MageekService.Tools;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -65,10 +64,10 @@ namespace MaGeek.UI
             {
                 IsLoading = Visibility.Visible;
                 await Task.Run(async () => {
-                    TotalDiffExist = await MageekService.GetTotal_ExistingArchetypes();
-                    TotalDiffGot = await MageekService.GetTotal_CollectedArchetype();
-                    TotalGot = await MageekService.GetTotal_CollectedDiff();
-                    var est = await MageekService.AutoEstimatePrices(App.Config.Settings[Setting.ForeignLanguage]);
+                    TotalDiffExist = await MageekService.MageekService.GetTotal_ExistingArchetypes();
+                    TotalDiffGot = await MageekService.MageekService.GetTotal_CollectedArchetype();
+                    TotalGot = await MageekService.MageekService.GetTotal_CollectedDiff();
+                    var est = await MageekService.MageekService.AutoEstimatePrices(App.Config.Settings[Setting.ForeignLanguage]);
                     AutoEstimation = est.Item1;
                     MissingList = est.Item2;
                     OnPropertyChanged(nameof(TotalDiffExist));

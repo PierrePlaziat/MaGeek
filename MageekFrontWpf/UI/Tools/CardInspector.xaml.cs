@@ -218,7 +218,7 @@ namespace MaGeek.UI
         private async void DeleteTag(object sender, RoutedEventArgs e)
         {
             Tag cardTag = (Tag)((Button)sender).DataContext;
-            await MageekService.MageekService.UnTagCard(cardTag);
+            await MageekService.MageekService.UnTagCard(cardTag.ArchetypeId,cardTag.TagContent);
             OnPropertyChanged(nameof(Tags));
             sugestions.Visibility = Visibility.Collapsed;
             SelectCard(SelectedVariant.Card.Uuid);

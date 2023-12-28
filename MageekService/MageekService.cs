@@ -25,42 +25,54 @@ namespace MageekService
 
         public static async Task InitializeService()
         {
-
-            Folders.InitFolders();
-            if (!File.Exists(Folders.DB)) CollectionDbManager.CreateDb();
-
             try
             {
 
+                Logger.Log("Init folders...");
+                Folders.InitFolders();
+
+                Logger.Log("Init collection DB...");
+                if (!File.Exists(Folders.DB)) CollectionDbManager.CreateDb();
+
+                Logger.Log("Init cards DB...");
                 bool mtgUpdated = false;
                 try
                 {
+
                     if (await MtgDbManager.NeedsUpdate())
                     {
                         Logger.Log("Updating...");
                         await MtgDbManager.DatabaseDownload();
-                        Logger.Log("Updated!");
                         MtgDbManager.HashSave();
                         mtgUpdated = true;
+                        Logger.Log("Updated!");
                     }
                     else
                     {
                         Logger.Log("No Update");
                         mtgUpdated = false;
                     }
+
                 }
                 catch (Exception e)
                 {
                     Logger.Log(e);
                     mtgUpdated = false;
                 }
+                
+                if (mtgUpdated)
+                {
+                    Logger.Log("Fetch vards DB...");
+                    await CollectionDbManager.FetchMtg();
+                }
 
-                if (mtgUpdated) await CollectionDbManager.FetchMtg();
             }
             catch (Exception e)
             {
                 Logger.Log(e);
+                Environment.Exit(-1);
             }
+            Logger.Log("Done");
         }
 
         #region Cards
@@ -904,7 +916,7 @@ namespace MageekService
         /// <param name="description"></param>
         /// <param name="deckLines"></param>
         /// <returns>A list of messages, empty if everything went well</returns>
-        public static async Task<List<string>> CreateDeck_Contructed(string title, string description, List<DeckLine> deckLines)
+        public static async Task<List<string>> CreateDeck_Contructed(string title, string description, IEnumerable<DeckCard> deckLines)
         {
             List<string> messages = new();
             Deck deck = await CreateDeck_Empty(title, description);
@@ -918,24 +930,24 @@ namespace MageekService
                 try
                 {
                     using CollectionDbContext DB = await CollectionDbManager.GetContext();
-                    foreach (DeckLine deckLine in deckLines)
+                    foreach (DeckCard deckLine in deckLines)
                     {
-                        if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.Uuid).Any())
+                        if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.CardUuid).Any())
                         {
                             DB.DeckCard.Add(
                                 new DeckCard()
                                 {
                                     DeckId = deck.DeckId,
-                                    CardUuid = deckLine.Uuid,
+                                    CardUuid = deckLine.CardUuid,
                                     Quantity = deckLine.Quantity,
-                                    RelationType = deckLine.Relation
+                                    RelationType = deckLine.RelationType
                                 }
                             );
                             deck.CardCount += deckLine.Quantity;
                         }
                         else
                         {
-                            messages.Add("[CardNotFoud]" + deckLine.Uuid);
+                            messages.Add("[CardNotFoud]" + deckLine.CardUuid);
                         }
                     }
 
@@ -1052,6 +1064,21 @@ namespace MageekService
                 else result.AppendLine("???");
             }
             return result.ToString();
+        }
+
+        /// <summary>
+        /// Change deck entirely
+        /// </summary>
+        /// <param name="deckId"></param>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        internal static async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
+        {
+            await DeleteDeck(deckId);
+            await CreateDeck_Contructed(title, description, content);
         }
 
         /// <summary>
@@ -1743,11 +1770,15 @@ namespace MageekService
         /// Remove a tag from a card
         /// </summary>
         /// <param name="cardTag"></param>
-        public static async Task UnTagCard(Tag cardTag)
+        public static async Task UnTagCard(string archetypeId, string text)
         {
             using CollectionDbContext DB = await CollectionDbManager.GetContext();
-            DB.Tag.Remove(cardTag);
-            await DB.SaveChangesAsync();
+            var cardTag = DB.Tag.Where(x => x.ArchetypeId == archetypeId && x.TagContent==text).FirstOrDefault();
+            if (cardTag != null)
+            {
+                DB.Tag.Remove(cardTag);
+                await DB.SaveChangesAsync();
+            }
         }
 
         /// <summary>

@@ -29,15 +29,4 @@ namespace MageekService.Data
         small, large, medium, png, art_crop, border_crop
     }
 
-    /// <summary>
-    /// Aggregated into a deck
-    /// </summary>
-    public struct DeckLine
-    {
-        public string Uuid;
-        public int Quantity;
-        public int Relation;
-    }
-
-
 }

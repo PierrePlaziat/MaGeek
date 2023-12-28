@@ -1,6 +1,6 @@
 using Grpc.Core;
 
-namespace MageekGrpc.Services
+namespace MageekServer.Services
 {
     public class DeckBuilderService : DeckBuilder.DeckBuilderBase
     {

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "MageekGrpc";
+option csharp_namespace = "MageekServer";
 
 package greet;
 

@@ -3,13 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MageekMaui.Views.GameView"
              xmlns:vm="clr-namespace:MageekMaui.ViewModels"
+             xmlns:control="clr-namespace:MageekMaui.Controls"
              x:DataType="vm:GameViewModel"
              Title="Game"
-             Background="Black">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Background="LightGray">
+
+    <Grid ColumnDefinitions="*,*"
+          RowDefinitions="*,*">
+
+        <control:PlayerControl Grid.Row="0"
+                               Grid.Column="0"
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="CenterAndExpand"
+                               Rotation="90"/>
+        <control:PlayerControl Grid.Row="0"
+                               Grid.Column="1"
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="CenterAndExpand"
+                               Rotation="-90" />
+        <control:PlayerControl Grid.Row="1"
+                               Grid.Column="0"
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="CenterAndExpand"
+                               Rotation="90" />
+        <control:PlayerControl Grid.Row="1"
+                               Grid.Column="1"
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="CenterAndExpand"
+                               Rotation="-90" />
+
+    </Grid>
+    
 </ContentPage>
