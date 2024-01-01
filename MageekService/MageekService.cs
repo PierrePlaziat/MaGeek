@@ -11,7 +11,6 @@ using MageekService.Data.Collection;
 using MageekService.Data.Mtg;
 using MageekService.Data.Collection.Entities;
 using MageekService.Data.Mtg.Entities;
-using MageekService.Data;
 using MageekService.Tools;
 
 namespace MageekService

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,6 +10,11 @@ namespace MageekService.Tools
 
     public static class HttpUtils
     {
+
+        public static void HyperLink(string v)
+        {
+            Process.Start(new ProcessStartInfo(v) { UseShellExecute = true });
+        }
 
         public static async Task<string> Get(string v)
         {

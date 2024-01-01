@@ -4,7 +4,7 @@
     public static class Folders
     {
 
-        private static string Roaming { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
+        public static string Roaming { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
         private static string SDK { get; } = Path.Combine(Roaming, "SDK");
 
         private static string DbFolder { get; } = Path.Combine(SDK, "DB");

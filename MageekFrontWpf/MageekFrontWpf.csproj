@@ -75,9 +75,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="UI\Utils\CollectionEstimation.xaml.cs">
+    <Compile Update="Views\Utils\CollectionEstimation.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 
 </Project>
