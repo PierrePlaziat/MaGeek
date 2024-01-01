@@ -29,10 +29,6 @@
   </PropertyGroup>
 
   <!-- Mageek Client -->
-  <ItemGroup>
-    <Protobuf Include="Protos\greet.proto" GrpcServices="Client" />
-    <Protobuf Include="Protos\collection.proto" GrpcServices="Client" />
-  </ItemGroup>
 
   <!-- Resources -->
 	<ItemGroup>
@@ -42,10 +38,6 @@
 		<MauiImage Include="Resources\Images\*" />
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="Protos\collection.proto" />
-	  <None Remove="Protos\greet.proto" />
-	</ItemGroup>
 
   <!-- Dependancies -->
 
@@ -53,15 +45,12 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="7.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="Google.Protobuf" Version="3.25.1" />
-		<PackageReference Include="Grpc.Net.Client" Version="2.59.0" />
-		<PackageReference Include="Grpc.Tools" Version="2.59.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\MageekClient\MageekClient.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Controls\PlayerControl.xaml.cs">
