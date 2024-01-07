@@ -1,5 +1,5 @@
-﻿<ui:TemplatedWindow  xmlns:ui="clr-namespace:MaGeek.UI"
-                     x:Class="MaGeek.Welcome"
+﻿<ui:BaseWindow  xmlns:ui="clr-namespace:MaGeek.UI"
+                     x:Class="MaGeek.WelcomeWindow"
                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -63,94 +63,57 @@
                   Background="#222" />
 
             <controls:BusyIndicator HorizontalAlignment="Stretch"
-                                    Visibility="{Binding Visibility_IsLoading}"
-                                        VerticalAlignment="Stretch"
-                                        Grid.Row="1"
-                                        Grid.Column="1" />
+                                    Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"
+                                    VerticalAlignment="Stretch"
+                                    Grid.Row="1"
+                                    Grid.Column="1" />
 
-            <Label Content="{Binding MageekMessage}"
+            <Label Content="{Binding Message}"
                    FontWeight="Bold"
                    Foreground="White"
                    HorizontalAlignment="Center"
                    Margin="0"
                    Padding="1" />
 
-            <!-- NEW CARDS -->
             <Grid Grid.Row="1"
-                  VerticalAlignment="Center"
-                  Visibility="{Binding Visibility_NewCards}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0"
-                        BorderThickness="0"
-                        Background="IndianRed"
-                        Height="50"
-                        Margin="10,10,5,10"
-                        Click="Button_Ignore">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius"
-                                    Value="10" />
-                        </Style>
-                    </Button.Resources>
-                    Ignore
-                </Button>
-                <Button Grid.Column="1"
-                        BorderThickness="0"
-                        Background="LightSeaGreen"
-                        Height="50"
-                        Margin="5,10,10,10">
-                    <!--Click="Button_UpdateCardDb"-->
+                  VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
 
+                <Button Grid.Row="0"
+                        Command="{Binding UpdateCommand}"
+                        CommandParameter=""
+                        Content="Update"
+                        Margin="5"
+                        Background="#000"
+                        Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVis}}">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius"
                                     Value="10" />
                         </Style>
                     </Button.Resources>
-                    Import
+                    
                 </Button>
-            </Grid>
 
-            <!-- NEW UPDATE -->
-            <Grid Grid.Row="1"
-                  VerticalAlignment="Center"
-                  Visibility="{Binding Visibility_NewUpdate}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0"
-                        BorderThickness="0"
-                        Background="IndianRed"
-                        Height="50"
-                        Margin="10,10,5,10"
-                        Click="Button_Ignore">
+                <Button Grid.Row="1"
+                        Command="{Binding LaunchCommand}"
+                        CommandParameter=""
+                        Content="Launch"
+                        Margin="5"
+                        Background="#000"
+                        Visibility="{Binding CanLaunch, Converter={StaticResource BoolToVis}}">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius"
                                     Value="10" />
                         </Style>
                     </Button.Resources>
-                    Ignore
                 </Button>
-                <Button Grid.Column="1"
-                        BorderThickness="0"
-                        Background="LightSeaGreen"
-                        Height="50"
-                        Margin="5,10,10,10"
-                        Click="Button_UpdateSoftware">
 
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius"
-                                    Value="10" />
-                        </Style>
-                    </Button.Resources>
-                    Update
-                </Button>
             </Grid>
 
         </Grid>
@@ -163,4 +126,4 @@
 
     </Grid>
 
-</ui:TemplatedWindow>
+</ui:BaseWindow>

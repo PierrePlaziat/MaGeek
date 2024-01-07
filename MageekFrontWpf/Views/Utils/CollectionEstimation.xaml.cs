@@ -8,7 +8,7 @@ using System.Windows;
 namespace MaGeek.UI
 {
 
-    public partial class CollectionEstimation : TemplatedWindow
+    public partial class CollectionEstimation : BaseWindow
     {
 
         #region Attributes

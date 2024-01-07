@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Forms;
+﻿using System.Windows.Documents;
 using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace MageekFrontWpf.Framework.Helpers

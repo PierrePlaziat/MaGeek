@@ -15,63 +15,63 @@ using MageekService.Tools;
 
 namespace MageekService
 {
+    public enum MageekInitReturn
+    {
+        Error,
+        MtgUpToDate,
+        MtgOutdated,
+    }
+    public enum MageekUpdateReturn
+    {
+        ErrorDownloading,
+        ErrorFetching,
+        Success,
+    }
 
-    /// <summary>
-    /// Functional core
-    /// </summary>
     public static class MageekService
     {
 
-        public static async Task InitializeService()
+
+
+        public static async Task<MageekInitReturn> InitializeService()
         {
             try
             {
-
-                Logger.Log("Init folders...");
                 Folders.InitFolders();
-
-                Logger.Log("Init collection DB...");
                 if (!File.Exists(Folders.DB)) CollectionDbManager.CreateDb();
-
-                Logger.Log("Init cards DB...");
-                bool mtgUpdated = false;
-                try
-                {
-
-                    if (await MtgDbManager.NeedsUpdate())
-                    {
-                        Logger.Log("Updating...");
-                        await MtgDbManager.DatabaseDownload();
-                        MtgDbManager.HashSave();
-                        mtgUpdated = true;
-                        Logger.Log("Updated!");
-                    }
-                    else
-                    {
-                        Logger.Log("No Update");
-                        mtgUpdated = false;
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(e);
-                    mtgUpdated = false;
-                }
-                
-                if (mtgUpdated)
-                {
-                    Logger.Log("Fetch vards DB...");
-                    await CollectionDbManager.FetchMtg();
-                }
-
+                bool needsUpdate = await MtgDbManager.UpdateAvailable();
+                if (needsUpdate) return MageekInitReturn.MtgOutdated;
+                else return MageekInitReturn.MtgUpToDate;
             }
             catch (Exception e)
             {
                 Logger.Log(e);
-                Environment.Exit(-1);
+                return MageekInitReturn.Error;
             }
-            Logger.Log("Done");
+        }
+
+        public static async Task<MageekUpdateReturn> UpdateMtg()
+        {
+            try
+            {
+                await MtgDbManager.DatabaseDownload();
+                MtgDbManager.HashSave();
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return MageekUpdateReturn.ErrorDownloading;
+            }
+            try
+            {
+                await CollectionDbManager.FetchMtg();
+                return MageekUpdateReturn.Success;
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return MageekUpdateReturn.ErrorFetching;
+            }
         }
 
         #region Cards

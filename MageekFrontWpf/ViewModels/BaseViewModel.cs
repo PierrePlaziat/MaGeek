@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
 
-namespace MaGeek.UI
+namespace MageekFrontWpf.ViewModels
 {
 
-    public class TemplatedWindow : Window, INotifyPropertyChanged
+    public class BaseViewModel : INotifyPropertyChanged
     {
 
         public event PropertyChangedEventHandler PropertyChanged;

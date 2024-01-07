@@ -99,7 +99,7 @@ namespace MageekService.Data.Mtg
             }
         }
 
-        public static async Task<bool> NeedsUpdate()
+        public static async Task<bool> UpdateAvailable()
         {
             Logger.Log("Is update needed?");
             try

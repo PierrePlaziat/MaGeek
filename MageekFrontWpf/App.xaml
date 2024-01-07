@@ -2,10 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mageek="clr-namespace:MaGeek"
-             StartupUri="Views/Welcome.xaml">
+             Startup="OnStartup">
 
     <Application.Resources>
 
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        
         <!-- MANA FONT -->
 
         <FontFamily x:Key="MtgSymbols">pack://application:,,,/Resources/Fonts/Magic_Symbols_2008.ttf#Magic Symbols 2008</FontFamily>

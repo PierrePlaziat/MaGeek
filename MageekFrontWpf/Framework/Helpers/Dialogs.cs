@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 
 namespace MageekFrontWpf.Framework.Helpers
