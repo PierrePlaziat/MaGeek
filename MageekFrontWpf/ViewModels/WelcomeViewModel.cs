@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework;
+using MageekFrontWpf.Framework.BaseMvvm;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -11,7 +12,7 @@ namespace MageekFrontWpf.ViewModels
 
         #region Construction
 
-        private readonly WinManager winManager;
+        private readonly WindowsManager winManager;
 
         private bool updateAvailable = false;
         public bool UpdateAvailable
@@ -43,7 +44,7 @@ namespace MageekFrontWpf.ViewModels
             set { message = value; OnPropertyChanged(); }
         }
 
-        public WelcomeViewModel(WinManager winManager)
+        public WelcomeViewModel(WindowsManager winManager)
         {
             this.winManager = winManager;
             UpdateCommand = new AsyncRelayCommand(Update);

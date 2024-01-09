@@ -1,14 +1,28 @@
 ﻿using MageekFrontWpf.Framework;
-using MageekService.Data.Collection;
+using MageekFrontWpf.Framework.BaseMvvm;
+using MageekService;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace MageekFrontWpf.ViewModels
 {
     public class PrecoImporterViewModel : BaseViewModel
     {
+
+        public PrecoImporterViewModel
+        (
+            CollectionImporter importer, 
+            WindowsManager winManager
+        ){
+            this.winManager = winManager;
+            this.importer = importer;
+        }
+
+        public ICommand ImportPrecoCommand;
+        public ICommand ImportPrecosCommand;
 
         bool asOwned = false;
         public bool AsOwned
@@ -20,22 +34,13 @@ namespace MageekFrontWpf.ViewModels
         string path = "D:\\PROJECTS\\VS\\MaGeek\\Preco";
 
         List<string> precoList = new List<string>();
-        private WinManager winManager;
-        private ListImporter importer;
+        private WindowsManager winManager;
+        private CollectionImporter importer;
 
         public List<string> PrecoList
         {
             get { return precoList; }
             set { precoList = value; OnPropertyChanged(); }
-        }
-
-        public PrecoImporterViewModel
-        (
-            ListImporter importer, 
-            WinManager winManager
-        ){
-            this.winManager = winManager;
-            this.importer = importer;
         }
 
         public async Task Init()

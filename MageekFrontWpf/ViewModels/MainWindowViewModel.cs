@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using MaGeek;
-using MageekFrontWpf.Framework;
+using MageekFrontWpf.Framework.BaseMvvm;
 
 namespace MageekFrontWpf.ViewModels
 {

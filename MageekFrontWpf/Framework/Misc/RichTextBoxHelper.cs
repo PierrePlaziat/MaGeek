@@ -1,7 +1,7 @@
 ﻿using System.Windows.Documents;
 using RichTextBox = System.Windows.Controls.RichTextBox;
 
-namespace MageekFrontWpf.Framework.Helpers
+namespace MageekFrontWpf.Framework.Misc
 {
     public static class RichTextBoxHelper
     {

@@ -1,9 +1,10 @@
-﻿using MageekFrontWpf.ViewModels;
+﻿using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.ViewModels;
 
 namespace MaGeek.UI.Menus
 {
 
-    public partial class ImporterUi : TemplatedUserControl
+    public partial class ImporterUi : BaseUserControl
     {
         public ImporterUi(ImporterUiViewModel vm)
         {

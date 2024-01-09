@@ -1,4 +1,5 @@
 ﻿using System.Timers;
+using MageekFrontWpf.Framework.BaseMvvm;
 using Timer = System.Timers.Timer;
 
 namespace MaGeek.UI
@@ -6,7 +7,7 @@ namespace MaGeek.UI
     /// <summary>
     /// Logique d'interaction pour OutputMsg.xaml
     /// </summary>
-    public partial class OutputMsg : TemplatedUserControl
+    public partial class OutputMsg : BaseUserControl
     {
 
         public string Msg

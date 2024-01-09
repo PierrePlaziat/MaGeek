@@ -1,4 +1,4 @@
-﻿using MaGeek.UI;
+﻿using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.ViewModels;
 using System;
 using System.Windows.Input;

@@ -1,4 +1,5 @@
-﻿using MageekService.Data.Mtg;
+﻿using MageekFrontWpf.Framework.BaseMvvm;
+using MageekService;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
@@ -7,7 +8,7 @@ namespace MaGeek.UI.Controls
     /// <summary>
     /// Logique d'interaction pour PrintingPage.xaml
     /// </summary>
-    public partial class PrintingPage : TemplatedUserControl
+    public partial class PrintingPage : BaseUserControl
     {
 
         private BitmapImage card0;

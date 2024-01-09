@@ -3,9 +3,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 
-namespace MaGeek.UI
+namespace MageekFrontWpf.Framework.BaseMvvm
 {
-    public class TemplatedUserControl : UserControl, INotifyPropertyChanged
+    public class BaseUserControl : UserControl, INotifyPropertyChanged
     {
 
         public string ControlName

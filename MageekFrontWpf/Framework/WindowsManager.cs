@@ -1,8 +1,7 @@
 ﻿using AvalonDock.Layout.Serialization;
 using AvalonDock.Layout;
-using AvalonDock;
 using MaGeek.UI;
-using static MageekFrontWpf.AppEvents;
+using static MageekFrontWpf.Framework.AppEvents;
 using System.IO;
 using System;
 using System.Collections.Generic;
@@ -12,63 +11,82 @@ using System.Linq;
 using MageekFrontWpf.ViewModels;
 using MaGeek.UI.Menus;
 using MaGeek.UI.Windows.Importers;
+using MageekFrontWpf.Framework.BaseMvvm;
 
 namespace MageekFrontWpf.Framework
 {
 
-    public class WinManager
+    enum Windows
     {
+        mainWindow, welcomeWindow, precoImporter, txtImporter, proxyPrint, collectionEstimation
+    }
+
+    public class WindowsManager
+    {
+
+        #region Construction
 
         public string Path_LayoutFolder { get; } = Path.Combine(MageekService.Folders.Roaming, "Layout");
 
-
         MainWindow mainWindow;
         private List<Tuple<BaseWindow,BaseViewModel>> appWindows;
-        private readonly List<TemplatedUserControl> AppPanels = new()
-        {
-            new CardInspector(),
-            new CardSearcher(),
-            new DeckContent(),
-            new DeckList(),
-            new DeckStats(),
-            new DeckTable(),
-            new SetExplorer(),
-        };
+        private readonly List<Tuple<BaseUserControl, BaseViewModel>> appPanels;
 
-
-        public WinManager(
-            MainWindow mainWindow,
+        public WindowsManager(
+            AppEvents events,
             WelcomeWindow welcomeWindow ,
-            ImporterUi importerUi,
-            PrecoImporter precoImporter,
+            MainWindow mainWindow,
             TxtImporter txtImporter,
-            MainWindowViewModel mainWindowVm,
+            PrecoImporter precoImporter,
+            DeckStats deckStats,
+            CardInspector cardInspector,
+            CardSearcher cardSearcher,
+            DeckContent deckContent,
+            DeckList deckList,
+            DeckTable deckTable,
+            ImporterUi importerUi,
             WelcomeViewModel welcomeWindowVm,
-            ImporterUiViewModel importerUiVm,
+            MainWindowViewModel mainWindowVm,
+            TxtImporterViewModel txtImporterVm,
             PrecoImporterViewModel precoImporterVm,
-            TxtImporterViewModel txtImporterVm
-        ) {
+            DeckStatsViewModel deckStatsViewModel,
+            CardInspectorViewModel cardInspectorViewModel,
+            CardSearcherViewModel cardSearcherViewModel,
+            DeckContentViewModel deckContentViewModel,
+            DeckListViewModel deckListViewModel,
+            DeckTableViewModel deckTableViewModel,
+            ImporterUiViewModel importerUiVm
+        ){
             this.mainWindow = mainWindow;
-            App.Events.LayoutActionEvent += HandleLayoutActionEvent;
-
+            events.LayoutActionEvent += HandleLayoutActionEvent;
             appWindows.Add(new Tuple<BaseWindow, BaseViewModel>(mainWindow,mainWindowVm));
             appWindows.Add(new Tuple<BaseWindow, BaseViewModel>(welcomeWindow, welcomeWindowVm));
-            appWindows.Add(new Tuple<BaseWindow, BaseViewModel>(importerUi, importerUiVm));
             appWindows.Add(new Tuple<BaseWindow, BaseViewModel>(precoImporter, precoImporterVm));
             appWindows.Add(new Tuple<BaseWindow, BaseViewModel>(txtImporter, txtImporterVm));
+            appPanels.Add(new Tuple<BaseUserControl, BaseViewModel>(deckStats, deckStatsViewModel));
+            appPanels.Add(new Tuple<BaseUserControl, BaseViewModel>(cardInspector, cardInspectorViewModel));
+            appPanels.Add(new Tuple<BaseUserControl, BaseViewModel>(cardSearcher, cardSearcherViewModel));
+            appPanels.Add(new Tuple<BaseUserControl, BaseViewModel>(deckContent, deckContentViewModel));
+            appPanels.Add(new Tuple<BaseUserControl, BaseViewModel>(deckList, deckListViewModel));
+            appPanels.Add(new Tuple<BaseUserControl, BaseViewModel>(deckTable, deckTableViewModel));
+            appPanels.Add(new Tuple<BaseUserControl, BaseViewModel>(importerUi, importerUiVm));
         }
+
+        #endregion
+
+        #region Usage
 
         internal void LaunchMainWin()
         {
             mainWindow.Show();
         }
 
-        internal void OpenWindow(BaseViewModel vm)
+        internal void OpenWindow(Windows win)
         {
             try
             {
                 appWindows
-                    .Where(w=>w.Item2.GetType()==vm.GetType())
+                    .Where(w=>w.Item2.GetType()==win.GetType())
                     .First()
                     .Item1
                     .Show();
@@ -78,6 +96,7 @@ namespace MageekFrontWpf.Framework
                 Logger.Log(e);
             }
         }
+
         internal void CloseWindow(BaseViewModel vm)
         {
             try
@@ -114,7 +133,7 @@ namespace MageekFrontWpf.Framework
                 if (item is LayoutAnchorablePane && ((LayoutAnchorablePane)item).Name == controlName) return;
             }
             // Find corresponding control
-            TemplatedUserControl control = AppPanels.Find(tool => tool.ControlName == controlName);
+            BaseUserControl control = appPanels.Find(tool => tool.Item1.ControlName == controlName).Item1;
             if (control == null) return;
             // Open the control in Avalon
 
@@ -160,7 +179,7 @@ namespace MageekFrontWpf.Framework
                 serializer.Deserialize(GetLayoutPath(layoutName));
                 foreach (var element in mainWindow.DockingManager.Layout.Descendents().OfType<LayoutAnchorable>())
                 {
-                    var panel = AppPanels.Find(control => control.ControlName == element.Title);
+                    var panel = appPanels.Find(control => control.Item1.ControlName == element.Title);
                     if (panel != null)
                     {
                         element.Content = panel;
@@ -174,6 +193,8 @@ namespace MageekFrontWpf.Framework
         {
             return Path_LayoutFolder + "\\" + layoutName + ".avalonXml";
         }
+
+        #endregion
 
     }
 

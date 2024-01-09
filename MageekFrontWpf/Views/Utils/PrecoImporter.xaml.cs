@@ -1,11 +1,12 @@
-﻿using MageekFrontWpf.ViewModels;
+﻿using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.ViewModels;
 using System;
 using System.Windows;
 
 namespace MaGeek.UI.Windows.Importers
 {
 
-    public partial class PrecoImporter : Window
+    public partial class PrecoImporter : BaseWindow
     {
 
         PrecoImporterViewModel vm;

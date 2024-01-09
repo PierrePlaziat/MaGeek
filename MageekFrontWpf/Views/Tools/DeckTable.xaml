@@ -1,11 +1,12 @@
-﻿<local:TemplatedUserControl xmlns:local="clr-namespace:MaGeek.UI" 
+﻿<mvvm:BaseUserControl xmlns:local="clr-namespace:MaGeek.UI" 
                             x:Class="MaGeek.UI.DeckTable"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:controls="clr-namespace:MaGeek.UI.Controls"
-             mc:Ignorable="d" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:controls="clr-namespace:MaGeek.UI.Controls"
+                       xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
+                       mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="myWindow" Background="Black">
 
@@ -17,9 +18,15 @@
 
                 <DockPanel Margin="10">
                     <Label>CardSize:</Label>
-                    <Button Width="80" Click="Resize_Complete">Complete</Button>
-                    <Button Width="80" Click="Resize_Picture">Picture</Button>
-                    <Button Width="80" Click="Resize_Header">Header</Button>
+                    <Button Width="80"
+                            Command="{Binding Resize_Complete}"
+                            Content="Complete" />
+                    <Button Width="80"
+                            Command="{Binding Resize_Picture}"
+                            Content="Picture" />
+                    <Button Width="80"
+                            Command="{Binding Resize_Header}"
+                            Content="Header" />
                     <Label></Label>
                 </DockPanel>
 
@@ -51,11 +58,15 @@
                                 <ContentControl.ContextMenu>
 
                                     <ContextMenu>
-                                        <MenuItem Header="Unset Commandant" Click="UnsetCommandant_Click"/>
-                                        <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                        <MenuItem Header="Unset Commandant"
+                                                  Click="UnsetCommandant_Click"
+                                                  Command="{Binding UnsetCommandant}"/>
+                                        <MenuItem Header="To Side" Command="{Binding ToSide_Click}"/>
                                         <Separator />
-                                        <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                        <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                        <MenuItem Header="Add one"
+                                                  Command="{Binding AddOne_Click}"/>
+                                        <MenuItem Header="Remove one"
+                                                  Command="{Binding RemoveOne_Click}"/>
                                         <Separator />
                                         <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                             <MenuItem.ItemContainerStyle>
@@ -108,11 +119,15 @@
                                     <ContentControl.ContextMenu>
 
                                         <ContextMenu>
-                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
-                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <MenuItem Header="Set Commandant"
+                                                      Command="{Binding SetCommandant_Click}"/>
+                                            <MenuItem Header="To Side"
+                                                      Command="{Binding ToSide_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <MenuItem Header="Add one"
+                                                      Command="{Binding AddOne_Click}"/>
+                                            <MenuItem Header="Remove one"
+                                                      Command="{Binding RemoveOne_Click}"/>
                                             <Separator />
                                             <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                                 <MenuItem.ItemContainerStyle>
@@ -159,11 +174,15 @@
 
                                     <ContentControl.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
-                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <MenuItem Header="Set Commandant"
+                                                      Command="{Binding SetCommandant_Click}"/>
+                                            <MenuItem Header="To Side"
+                                                      Command="{Binding ToSide_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <MenuItem Header="Add one"
+                                                      Command="{Binding AddOne_Click}"/>
+                                            <MenuItem Header="Remove one"
+                                                      Command="{Binding RemoveOne_Click}"/>
                                             <Separator />
                                             <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                                 <MenuItem.ItemContainerStyle>
@@ -210,11 +229,15 @@
 
                                     <ContentControl.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
-                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <MenuItem Header="Set Commandant"
+                                                      Command="{Binding SetCommandant_Click}"/>
+                                            <MenuItem Header="To Side"
+                                                      Command="{Binding ToSide_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <MenuItem Header="Add one"
+                                                      Command="{Binding AddOne_Click}"/>
+                                            <MenuItem Header="Remove one"
+                                                      Command="{Binding RemoveOne_Click}"/>
                                             <Separator />
                                             <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                                 <MenuItem.ItemContainerStyle>
@@ -261,11 +284,15 @@
 
                                     <ContentControl.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
-                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <MenuItem Header="Set Commandant"
+                                                      Command="{Binding SetCommandant_Click}"/>
+                                            <MenuItem Header="To Side"
+                                                      Command="{Binding ToSide_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <MenuItem Header="Add one"
+                                                      Command="{Binding AddOne_Click}"/>
+                                            <MenuItem Header="Remove one"
+                                                      Command="{Binding RemoveOne_Click}"/>
                                             <Separator />
                                             <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                                 <MenuItem.ItemContainerStyle>
@@ -312,11 +339,15 @@
 
                                     <ContentControl.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
-                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <MenuItem Header="Set Commandant"
+                                                      Command="{Binding SetCommandant_Click}"/>
+                                            <MenuItem Header="To Side"
+                                                      Command="{Binding ToSide_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <MenuItem Header="Add one"
+                                                      Command="{Binding AddOne_Click}"/>
+                                            <MenuItem Header="Remove one"
+                                                      Command="{Binding RemoveOne_Click}"/>
                                             <Separator />
                                             <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                                 <MenuItem.ItemContainerStyle>
@@ -363,11 +394,15 @@
 
                                     <ContentControl.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
-                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <MenuItem Header="Set Commandant"
+                                                      Command="{Binding SetCommandant_Click}"/>
+                                            <MenuItem Header="To Side"
+                                                      Command="{Binding ToSide_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <MenuItem Header="Add one"
+                                                      Command="{Binding AddOne_Click}"/>
+                                            <MenuItem Header="Remove one"
+                                                      Command="{Binding RemoveOne_Click}"/>
                                             <Separator />
                                             <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                                 <MenuItem.ItemContainerStyle>
@@ -412,11 +447,15 @@
 
                                     <ContentControl.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
-                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <MenuItem Header="Set Commandant"
+                                                      Command="{Binding SetCommandant_Click}"/>
+                                            <MenuItem Header="To Side"
+                                                      Command="{Binding ToSide_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <MenuItem Header="Add one"
+                                                      Command="{Binding AddOne_Click}"/>
+                                            <MenuItem Header="Remove one"
+                                                      Command="{Binding RemoveOne_Click}"/>
                                             <Separator />
                                             <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                                 <MenuItem.ItemContainerStyle>
@@ -463,11 +502,15 @@
 
                                     <ContentControl.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
-                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <MenuItem Header="Set Commandant"
+                                                      Command="{Binding SetCommandant_Click}"/>
+                                            <MenuItem Header="To Side"
+                                                      Command="{Binding ToSide_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <MenuItem Header="Add one"
+                                                      Command="{Binding AddOne_Click}"/>
+                                            <MenuItem Header="Remove one"
+                                                      Command="{Binding RemoveOne_Click}"/>
                                             <Separator />
                                             <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                                 <MenuItem.ItemContainerStyle>
@@ -524,13 +567,18 @@
 
                                     <ContentControl.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Set Commandant" Click="SetCommandant_Click"/>
-                                            <MenuItem Header="To Side" Click="ToSide_Click"/>
+                                            <MenuItem Header="Set Commandant"
+                                                      Command="{Binding SetCommandant_Click}"/>
+                                            <MenuItem Header="To Side"
+                                                      Command="{Binding ToSide_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Add one" Click="AddOne_Click"/>
-                                            <MenuItem Header="Remove one" Click="RemoveOne_Click"/>
+                                            <MenuItem Header="Add one"
+                                                      Command="{Binding AddOne_Click}"/>
+                                            <MenuItem Header="Remove one"
+                                                      Command="{Binding RemoveOne_Click}"/>
                                             <Separator />
-                                            <MenuItem Header="Variant" ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                                            <MenuItem Header="Variant" 
+                                                      ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                                                 <MenuItem.ItemContainerStyle>
                                                     <Style TargetType="MenuItem">
                                                         <Setter Property="Header" Value="{Binding SetName}"/>
@@ -852,4 +900,4 @@
 
     </Grid>
     
-</local:TemplatedUserControl>
+</mvvm:BaseUserControl>

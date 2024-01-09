@@ -1,6 +1,6 @@
-﻿using MageekFrontWpf.Framework.Helpers;
-using MageekService.Data.Collection;
-using MageekFrontWpf.Framework;
+﻿using MageekFrontWpf.Framework;
+using MageekFrontWpf.Framework.BaseMvvm;
+using MageekService;
 
 namespace MageekFrontWpf.ViewModels
 {
@@ -11,8 +11,8 @@ namespace MageekFrontWpf.ViewModels
         #region Construction
 
 
-        private ListImporter importer;
-        private WinManager winManager;
+        private CollectionImporter importer;
+        private WindowsManager winManager;
 
         public string Title
         {
@@ -30,8 +30,8 @@ namespace MageekFrontWpf.ViewModels
 
         public TxtImporterViewModel
         (
-            ListImporter importer,
-            WinManager winManager
+            CollectionImporter importer,
+            WindowsManager winManager
         )
         {
             this.winManager = winManager;

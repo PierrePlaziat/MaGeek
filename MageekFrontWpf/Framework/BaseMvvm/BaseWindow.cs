@@ -1,10 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
-namespace MageekFrontWpf.ViewModels
+namespace MageekFrontWpf.Framework.BaseMvvm
 {
 
-    public class BaseViewModel : INotifyPropertyChanged
+    public class BaseWindow : Window, INotifyPropertyChanged
     {
 
         public event PropertyChangedEventHandler PropertyChanged;

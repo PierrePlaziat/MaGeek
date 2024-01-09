@@ -2,7 +2,7 @@
 using System;
 using MageekService.Data.Collection.Entities;
 
-namespace MageekFrontWpf
+namespace MageekFrontWpf.Framework
 {
 
     /// <summary>

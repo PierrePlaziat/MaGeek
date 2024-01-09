@@ -4,10 +4,10 @@ using System.ComponentModel;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace MageekService.Data.Collection
+namespace MageekService
 {
 
-    public class ListImporter
+    public class CollectionImporter
     {
 
         #region Attributes
@@ -48,7 +48,7 @@ namespace MageekService.Data.Collection
 
         #region CTOR
 
-        public ListImporter()
+        public CollectionImporter()
         {
             ConfigureTimer();
             if (PendingCount > 0)

@@ -1,4 +1,6 @@
-﻿using MageekService.Data.Mtg;
+﻿using MageekFrontWpf.Framework;
+using MageekFrontWpf.Framework.BaseMvvm;
+using MageekService;
 using MageekService.Data.Mtg.Entities;
 using System.ComponentModel;
 using System.Windows;
@@ -8,8 +10,28 @@ using System.Windows.Media.Imaging;
 namespace MaGeek.UI
 {
 
-    public partial class CardIllustration : TemplatedUserControl
+    public partial class CardIllustration : BaseUserControl
     {
+
+        private AppEvents events;
+
+        public CardIllustration(
+            AppEvents events,
+            Cards card)
+        {
+            this.events = events;
+            InitializeComponent();
+            DataContext = this;
+            SelectedVariant = card;
+        }
+
+        public CardIllustration(
+            AppEvents events)
+        {
+            this.events = events;
+            InitializeComponent();
+            DataContext = this;
+        }
 
         #region Attributes
 
@@ -107,6 +129,7 @@ namespace MaGeek.UI
         #region Back Face
 
         bool showBack = false;
+
         public bool ShowBack
         {
             get { return showBack; }
@@ -134,19 +157,6 @@ namespace MaGeek.UI
             DataContext = this;
             SelectedVariant = MageekService.MageekService.FindCard_Data(uuid).Result;
         }
-        
-        public CardIllustration(Cards card)
-        {
-            InitializeComponent();
-            DataContext = this;
-            SelectedVariant = card;
-        }
-
-        public CardIllustration()
-        {
-            InitializeComponent();
-            DataContext = this;
-        }
 
         #endregion
 
@@ -164,14 +174,14 @@ namespace MaGeek.UI
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (selectedVariant != null) App.Events.RaiseCardSelected(selectedVariant.Uuid);
+            if (selectedVariant != null) events.RaiseCardSelected(selectedVariant.Uuid);
         }
 
         #endregion
 
         private void SwitchFaceClic(object sender, RoutedEventArgs e)
         {
-            App.Events.RaiseCardSelected(SelectedVariant.OtherFaceIds);
+            events.RaiseCardSelected(SelectedVariant.OtherFaceIds);
         }
 
         public void ReLoad(Cards c)

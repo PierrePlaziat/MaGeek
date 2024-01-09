@@ -1,43 +1,16 @@
-﻿namespace MaGeek.UI.Menus
+﻿using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.ViewModels;
+
+namespace MaGeek.UI.Menus
 {
 
-    public partial class StateBar : TemplatedUserControl
+    public partial class BottomBar : BaseUserControl
     {
 
-        public string SelectedDeckString
+        public BottomBar(StateBarViewModel vm)
         {
-            get {
-                string s = "";
-                if (App.State.SelectedDeck != null) s = App.State.SelectedDeck.Title;
-                return s;
-            }
-        }
-        
-        public string SelectedCardString
-        {
-            get {
-                string s = "";
-                if (App.State.SelectedCard != null) s = App.State.SelectedCard.ArchetypeId;
-                return s;
-            }
-        }
-
-        public StateBar()
-        {
+            DataContext = vm;
             InitializeComponent();
-            DataContext = this;
-            App.Events.CardSelectedEvent += STATE_CardSelectedEvent;
-            App.Events.SelectDeckEvent += STATE_SelectDeckEvent; ;
-        }
-
-        private void STATE_SelectDeckEvent(string deckId)
-        {
-            OnPropertyChanged(nameof(SelectedDeckString));
-        }
-
-        private void STATE_CardSelectedEvent(string CardUuid)
-        {
-            OnPropertyChanged(nameof(SelectedCardString));
         }
 
     }

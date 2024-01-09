@@ -2,7 +2,7 @@
 using MageekService;
 using MageekService.Data.Collection.Entities;
 
-namespace MageekFrontWpf
+namespace MageekFrontWpf.Framework
 {
 
     public class AppState
@@ -20,10 +20,10 @@ namespace MageekFrontWpf
 
         #region CTOR
 
-        public AppState()
+        public AppState(AppEvents events)
         {
-            App.Events.CardSelectedEvent += DoSelectCard;
-            App.Events.SelectDeckEvent += DoSelectDeck;
+            events.CardSelectedEvent += DoSelectCard;
+            events.SelectDeckEvent += DoSelectDeck;
         }
 
         #endregion

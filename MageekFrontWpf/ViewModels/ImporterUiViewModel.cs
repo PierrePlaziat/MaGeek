@@ -1,4 +1,5 @@
-﻿using MageekService.Data.Collection;
+﻿using MageekFrontWpf.Framework.BaseMvvm;
+using MageekService;
 using System.Timers;
 using System.Windows;
 
@@ -8,7 +9,7 @@ namespace MageekFrontWpf.ViewModels
     {
 
         Timer loopTimer;
-        private ListImporter importer;
+        private CollectionImporter importer;
 
         public Visibility HasImportInQueue
         {
@@ -53,7 +54,7 @@ namespace MageekFrontWpf.ViewModels
             set { state = value; OnPropertyChanged(); }
         }
 
-        public ImporterUiViewModel(ListImporter Importer)
+        public ImporterUiViewModel(CollectionImporter Importer)
         {
             importer = Importer;
             ConfigureTimer();
