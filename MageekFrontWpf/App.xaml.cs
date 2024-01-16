@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
-using MaGeek.UI;
-using MaGeek.UI.Menus;
-using MaGeek.UI.Windows.Importers;
 using MageekFrontWpf;
-using MageekFrontWpf.Framework;
-using MageekFrontWpf.Framework.Services;
-using MageekFrontWpf.ViewModels;
-using MageekService;
+using MageekFrontWpf.App;
+using MageekFrontWpf.Framework.BaseMvvm;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MaGeek
@@ -17,67 +12,30 @@ namespace MaGeek
     public partial class App : Application
     {
 
-        private ServiceProvider serviceProvider;
+        private IServiceProvider serviceProvider;
 
         public App()
         {
             ServiceCollection services = new ServiceCollection();
-            ConfigureServices(services);
+            services.AddLogging();
+            services.AddMageek();
             serviceProvider = services.BuildServiceProvider();
-        }
-
-        private void ConfigureServices(ServiceCollection services)
-        {
-            services.AddSingleton<CollectionImporter>();
-            // Framework
-            services.AddSingleton<DialogService>();
-            services.AddSingleton<SettingService>();
-            // App
-            services.AddSingleton<AppEvents>();
-            services.AddSingleton<AppState>();
-            // Views
-            services.AddSingleton<WelcomeWindow>();
-            services.AddSingleton<MainWindow>();
-            services.AddSingleton<ImporterUi>();
-            services.AddSingleton<TxtImporter>();
-            services.AddSingleton<PrecoImporter>();
-            services.AddSingleton<DeckStats>();
-            services.AddSingleton<CardInspector>();
-            services.AddSingleton<CardSearcher>();
-            services.AddSingleton<DeckContent>();
-            services.AddSingleton<DeckList>();
-            services.AddSingleton<DeckTable>();
-            // ViewModels
-            services.AddSingleton<WelcomeViewModel>();
-            services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<ImporterUiViewModel>();
-            services.AddSingleton<TxtImporterViewModel>();
-            services.AddSingleton<PrecoImporterViewModel>();
-            services.AddSingleton<DeckStatsViewModel>();
-            services.AddSingleton<CardInspectorViewModel>();
-            services.AddSingleton<CardSearcherViewModel>();
-            services.AddSingleton<DeckContentViewModel>();
-            services.AddSingleton<DeckListViewModel>();
-            services.AddSingleton<DeckTableViewModel>();
-            // WindowsManager
-            services.AddSingleton<WindowsManager>();
+            ServiceHelper.Initialize(serviceProvider);
         }
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            var startWindow = serviceProvider.GetService<WelcomeWindow>();
-            startWindow.Show();
+            AppSettings.SetDefaultSettings(serviceProvider.GetService<SettingService>());
+            serviceProvider.GetService<WindowsManager>().Init();
+            WelcomeWindow welcome = serviceProvider.GetService<WelcomeWindow>();
+            welcome.Show();
         }
 
         public static void Restart()
-        {
+        { 
+            // Wont work :(
             Process.Start(Process.GetCurrentProcess().MainModule.FileName);
             Current.Shutdown();
-        }
-
-        public static void Quit()
-        {
-            Environment.Exit(-1);
         }
 
     }

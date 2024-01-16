@@ -7,7 +7,7 @@
     <Application.Resources>
 
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        
+
         <!-- MANA FONT -->
 
         <FontFamily x:Key="MtgSymbols">pack://application:,,,/Resources/Fonts/Magic_Symbols_2008.ttf#Magic Symbols 2008</FontFamily>

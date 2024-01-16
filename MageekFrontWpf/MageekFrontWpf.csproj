@@ -50,9 +50,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\Utils\CollectionEstimation.xaml.cs">
+    <Compile Update="UI\Views\AppWindows\CollectionEstimation.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mageek\" />
   </ItemGroup>
 
 </Project>

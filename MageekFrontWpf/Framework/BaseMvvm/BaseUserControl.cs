@@ -5,6 +5,7 @@ using System.Windows.Controls;
 
 namespace MageekFrontWpf.Framework.BaseMvvm
 {
+
     public class BaseUserControl : UserControl, INotifyPropertyChanged
     {
 
