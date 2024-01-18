@@ -58,6 +58,8 @@ namespace MageekFrontWpf.UI.ViewModels
         public async Task Update()
         {
             IsLoading = true;
+            CanLaunch = false;
+            UpdateAvailable = false;
             await Task.Delay(100);
             Message = "Updating...";
             var retour = await MageekService.MageekService.UpdateMtg();
