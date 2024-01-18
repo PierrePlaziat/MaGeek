@@ -17,6 +17,7 @@ using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekFrontWpf.UI.ViewModels.AppWindows;
 using AvalonDock;
 using MageekFrontWpf.Framework.BaseMvvm;
+using MaGeek.UI.Menus;
 
 namespace MageekFrontWpf.App
 {
@@ -69,7 +70,7 @@ namespace MageekFrontWpf.App
             appPanels.Add(new AppPanel() { id = AppPanelEnum.DeckList, viewModel = ServiceHelper.GetService<DeckListViewModel>(), window = ServiceHelper.GetService<DeckList>() });
             appPanels.Add(new AppPanel() { id = AppPanelEnum.DeckTable, viewModel = ServiceHelper.GetService<DeckTableViewModel>(), window = ServiceHelper.GetService<DeckTable>() });
             appPanels.Add(new AppPanel() { id = AppPanelEnum.Sets, viewModel = ServiceHelper.GetService<SetExplorerViewModel>(), window = ServiceHelper.GetService<SetExplorer>() });
-            //appPanels.Add(new AppPanel() { id = AppPanelEnum.ImporterUi, viewModel = ServiceHelper.GetService<ImporterUiViewModel>(), window = ServiceHelper.GetService<ImporterUi>() });
+            appPanels.Add(new AppPanel() { id = AppPanelEnum.ImporterUi, viewModel = ServiceHelper.GetService<ImporterUiViewModel>(), window = ServiceHelper.GetService<ImporterUi>() });
         }
 
         public void OpenWindow(AppWindowEnum id)
