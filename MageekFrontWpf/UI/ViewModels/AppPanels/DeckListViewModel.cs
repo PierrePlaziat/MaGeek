@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
@@ -100,7 +101,7 @@ namespace MageekFrontWpf.UI.ViewModels
         private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
         {
             if (state.SelectedDeck == null) return;
-            var totalPrice = await MageekService.MageekService.EstimateDeckPrice(state.SelectedDeck.DeckId, config.Settings[Settings.Currency]);
+            var totalPrice = await MageekService.MageekService.EstimateDeckPrice(state.SelectedDeck.DeckId, config.Settings[AppSetting.Currency]);
 
             MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + "\n" +
                             "Missing : " + totalPrice.Item2);

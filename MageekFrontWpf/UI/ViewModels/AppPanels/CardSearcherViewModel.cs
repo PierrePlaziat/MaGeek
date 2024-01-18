@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekService;
 using MageekService.Data.Collection.Entities;
@@ -50,13 +51,13 @@ namespace MageekFrontWpf.ViewModels
             if (ShowAdvanced == false)
             {
                 CardList = await MageekService.MageekService.NormalSearch(
-                    config.Settings[Settings.ForeignLanguage],
+                    config.Settings[AppSetting.ForeignLanguage],
                     FilterName
                 );
             }
             else
             {
-                var lang = config.Settings[Settings.ForeignLanguage];
+                var lang = config.Settings[AppSetting.ForeignLanguage];
                 var color = FilterColor.ToString();
                 string tagz = "";// FilterTag.TagContent;
                 CardList = await MageekService.MageekService.AdvancedSearch(

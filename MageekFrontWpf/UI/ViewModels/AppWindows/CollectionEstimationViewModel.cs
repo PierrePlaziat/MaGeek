@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekService.Tools;
 using System;
@@ -51,7 +52,7 @@ namespace MageekFrontWpf.ViewModels
                     TotalDiffExist = await MageekService.MageekService.GetTotal_ExistingArchetypes();
                     TotalDiffGot = await MageekService.MageekService.GetTotal_CollectedArchetype();
                     TotalGot = await MageekService.MageekService.GetTotal_CollectedDiff();
-                    var est = await MageekService.MageekService.AutoEstimatePrices(config.Settings[Settings.ForeignLanguage]);
+                    var est = await MageekService.MageekService.AutoEstimatePrices(config.Settings[AppSetting.ForeignLanguage]);
                     AutoEstimation = est.Item1;
                     MissingList = est.Item2;
                     OnPropertyChanged(nameof(TotalDiffExist));
