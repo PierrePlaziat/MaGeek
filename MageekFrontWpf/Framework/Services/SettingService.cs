@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Collections.Generic;
 using MageekFrontWpf.App;
+using MageekService;
 
 namespace MageekFrontWpf
 {
@@ -19,6 +20,7 @@ namespace MageekFrontWpf
 
         private void LoadSettings()
         {
+            Folders.InitFolders();
             if (!File.Exists(Path_Settings))
             {
                 SaveSettings();
