@@ -3,11 +3,10 @@ using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.Services;
 using MageekService.Tools;
 using System;
-using System.Windows.Input;
 
 namespace MageekFrontWpf.UI.ViewModels
 {
-    public class TopMenuViewModel
+    public partial class TopMenuViewModel
     {
 
         private WindowsManager winManager;
@@ -21,166 +20,65 @@ namespace MageekFrontWpf.UI.ViewModels
             this.config = config;
         }
 
-        public ICommand OpenWindowCommand { get; } = new RelayCommand<string>(OpenWindow);
-        public ICommand OpenPanelCommand { get; } = new RelayCommand<string>(OpenPanel);
-        public ICommand LayoutBackupCommand { get; } = new RelayCommand<string>(LayoutBackup);
-
-        private static void LayoutBackup(string obj)
+        [RelayCommand]
+        private void OpenWindow(string window)
         {
-            throw new NotImplementedException();
+            bool success = Enum.TryParse(window, out AppWindowEnum value);
+            if (!success) return;
+            winManager.OpenWindow(value);
         }
 
-        public ICommand LayoutRestoreCommand { get; } = new RelayCommand<string>(LayoutRestore);
-
-        private static void LayoutRestore(string obj)
+        [RelayCommand]
+        private void OpenPanel(string panel)
         {
-            throw new NotImplementedException();
+            bool success = Enum.TryParse(panel, out AppPanelEnum value);
+            if (!success) return;
+            winManager.OpenPanel(value);
         }
 
-        public ICommand ChangeLanguageCommand { get; } = new RelayCommand(ChangeLanguage);
-
-        private static void ChangeLanguage()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICommand ChangeCurrencyCommand { get; } = new RelayCommand(ChangeCurrency);
-
-        private static void ChangeCurrency()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICommand AboutCommand { get; } = new RelayCommand(About);
-
-        private static void About()
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void OpenWindow(string obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void OpenPanel(string obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        #region Tools
-
-        private void SetExplorer_Click()
+        [RelayCommand]
+        private void LayoutBackup(string obj)
         {
             events.RaiseLayoutAction(
                 new AppEvents.LayoutEventArgs()
                 {
-                    EventType = AppEvents.LayoutEventType.OpenPanel,
-                    information = "SetExplorer"
+                    EventType = AppEvents.LayoutEventType.Save,
+                    //information = "User"
                 }
             );
         }
 
-        private void CardSearcher_Click()
+        [RelayCommand]
+        private void LayoutRestore(string obj)
         {
             events.RaiseLayoutAction(
                 new AppEvents.LayoutEventArgs()
                 {
-                    EventType = AppEvents.LayoutEventType.OpenPanel,
-                    information = "CardSearcher"
+                    EventType = AppEvents.LayoutEventType.Load,
+                    //information = "User"
                 }
             );
         }
 
-        private void DeckList_Click()
+        [RelayCommand]
+        private void ChangeLanguage(string lang)
         {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.OpenPanel,
-                    information = "DeckList"
-                }
-            );
+            config.SetSetting(AppSetting.ForeignLanguage, lang);
         }
 
-        private void DeckContent_Click()
+        [RelayCommand]
+        private void ChangeCurrency(string currency)
         {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.OpenPanel,
-                    information = "DeckContent"
-                }
-            );
+            config.SetSetting(AppSetting.Currency, currency);
         }
 
-        private void DeckTable_Click()
+        [RelayCommand]
+        private void About()
         {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.OpenPanel,
-                    information = "DeckTable"
-                }
-            );
+            HttpUtils.HyperLink("https://github.com/PierrePlaziat/MaGeek");
         }
 
-        private void DeckStats_Click()
-        {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.OpenPanel,
-                    information = "DeckStats"
-                }
-            );
-        }
-
-        private void CardInspector_Click()
-        {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.OpenPanel,
-                    information = "CardInspector"
-                }
-            );
-        }
-
-        #endregion
-
-        #region Utils
-
-        private void OpenWindow_TxtImporter()
-        {
-            winManager.OpenWindow(AppWindowEnum.Import);
-        }
-
-        private void OpenWindow_PrecoImporter()
-        {
-            winManager.OpenWindow(AppWindowEnum.Precos);
-        }
-
-        private void OpenWindow_ProxyPrint()
-        {
-            winManager.OpenWindow(AppWindowEnum.Print);
-        }
-
-        private void OpenWindow_CollectionEstimation()
-        {
-            winManager.OpenWindow(AppWindowEnum.Estimation);
-        }
-
-        #endregion
-
-        #region Settings
-
-        private void ChangeLanguage(string newLang)
-        {
-            config.SetSetting(AppSetting.ForeignLanguage, newLang);
-            events.RaiseUpdateCardCollec();
-            //UpdateLangIcons(newLang);
-        }
+        #region Not used
 
         //private void UpdateLangIcons(string lang)
         //{
@@ -202,12 +100,6 @@ namespace MageekFrontWpf.UI.ViewModels
         //        }
         //    }
         //}
-
-        private void ChangeCurrency(string newCurrency)
-        {
-            config.SetSetting(AppSetting.Currency, newCurrency);
-            //UpdateCurrencyIcons(newCurrency);
-        }
 
         //private void UpdateCurrencyIcons(string currency)
         //{
@@ -231,52 +123,6 @@ namespace MageekFrontWpf.UI.ViewModels
         //}
 
         #endregion
-
-        #region Layout
-
-        private void LayoutBackup_Click()
-        {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.Save,
-                    information = "User"
-                }
-            );
-        }
-        private void LayoutRestore_Click()
-        {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.Load,
-                    information = "User"
-                }
-            );
-        }
-
-        private void ResetDefaultLayout()
-        {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.Load,
-                    information = "Default"
-                }
-            );
-        }
-
-        #endregion
-
-        private void AboutClicked()
-        {
-            HttpUtils.HyperLink("https://github.com/PierrePlaziat/MaGeek");
-        }
-
-        private async void MenuItem_Click()
-        {
-            await MageekService.MageekService.ConvertCollectedFromScryfallIdToUuid();
-        }
 
     }
 }

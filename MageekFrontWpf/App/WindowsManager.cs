@@ -100,15 +100,15 @@ namespace MageekFrontWpf.App
             }
         }
 
-        public void OpenPanel(string controlName)
+        public void OpenPanel(AppPanelEnum controlName)
         {
-            // Guard from an already openned panel
-            foreach (var item in rootLayout.RootPanel.Children)
-            {
-                if (item is LayoutAnchorablePane && ((LayoutAnchorablePane)item).Name == controlName) return;
-            }
+            //// Guard from an already openned panel
+            //foreach (var item in rootLayout.RootPanel.Children)
+            //{
+            //    if (item is LayoutAnchorablePane && (LayoutAnchorablePane)item == controlName) return;
+            //}
             // Find corresponding control
-            BaseUserControl control = appPanels.Find(tool => tool.window.ControlName == controlName).window;
+            BaseUserControl control = appPanels.Find(tool => tool.id== controlName).window;
             if (control == null) return;
             // Open the control in Avalon
 
@@ -116,13 +116,13 @@ namespace MageekFrontWpf.App
             {
                 IsSelected = true,
                 Content = control,
-                Title = controlName,
+                Title = controlName.ToString(),
                 FloatingHeight = 500,
                 FloatingWidth = 300,
             };
             var panel = new LayoutAnchorablePane
             {
-                Name = controlName,
+                Name = controlName.ToString(),
                 Children = {
                     anch
                 },
@@ -138,8 +138,8 @@ namespace MageekFrontWpf.App
             switch (args.EventType)
             {
                 case LayoutEventType.OpenPanel: OpenPanel(args.information); break;
-                case LayoutEventType.Save: SaveLayout(args.information); break;
-                case LayoutEventType.Load: LoadLayout(args.information); break;
+                case LayoutEventType.Save: SaveLayout(args.information.ToString()); break;
+                case LayoutEventType.Load: LoadLayout(args.information.ToString()); break;
                 default: break;
             }
         }

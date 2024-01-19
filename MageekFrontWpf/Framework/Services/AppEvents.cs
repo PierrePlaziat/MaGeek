@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using System;
 using MageekService.Data.Collection.Entities;
+using MageekFrontWpf.App;
 
 namespace MageekFrontWpf.Framework.Services
 {
@@ -19,7 +20,7 @@ namespace MageekFrontWpf.Framework.Services
         public class LayoutEventArgs
         {
             public LayoutEventType EventType { get; set; }
-            public string information { get; set; }
+            public AppPanelEnum information { get; set; }
         }
         public enum LayoutEventType
         {
