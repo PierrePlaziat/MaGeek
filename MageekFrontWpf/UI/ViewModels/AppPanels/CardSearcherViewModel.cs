@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekService;
@@ -81,12 +82,14 @@ namespace MageekFrontWpf.ViewModels
 
         #region UI Link
 
-        private void Button_Search(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private void Search()
         {
             ReloadData().ConfigureAwait(false);
         }
 
-        private void ResetFilters(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private void ResetFilters()
         {
             ShowAdvanced = false;
             ShowNormal = true;
@@ -110,7 +113,8 @@ namespace MageekFrontWpf.ViewModels
         //    }
         //}
 
-        private void Button_AdvancedSearcher(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private void AdvancedSearch()
         {
             if (ShowAdvanced == false)
             {

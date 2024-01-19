@@ -27,7 +27,7 @@
         <Image Source="{Binding SelectedImage}" />
 
         <!-- HUD -->
-        <Grid Visibility="{Binding IsHudVisible}"
+        <Grid Visibility="{Binding ShowHud, Converter={StaticResource BoolToVis}}"
               Background="#000"
               Opacity="0.8">
  

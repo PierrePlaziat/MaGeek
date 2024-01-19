@@ -22,7 +22,7 @@
                 <DataTemplate>
                     <DockPanel>
                         <Button Content="Import"
-                                Command="{Binding ImportPrecoCommand}"
+                                Command="{Binding ImportPreco}"
                                 CommandParameter="{Binding}"/>
                     </DockPanel>
                 </DataTemplate>
@@ -30,7 +30,7 @@
         </ListView>
 
         <DockPanel Grid.Row="1">
-            <Button Command="{Binding ImportPrecosCommand}"
+            <Button Command="{Binding ImportPrecos}"
                     Content="Import Selected Decks" />
             <CheckBox IsChecked="{Binding AsOwned}"
                       Foreground="White"

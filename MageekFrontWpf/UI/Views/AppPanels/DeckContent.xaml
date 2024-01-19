@@ -52,7 +52,7 @@
                           Background="DarkOrange"
                           MouseDoubleClick="SelectionChanged"
                           Grid.Row="2"
-                          Visibility="{Binding HasCommander}"
+                          Visibility="{Binding HasCommander, Converter={StaticResource BoolToVis}}"
                           SelectionMode="Single">
 
                     <ListView.ItemContainerStyle>
@@ -714,7 +714,7 @@
 
         </ScrollViewer>
 
-        <StackPanel Visibility="{Binding IsActive}"
+        <StackPanel Visibility="{Binding IsActive, Converter={StaticResource BoolToVis}}"
                     Grid.RowSpan="4"
                     Grid.ColumnSpan="2"
                     Background="#222">
@@ -724,7 +724,7 @@
 
         <Grid Background="Black"
               Grid.RowSpan="5"
-              Visibility="{Binding IsLoading}">
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
             <controls:BusyIndicator></controls:BusyIndicator>
         </Grid>
 

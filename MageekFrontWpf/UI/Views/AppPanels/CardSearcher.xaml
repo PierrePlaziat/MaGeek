@@ -35,7 +35,7 @@
             <Button Grid.Column="1"
                     Content="V"
                     ToolTip="Advanced search"
-                    Command="{Binding AdvancedSearcherCommand}" />
+                    Command="{Binding AdvancedSearchCommand}" />
             <TextBox Grid.Column="2"
                      Text="{Binding FilterName}"
                      ToolTip="Search a card by its name"
@@ -65,7 +65,7 @@
             <Button Grid.Column="3"
                     Content="Search"
                     ToolTip="Launch search"
-                    Command="{Binding Search}" />
+                    Command="{Binding SearchCommand}" />
 
         </Grid>
 
@@ -73,7 +73,7 @@
 
         <UniformGrid Grid.Row="1"
                      Margin="2"
-                     Visibility="{Binding ShowAdvanced}">
+                     Visibility="{Binding ShowAdvanced, Converter={StaticResource BoolToVis}}">
 
             <DockPanel HorizontalAlignment="Center">
                 <Label Content="Type"
@@ -205,7 +205,7 @@
 
         <Grid Background="Black"
               Grid.RowSpan="5"
-              Visibility="{Binding IsLoading}">
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
             <controls:BusyIndicator></controls:BusyIndicator>
         </Grid>
 

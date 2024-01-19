@@ -21,7 +21,6 @@ namespace MaGeek
         {
             base.OnClosed(e);
             App.Current.Shutdown();
-
         }
 
     }

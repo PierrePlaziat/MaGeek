@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
@@ -66,14 +67,16 @@ namespace MageekFrontWpf.UI.ViewModels
         //    if (decklistbox.SelectedItem is Deck deck) events.RaiseDeckSelect(deck.DeckId);
         //}
 
-        private async void AddDeck(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
             await MageekService.MageekService.CreateDeck_Empty(title, "");
             await Reload();
         }
 
-        private async void RenameDeck(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private async Task RenameDeck()
         {
             if (state.SelectedDeck == null) return;
             string title = dialog.GetInpurFromUser("What title?", "New title");
@@ -81,22 +84,19 @@ namespace MageekFrontWpf.UI.ViewModels
             await Reload();
         }
 
-        //private async void DuplicateDeck(object sender, RoutedEventArgs e)
-        //{
-        //    if (decklistbox.SelectedIndex == -1) return;
-        //    await MageekService.MageekService.DuplicateDeck(Decks.ToArray()[decklistbox.SelectedIndex]);
-        //    await Reload();
-        //}
+        [RelayCommand]
+        private async Task DuplicateDeck(string deckId)
+        {
+            await MageekService.MageekService.DuplicateDeck(deckId);
+            await Reload();
+        }
 
-        //private async void DeleteDeck(object sender, RoutedEventArgs e)
-        //{
-        //    if (decklistbox.SelectedIndex == -1) return;
-        //    var v = decklistbox.SelectedItems;
-        //    List<Deck> v2 = new();
-        //    foreach (var vv in v) v2.Add((Deck)vv);
-        //    await MageekService.MageekService.DeleteDecks(v2);
-        //    await Reload();
-        //}
+        [RelayCommand]
+        private async Task DeleteDeck(string deckId)
+        {
+            await MageekService.MageekService.DeleteDeck(deckId);
+            await Reload();
+        }
 
         private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
         {

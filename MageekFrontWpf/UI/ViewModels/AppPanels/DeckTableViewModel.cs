@@ -1,4 +1,5 @@
-﻿using MageekFrontWpf.Framework.BaseMvvm;
+﻿using CommunityToolkit.Mvvm.Input;
+using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
 using MageekService.Data.Mtg.Entities;
@@ -13,7 +14,7 @@ using System.Windows;
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
-    public class DeckTableViewModel : BaseViewModel
+    public partial class DeckTableViewModel : BaseViewModel
     {
 
         public DeckTableViewModel(AppEvents events)
@@ -198,19 +199,22 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             return deckCards;
         }
 
-        private void Resize_Complete(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private void ResizeComplete()
         {
             currentCardSize = CardSize_Complete;
             FullRefresh();
         }
 
-        private void Resize_Picture(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private void ResizePicture()
         {
             currentCardSize = CardSize_Picture;
             FullRefresh();
         }
 
-        private void Resize_Header(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private void ResizeHeader()
         {
             currentCardSize = CardSize_Header;
             FullRefresh();

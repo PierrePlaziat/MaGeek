@@ -1010,6 +1010,12 @@ namespace MageekService
             await DB.SaveChangesAsync();
         }
 
+        public static async Task DuplicateDeck(string deckId)
+        {
+            var deck = await GetDeck(deckId);
+            await DuplicateDeck(deck);
+        }
+
         /// <summary>
         /// Exports a txt list from a registered deck
         /// format: 

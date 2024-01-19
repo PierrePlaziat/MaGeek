@@ -141,7 +141,7 @@
 
     <StackPanel VerticalAlignment="Center">
         <Control Style="{StaticResource BusyAnimationStyle}"/>
-        <Label Content="{Binding Message}" 
-               HorizontalAlignment="Center"/>
+        <!--<Label Content="{Binding Message}" 
+               HorizontalAlignment="Center"/>-->
     </StackPanel>
 </UserControl>

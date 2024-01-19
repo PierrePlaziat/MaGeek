@@ -99,7 +99,7 @@
 
         </ListView>
 
-        <Grid Background="Black" Grid.RowSpan="5" Visibility="{Binding IsLoading}">
+        <Grid Background="Black" Grid.RowSpan="5" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
             <controls:BusyIndicator></controls:BusyIndicator>
         </Grid>
 

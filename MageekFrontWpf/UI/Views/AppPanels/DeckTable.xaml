@@ -19,13 +19,13 @@
                 <DockPanel Margin="10">
                     <Label>CardSize:</Label>
                     <Button Width="80"
-                            Command="{Binding Resize_Complete}"
+                            Command="{Binding ResizeCompleteCommand}"
                             Content="Complete" />
                     <Button Width="80"
-                            Command="{Binding Resize_Picture}"
+                            Command="{Binding ResizePictureCommand}"
                             Content="Picture" />
                     <Button Width="80"
-                            Command="{Binding Resize_Header}"
+                            Command="{Binding ResizeHeaderCommand}"
                             Content="Header" />
                     <Label></Label>
                 </DockPanel>

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekService;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 
@@ -40,19 +41,19 @@ namespace MageekFrontWpf.UI.ViewModels
         }
 
         [RelayCommand]
-        private void ButtonPlayCommand()
+        private async Task Play()
         {
             importer.Play();
         }
 
         [RelayCommand]
-        private void ButtonPauseCommand()
+        private async Task Pause()
         {
             importer.Pause();
         }
 
         [RelayCommand]
-        private void ButtonCancelCommand() 
+        private async Task Cancel() 
         {
             importer.CancelAll();
         }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekService;
@@ -15,6 +16,7 @@ namespace MageekFrontWpf.UI.ViewModels
         private const string path = "D:\\PROJECTS\\VS\\MaGeek\\Preco";
         private WindowsManager winManager;
         private CollectionImporter importer;
+        private bool importingSeveral = false;
 
         public PrecosViewModel
         (
@@ -29,9 +31,6 @@ namespace MageekFrontWpf.UI.ViewModels
         [ObservableProperty] bool asOwned = false;
         [ObservableProperty] List<string> precoList = new();
 
-        public ICommand ImportPrecoCommand;
-        public ICommand ImportPrecosCommand;
-
         public async Task Init()
         {
             string[] files = Directory.GetFiles(path);
@@ -44,28 +43,27 @@ namespace MageekFrontWpf.UI.ViewModels
             OnPropertyChanged(nameof(PrecoList));
         }
 
-        private void ListView_MouseDoubleClick(string selectedItem)
+        private async Task ImportPrecos(List<string> titles)
         {
-            ImportPreco(selectedItem, AsOwned);
+            importingSeveral = true;
+            List<Task> tasks = new List<Task>();
+            foreach (string preco in titles) ImportPreco(preco);
+            importingSeveral = false;
             winManager.CloseWindow(AppWindowEnum.Precos);
         }
-
-        private void Button_Click(List<string> PrecoListViewSelectedItems, bool asOwned)
-        {
-            foreach (string preco in PrecoListViewSelectedItems) ImportPreco(preco, asOwned);
-            winManager.CloseWindow(AppWindowEnum.Precos);
-        }
-
-        private void ImportPreco(string title, bool asOwned)
+        
+        [RelayCommand]
+        private async Task ImportPreco(string title)
         {
             importer.AddImportToQueue(
                 new PendingImport
                 {
                     Title = "[Preco] " + title,
                     Content = File.ReadAllText(path + "\\" + title + ".txt"),
-                    AsOwned = asOwned
+                    AsOwned = AsOwned
                 }
             );
+            if (!importingSeveral) winManager.CloseWindow(AppWindowEnum.Precos);
         }
 
     }
