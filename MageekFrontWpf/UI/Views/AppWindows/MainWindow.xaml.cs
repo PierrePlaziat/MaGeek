@@ -17,6 +17,13 @@ namespace MaGeek
             InitializeComponent();
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            App.Current.Shutdown();
+
+        }
+
     }
 
 }
