@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekService;
@@ -24,6 +25,7 @@ namespace MageekFrontWpf.UI.ViewModels
         [ObservableProperty] private string title;
         [ObservableProperty] private bool asOwned;
 
+        [RelayCommand]
         private void LaunchImportation(string content)
         {
             importer.AddImportToQueue(

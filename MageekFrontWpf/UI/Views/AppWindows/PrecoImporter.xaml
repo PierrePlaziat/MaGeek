@@ -30,8 +30,8 @@
         </ListView>
 
         <DockPanel Grid.Row="1">
-            <Button Command="{Binding ImportPrecos}"
-                    Content="Import Selected Decks" />
+            <!--<Button Command="{Binding ImportPrecos}"
+                    Content="Import Selected Decks" />-->
             <CheckBox IsChecked="{Binding AsOwned}"
                       Foreground="White"
                       Margin="1.5">As Owned</CheckBox>

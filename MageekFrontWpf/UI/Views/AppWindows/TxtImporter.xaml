@@ -59,7 +59,7 @@
             </RichTextBox.Resources>
         </RichTextBox>
 
-        <Button Command="{Binding LaunchImportation}"
+        <Button Command="{Binding LaunchImportationCommand}"
                 Grid.Row="2"
                 Grid.Column="0"
                 Content="Import"

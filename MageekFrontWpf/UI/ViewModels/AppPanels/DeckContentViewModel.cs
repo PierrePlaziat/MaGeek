@@ -22,22 +22,22 @@ namespace MageekFrontWpf.ViewModels
             events.UpdateDeckEvent += HandleDeckModif;
         }
 
-        [ObservableProperty] private Deck currentDeck = null;
-        [ObservableProperty] private List<DeckCard> deckCards = new List<DeckCard>();
-        [ObservableProperty] private IEnumerable<DeckCard> currentCommanders;
-        [ObservableProperty] private IEnumerable<DeckCard> currentSide;
-        [ObservableProperty] private IEnumerable<DeckCard> currentCreatures;
-        [ObservableProperty] private IEnumerable<DeckCard> currentInstants;
-        [ObservableProperty] private IEnumerable<DeckCard> currentSorceries;
-        [ObservableProperty] private IEnumerable<DeckCard> currentEnchantments;
-        [ObservableProperty] private IEnumerable<DeckCard> currentArtifacts;
-        [ObservableProperty] private IEnumerable<DeckCard> currentPlaneswalkers;
-        [ObservableProperty] private IEnumerable<DeckCard> currentLands;
-        [ObservableProperty] private string filterString = string.Empty;
-        [ObservableProperty] private bool hasCommander;
-        [ObservableProperty] private bool hasSide;
-        [ObservableProperty] private bool isActive;
-        [ObservableProperty] private bool isLoading = false;
+        [ObservableProperty] Deck currentDeck = null;
+        [ObservableProperty] List<DeckCard> deckCards = new List<DeckCard>();
+        [ObservableProperty] IEnumerable<DeckCard> currentCommanders;
+        [ObservableProperty] IEnumerable<DeckCard> currentSide;
+        [ObservableProperty] IEnumerable<DeckCard> currentCreatures;
+        [ObservableProperty] IEnumerable<DeckCard> currentInstants;
+        [ObservableProperty] IEnumerable<DeckCard> currentSorceries;
+        [ObservableProperty] IEnumerable<DeckCard> currentEnchantments;
+        [ObservableProperty] IEnumerable<DeckCard> currentArtifacts;
+        [ObservableProperty] IEnumerable<DeckCard> currentPlaneswalkers;
+        [ObservableProperty] IEnumerable<DeckCard> currentLands;
+        [ObservableProperty] string filterString = string.Empty;
+        [ObservableProperty] bool hasCommander;
+        [ObservableProperty] bool hasSide;
+        [ObservableProperty] bool isActive;
+        [ObservableProperty] bool isLoading = false;
 
         #region Loading
 

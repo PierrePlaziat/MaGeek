@@ -133,7 +133,6 @@ namespace MageekFrontWpf.ViewModels
             VariantCount = Variants.Count;
         }
 
-
         [RelayCommand]
         private async Task SetFav(string uuid)
         {

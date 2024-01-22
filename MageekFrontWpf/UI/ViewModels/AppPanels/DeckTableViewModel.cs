@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
@@ -17,6 +18,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
     public partial class DeckTableViewModel : BaseViewModel
     {
 
+        readonly Dictionary<DeckCard, Cards> cardData = new();
+
+        const int CardSize_Complete = 207;
+        const int CardSize_Picture = 130;
+        const int CardSize_Header = 25;
+
         public DeckTableViewModel(AppEvents events)
         {
             events.SelectDeckEvent += HandleDeckSelected;
@@ -25,42 +32,22 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         #region Attributes
 
-        readonly Dictionary<DeckCard, Cards> cardData = new();
-
-        const int CardSize_Complete = 207;
-        const int CardSize_Picture = 130;
-        const int CardSize_Header = 25;
-
-        private Deck currentDeck;
-        public Deck CurrentDeck
-        {
-            get { return currentDeck; }
-            set
-            {
-                currentDeck = value;
-                OnPropertyChanged();
-                AsyncReload();
-            }
-        }
-
-        public List<DeckCard> CardRelations_Commandant { get; private set; }
-        public List<DeckCard> CardRelations_Content { get; private set; }
-        public List<DeckCard> CardRelations_Side { get; private set; }
-        public List<DeckCard> CardRelations_Lands { get; private set; }
-
-        public List<DeckCard> CardRelations_Cmc0 { get; private set; }
-        public List<DeckCard> CardRelations_Cmc1 { get; private set; }
-        public List<DeckCard> CardRelations_Cmc2 { get; private set; }
-        public List<DeckCard> CardRelations_Cmc3 { get; private set; }
-        public List<DeckCard> CardRelations_Cmc4 { get; private set; }
-        public List<DeckCard> CardRelations_Cmc5 { get; private set; }
-        public List<DeckCard> CardRelations_Cmc6 { get; private set; }
-        public List<DeckCard> CardRelations_Cmc7 { get; private set; }
-
-        public Visibility HasCommandant { get; private set; }
-        public Visibility HasSide { get; private set; }
-        public Visibility HasLands { get; private set; }
-
+        [ObservableProperty] Deck currentDeck;
+        [ObservableProperty] List<DeckCard> cardRelations_Commandant;
+        [ObservableProperty] List<DeckCard> cardRelations_Content;
+        [ObservableProperty] List<DeckCard> cardRelations_Side;
+        [ObservableProperty] List<DeckCard> cardRelations_Lands;
+        [ObservableProperty] List<DeckCard> cardRelations_Cmc0;
+        [ObservableProperty] List<DeckCard> cardRelations_Cmc1;
+        [ObservableProperty] List<DeckCard> cardRelations_Cmc2;
+        [ObservableProperty] List<DeckCard> cardRelations_Cmc3;
+        [ObservableProperty] List<DeckCard> cardRelations_Cmc4;
+        [ObservableProperty] List<DeckCard> cardRelations_Cmc5;
+        [ObservableProperty] List<DeckCard> cardRelations_Cmc6;
+        [ObservableProperty] List<DeckCard> cardRelations_Cmc7;
+        [ObservableProperty] bool hasCommandant;
+        [ObservableProperty] bool hasSide;
+        [ObservableProperty] bool hasLands;
 
         #region TableState
 
@@ -142,9 +129,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                 OnPropertyChanged(nameof(CardRelations_Commandant));
                 OnPropertyChanged(nameof(CardRelations_Side));
                 OnPropertyChanged(nameof(CardRelations_Lands));
-                HasCommandant = CardRelations_Commandant.Count > 0 ? Visibility.Visible : Visibility.Hidden;
-                HasSide = CardRelations_Side.Count > 0 ? Visibility.Visible : Visibility.Hidden;
-                HasLands = CardRelations_Lands.Count > 0 ? Visibility.Visible : Visibility.Hidden;
+                HasCommandant = CardRelations_Commandant.Count > 0;
+                HasSide = CardRelations_Side.Count > 0;
+                HasLands = CardRelations_Lands.Count > 0;
                 OnPropertyChanged(nameof(HasCommandant));
                 OnPropertyChanged(nameof(HasSide));
                 //OnPropertyChanged(nameof(HasContent));
@@ -200,21 +187,21 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
 
         [RelayCommand]
-        private void ResizeComplete()
+        private async Task ResizeComplete()
         {
             currentCardSize = CardSize_Complete;
             FullRefresh();
         }
 
         [RelayCommand]
-        private void ResizePicture()
+        private async Task ResizePicture()
         {
             currentCardSize = CardSize_Picture;
             FullRefresh();
         }
 
         [RelayCommand]
-        private void ResizeHeader()
+        private async Task ResizeHeader()
         {
             currentCardSize = CardSize_Header;
             FullRefresh();
@@ -222,40 +209,35 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         #endregion
 
-        //private async void SetCommandant_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var b = (MenuItem)sender;
-        //    var cr = b.DataContext as DeckCard;
-        //    await MageekService.MageekService.ChangeDeckRelationType(cr, 1);
-        //}
+        [RelayCommand]
+        private async Task SetCommandant_Click(DeckCard cr)
+        {
+            await MageekService.MageekService.ChangeDeckRelationType(cr, 1);
+        }
 
-        //private async void UnsetCommandant_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var b = (MenuItem)sender;
-        //    var cr = b.DataContext as DeckCard;
-        //    await MageekService.MageekService.ChangeDeckRelationType(cr, 0);
-        //}
+        [RelayCommand]
+        private async Task UnsetCommandant_Click(DeckCard cr)
+        {
+            await MageekService.MageekService.ChangeDeckRelationType(cr, 0);
+        }
 
-        //private async void ToSide_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var b = (MenuItem)sender;
-        //    var cr = b.DataContext as DeckCard;
-        //    await MageekService.MageekService.ChangeDeckRelationType(cr, 2);
-        //}
+        [RelayCommand]
+        private async Task ToSide_Click(DeckCard cr)
+        {
+            await MageekService.MageekService.ChangeDeckRelationType(cr, 2);
+        }
 
-        //private async void AddOne_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var b = (MenuItem)sender;
-        //    var cr = b.DataContext as DeckCard;
-        //    await MageekService.MageekService.AddCardToDeck(cr.CardUuid, CurrentDeck, 1);
-        //}
+        [RelayCommand]
+        private async Task AddOne_Click(DeckCard cr)
+        {
+            await MageekService.MageekService.AddCardToDeck(cr.CardUuid, CurrentDeck, 1);
+        }
 
-        //private async void RemoveOne_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var b = (MenuItem)sender;
-        //    var cr = b.DataContext as DeckCard;
-        //    await MageekService.MageekService.RemoveCardFromDeck(cr.CardUuid, CurrentDeck);
-        //}
+        [RelayCommand]
+        private async Task RemoveOne_Click(DeckCard cr)
+        {
+            await MageekService.MageekService.RemoveCardFromDeck(cr.CardUuid, CurrentDeck);
+        }
 
     }
 

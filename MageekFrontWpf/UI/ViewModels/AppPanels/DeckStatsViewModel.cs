@@ -1,82 +1,56 @@
-﻿using MageekFrontWpf.Framework.BaseMvvm;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
-    public class DeckStatsViewModel : BaseViewModel
+    public partial class DeckStatsViewModel : BaseViewModel
     {
-        #region Attributes
 
-        private Deck currentDeck;
-        public Deck CurrentDeck
+        private AppEvents events;
+
+        public DeckStatsViewModel(AppEvents events)
         {
-            get { return currentDeck; }
-            set
-            {
-                currentDeck = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsActive));
-                AsyncReload();
-            }
+            this.events = events;
+            events.SelectDeckEvent += HandleDeckSelected;
+            events.UpdateDeckEvent += HandleDeckModified;
         }
 
-        public int CreatureCount { get; private set; }
-        public int InstantCount { get; private set; }
-        public int SorceryCount { get; private set; }
-        public int EnchantmentCount { get; private set; }
-        public int ArtifactCount { get; private set; }
-        public int BasicLandCount { get; private set; }
-        public int SpecialLandCount { get; private set; }
-        public int OtherCount { get; private set; }
-        public int DevotionB { get; private set; }
-        public int DevotionW { get; private set; }
-        public int DevotionU { get; private set; }
-        public int DevotionG { get; private set; }
-        public int DevotionR { get; private set; }
-        public string StandardOk { get; private set; }
-        public string CommanderOk { get; private set; }
-        public int OwnedRatio { get; private set; }
+        [ObservableProperty] private Deck currentDeck;
+        //OnPropertyChanged();
+        //OnPropertyChanged(nameof(IsActive));
+        //AsyncReload();
 
-        #region Visibilities
-
-        private Visibility isLoading = Visibility.Collapsed;
-        public Visibility IsLoading
-        {
-            get { return isLoading; }
-            set { isLoading = value; OnPropertyChanged(); }
-        }
-
-        public Visibility IsActive
-        {
-            get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; }
-        }
-
-        #endregion
-
-        #endregion
-
-        #region CTOR
-
-        public DeckStatsViewModel()
-        {
-            ConfigureEvents();
-        }
-
-        #endregion
-
-        #region Events
-
-        private void ConfigureEvents()
-        {
-            //App.Events.SelectDeckEvent += HandleDeckSelected;
-            //App.Events.UpdateDeckEvent += HandleDeckModified;
-        }
+        [ObservableProperty] int creatureCount;
+        [ObservableProperty] int instantCount;
+        [ObservableProperty] int sorceryCount;
+        [ObservableProperty] int enchantmentCount;
+        [ObservableProperty] int artifactCount;
+        [ObservableProperty] int basicLandCount;
+        [ObservableProperty] int specialLandCount;
+        [ObservableProperty] int otherCount;
+        [ObservableProperty] int devotionB;
+        [ObservableProperty] int devotionW;
+        [ObservableProperty] int devotionU;
+        [ObservableProperty] int devotionG;
+        [ObservableProperty] int devotionR;
+        [ObservableProperty] string standardOk;
+        [ObservableProperty] string commanderOk;
+        [ObservableProperty] int ownedRatio;
+        [ObservableProperty] bool isActive;
+        [ObservableProperty] bool isLoading = false;
+        [ObservableProperty] PointCollection curvePoints;
+        [ObservableProperty] Point curveStart;
+        [ObservableProperty] List<string> hand;
+        List<int> alreadyDrawed;
+        readonly Random random = new();
 
         void HandleDeckSelected(string deckId)
         {
@@ -88,8 +62,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             AsyncReload();
         }
 
-        #endregion
-
         #region Async Reload
 
         private void AsyncReload()
@@ -100,7 +72,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         private async Task DoAsyncReload()
         {
             if (CurrentDeck == null) return;
-            IsLoading = Visibility.Visible;
+            IsLoading = true;
             CreatureCount = await MageekService.MageekService.Count_Typed(CurrentDeck.DeckId, "Creature");
             InstantCount = await MageekService.MageekService.Count_Typed(CurrentDeck.DeckId, "Instant");
             SorceryCount = await MageekService.MageekService.Count_Typed(CurrentDeck.DeckId, "Sorcery");
@@ -108,14 +80,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             ArtifactCount = await MageekService.MageekService.Count_Typed(CurrentDeck.DeckId, "Artifact");
             BasicLandCount = await MageekService.MageekService.Count_Typed(CurrentDeck.DeckId, "Planeswalker");
             BasicLandCount = await MageekService.MageekService.Count_Typed(CurrentDeck.DeckId, "Land");
-            DevotionB = await MageekService.MageekService.DeckDevotion(currentDeck.DeckId, 'B');
-            DevotionW = await MageekService.MageekService.DeckDevotion(currentDeck.DeckId, 'W');
-            DevotionU = await MageekService.MageekService.DeckDevotion(currentDeck.DeckId, 'U');
-            DevotionG = await MageekService.MageekService.DeckDevotion(currentDeck.DeckId, 'G');
-            DevotionR = await MageekService.MageekService.DeckDevotion(currentDeck.DeckId, 'R');
-            StandardOk = await MageekService.MageekService.DeckValidity(currentDeck, "Standard");
-            CommanderOk = await MageekService.MageekService.DeckValidity(currentDeck, "Commander");
-            OwnedRatio = await MageekService.MageekService.OwnedRatio(currentDeck.DeckId);
+            DevotionB = await MageekService.MageekService.DeckDevotion(CurrentDeck.DeckId, 'B');
+            DevotionW = await MageekService.MageekService.DeckDevotion(CurrentDeck.DeckId, 'W');
+            DevotionU = await MageekService.MageekService.DeckDevotion(CurrentDeck.DeckId, 'U');
+            DevotionG = await MageekService.MageekService.DeckDevotion(CurrentDeck.DeckId, 'G');
+            DevotionR = await MageekService.MageekService.DeckDevotion(CurrentDeck.DeckId, 'R');
+            StandardOk = await MageekService.MageekService.DeckValidity(CurrentDeck, "Standard");
+            CommanderOk = await MageekService.MageekService.DeckValidity(CurrentDeck, "Commander");
+            OwnedRatio = await MageekService.MageekService.OwnedRatio(CurrentDeck.DeckId);
             OnPropertyChanged(nameof(CreatureCount));
             OnPropertyChanged(nameof(InstantCount));
             OnPropertyChanged(nameof(SorceryCount));
@@ -133,134 +105,99 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             OnPropertyChanged(nameof(DevotionR));
             OnPropertyChanged(nameof(OwnedRatio));
             int[] manacurve = await MageekService.MageekService.GetManaCurve(CurrentDeck.DeckId);
-            //DrawNewHand();
-            //DrawManacurve(manacurve);
-            IsLoading = Visibility.Collapsed;
+            DrawNewHand();
+            DrawManacurve(manacurve);
+            IsLoading = false;
         }
 
         #endregion
 
-        //#region Methods
+        #region Methods
 
-        //private async void ListMissing(object sender, RoutedEventArgs e)
-        //{
-        //    string missList = await MageekService
-        //        .MageekService
-        //        .ListMissingCards(CurrentDeck.DeckId);
+        private async void ListMissing(object sender, RoutedEventArgs e)
+        {
+            string missList = await MageekService
+                .MageekService
+                .ListMissingCards(CurrentDeck.DeckId);
 
-        //    if (!string.IsNullOrEmpty(missList))
-        //    {
-        //        var window = new TxtImporter(missList);
-        //        window.Show();
-        //    }
-        //}
+            if (!string.IsNullOrEmpty(missList))
+            {
+                Clipboard.SetText(missList);
+                // TODO show a toaster
+            }
+        }
 
-        //#region ManaCurve
+        #region ManaCurve
 
-        //private PointCollection curvePoints;
-        //public PointCollection CurvePoints
-        //{
-        //    get { return curvePoints; }
-        //    set { curvePoints = value; OnPropertyChanged(); }
-        //}
+        private void DrawManacurve(int[] manaCurve)
+        {
+            CurveStart = new Point(0, 0);
+            CurvePoints = null;
+            PointCollection Points = new();
+            if (CurrentDeck != null)
+            {
+                int manaMax = manaCurve.ToList().Max();
+                float factor;
+                if (manaMax == 0) factor = 0;
+                else factor = 100 / manaMax;
+                CurveStart = new Point(0, 100 - factor * manaCurve[0]);
+                Points.Add(CurveStart);
+                for (int i = 1; i < manaCurve.Length; i++) Points.Add(new Point(50 * i, 100 - factor * manaCurve[i]));
 
-        //private Point curveStart;
-        //public Point CurveStart
-        //{
-        //    get { return curveStart; }
-        //    set { curveStart = value; OnPropertyChanged(); }
-        //}
+            }
+            CurvePoints = Points;
+        }
 
-        //private void DrawManacurve(int[] manaCurve)
-        //{
-        //    CurveStart = new Point(0, 0);
-        //    CurvePoints = null;
-        //    PointCollection Points = new();
-        //    if (CurrentDeck != null)
-        //    {
-        //        int manaMax = manaCurve.ToList().Max();
-        //        float factor;
-        //        if (manaMax == 0) factor = 0;
-        //        else factor = 100 / manaMax;
-        //        CurveStart = new Point(0, 100 - factor * manaCurve[0]);
-        //        Points.Add(CurveStart);
-        //        for (int i = 1; i < manaCurve.Length; i++) Points.Add(new Point(50 * i, 100 - factor * manaCurve[i]));
+        #endregion
 
-        //    }
-        //    CurvePoints = Points;
-        //}
+        #region Hand
 
-        //#endregion
+        private void DrawNewHand()
+        {
+            Hand = new List<string>();
+            alreadyDrawed = new List<int>();
+            for (int i = 0; i < 7; i++) DrawNewCard();
+        }
 
-        //#region Hand
+        private async void DrawNewCard()
+        {
+            string newCard = await DoDraw();
+            if (newCard != null)
+            {
+                Hand.Add(newCard);
+            }
+        }
 
-        //private List<string> hand;
-        //public List<string> Hand
-        //{
-        //    get { return hand; }
-        //    set { hand = value; OnPropertyChanged(); }
-        //}
+        private async Task<string> DoDraw()
+        {
+            if (CurrentDeck == null) return null;
+            if (CurrentDeck.CardCount <= alreadyDrawed.Count) return null;
+            int rgn;
+            do { rgn = random.Next(CurrentDeck.CardCount); }
+            while (alreadyDrawed.Contains(rgn));
+            //TODO
+            await Task.Delay(0);
+            return "";
+            //return await Mageek.GetDeckContent(currentDeck.DeckId)[rgn].;
+        }
 
-        //List<int> alreadyDrawed;
+        #region UI Link
 
-        //readonly Random random = new();
+        private void DrawNewHandButtonClick(object sender, RoutedEventArgs e)
+        {
+            DrawNewHand();
+        }
 
-        //private void DrawNewHand()
-        //{
-        //    Hand = new List<string>();
-        //    alreadyDrawed = new List<int>();
-        //    HandPanel.Children.Clear();
-        //    for (int i = 0; i < 7; i++)
-        //    {
-        //        DrawNewCard();
-        //    }
-        //}
+        private void DrawCardButtonClick(object sender, RoutedEventArgs e)
+        {
+            DrawNewCard();
+        }
 
-        //private async void DrawNewCard()
-        //{
-        //    string newCard = await DoDraw();
-        //    if (newCard != null)
-        //    {
-        //        HandPanel.Children.Add(
-        //            new CardIllustration(newCard)
-        //            {
-        //                Width = 50,
-        //                Height = 50,
-        //            }
-        //        );
-        //    }
-        //}
+        #endregion
 
-        //private async Task<string> DoDraw()
-        //{
-        //    if (CurrentDeck == null) return null;
-        //    if (currentDeck.CardCount <= alreadyDrawed.Count) return null;
-        //    int rgn;
-        //    do { rgn = random.Next(CurrentDeck.CardCount); }
-        //    while (alreadyDrawed.Contains(rgn));
-        //    //TODO
-        //    await Task.Delay(0);
-        //    return "";
-        //    //return await Mageek.GetDeckContent(currentDeck.DeckId)[rgn].;
-        //}
+        #endregion
 
-        //#region UI Link
-
-        //private void DrawNewHandButtonClick(object sender, RoutedEventArgs e)
-        //{
-        //    DrawNewHand();
-        //}
-
-        //private void DrawCardButtonClick(object sender, RoutedEventArgs e)
-        //{
-        //    DrawNewCard();
-        //}
-
-        //#endregion
-
-        //#endregion
-
-        //#endregion
+        #endregion
 
     }
 }

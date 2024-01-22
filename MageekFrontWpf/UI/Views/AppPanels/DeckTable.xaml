@@ -30,7 +30,7 @@
                     <Label></Label>
                 </DockPanel>
 
-                <Label FontWeight="Bold" FontSize="20" Visibility="{Binding HasCommandant}">Commandement</Label>
+                <Label FontWeight="Bold" FontSize="20" Visibility="{Binding HasCommandant, Converter={StaticResource BoolToVis}}">Commandement</Label>
 
                 <ItemsControl 
                           ItemsSource="{Binding CardRelations_Commandant}"
@@ -50,8 +50,8 @@
                           Margin="0" Padding="0" BorderThickness="0">
 
                                 <local:CardIllustration Height="{Binding CurrentCardSize, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl},Mode=TwoWay}" 
-                                                            CardFront="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
-                                                            Width="150" 
+                                                        CardFront="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"
+                                                        Width="150" 
                           Margin="0" Padding="0" BorderThickness="0"
                                                             HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
@@ -537,7 +537,7 @@
 
                 </DockPanel>
 
-                <Label FontWeight="Bold" FontSize="20" Visibility="{Binding HasLands}">Lands</Label>
+                <Label FontWeight="Bold" FontSize="20" Visibility="{Binding HasLands, Converter={StaticResource BoolToVis}}">Lands</Label>
 
                 <DockPanel>
 

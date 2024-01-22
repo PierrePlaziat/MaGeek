@@ -306,7 +306,7 @@
 
         </ScrollViewer>
 
-        <Grid Visibility="{Binding IsActive}"
+        <Grid Visibility="{Binding IsActive, Converter={StaticResource BoolToVis}}"
               Background="#222"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
@@ -318,7 +318,7 @@
 
         <Grid Background="Black"
               Grid.RowSpan="5"
-              Visibility="{Binding IsLoading}">
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
             <controls:BusyIndicator></controls:BusyIndicator>
         </Grid>
 
