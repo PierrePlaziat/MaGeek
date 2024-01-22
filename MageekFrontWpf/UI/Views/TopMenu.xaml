@@ -15,27 +15,27 @@
             <MenuItem Header="Txt Importer"
                       Foreground="Black"
                       Command="{Binding OpenWindowCommand}"
-                      CommandParameter="TxtImporter"/>
+                      CommandParameter="Import"/>
             <MenuItem Header="Preco Importer"
                       Foreground="Black"
                       Command="{Binding OpenWindowCommand}"
-                      CommandParameter="PrecoImporter" />
+                      CommandParameter="Precos" />
             <Separator />
             <MenuItem Header="Proxy Printer"
                       Foreground="Black"
                       Command="{Binding OpenWindowCommand}"
-                      CommandParameter="ProxyPrint" />
+                      CommandParameter="Print" />
             <MenuItem Header="Collection Estimator"
                       Foreground="Black"
                       Command="{Binding OpenWindowCommand}"
-                      CommandParameter="CollectionEstimation" />
+                      CommandParameter="Estimation" />
         </MenuItem>
 
         <MenuItem Header="Tools">
             <MenuItem Header="Set Explorer"
                       Foreground="Black"
                       Command="{Binding OpenPanelCommand}"
-                      CommandParameter="SetExplorer" />
+                      CommandParameter="Sets" />
             <Separator />
             <MenuItem Header="Card Searcher"
                       Foreground="Black"
