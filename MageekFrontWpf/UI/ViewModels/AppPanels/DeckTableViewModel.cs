@@ -1,106 +1,64 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
 using MageekService.Data.Mtg.Entities;
 using MageekService.Tools;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
-    public partial class DeckTableViewModel : BaseViewModel
+    public partial class DeckTableViewModel : BaseViewModel,
+        IRecipient<DeckSelectMessage>,
+        IRecipient<UpdateDeckMessage>
     {
 
-        readonly Dictionary<DeckCard, Cards> cardData = new();
+        public DeckTableViewModel()
+        {
+            WeakReferenceMessenger.Default.RegisterAll(this);
+        }
+
+        [ObservableProperty] private Deck currentDeck;
+        [ObservableProperty] private List<DeckCard> cardRelations_Commandant;
+        [ObservableProperty] private List<DeckCard> cardRelations_Content;
+        [ObservableProperty] private List<DeckCard> cardRelations_Side;
+        [ObservableProperty] private List<DeckCard> cardRelations_Lands;
+        [ObservableProperty] private List<DeckCard> cardRelations_Cmc0;
+        [ObservableProperty] private List<DeckCard> cardRelations_Cmc1;
+        [ObservableProperty] private List<DeckCard> cardRelations_Cmc2;
+        [ObservableProperty] private List<DeckCard> cardRelations_Cmc3;
+        [ObservableProperty] private List<DeckCard> cardRelations_Cmc4;
+        [ObservableProperty] private List<DeckCard> cardRelations_Cmc5;
+        [ObservableProperty] private List<DeckCard> cardRelations_Cmc6;
+        [ObservableProperty] private List<DeckCard> cardRelations_Cmc7;
+        [ObservableProperty] private bool hasCommandant;
+        [ObservableProperty] private bool hasSide;
+        [ObservableProperty] private bool hasLands;
+        [ObservableProperty] private bool isLoading;
+        [ObservableProperty] private int currentCardSize;
+
+        private readonly Dictionary<DeckCard, Cards> cardData = new();
 
         const int CardSize_Complete = 207;
         const int CardSize_Picture = 130;
         const int CardSize_Header = 25;
 
-        public DeckTableViewModel(AppEvents events)
-        {
-            events.SelectDeckEvent += HandleDeckSelected;
-            events.UpdateDeckEvent += HandleDeckModified;
-        }
-
-        #region Attributes
-
-        [ObservableProperty] Deck currentDeck;
-        [ObservableProperty] List<DeckCard> cardRelations_Commandant;
-        [ObservableProperty] List<DeckCard> cardRelations_Content;
-        [ObservableProperty] List<DeckCard> cardRelations_Side;
-        [ObservableProperty] List<DeckCard> cardRelations_Lands;
-        [ObservableProperty] List<DeckCard> cardRelations_Cmc0;
-        [ObservableProperty] List<DeckCard> cardRelations_Cmc1;
-        [ObservableProperty] List<DeckCard> cardRelations_Cmc2;
-        [ObservableProperty] List<DeckCard> cardRelations_Cmc3;
-        [ObservableProperty] List<DeckCard> cardRelations_Cmc4;
-        [ObservableProperty] List<DeckCard> cardRelations_Cmc5;
-        [ObservableProperty] List<DeckCard> cardRelations_Cmc6;
-        [ObservableProperty] List<DeckCard> cardRelations_Cmc7;
-        [ObservableProperty] bool hasCommandant;
-        [ObservableProperty] bool hasSide;
-        [ObservableProperty] bool hasLands;
-
-        #region TableState
-
-        int currentCardSize = 130;
-        public int CurrentCardSize
-        {
-            get { return currentCardSize; }
-            set { currentCardSize = value; OnPropertyChanged(); }
-        }
-
-        #endregion
-
-        #region Visibilitie
-
-        private Visibility isLoading = Visibility.Collapsed;
-        public Visibility IsLoading
-        {
-            get { return isLoading; }
-            set { isLoading = value; OnPropertyChanged(); }
-        }
-
-        public Visibility IsActive
-        {
-            get { return currentDeck == null ? Visibility.Visible : Visibility.Collapsed; }
-        }
-
-        #endregion
-
-        #endregion
-
-        #region CTOR
-
-        #endregion
-
-        #region Events
-
-        private void ConfigureEvents()
-        {
-        }
-
-        void HandleDeckSelected(string deck)
-        {
-            CurrentDeck = MageekService.MageekService.GetDeck(deck).Result;
-        }
-
-        void HandleDeckModified()
+        public void Receive(UpdateDeckMessage message)
         {
             Deck tmp = CurrentDeck;
             CurrentDeck = null;
             CurrentDeck = tmp;
         }
 
-        #endregion
+        public void Receive(DeckSelectMessage message)
+        {
+            CurrentDeck = MageekService.MageekService.GetDeck(message.Value).Result;
+        }
 
         private void FullRefresh()
         {
@@ -119,7 +77,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         {
             try
             {
-                IsLoading = Visibility.Visible;
+                IsLoading = true;
                 OnPropertyChanged(nameof(IsActive));
                 CardRelations_Content = await MageekService.MageekService.GetDeckContent_Related(CurrentDeck.DeckId, 0);
                 CardRelations_Commandant = await MageekService.MageekService.GetDeckContent_Related(CurrentDeck.DeckId, 1);
@@ -153,10 +111,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                 OnPropertyChanged(nameof(CardRelations_Cmc5));
                 OnPropertyChanged(nameof(CardRelations_Cmc6));
                 OnPropertyChanged(nameof(CardRelations_Cmc7));
-                IsLoading = Visibility.Collapsed;
+                IsLoading = false;
             }
             catch (Exception ex) { Logger.Log(ex); }
-            finally { IsLoading = Visibility.Collapsed; }
+            finally { IsLoading = false; }
         }
 
         #region methods

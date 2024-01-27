@@ -1,8 +1,8 @@
 ﻿using System.Windows.Controls;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels;
+using MageekFrontWpf.UI.ViewModels.AppPanels;
 
-namespace MaGeek.UI
+namespace MageekFrontWpf.UI.Views.AppPanels
 {
     public partial class SetExplorer : BaseUserControl
     {

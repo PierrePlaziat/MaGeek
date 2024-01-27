@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.App;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
@@ -9,24 +9,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace MageekFrontWpf.UI.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
-    
+
     //events.UpdateDeckEvent += async () => { await Reload(); };
     //events.UpdateDeckListEvent += async () => { await Reload(); };
     public partial class DeckListViewModel : BaseViewModel
     {
 
-        private WindowsManager win;
         private SettingService config;
         private DialogService dialog;
 
         public DeckListViewModel(
             SettingService config,
-            DialogService dialog,
-            WindowsManager win
+            DialogService dialog
         ){
-            this.win = win;
             this.config = config;
             this.dialog = dialog;
         }
@@ -94,7 +91,7 @@ namespace MageekFrontWpf.UI.ViewModels
             if (!string.IsNullOrEmpty(txt))
             {
                 Clipboard.SetText(txt);
-                win.Notif("Deck:", "Copied to clipboard.");
+                dialog.Notif("Deck:", "Copied to clipboard.");
             }
         }
 

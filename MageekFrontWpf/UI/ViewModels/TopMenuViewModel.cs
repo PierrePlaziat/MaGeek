@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.App;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.Services;
 using MageekService.Tools;
 using System;
@@ -9,15 +10,13 @@ namespace MageekFrontWpf.UI.ViewModels
     public partial class TopMenuViewModel
     {
 
-        private WindowsManager winManager;
-        private AppEvents events;
-        private SettingService config;
+        private WindowsService win;
+        private SettingService conf;
 
-        public TopMenuViewModel(WindowsManager winManager, AppEvents events, SettingService config)
+        public TopMenuViewModel(WindowsService winManager, SettingService config)
         {
-            this.winManager = winManager;
-            this.events = events;
-            this.config = config;
+            this.win = winManager;
+            this.conf = config;
         }
 
         [RelayCommand]
@@ -25,7 +24,7 @@ namespace MageekFrontWpf.UI.ViewModels
         {
             bool success = Enum.TryParse(window, out AppWindowEnum value);
             if (!success) return;
-            winManager.OpenWindow(value);
+            win.OpenWindow(value);
         }
 
         [RelayCommand]
@@ -33,43 +32,31 @@ namespace MageekFrontWpf.UI.ViewModels
         {
             bool success = Enum.TryParse(panel, out AppPanelEnum value);
             if (!success) return;
-            winManager.OpenPanel(value);
+            win.OpenPanel(value);
         }
 
         [RelayCommand]
         private void LayoutBackup(string obj)
         {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.Save,
-                    //information = "User"
-                }
-            );
+            WeakReferenceMessenger.Default.Send(new SaveLayoutMessage("Default"));
         }
 
         [RelayCommand]
         private void LayoutRestore(string obj)
         {
-            events.RaiseLayoutAction(
-                new AppEvents.LayoutEventArgs()
-                {
-                    EventType = AppEvents.LayoutEventType.Load,
-                    //information = "User"
-                }
-            );
+            WeakReferenceMessenger.Default.Send(new LoadLayoutMessage("Default"));
         }
 
         [RelayCommand]
         private void ChangeLanguage(string lang)
         {
-            config.SetSetting(AppSetting.ForeignLanguage, lang);
+            conf.SetSetting(AppSetting.ForeignLanguage, lang);
         }
 
         [RelayCommand]
         private void ChangeCurrency(string currency)
         {
-            config.SetSetting(AppSetting.Currency, currency);
+            conf.SetSetting(AppSetting.Currency, currency);
         }
 
         [RelayCommand]
@@ -77,52 +64,6 @@ namespace MageekFrontWpf.UI.ViewModels
         {
             HttpUtils.HyperLink("https://github.com/PierrePlaziat/MaGeek");
         }
-
-        #region Not used
-
-        //private void UpdateLangIcons(string lang)
-        //{
-        //    foreach (MenuItem v in LangBox.Items)
-        //    {
-        //        if (v.Header.ToString() == lang)
-        //        {
-        //            v.Icon = new System.Windows.Controls.Image
-        //            {
-        //                Source = new BitmapImage(new Uri("/Resources/Images/TickOn.jpg", UriKind.Relative))
-        //            };
-        //        }
-        //        else
-        //        {
-        //            v.Icon = new System.Windows.Controls.Image
-        //            {
-        //                Source = new BitmapImage(new Uri("/Resources/Images/TickOff.jpg", UriKind.Relative))
-        //            };
-        //        }
-        //    }
-        //}
-
-        //private void UpdateCurrencyIcons(string currency)
-        //{
-        //    foreach (MenuItem v in CurrencyBox.Items)
-        //    {
-        //        if (v.Header.ToString() == currency)
-        //        {
-        //            v.Icon = new System.Windows.Controls.Image
-        //            {
-        //                Source = new BitmapImage(new Uri("/Resources/Images/TickOn.jpg", UriKind.Relative))
-        //            };
-        //        }
-        //        else
-        //        {
-        //            v.Icon = new System.Windows.Controls.Image
-        //            {
-        //                Source = new BitmapImage(new Uri("/Resources/Images/TickOff.jpg", UriKind.Relative))
-        //            };
-        //        }
-        //    }
-        //}
-
-        #endregion
 
     }
 }

@@ -1,34 +1,30 @@
-﻿using MaGeek;
-using MaGeek.UI;
-using MaGeek.UI.Menus;
-using MaGeek.UI.Windows.Importers;
-using MageekFrontWpf.Framework.Services;
-using MageekFrontWpf.UI.ViewModels;
-using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekFrontWpf.UI.ViewModels.AppWindows;
-using MageekFrontWpf.ViewModels;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MageekService;
-using Microsoft.Extensions.DependencyInjection;
+using MageekFrontWpf.Framework.Services;
+using MageekFrontWpf.UI.ViewModels.AppWindows;
+using MageekFrontWpf.UI.ViewModels.AppPanels;
+using MageekFrontWpf.UI.Views.AppWindows;
+using MageekFrontWpf.UI.Views.AppPanels;
+using MageekFrontWpf.UI.ViewModels;
 
-namespace MageekFrontWpf.App
+namespace MageekFrontWpf.AppValues
 {
     public static class ServiceCollectionExtensions
     {
+
         public static ServiceCollection AddMageek(this ServiceCollection services)
         {
-            services.AddSingleton<AppEvents>(); // TODO use mvvm messages
-            services.AddSingleton<AppState>(); // TODO use mvvm messages
 
             // Framework
             services.AddSingleton<DialogService>();
             services.AddSingleton<SettingService>();
-            services.AddSingleton<WindowsManager>();
+            services.AddSingleton<WindowsService>();
             services.AddSingleton<CollectionImporter>();
+            services.AddSingleton<TopMenuViewModel>();
 
             // Views
             services.AddSingleton<WelcomeWindow>();
             services.AddSingleton<MainWindow>();
-            services.AddSingleton<ImporterUi>();
             services.AddSingleton<ImportWindow>();
             services.AddSingleton<PrecosWindow>();
             services.AddSingleton<DeckStats>();
@@ -37,10 +33,10 @@ namespace MageekFrontWpf.App
             services.AddSingleton<DeckContent>();
             services.AddSingleton<DeckList>();
             services.AddSingleton<DeckTable>();
+            services.AddSingleton<ImporterUi>();
             // ViewModels
             services.AddSingleton<WelcomeWindowViewModel>();
             services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<ImporterUiViewModel>();
             services.AddSingleton<ImportViewModel>();
             services.AddSingleton<PrecosViewModel>();
             services.AddSingleton<DeckStatsViewModel>();
@@ -49,9 +45,7 @@ namespace MageekFrontWpf.App
             services.AddSingleton<DeckContentViewModel>();
             services.AddSingleton<DeckListViewModel>();
             services.AddSingleton<DeckTableViewModel>();
-            // Menus viewModels
-            services.AddSingleton<StateBarViewModel>();
-            services.AddSingleton<TopMenuViewModel>();
+            services.AddSingleton<ImporterUiViewModel>();
 
             return services;
         }

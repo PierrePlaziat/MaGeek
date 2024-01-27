@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.App;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.Framework.Services;
 using MageekService;
 using MageekService.Data.Collection.Entities;
 using MageekService.Data.Mtg.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows;
 
-namespace MageekFrontWpf.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
     public partial class CardSearcherViewModel : BaseViewModel
     {
@@ -36,11 +36,11 @@ namespace MageekFrontWpf.ViewModels
         [ObservableProperty] private Tag filterTag = null;
         [ObservableProperty] private bool onlyGot = false;
 
-        #region DATA LOAD
-
-        private async Task ReloadData()
+        public async Task ReloadData()
         {
             IsLoading = true;
+
+            await Task.Delay(100);
 
             if (!string.IsNullOrEmpty(FilterName) && !Historic.Contains(FilterName))
             {
@@ -78,10 +78,6 @@ namespace MageekFrontWpf.ViewModels
             IsLoading = false;
         }
 
-        #endregion
-
-        #region UI Link
-
         [RelayCommand]
         private void Search()
         {
@@ -102,17 +98,6 @@ namespace MageekFrontWpf.ViewModels
             OnlyGot = false;
         }
 
-        //private void FilterName_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        //{
-        //    if (e.Key == System.Windows.Input.Key.Enter)
-        //    {
-        //        e.Handled = true;
-        //        var binding = ((TextBox)sender).GetBindingExpression(TextBox.TextProperty);
-        //        binding.UpdateSource();
-        //        ReloadData().ConfigureAwait(false);
-        //    }
-        //}
-
         [RelayCommand]
         private void AdvancedSearch()
         {
@@ -128,11 +113,6 @@ namespace MageekFrontWpf.ViewModels
             }
         }
 
-        //private void CardGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        //{
-        //    if (CardGrid.SelectedItem is Cards card) App.Events.RaiseCardSelected(card.Uuid);
-        //}
-
         //private async void AddToDeck(object sender, RoutedEventArgs e)
         //{
         //    foreach (Cards c in CardGrid.SelectedItems)
@@ -142,22 +122,6 @@ namespace MageekFrontWpf.ViewModels
         //    App.Events.RaiseUpdateDeck();
         //}
 
-        private void FilterTag_DropDownOpened(object sender, System.EventArgs e)
-        {
-            OnPropertyChanged(nameof(AvailableTags));
-        }
-
-        //private void FillColorFilterCombo()
-        //{
-        //    ColorComboBox.ItemsSource = Enum.GetValues(typeof(MtgColorFilter));
-        //}
-
-        #endregion
-
-        //private void ContextMenu_Click(object sender, RoutedEventArgs e)
-        //{
-        //    FilterName = ((MenuItem)e.OriginalSource).Header.ToString();
-        //}
     }
 
 

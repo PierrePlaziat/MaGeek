@@ -1,9 +1,8 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels;
+using MageekFrontWpf.UI.ViewModels.AppWindows;
 using System;
-using System.Windows;
 
-namespace MaGeek.UI.Windows.Importers
+namespace MageekFrontWpf.UI.Views.AppWindows
 {
 
     public partial class PrecosWindow : BaseWindow

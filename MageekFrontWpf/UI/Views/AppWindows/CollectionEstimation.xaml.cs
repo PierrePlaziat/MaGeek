@@ -1,13 +1,7 @@
-﻿using MageekFrontWpf;
-using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.ViewModels;
-using MageekService.Tools;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.UI.ViewModels.AppWindows;
 
-namespace MaGeek.UI
+namespace MageekFrontWpf.UI.Views.AppWindows
 {
 
     public partial class CollectionEstimation : BaseWindow

@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
-using MageekFrontWpf;
-using MageekFrontWpf.App;
-using MageekFrontWpf.Framework.BaseMvvm;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using WPFNotification.Services;
+using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.Framework.Services;
+using MageekFrontWpf.AppValues;
+using MageekFrontWpf.UI.Views.AppWindows;
 
-namespace MaGeek
+namespace MageekFrontWpf
 {
 
     public partial class App : Application
@@ -18,8 +19,8 @@ namespace MaGeek
         public App()
         {
             ServiceCollection services = new ServiceCollection();
-            services.AddLogging();
             services.AddSingleton<INotificationDialogService, NotificationDialogService>();
+            services.AddLogging();
             services.AddMageek();
             serviceProvider = services.BuildServiceProvider();
             ServiceHelper.Initialize(serviceProvider);
@@ -28,7 +29,7 @@ namespace MaGeek
         private void OnStartup(object sender, StartupEventArgs e)
         {
             AppSettings.SetDefaultSettings(serviceProvider.GetService<SettingService>());
-            serviceProvider.GetService<WindowsManager>().Init();
+            serviceProvider.GetService<WindowsService>().Init();
             WelcomeWindow welcome = serviceProvider.GetService<WelcomeWindow>();
             welcome.Show();
         }

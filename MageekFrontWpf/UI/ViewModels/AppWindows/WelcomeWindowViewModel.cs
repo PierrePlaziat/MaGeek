@@ -1,32 +1,27 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.App;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.Framework.Services;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace MageekFrontWpf.UI.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
     public partial class WelcomeWindowViewModel : BaseViewModel
     {
 
-        private readonly WindowsManager winManager;
+        private readonly WindowsService winManager;
 
-        public WelcomeWindowViewModel(WindowsManager winManager)
+        public WelcomeWindowViewModel(WindowsService winManager)
         {
             this.winManager = winManager;
-            UpdateCommand = new AsyncRelayCommand(Update);
-            LaunchCommand = new RelayCommand(Launch);
         }
 
         [ObservableProperty] bool updateAvailable = false;
         [ObservableProperty] bool canLaunch = false;
         [ObservableProperty] bool isLoading = false;
         [ObservableProperty] string message = "Welcome";
-
-        public ICommand LaunchCommand { get; }
-        public ICommand UpdateCommand { get; }
 
         public async Task Init()
         {
@@ -55,13 +50,14 @@ namespace MageekFrontWpf.UI.ViewModels
             IsLoading = false;
         }
 
+        [RelayCommand]
         public async Task Update()
         {
             IsLoading = true;
             CanLaunch = false;
             UpdateAvailable = false;
-            await Task.Delay(100);
             Message = "Updating...";
+            await Task.Delay(100);
             var retour = await MageekService.MageekService.UpdateMtg();
             switch (retour)
             {
@@ -84,7 +80,8 @@ namespace MageekFrontWpf.UI.ViewModels
             IsLoading = false;
         }
 
-        public void Launch()
+        [RelayCommand]
+        public async Task Launch()
         {
             IsLoading = true;
             winManager.CloseWindow(AppWindowEnum.Welcome);

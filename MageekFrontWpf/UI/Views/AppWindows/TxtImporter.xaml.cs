@@ -1,8 +1,7 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels;
-using System.Windows;
+using MageekFrontWpf.UI.ViewModels.AppWindows;
 
-namespace MaGeek.UI
+namespace MageekFrontWpf.UI.Views.AppWindows
 {
 
     public partial class ImportWindow : BaseWindow

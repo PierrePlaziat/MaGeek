@@ -1,62 +1,57 @@
 ﻿using AvalonDock.Layout.Serialization;
 using AvalonDock.Layout;
-using MaGeek.UI;
-using static MageekFrontWpf.Framework.Services.AppEvents;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using MaGeek;
 using MageekService.Tools;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using MageekFrontWpf.Framework.Services;
-using MageekFrontWpf.UI.ViewModels;
-using MaGeek.UI.Windows.Importers;
-using MageekFrontWpf.ViewModels;
-using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekFrontWpf.UI.ViewModels.AppWindows;
 using AvalonDock;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MaGeek.UI.Menus;
-using WPFNotification.Services;
-using WPFNotification.Core.Configuration;
-using WPFNotification.Model;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.AppValues;
+using MageekFrontWpf.UI.Views.AppWindows;
 
-namespace MageekFrontWpf.App
+namespace MageekFrontWpf.Framework.Services
 {
 
-    public class WindowsManager
+    public class WindowsService : 
+        IRecipient<LoadLayoutMessage>,
+        IRecipient<SaveLayoutMessage>
     {
 
+        private readonly ILogger<WindowsService> logger;
+
+        public WindowsService(ILogger<WindowsService> logger)
+        {
+            this.logger = logger;
+            WeakReferenceMessenger.Default.RegisterAll(this);
+        }
+
         private readonly string Path_LayoutFolder = Path.Combine(MageekService.Folders.Roaming, "Layout");
-        private readonly ILogger<WindowsManager> logger;
-        private readonly AppEvents events;
         private List<AppWindow> appWindows = new();
         private List<AppPanel> appPanels = new();
+
         LayoutRoot rootLayout;
         DockingManager dockingManager;
-        private readonly INotificationDialogService _dailogService;
-
-
-        public WindowsManager(
-            ILogger<WindowsManager> logger,
-            AppEvents events, 
-            INotificationDialogService dailogService
-        )
-        {
-            _dailogService = dailogService;
-            this.logger = logger;
-            this.events = events;
-        }
 
         public void Init()
         {
             if (!File.Exists(Path_LayoutFolder)) Directory.CreateDirectory(Path_LayoutFolder);
-            events.LayoutActionEvent += HandleLayoutActionEvent;
             rootLayout = ServiceHelper.GetService<MainWindow>().RootLayout;
             dockingManager = ServiceHelper.GetService<MainWindow>().DockingManager;
             appWindows = WindowsAndPanels.GetWindows();
             appPanels = WindowsAndPanels.GetPanels();
+        }
+
+        public void Receive(LoadLayoutMessage message)
+        {
+            LoadLayout(message.Value);
+        }
+        
+        public void Receive(SaveLayoutMessage message)
+        {
+            SaveLayout(message.Value);
         }
 
         public void OpenWindow(AppWindowEnum id)
@@ -94,7 +89,7 @@ namespace MageekFrontWpf.App
             //    if (item is LayoutAnchorablePane && (LayoutAnchorablePane)item == controlName) return;
             //}
             // Find corresponding control
-            BaseUserControl control = appPanels.Find(tool => tool.id== controlName).window;
+            BaseUserControl control = appPanels.Find(tool => tool.id == controlName).window;
             if (control == null) return;
             // Open the control in Avalon
 
@@ -117,17 +112,6 @@ namespace MageekFrontWpf.App
             };
             rootLayout.RootPanel.Children.Add(panel);
 
-        }
-
-        private void HandleLayoutActionEvent(LayoutEventArgs args)
-        {
-            switch (args.EventType)
-            {
-                case LayoutEventType.OpenPanel: OpenPanel(args.information); break;
-                case LayoutEventType.Save: SaveLayout(args.information.ToString()); break;
-                case LayoutEventType.Load: LoadLayout(args.information.ToString()); break;
-                default: break;
-            }
         }
 
         public void SaveLayout(string layoutName)
@@ -159,18 +143,6 @@ namespace MageekFrontWpf.App
                 }
             }
             catch (Exception e) { Logger.Log(e); }
-        }
-
-        public void Notif(string title, string message)
-        {
-            var notificationConfiguration = NotificationConfiguration.DefaultConfiguration;
-            var newNotification = new Notification()
-            {
-                Title = title,
-                Message = message,
-                ImgURL = "pack://application:,,,a/Resources/Images/TickOn.jpg"
-            };
-            _dailogService.ShowNotificationWindow(newNotification, notificationConfiguration);
         }
 
         public string GetLayoutPath(string layoutName)

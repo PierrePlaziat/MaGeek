@@ -2,13 +2,13 @@
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using System;
 
-namespace MaGeek.UI.Menus
+namespace MageekFrontWpf.UI.Views.AppPanels
 {
 
     public partial class ImporterUi : BaseUserControl
     {
 
-        public ImporterUi() {}
+        public ImporterUi(){}
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -18,4 +18,5 @@ namespace MaGeek.UI.Menus
         }
 
     }
+
 }

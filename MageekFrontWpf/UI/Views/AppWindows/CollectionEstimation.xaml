@@ -1,5 +1,5 @@
 ﻿<mvvm:BaseWindow xmlns:ui="clr-namespace:MaGeek.UI"
-                 x:Class="MaGeek.UI.CollectionEstimation"
+                 x:Class="MageekFrontWpf.UI.Views.AppWindows.CollectionEstimation"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

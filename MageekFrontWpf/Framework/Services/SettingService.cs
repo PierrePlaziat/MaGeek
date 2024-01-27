@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Collections.Generic;
-using MageekFrontWpf.App;
 using MageekService;
+using MageekFrontWpf.AppValues;
 
-namespace MageekFrontWpf
+namespace MageekFrontWpf.Framework.Services
 {
 
     public class SettingService

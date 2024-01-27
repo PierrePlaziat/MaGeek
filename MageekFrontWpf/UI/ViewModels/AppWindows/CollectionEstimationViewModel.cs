@@ -1,14 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.App;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.Framework.Services;
 using MageekService.Tools;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows;
 
-namespace MageekFrontWpf.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
     public partial class CollectionEstimationViewModel : BaseViewModel

@@ -1,12 +1,11 @@
-﻿<mvvm:BaseWindow x:Class="MaGeek.MainWindow"
+﻿<mvvm:BaseWindow x:Class="MageekFrontWpf.UI.Views.AppWindows.MainWindow"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
-                 xmlns:local="clr-namespace:MaGeek.UI"
-                 xmlns:menus="clr-namespace:MaGeek.UI.Menus"
                  xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
+                 xmlns:menu="clr-namespace:MageekFrontWpf.UI.Views"
                  mc:Ignorable="d"
                  Title="MaGeek V1.0"
                  Height="800"
@@ -18,10 +17,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
 
-        <menus:TopMenu Grid.Row="0"
+        <menu:TopMenu Grid.Row="0"
                        x:Name="TopMenuControl"/>
 
         <avalonDock:DockingManager Grid.Row="1"
@@ -38,9 +36,6 @@
             </avalonDock:LayoutRoot>
 
         </avalonDock:DockingManager>
-
-        <menus:BottomBar Grid.Row="3"
-                         x:Name="BottomBarControl" />
 
     </Grid>
 

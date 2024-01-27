@@ -1,12 +1,12 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.ViewModels;
+using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekService.Data.Collection.Entities;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace MaGeek.UI
+namespace MageekFrontWpf.UI.Views.AppPanels
 {
 
     public partial class CardInspector : BaseUserControl
@@ -84,7 +84,7 @@ namespace MaGeek.UI
         private void SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ListView sendedBy = (sender as ListView);
-            if (sendedBy.SelectedItem is DeckCard cardRel) vm.SelectCard(cardRel.Card.Uuid);
+            if (sendedBy.SelectedItem is DeckCard cardRel) vm.Reload(cardRel.Card.Uuid).ConfigureAwait(false);
             sendedBy.UnselectAll();
         }
 

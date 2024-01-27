@@ -1,27 +1,27 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.App;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.Framework.Services;
 using MageekService;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace MageekFrontWpf.UI.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
     public partial class PrecosViewModel : BaseViewModel
     {
 
         private const string path = "D:\\PROJECTS\\VS\\MaGeek\\Preco";
-        private WindowsManager winManager;
+        private WindowsService winManager;
         private CollectionImporter importer;
         private bool importingSeveral = false;
 
         public PrecosViewModel
         (
             CollectionImporter importer,
-            WindowsManager winManager
+            WindowsService winManager
         )
         {
             this.winManager = winManager;

@@ -1,9 +1,9 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels;
+using MageekFrontWpf.UI.ViewModels.AppWindows;
 using System;
 using System.Windows.Input;
 
-namespace MaGeek
+namespace MageekFrontWpf.UI.Views.AppWindows
 {
 
     public partial class WelcomeWindow : BaseWindow

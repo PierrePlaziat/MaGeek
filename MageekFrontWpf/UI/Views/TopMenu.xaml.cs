@@ -2,7 +2,7 @@
 using MageekFrontWpf.UI.ViewModels;
 using System;
 
-namespace MaGeek.UI.Menus
+namespace MageekFrontWpf.UI.Views
 {
 
     public partial class TopMenu : BaseUserControl

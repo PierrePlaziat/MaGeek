@@ -1,21 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.App;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.Framework.Services;
 using MageekService;
 
-namespace MageekFrontWpf.UI.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
     public partial class ImportViewModel : BaseViewModel
     {
 
         private CollectionImporter importer;
-        private WindowsManager winManager;
+        private WindowsService winManager;
 
         public ImportViewModel
         (
             CollectionImporter importer,
-            WindowsManager winManager
+            WindowsService winManager
         )
         {
             this.winManager = winManager;

@@ -4,9 +4,8 @@ using MageekFrontWpf.Framework.BaseMvvm;
 using MageekService;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Windows;
 
-namespace MageekFrontWpf.UI.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
     public partial class ImporterUiViewModel : BaseViewModel
     {

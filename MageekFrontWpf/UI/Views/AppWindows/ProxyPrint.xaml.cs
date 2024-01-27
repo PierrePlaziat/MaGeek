@@ -2,7 +2,7 @@
 using MageekFrontWpf.UI.ViewModels.AppWindows;
 using System.ComponentModel;
 
-namespace MaGeek.UI.Windows.ImportExport
+namespace MageekFrontWpf.UI.Views.AppWindows
 {
 
     public partial class ProxyPrint : BaseWindow, INotifyPropertyChanged

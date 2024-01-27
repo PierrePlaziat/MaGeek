@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace MaGeek.UI
+namespace MageekFrontWpf.UI.Views.AppPanels
 {
 
     public partial class DeckStats : BaseUserControl

@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.Framework.Services;
 using MageekService;
 using MageekService.Data.Collection.Entities;
 using MageekService.Data.Mtg.Entities;
@@ -11,26 +12,19 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MageekFrontWpf.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
-    public partial class CardInspectorViewModel : BaseViewModel
+    public partial class CardInspectorViewModel : BaseViewModel, 
+        IRecipient<CardSelectedMessage>
     {
 
-
-        private AppEvents events;
-        private AppState state;
-
-        public CardInspectorViewModel(
-            AppEvents events,
-            AppState state,
-            SettingService settings
-        ){
-            this.events = events;
-            this.state = state;
-            events.CardSelectedEvent += SelectCard;
+        public CardInspectorViewModel()
+        {
+            WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
+        [ObservableProperty] private bool pinned = false;
         [ObservableProperty] private bool isLoading = false;
         [ObservableProperty] private string selectedArchetype;
         [ObservableProperty] private string selectedUuid;
@@ -45,16 +39,17 @@ namespace MageekFrontWpf.ViewModels
         [ObservableProperty] private CardVariant selectedVariant;
         [ObservableProperty] private List<CardVariant> variants;
 
-        public void SelectCard(string cardUuid)
+        public void Receive(CardSelectedMessage message)
         {
-             Reload(cardUuid).ConfigureAwait(false);
+            if (!Pinned) Reload(message.Value).ConfigureAwait(false);
         }
 
         [RelayCommand]
-        private async Task Reload(string uuid)
+        public async Task Reload(string uuid)
         {
             if (uuid == null) return;
             IsLoading = true;
+            await Task.Delay(100);
             string archetype = await MageekService.MageekService.FindCard_Archetype(uuid);
             if (archetype == null)
             {
@@ -143,8 +138,9 @@ namespace MageekFrontWpf.ViewModels
         [RelayCommand]
         private async Task AddToCurrentDeck(string uuid)
         {
-            await MageekService.MageekService.AddCardToDeck(uuid, state.SelectedDeck, 1);
-            events.RaiseUpdateDeck();
+            //TODO
+            //await MageekService.MageekService.AddCardToDeck(uuid, state.SelectedDeck, 1);
+            //events.RaiseUpdateDeck();
         }
 
         [RelayCommand] 

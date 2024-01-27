@@ -3,7 +3,7 @@ using System.Windows;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppWindows;
 
-namespace MaGeek
+namespace MageekFrontWpf.UI.Views.AppWindows
 {
 
     public partial class MainWindow : BaseWindow

@@ -1,15 +1,8 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekService.Data.Collection.Entities;
-using MageekService.Data.Mtg.Entities;
-using MageekService.Tools;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 
-namespace MaGeek.UI
+namespace MageekFrontWpf.UI.Views.AppPanels
 {
 
     public partial class DeckTable : BaseUserControl
@@ -19,13 +12,8 @@ namespace MaGeek.UI
         {
             DataContext = vm;
             InitializeComponent();
-            //ConfigureEvents();
         }
 
-        private void UnsetCommandant_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 
 }

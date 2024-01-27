@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.App;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
@@ -10,30 +11,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using WPFNotification.Core.Configuration;
-using WPFNotification.Model;
-using WPFNotification.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
-    public partial class DeckStatsViewModel : BaseViewModel
+    public partial class DeckStatsViewModel : BaseViewModel,
+        IRecipient<DeckSelectMessage>,
+        IRecipient<UpdateDeckMessage>
     {
-        private WindowsManager win;
-        private AppEvents events;
 
-        public DeckStatsViewModel(AppEvents events, WindowsManager win)
+        private DialogService dialog;
+
+        public DeckStatsViewModel(DialogService dialog)
         {
-            this.win = win;
-            this.events = events;
-            events.SelectDeckEvent += HandleDeckSelected;
-            events.UpdateDeckEvent += HandleDeckModified;
+            this.dialog = dialog;
+            WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
         [ObservableProperty] private Deck currentDeck;
-        //OnPropertyChanged();
-        //OnPropertyChanged(nameof(IsActive));
-        //AsyncReload();
-
         [ObservableProperty] int creatureCount;
         [ObservableProperty] int instantCount;
         [ObservableProperty] int sorceryCount;
@@ -58,14 +52,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         List<int> alreadyDrawed;
         readonly Random random = new();
 
-        void HandleDeckSelected(string deckId)
-        {
-            CurrentDeck = MageekService.MageekService.GetDeck(deckId).Result;
-        }
-
-        void HandleDeckModified()
+        public void Receive(UpdateDeckMessage message)
         {
             AsyncReload();
+        }
+
+        public void Receive(DeckSelectMessage message)
+        {
+            CurrentDeck = MageekService.MageekService.GetDeck(message.Value).Result;
         }
 
         #region Async Reload
@@ -120,20 +114,18 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         #region Methods
 
-        private async void ListMissing(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private async Task ListMissing()
         {
             string missList = await MageekService
                 .MageekService
                 .ListMissingCards(CurrentDeck.DeckId);
-
             if (!string.IsNullOrEmpty(missList))
             {
                 Clipboard.SetText(missList);
-                win.Notif("Missing:","Copied to clipboard.");
+                dialog.Notif("Missing:","Copied to clipboard.");
             }
         }
-
-        #region ManaCurve
 
         private void DrawManacurve(int[] manaCurve)
         {
@@ -153,6 +145,8 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             }
             CurvePoints = Points;
         }
+
+        #region ManaCurve
 
         #endregion
 

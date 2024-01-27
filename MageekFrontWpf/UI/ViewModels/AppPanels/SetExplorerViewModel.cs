@@ -1,24 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Mtg.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 
-namespace MageekFrontWpf.UI.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
     public partial class SetExplorerViewModel : BaseViewModel
     {
 
-        private AppState state;
-        private AppEvents events;
-
-        public SetExplorerViewModel(AppState state, AppEvents events)
-        {
-            this.state = state;
-            this.events = events;
-        }
+        public SetExplorerViewModel(){}
 
         [ObservableProperty] List<Sets> setList = new();
         [ObservableProperty] List<string> types = new();
@@ -53,7 +47,7 @@ namespace MageekFrontWpf.UI.ViewModels
         {
             var v = (DataGrid)sender;
             if (v.SelectedItem == null) return;
-            events.RaiseCardSelected((v.SelectedItem as Cards).Uuid);
+            WeakReferenceMessenger.Default.Send(new CardSelectedMessage((v.SelectedItem as Cards).Uuid));
         }
 
 

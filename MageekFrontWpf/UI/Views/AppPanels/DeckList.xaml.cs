@@ -1,8 +1,11 @@
-﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.AppValues;
+using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.UI.ViewModels.AppPanels;
+using MageekService.Data.Collection.Entities;
 using System.Windows.Controls;
 
-namespace MaGeek.UI
+namespace MageekFrontWpf.UI.Views.AppPanels
 {
 
     public partial class DeckList : BaseUserControl
@@ -17,12 +20,13 @@ namespace MaGeek.UI
         private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var deck = decklistbox.SelectedItem as Deck;
-            if (deck != null) events.RaiseDeckSelect(deck);
+            WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(deck.DeckId));
         }
 
         private void Decklistbox_SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (decklistbox.SelectedItem is Deck deck) events.RaiseDeckSelect(deck.DeckId);
+            if (decklistbox.SelectedItem is Deck deck)
+                WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(deck.DeckId));
         }
 
     }

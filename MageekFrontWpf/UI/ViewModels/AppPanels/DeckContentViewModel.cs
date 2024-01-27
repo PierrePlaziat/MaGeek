@@ -1,25 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace MageekFrontWpf.ViewModels
+namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
     public partial class DeckContentViewModel : BaseViewModel
     {
 
-        private AppEvents events;
-
-        public DeckContentViewModel(AppEvents events)
+        public DeckContentViewModel()
         {
-            this.events = events;
-            events.SelectDeckEvent += HandleDeckSelected;
-            events.UpdateDeckEvent += HandleDeckModif;
         }
 
         [ObservableProperty] Deck currentDeck = null;
@@ -157,7 +153,7 @@ namespace MageekFrontWpf.ViewModels
         {
             var cr = b.DataContext as DeckCard;
             MageekService.MageekService.RemoveCardFromDeck(cr.CardUuid, CurrentDeck).ConfigureAwait(true);
-            events.RaiseUpdateDeck();
+            WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(CurrentDeck.DeckId));
         }
 
         [RelayCommand]
@@ -165,35 +161,35 @@ namespace MageekFrontWpf.ViewModels
         {
             var cr = b.DataContext as DeckCard;
             MageekService.MageekService.AddCardToDeck(cr.CardUuid, CurrentDeck, 1).ConfigureAwait(true);
-            events.RaiseUpdateDeck();
+            WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(CurrentDeck.DeckId));
         }
 
         [RelayCommand]
         private void SetCommandant(DeckCard cardRel)
         {
             MageekService.MageekService.ChangeDeckRelationType(cardRel, 1).ConfigureAwait(true);
-            events.RaiseUpdateDeck();
+            WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(CurrentDeck.DeckId));
         }
 
         [RelayCommand]
         private void UnsetCommandant(DeckCard cardRel)
         {
             MageekService.MageekService.ChangeDeckRelationType(cardRel, 0).ConfigureAwait(true);
-            events.RaiseUpdateDeck();
+            WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(CurrentDeck.DeckId));
         }
 
         [RelayCommand]
         private void ToSide(DeckCard cardRel)
         {
             MageekService.MageekService.ChangeDeckRelationType(cardRel, 2).ConfigureAwait(true);
-            events.RaiseUpdateDeck();
+            WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(CurrentDeck.DeckId));
         }
 
         [RelayCommand]
         private void ToDeck(DeckCard cardRel)
         {
             MageekService.MageekService.ChangeDeckRelationType(cardRel, 0).ConfigureAwait(true);
-            events.RaiseUpdateDeck();
+            WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(CurrentDeck.DeckId));
         }
 
     }

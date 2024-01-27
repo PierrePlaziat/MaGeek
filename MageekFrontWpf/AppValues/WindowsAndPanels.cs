@@ -1,16 +1,12 @@
-﻿using MaGeek.UI.Menus;
-using MaGeek.UI;
-using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekFrontWpf.UI.ViewModels;
-using MageekFrontWpf.ViewModels;
+﻿using MageekFrontWpf.Framework.BaseMvvm;
 using System.Collections.Generic;
-using static MageekFrontWpf.App.WindowsManager;
+using static MageekFrontWpf.Framework.Services.WindowsService;
+using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekFrontWpf.UI.ViewModels.AppWindows;
-using MaGeek;
-using MaGeek.UI.Windows.Importers;
+using MageekFrontWpf.UI.Views.AppWindows;
+using MageekFrontWpf.UI.Views.AppPanels;
 
-namespace MageekFrontWpf.App
+namespace MageekFrontWpf.AppValues
 {
 
     public static class WindowsAndPanels
