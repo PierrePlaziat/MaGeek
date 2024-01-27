@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
@@ -17,11 +18,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
     public partial class DeckStatsViewModel : BaseViewModel
     {
-
+        private WindowsManager win;
         private AppEvents events;
 
-        public DeckStatsViewModel(AppEvents events, Window)
+        public DeckStatsViewModel(AppEvents events, WindowsManager win)
         {
+            this.win = win;
             this.events = events;
             events.SelectDeckEvent += HandleDeckSelected;
             events.UpdateDeckEvent += HandleDeckModified;
@@ -127,7 +129,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             if (!string.IsNullOrEmpty(missList))
             {
                 Clipboard.SetText(missList);
-                win.
+                win.Notif("Missing:","Copied to clipboard.");
             }
         }
 

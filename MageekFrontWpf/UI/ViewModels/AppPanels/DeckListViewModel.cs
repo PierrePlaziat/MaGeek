@@ -11,61 +11,43 @@ using System.Windows;
 
 namespace MageekFrontWpf.UI.ViewModels
 {
+    
+    //events.UpdateDeckEvent += async () => { await Reload(); };
+    //events.UpdateDeckListEvent += async () => { await Reload(); };
     public partial class DeckListViewModel : BaseViewModel
     {
 
-        private AppEvents events;
-        private AppState state;
+        private WindowsManager win;
         private SettingService config;
         private DialogService dialog;
 
         public DeckListViewModel(
-            AppEvents events,
-            AppState state,
             SettingService config,
-            DialogService dialog
-        )
-        {
-            this.events = events;
-            this.state = state;
+            DialogService dialog,
+            WindowsManager win
+        ){
+            this.win = win;
             this.config = config;
             this.dialog = dialog;
-            events.UpdateDeckEvent += async () => { await Reload(); };
-            events.UpdateDeckListEvent += async () => { await Reload(); };
-            Reload().ConfigureAwait(false);
         }
 
         [ObservableProperty] private IEnumerable<Deck> decks;
         [ObservableProperty] private string filterString = "";
         [ObservableProperty] private bool isLoading = false;
 
+        protected override void OnActivated()
+        {
+            base.OnActivated();
+            Reload().ConfigureAwait(false);
+        }
+
+        [RelayCommand]
         private async Task Reload()
         {
             IsLoading = true;
-            await Task.Run(async () =>
-            {
-                Decks = FilterDeckEnumerator(await MageekService.MageekService.GetDecks());
-            });
+            Decks = FilterDeck(await MageekService.MageekService.GetDecks());
             IsLoading = false;
         }
-
-        private IEnumerable<Deck> FilterDeckEnumerator(IEnumerable<Deck> enumerable)
-        {
-            if (enumerable == null) return null;
-            return enumerable.Where(x => x.Title.ToLower().Contains(FilterString.ToLower()))
-                             .OrderBy(x => x.Title);
-        }
-
-        //private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    var deck = decklistbox.SelectedItem as Deck;
-        //    if (deck != null) events.RaiseDeckSelect(deck);
-        //}
-
-        //private void Decklistbox_SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        //{
-        //    if (decklistbox.SelectedItem is Deck deck) events.RaiseDeckSelect(deck.DeckId);
-        //}
 
         [RelayCommand]
         private async Task AddDeck()
@@ -76,11 +58,10 @@ namespace MageekFrontWpf.UI.ViewModels
         }
 
         [RelayCommand]
-        private async Task RenameDeck()
+        private async Task RenameDeck(string deckId)
         {
-            if (state.SelectedDeck == null) return;
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await MageekService.MageekService.RenameDeck(state.SelectedDeck.DeckId, title);
+            await MageekService.MageekService.RenameDeck(deckId, title);
             await Reload();
         }
 
@@ -98,20 +79,32 @@ namespace MageekFrontWpf.UI.ViewModels
             await Reload();
         }
 
-        private async void EstimateDeckPrice(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private async Task EstimateDeckPrice(string deckId)
         {
-            if (state.SelectedDeck == null) return;
-            var totalPrice = await MageekService.MageekService.EstimateDeckPrice(state.SelectedDeck.DeckId, config.Settings[AppSetting.Currency]);
-
+            var totalPrice = await MageekService.MageekService.EstimateDeckPrice(deckId, config.Settings[AppSetting.Currency]);
             MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + "\n" +
                             "Missing : " + totalPrice.Item2);
         }
 
-        //private async void GetAsTxtList(object sender, RoutedEventArgs e)
-        //{
-        //    string txt = await MageekService.MageekService.DeckToTxt(((Deck)decklistbox.SelectedItem).DeckId);
-        //    //new TxtImporter().Show();
-        //    // TODO load content
-        //}
+        [RelayCommand]
+        private async Task GetAsTxtList(string deckId)
+        {
+            string txt = await MageekService.MageekService.DeckToTxt(deckId);
+            if (!string.IsNullOrEmpty(txt))
+            {
+                Clipboard.SetText(txt);
+                win.Notif("Deck:", "Copied to clipboard.");
+            }
+        }
+
+        private IEnumerable<Deck> FilterDeck(IEnumerable<Deck> enumerable)
+        {
+            if (enumerable == null) return null;
+            return enumerable.Where(x => x.Title.ToLower().Contains(FilterString.ToLower()))
+                             .OrderBy(x => x.Title);
+        }
+
     }
+
 }
