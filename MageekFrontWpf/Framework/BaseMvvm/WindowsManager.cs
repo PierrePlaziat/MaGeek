@@ -18,6 +18,9 @@ using MageekFrontWpf.UI.ViewModels.AppWindows;
 using AvalonDock;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MaGeek.UI.Menus;
+using WPFNotification.Services;
+using WPFNotification.Core.Configuration;
+using WPFNotification.Model;
 
 namespace MageekFrontWpf.App
 {
@@ -32,18 +35,23 @@ namespace MageekFrontWpf.App
         private List<AppPanel> appPanels = new();
         LayoutRoot rootLayout;
         DockingManager dockingManager;
+        private readonly INotificationDialogService _dailogService;
+
 
         public WindowsManager(
             ILogger<WindowsManager> logger,
-            AppEvents events
+            AppEvents events, 
+            INotificationDialogService dailogService
         )
         {
+            _dailogService = dailogService;
             this.logger = logger;
             this.events = events;
         }
 
         public void Init()
         {
+            if (!File.Exists(Path_LayoutFolder)) Directory.CreateDirectory(Path_LayoutFolder);
             events.LayoutActionEvent += HandleLayoutActionEvent;
             rootLayout = ServiceHelper.GetService<MainWindow>().RootLayout;
             dockingManager = ServiceHelper.GetService<MainWindow>().DockingManager;
@@ -131,7 +139,7 @@ namespace MageekFrontWpf.App
                 xmlLayout.Serialize(fs);
                 xmlLayoutString = fs.ToString();
             }
-            File.WriteAllText(GetLayoutPath(layoutName), xmlLayoutString);
+            File.WriteAllText(GetLayoutPath("Layout"), xmlLayoutString);
         }
 
         public void LoadLayout(string layoutName)
@@ -151,6 +159,18 @@ namespace MageekFrontWpf.App
                 }
             }
             catch (Exception e) { Logger.Log(e); }
+        }
+
+        public void Notif(string title, string message)
+        {
+            var notificationConfiguration = NotificationConfiguration.DefaultConfiguration;
+            var newNotification = new Notification()
+            {
+                Title = title,
+                Message = message,
+                ImgURL = "pack://application:,,,a/Resources/Images/TickOn.jpg"
+            };
+            _dailogService.ShowNotificationWindow(newNotification, notificationConfiguration);
         }
 
         public string GetLayoutPath(string layoutName)

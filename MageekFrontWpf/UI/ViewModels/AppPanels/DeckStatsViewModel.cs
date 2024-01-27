@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekService.Data.Collection.Entities;
@@ -8,6 +9,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using WPFNotification.Core.Configuration;
+using WPFNotification.Model;
+using WPFNotification.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -16,7 +20,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         private AppEvents events;
 
-        public DeckStatsViewModel(AppEvents events)
+        public DeckStatsViewModel(AppEvents events, Window)
         {
             this.events = events;
             events.SelectDeckEvent += HandleDeckSelected;
@@ -123,7 +127,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             if (!string.IsNullOrEmpty(missList))
             {
                 Clipboard.SetText(missList);
-                // TODO show a toaster
+                win.
             }
         }
 

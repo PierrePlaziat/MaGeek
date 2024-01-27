@@ -5,6 +5,7 @@ using MageekFrontWpf;
 using MageekFrontWpf.App;
 using MageekFrontWpf.Framework.BaseMvvm;
 using Microsoft.Extensions.DependencyInjection;
+using WPFNotification.Services;
 
 namespace MaGeek
 {
@@ -18,6 +19,7 @@ namespace MaGeek
         {
             ServiceCollection services = new ServiceCollection();
             services.AddLogging();
+            services.AddSingleton<INotificationDialogService, NotificationDialogService>();
             services.AddMageek();
             serviceProvider = services.BuildServiceProvider();
             ServiceHelper.Initialize(serviceProvider);
@@ -33,7 +35,6 @@ namespace MaGeek
 
         public static void Restart()
         { 
-            // Wont work :(
             Process.Start(Process.GetCurrentProcess().MainModule.FileName);
             Current.Shutdown();
         }
