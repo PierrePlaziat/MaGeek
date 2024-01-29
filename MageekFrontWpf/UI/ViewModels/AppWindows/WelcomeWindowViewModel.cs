@@ -4,6 +4,7 @@ using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -20,6 +21,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         ){
             this.mageek = mageek;
             this.winManager = winManager;
+            this.dialog = dialog;
         }
 
         [ObservableProperty] bool updateAvailable = false;
@@ -30,6 +32,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         public async Task Init()
         {
             IsLoading = true;
+            dialog.Notif("Test: ", "test message");
             await Task.Delay(100);
             Message = "Init...";
             var retour = await mageek.InitializeService();

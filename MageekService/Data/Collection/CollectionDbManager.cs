@@ -84,15 +84,19 @@ namespace MageekService.Data.Collection
                 logger.LogInformation("Parsing...");
                 using (MtgDbContext mtgSqliveContext = await MtgDbManager.GetContext())
                 {
+
                     foreach (Cards card in mtgSqliveContext.cards)
                     {
-                        archetypes.Add(
-                            new ArchetypeCard()
-                            {
-                                ArchetypeId = card.Name != null ? card.Name : string.Empty,
-                                CardUuid = card.Uuid
-                            }
-                        );
+                        if (!(archetypes.Any(x => x.CardUuid == card.Uuid))) // todo remove later (duplicated uuid bug)
+                        {
+                            archetypes.Add(
+                                new ArchetypeCard()
+                                {
+                                    ArchetypeId = card.Name != null ? card.Name : string.Empty,
+                                    CardUuid = card.Uuid
+                                }
+                            );
+                        }
                     }
                 }
                 logger.LogInformation("Saving...");
@@ -178,19 +182,29 @@ namespace MageekService.Data.Collection
                 var Setz = JsonSerializer.Deserialize<ResultList<Set>>(json_data);
                 foreach (Set set in Setz.Data)
                 {
-                    var uri = set.IconSvgUri;
-                    string localFileName = Path.Combine(Folders.SetIcon, set.Code.ToUpper() + ".svg");
-                    if (!File.Exists(localFileName))
+                    try
                     {
-                        using (WebClient client = new WebClient())
+                        var uri = set.IconSvgUri;
+                        string localFileName = Path.Combine(Folders.SetIcon, set.Code.ToUpper() + ".svg");
+                        if (!File.Exists(localFileName))
                         {
-                            await client.DownloadFileTaskAsync(uri, localFileName);
+                            using (WebClient client = new WebClient())
+                            {
+                                await client.DownloadFileTaskAsync(uri, localFileName);
+                            }
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Log(e);
                     }
                 }
             }
-            catch (Exception e) { logger.LogError(e.Message); }
-            logger.LogInformation("Done");
+            catch (Exception e) 
+            { 
+                Logger.Log(e); 
+            }
+            Logger.Log("Done");
         }
 
     }

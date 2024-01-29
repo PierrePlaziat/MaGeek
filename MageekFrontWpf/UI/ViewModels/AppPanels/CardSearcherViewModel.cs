@@ -26,7 +26,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
 
         [ObservableProperty] private bool colorIsOr;
-        [ObservableProperty] private List<string> historic;
+        [ObservableProperty] private List<string> historic = new();
         [ObservableProperty] private List<Cards> cardList;
         [ObservableProperty] private List<Tag> availableTags;
         [ObservableProperty] private bool isLoading = false;
