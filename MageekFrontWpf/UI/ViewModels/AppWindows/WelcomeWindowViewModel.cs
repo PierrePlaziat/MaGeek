@@ -12,9 +12,13 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     {
 
         private readonly WindowsService winManager;
+        private readonly MageekService.MageekService mageek;
 
-        public WelcomeWindowViewModel(WindowsService winManager)
-        {
+        public WelcomeWindowViewModel(
+            WindowsService winManager,
+            MageekService.MageekService mageek
+        ){
+            this.mageek = mageek;
             this.winManager = winManager;
         }
 
@@ -28,7 +32,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             IsLoading = true;
             await Task.Delay(100);
             Message = "Init...";
-            var retour = await MageekService.MageekService.InitializeService();
+            var retour = await mageek.InitializeService();
             switch (retour)
             {
                 case MageekService.MageekInitReturn.Error:
@@ -58,7 +62,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             UpdateAvailable = false;
             Message = "Updating...";
             await Task.Delay(100);
-            var retour = await MageekService.MageekService.UpdateMtg();
+            var retour = await mageek.UpdateMtg();
             switch (retour)
             {
                 case MageekService.MageekUpdateReturn.Success:

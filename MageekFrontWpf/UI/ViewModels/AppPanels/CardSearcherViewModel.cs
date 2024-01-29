@@ -15,9 +15,13 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
     {
 
         private SettingService config;
+        private MageekService.MageekService mageek;
 
-        public CardSearcherViewModel(SettingService config)
-        {
+        public CardSearcherViewModel(
+            SettingService config,
+            MageekService.MageekService mageek
+        ){
+            this.mageek = mageek;
             this.config = config;
         }
 
@@ -51,7 +55,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
             if (ShowAdvanced == false)
             {
-                CardList = await MageekService.MageekService.NormalSearch(
+                CardList = await mageek.NormalSearch(
                     config.Settings[AppSetting.ForeignLanguage],
                     FilterName
                 );
@@ -61,7 +65,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                 var lang = config.Settings[AppSetting.ForeignLanguage];
                 var color = FilterColor.ToString();
                 string tagz = "";// FilterTag.TagContent;
-                CardList = await MageekService.MageekService.AdvancedSearch(
+                CardList = await mageek.AdvancedSearch(
                     lang,
                     FilterName,
                     FilterType,

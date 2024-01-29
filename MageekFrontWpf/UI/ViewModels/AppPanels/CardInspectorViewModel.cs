@@ -19,8 +19,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<CardSelectedMessage>
     {
 
-        public CardInspectorViewModel()
-        {
+        private MageekService.MageekService mageek;
+
+        public CardInspectorViewModel(
+            MageekService.MageekService mageek
+        ){
+            this.mageek = mageek;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
@@ -50,7 +54,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             if (uuid == null) return;
             IsLoading = true;
             await Task.Delay(100);
-            string archetype = await MageekService.MageekService.FindCard_Archetype(uuid);
+            string archetype = await mageek.FindCard_Archetype(uuid);
             if (archetype == null)
             {
                 IsLoading = false;
@@ -84,15 +88,15 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             Variants = null;
             Variants = new List<CardVariant>();
 
-            foreach (string variant in await MageekService.MageekService.FindCard_Variants(SelectedArchetype))
+            foreach (string variant in await mageek.FindCard_Variants(SelectedArchetype))
             {
-                var x = await MageekService.MageekService.FindCard_Data(variant);
+                var x = await mageek.FindCard_Data(variant);
                 if (x != null)
                 {
                     CardVariant v = new()
                     {
                         Card = x,
-                        PriceValue = await MageekService.MageekService.EstimateCardPrice(x.Uuid)
+                        PriceValue = await mageek.EstimateCardPrice(x.Uuid)
                     };
                     Variants.Add(v);
                     if (x.Uuid == SelectedUuid) SelectedVariant = v;
@@ -101,19 +105,19 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
         private async Task GetLegalities()
         {
-            Legalities = await MageekService.MageekService.GetLegalities(SelectedUuid); 
+            Legalities = await mageek.GetLegalities(SelectedUuid); 
         }
         private async Task GetRulings()
         {
-            Rulings = await MageekService.MageekService.GetRulings(SelectedUuid);
+            Rulings = await mageek.GetRulings(SelectedUuid);
         }
         private async Task GetRelatedCards()
         {
-            RelatedCards = await MageekService.MageekService.FindCard_Related(SelectedVariant.Card); 
+            RelatedCards = await mageek.FindCard_Related(SelectedVariant.Card); 
         }
         private async Task GetTags()
         {
-            Tags = await MageekService.MageekService.GetTags(SelectedVariant.Card.Name);
+            Tags = await mageek.GetTags(SelectedVariant.Card.Name);
         }
         private async Task GetTotalGot() 
         {
@@ -131,7 +135,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task SetFav(string uuid)
         {
-            await MageekService.MageekService.SetFav(SelectedArchetype, uuid);
+            await mageek.SetFav(SelectedArchetype, uuid);
             IsFav = true;
         }
 
@@ -146,28 +150,28 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand] 
         private async Task AddCardToCollection(string uuid)
         {
-            await MageekService.MageekService.CollecMove(uuid, 1);
+            await mageek.CollecMove(uuid, 1);
             await GetCardVariants();
         }
 
         [RelayCommand]
         private async Task SubstractCardFromCollection(string uuid)
         {
-            await MageekService.MageekService.CollecMove(uuid, -1);
+            await mageek.CollecMove(uuid, -1);
             await GetCardVariants();
         }
 
         [RelayCommand]
         private async Task AddTag(string txt)
         {
-            await MageekService.MageekService.TagCard(SelectedVariant.Card.Name, txt);
+            await mageek.TagCard(SelectedVariant.Card.Name, txt);
             await GetTags();
         }
 
         [RelayCommand]
         private async Task DeleteTag(string txt)
         {
-            await MageekService.MageekService.UnTagCard(SelectedVariant.Card.Name, txt);
+            await mageek.UnTagCard(SelectedVariant.Card.Name, txt);
             await GetTags();
         }
 

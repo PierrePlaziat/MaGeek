@@ -12,6 +12,7 @@ using MageekService.Data.Mtg;
 using MageekService.Data.Collection.Entities;
 using MageekService.Data.Mtg.Entities;
 using MageekService.Tools;
+using Microsoft.Extensions.Logging;
 
 namespace MageekService
 {
@@ -28,17 +29,27 @@ namespace MageekService
         Success,
     }
 
-    public static class MageekService
+    public class MageekService
     {
 
+        private readonly ILogger<MageekService> logger;
+        private readonly CollectionDbManager collection;
 
+        public MageekService(
+            ILogger<MageekService> logger,
+            CollectionDbManager collection
 
-        public static async Task<MageekInitReturn> InitializeService()
+        ){
+            this.logger = logger;
+            this.collection = collection;
+        }
+
+        public async Task<MageekInitReturn> InitializeService()
         {
             try
             {
                 Folders.InitFolders();
-                if (!File.Exists(Folders.DB)) CollectionDbManager.CreateDb();
+                if (!File.Exists(Folders.DB)) collection.CreateDb();
                 bool needsUpdate = await MtgDbManager.UpdateAvailable();
                 if (needsUpdate) return MageekInitReturn.MtgOutdated;
                 else return MageekInitReturn.MtgUpToDate;
@@ -50,7 +61,7 @@ namespace MageekService
             }
         }
 
-        public static async Task<MageekUpdateReturn> UpdateMtg()
+        public async Task<MageekUpdateReturn> UpdateMtg()
         {
             try
             {
@@ -64,7 +75,7 @@ namespace MageekService
             }
             try
             {
-                await CollectionDbManager.FetchMtg();
+                await collection.FetchMtg();
                 return MageekUpdateReturn.Success;
             }
             catch (Exception e)
@@ -82,12 +93,12 @@ namespace MageekService
         /// <param name="lang"></param>
         /// <param name="filterName"></param>
         /// <returns>List of cards</returns>
-        public async static Task<List<Cards>> NormalSearch(string lang, string filterName)
+        public async Task<List<Cards>> NormalSearch(string lang, string filterName)
         {
             List<Cards> retour = new();
             string lowerFilterName = filterName.ToLower();
             string normalizedFilterName = StringExtension.RemoveDiacritics(filterName).Replace('-', ' ').ToLower();
-            using (CollectionDbContext DB = await CollectionDbManager.GetContext())
+            using (CollectionDbContext DB = await collection.GetContext())
             using (MtgDbContext DB2 = await MtgDbManager.GetContext())
             {
                 if (!string.IsNullOrEmpty(filterName))
@@ -112,7 +123,7 @@ namespace MageekService
         /// <param name="lang"></param>
         /// <param name="filterName"></param>
         /// <returns>List of cards</returns>
-        public async static Task<List<Cards>> AdvancedSearch(string lang, string filterName, string filterType, string filterKeyword, string filterText, string filterColor, string filterTag, bool onlyGot, bool colorisOr)
+        public async Task<List<Cards>> AdvancedSearch(string lang, string filterName, string filterType, string filterKeyword, string filterText, string filterColor, string filterTag, bool onlyGot, bool colorisOr)
         {
             List<Cards> retour = await NormalSearch(lang, filterName);
 
@@ -224,7 +235,7 @@ namespace MageekService
                     var tagged = new List<Cards>();
                     foreach (var card in retour)
                     {
-                        if (await MageekService.HasTag(card.Name, filterTag))
+                        if (await HasTag(card.Name, filterTag))
                         {
                             tagged.Add(card);
                         }
@@ -234,7 +245,7 @@ namespace MageekService
 
                 if (onlyGot)
                 {
-                    using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                    using CollectionDbContext DB = await collection.GetContext();
                     retour = retour.Where(x => x.Collected > 0).ToList();
                 }
             }
@@ -247,9 +258,9 @@ namespace MageekService
         /// </summary>
         /// <param name="archetypeId"></param>
         /// <returns>a list of uuid</returns>
-        public static async Task<List<string>> FindCard_Variants(string archetypeId)
+        public async Task<List<string>> FindCard_Variants(string archetypeId)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.ArchetypeId == archetypeId)
                 .Select(p => p.CardUuid)
@@ -261,9 +272,9 @@ namespace MageekService
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>a single archetype id</returns>
-        public static async Task<string> FindCard_Archetype(string cardUuid)
+        public async Task<string> FindCard_Archetype(string cardUuid)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.CardUuid == cardUuid)
                 .Select(p => p.ArchetypeId)
@@ -275,9 +286,9 @@ namespace MageekService
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>Archetype</returns>
-        public static async Task<ArchetypeCard> FindCard_Ref(string cardUuid)
+        public async Task<ArchetypeCard> FindCard_Ref(string cardUuid)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.CardUuid == cardUuid)
                 .FirstOrDefaultAsync();
@@ -288,7 +299,7 @@ namespace MageekService
         /// </summary>
         /// <param name="name"></param>
         /// <returns>Archetype</returns>
-        public static async Task<Cards> FindCard_ArchetypeData(string name)
+        public async Task<Cards> FindCard_ArchetypeData(string name)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             return await DB.cards
@@ -301,7 +312,7 @@ namespace MageekService
         /// </summary>
         /// <param name="name"></param>
         /// <returns>Archetype</returns>
-        public static async Task<Tokens> FindToken(string name)
+        public async Task<Tokens> FindToken(string name)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             return await DB.tokens
@@ -314,7 +325,7 @@ namespace MageekService
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>Archetype</returns>
-        public static async Task<Cards> FindCard_Data(string cardUuid)
+        public async Task<Cards> FindCard_Data(string cardUuid)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             return await DB.cards
@@ -322,7 +333,7 @@ namespace MageekService
                 .FirstOrDefaultAsync();
         }
 
-        public static async Task<List<CardCardRelation>> FindCard_Related(Cards inputCard) 
+        public async Task<List<CardCardRelation>> FindCard_Related(Cards inputCard) 
         {
             // TODO cache data
             List<CardCardRelation> outputCards = new();
@@ -380,11 +391,11 @@ namespace MageekService
         /// </summary>
         /// <param name="archetypeId"></param>
         /// <param name="cardUuid"></param>
-        public static async Task SetFav(string archetypeId, string cardUuid)
+        public async Task SetFav(string archetypeId, string cardUuid)
         {
             try {
                 if (string.IsNullOrEmpty(archetypeId)) return;
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 FavVariant? favCard = await DB.FavVariant.Where(x => x.ArchetypeId == archetypeId).FirstOrDefaultAsync();
                 if (favCard == null)
                 {
@@ -415,12 +426,12 @@ namespace MageekService
         /// <param name="archetypeId"></param>
         /// <param name="lang"></param>
         /// <returns>Traducted name of english one if not found</returns>
-        public static async Task<string> GetTraduction(string archetypeId, string lang)
+        public async Task<string> GetTraduction(string archetypeId, string lang)
         {
             string foreignName = "";
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 var t = await DB.CardTraductions.Where(x => x.CardUuid == archetypeId && x.Language == lang).FirstOrDefaultAsync();
                 if (t != null) foreignName = t.Traduction;
             }
@@ -435,7 +446,7 @@ namespace MageekService
         /// <param name="cardUuid"></param>
         /// <param name="lang"></param>
         /// <returns>The data if any</returns>
-        public static async Task<CardForeignData> GetTraductedData(string cardUuid, string lang)
+        public async Task<CardForeignData> GetTraductedData(string cardUuid, string lang)
         {
             try
             {
@@ -458,7 +469,7 @@ namespace MageekService
         /// <param name="cardUuid"></param>
         /// <param name="typeFilter"></param>
         /// <returns>true if it has it</returns>
-        public static async Task<bool> CardHasType(string cardUuid, string typeFilter)
+        public async Task<bool> CardHasType(string cardUuid, string typeFilter)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             string type = await DB.cards.Where(x => x.Uuid == cardUuid).Select(x => x.Type).FirstOrDefaultAsync();
@@ -471,9 +482,9 @@ namespace MageekService
         /// <param name="v"></param>
         /// <param name="currency"></param>
         /// <returns>The estimation</returns>
-        public static async Task<PriceLine> EstimateCardPrice(string cardUuid)
+        public async Task<PriceLine> EstimateCardPrice(string cardUuid)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             PriceLine? price = DB.PriceLine.Where(x => x.CardUuid == cardUuid).FirstOrDefault();
             if (price != null)
             {
@@ -515,7 +526,7 @@ namespace MageekService
         /// <param name="manaCost"></param>
         /// <param name="color"></param>
         /// <returns>The devotion to this color</returns>
-        public static int Devotion(string manaCost, char color)
+        public int Devotion(string manaCost, char color)
         {
             return manaCost.Length - manaCost.Replace(color.ToString(), "").Length;
         }
@@ -525,7 +536,7 @@ namespace MageekService
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>a local url to a jpg</returns>
-        public async static Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type)
+        public async Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type)
         {
             try
             {
@@ -553,7 +564,7 @@ namespace MageekService
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>The card uuid of the back</returns>
-        public async static Task<string?> GetCardBack(string cardUuid)
+        public async Task<string?> GetCardBack(string cardUuid)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             return await DB.cards.Where(x => x.Uuid == cardUuid).Select(x => x.OtherFaceIds).FirstOrDefaultAsync();
@@ -564,7 +575,7 @@ namespace MageekService
         /// </summary>
         /// <param name="selectedCard"></param>
         /// <returns>List of legalities</returns>
-        public async static Task<CardLegalities> GetLegalities(string CardUuid)
+        public async Task<CardLegalities> GetLegalities(string CardUuid)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             return await DB.cardLegalities.Where(x => x.Uuid == CardUuid).FirstOrDefaultAsync();
@@ -575,7 +586,7 @@ namespace MageekService
         /// </summary>
         /// <param name="selectedCard"></param>
         /// <returns>List of rulings</returns>
-        public async static Task<List<CardRulings>> GetRulings(string CardUuid)
+        public async Task<List<CardRulings>> GetRulings(string CardUuid)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             return await DB.cardRulings.Where(x => x.Uuid == CardUuid).ToListAsync();
@@ -587,7 +598,7 @@ namespace MageekService
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>A scryfall card</returns>
-        private static async Task<Card?> GetScryfallCard(string cardUuid)
+        private async Task<Card?> GetScryfallCard(string cardUuid)
         {
             try
             {
@@ -608,10 +619,10 @@ namespace MageekService
             }
         }
 
-        public async static Task ConvertCollectedFromScryfallIdToUuid()
+        public async Task ConvertCollectedFromScryfallIdToUuid()
         {
             Logger.Log("start!");
-            using (CollectionDbContext DB = await CollectionDbManager.GetContext())
+            using (CollectionDbContext DB = await collection.GetContext())
             using (MtgDbContext DB2 = await MtgDbManager.GetContext())
             {
                 int i = 0;
@@ -642,12 +653,12 @@ namespace MageekService
         /// <param name="cardUuid">from mtgjson</param>
         /// <param name="quantityModification">how many</param>
         /// <returns>Quantity in collec before and after the move</returns>
-        public static async Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification)
+        public async Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification)
         {
             // Guard
             if (string.IsNullOrEmpty(cardUuid)) return new Tuple<int, int>(0, 0);
             // Get or create collected card
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             CollectedCard collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
             if (collectedCard == null)
             {
@@ -674,12 +685,12 @@ namespace MageekService
         /// <param name="cardUuid"></param>
         /// <param name="onlyThisVariant">set to false if you want to perform archetypal search from this card variant</param>
         /// <returns>The count</returns>
-        public static async Task<int> Collected(string cardUuid, bool onlyThisVariant = true)
+        public async Task<int> Collected(string cardUuid, bool onlyThisVariant = true)
         {
             try
             {
                 if (string.IsNullOrEmpty(cardUuid)) return 0;
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 if (onlyThisVariant)
                 {
                     CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
@@ -697,11 +708,11 @@ namespace MageekService
                 return -1;
             }
         }
-        private static async Task<int> Collected_AllVariants(string archetypeId)
+        private async Task<int> Collected_AllVariants(string archetypeId)
         {
             if (string.IsNullOrEmpty(archetypeId)) return 0;
             int count = 0;
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             List<string> uuids = await DB.CardArchetypes.Where(x => x.ArchetypeId == archetypeId).Select(p => p.CardUuid).ToListAsync();
             foreach (string uuid in uuids) count += await Collected(uuid);
             return count;
@@ -713,12 +724,12 @@ namespace MageekService
         /// Totality of cards including their quantity
         /// </summary>
         /// <returns></returns>
-        public static async Task<int> GetTotal_Collected()
+        public async Task<int> GetTotal_Collected()
         {
             int total = 0;
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 total = DB.CollectedCard.Sum(x => x.Collected);
             }
             catch (Exception e)
@@ -732,11 +743,11 @@ namespace MageekService
         /// Totality of cards variants but doesnt sur their quantity
         /// </summary>
         /// <returns></returns>
-        public static async Task<int> GetTotal_CollectedDiff()
+        public async Task<int> GetTotal_CollectedDiff()
         {
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 return DB.CollectedCard.Count();
             }
             catch (Exception e)
@@ -750,11 +761,11 @@ namespace MageekService
         /// Totality of different archetypes
         /// </summary>
         /// <returns></returns>
-        public static async Task<int> GetTotal_CollectedArchetype()
+        public async Task<int> GetTotal_CollectedArchetype()
         {
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 return DB.CollectedCard.Count(); //TODO this is wrong
             }
             catch (Exception e)
@@ -768,12 +779,12 @@ namespace MageekService
         /// Totality of different existing card archetypes
         /// </summary>
         /// <returns></returns>
-        public static async Task<int> GetTotal_ExistingArchetypes()
+        public async Task<int> GetTotal_ExistingArchetypes()
         {
             int total = 0;
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 total = DB.CardArchetypes
                     .GroupBy(x => x.ArchetypeId)
                     .Select(grp => grp.First())
@@ -790,13 +801,13 @@ namespace MageekService
         /// Auto estimate collection
         /// </summary>
         /// <returns>Estimated price and a list of missing estimations</returns>
-        public static async Task<Tuple<decimal, List<string>>> AutoEstimatePrices(string currency)
+        public async Task<Tuple<decimal, List<string>>> AutoEstimatePrices(string currency)
         {
             decimal total = 0;
             List<string> missingList = new();
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 var allGot = await DB.CollectedCard.Where(x => x.Collected > 0).ToListAsync();
                 foreach (CollectedCard collectedCard in allGot)
                 {
@@ -827,12 +838,12 @@ namespace MageekService
         /// Get decks registered
         /// </summary>
         /// <returns>A list containing the decks</returns>
-        public static async Task<List<Deck>> GetDecks()
+        public async Task<List<Deck>> GetDecks()
         {
             List<Deck> decks = new();
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 decks = await DB.Decks.ToListAsync();
             }
             catch (Exception e) { Logger.Log(e); }
@@ -844,11 +855,11 @@ namespace MageekService
         /// </summary>
         /// <param name="deckId"></param>
         /// <returns>The found deck or null</returns>
-        public async static Task<Deck> GetDeck(string deckId)
+        public async Task<Deck> GetDeck(string deckId)
         {
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 Deck deck = await DB.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
                 return deck;
             }
@@ -864,11 +875,11 @@ namespace MageekService
         /// </summary>
         /// <param name="deckId"></param>
         /// <returns>A list of deck-card relations</returns>
-        public static async Task<List<DeckCard>> GetDeckContent(string deckId)
+        public async Task<List<DeckCard>> GetDeckContent(string deckId)
         {
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 return await DB.DeckCard.Where(x => x.DeckId == deckId).ToListAsync();
             }
             catch (Exception e)
@@ -884,12 +895,12 @@ namespace MageekService
         /// <param name="title"></param>
         /// <param name="description"></param>
         /// <returns>a reference to the deck</returns>
-        public static async Task<Deck> CreateDeck_Empty(string title, string description)
+        public async Task<Deck> CreateDeck_Empty(string title, string description)
         {
             if (string.IsNullOrEmpty(title)) return null;
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 Deck deck = new()
                 {
                     Title = title,
@@ -915,7 +926,7 @@ namespace MageekService
         /// <param name="description"></param>
         /// <param name="deckLines"></param>
         /// <returns>A list of messages, empty if everything went well</returns>
-        public static async Task<List<string>> CreateDeck_Contructed(string title, string description, IEnumerable<DeckCard> deckLines)
+        public async Task<List<string>> CreateDeck_Contructed(string title, string description, IEnumerable<DeckCard> deckLines)
         {
             List<string> messages = new();
             Deck deck = await CreateDeck_Empty(title, description);
@@ -928,7 +939,7 @@ namespace MageekService
             {
                 try
                 {
-                    using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                    using CollectionDbContext DB = await collection.GetContext();
                     foreach (DeckCard deckLine in deckLines)
                     {
                         if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.CardUuid).Any())
@@ -966,10 +977,10 @@ namespace MageekService
         /// </summary>
         /// <param name="deck"></param>
         /// <param name="title"></param>
-        public static async Task RenameDeck(string deckId, string title)
+        public async Task RenameDeck(string deckId, string title)
         {
             if (string.IsNullOrEmpty(title)) return;
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             var deck = await DB.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
             if (deck!=null)
             {
@@ -983,7 +994,7 @@ namespace MageekService
         /// Duplicate a deck
         /// </summary>
         /// <param name="deckToCopy"></param>
-        public static async Task DuplicateDeck(Deck deckToCopy)
+        public async Task DuplicateDeck(Deck deckToCopy)
         {
             if (deckToCopy == null) return;
             var newDeck = await CreateDeck_Empty(
@@ -991,7 +1002,7 @@ namespace MageekService
                 deckToCopy.Description);
             if(newDeck == null) return;
             
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             foreach (DeckCard relation in DB.DeckCard.Where(x=>x.DeckId==deckToCopy.DeckId))
             {
                 DB.DeckCard.Add(
@@ -1010,7 +1021,7 @@ namespace MageekService
             await DB.SaveChangesAsync();
         }
 
-        public static async Task DuplicateDeck(string deckId)
+        public async Task DuplicateDeck(string deckId)
         {
             var deck = await GetDeck(deckId);
             await DuplicateDeck(deck);
@@ -1024,11 +1035,11 @@ namespace MageekService
         /// <param name="deckId"></param>
         /// <param name="withSetCode"></param>
         /// <returns>the formated decklist</returns>
-        public static async Task<string> DeckToTxt(string deckId, bool withSetCode = false)
+        public async Task<string> DeckToTxt(string deckId, bool withSetCode = false)
         {
-            using CollectionDbContext collection = await CollectionDbManager.GetContext();
+            using CollectionDbContext collec = await collection.GetContext();
             using MtgDbContext cardInfos = await MtgDbManager.GetContext();
-            var deck = await collection.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
+            var deck = await collec.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
             if (deck == null) return "";
 
             StringBuilder result = new();
@@ -1080,7 +1091,7 @@ namespace MageekService
         /// <param name="content"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        internal static async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
+        internal async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
         {
             await DeleteDeck(deckId);
             await CreateDeck_Contructed(title, description, content);
@@ -1090,9 +1101,9 @@ namespace MageekService
         /// Delete a deck
         /// </summary>
         /// <param name="deck"></param>
-        public static async Task DeleteDeck(Deck deck)
+        public async Task DeleteDeck(Deck deck)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             DB.Decks.Remove(deck);
             await DB.SaveChangesAsync();
         }
@@ -1101,9 +1112,9 @@ namespace MageekService
         /// Delete a deck
         /// </summary>
         /// <param name="deck"></param>
-        public static async Task DeleteDeck(string deckId)
+        public async Task DeleteDeck(string deckId)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             var deck = await GetDeck(deckId);
             DB.Decks.Remove(deck);
             await DB.SaveChangesAsync();
@@ -1113,9 +1124,9 @@ namespace MageekService
         /// Deletes some decks
         /// </summary>
         /// <param name="decks"></param>
-        public static async Task DeleteDecks(List<Deck> decks)
+        public async Task DeleteDecks(List<Deck> decks)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             DB.Decks.RemoveRange(decks);
             await DB.SaveChangesAsync();
         }
@@ -1127,9 +1138,9 @@ namespace MageekService
         /// <param name="deck"></param>
         /// <param name="qty"></param>
         /// <param name="relation"></param>
-        public static async Task AddCardToDeck_WithoutSet(string archetypeId, Deck deck, int qty, int relation = 0)
+        public async Task AddCardToDeck_WithoutSet(string archetypeId, Deck deck, int qty, int relation = 0)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             List<string> cardUuids = await FindCard_Variants(archetypeId);
             if (cardUuids.Count>0) await AddCardToDeck(cardUuids[0], deck, qty, relation);
         }
@@ -1142,12 +1153,12 @@ namespace MageekService
         /// <param name="qty"></param>
         /// <param name="relation"></param>
         /// <returns></returns>
-        public static async Task AddCardToDeck(string cardUuid, Deck deck, int qty, int relation = 0)
+        public async Task AddCardToDeck(string cardUuid, Deck deck, int qty, int relation = 0)
         {
             if (string.IsNullOrEmpty(cardUuid) || deck == null) return;
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 var cardRelation = await DB.DeckCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
                 if (cardRelation == null)
                 {
@@ -1181,12 +1192,12 @@ namespace MageekService
         /// <param name="cardUuid"></param>
         /// <param name="deck"></param>
         /// <param name="qty"></param>
-        public static async Task RemoveCardFromDeck(string cardUuid, Deck deck, int qty = 1)
+        public async Task RemoveCardFromDeck(string cardUuid, Deck deck, int qty = 1)
         {
             if (string.IsNullOrEmpty(cardUuid) || deck == null) return;
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 var cardRelation = await DB.DeckCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
                 if (cardRelation == null) return;
                 cardRelation.Quantity -= qty;
@@ -1207,9 +1218,9 @@ namespace MageekService
         /// </summary>
         /// <param name="relation"></param>
         /// <param name="type"></param>
-        public static async Task ChangeDeckRelationType(DeckCard relation, int type)
+        public async Task ChangeDeckRelationType(DeckCard relation, int type)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             relation.RelationType = type;
             DB.Entry(relation).State = EntityState.Modified;
             await DB.SaveChangesAsync();
@@ -1220,7 +1231,7 @@ namespace MageekService
         /// </summary>
         /// <param name="cardDeckRelation"></param>
         /// <param name="cardUuid"></param>
-        public static async Task SwitchCardInDeck(DeckCard cardDeckRelation, string cardUuid)
+        public async Task SwitchCardInDeck(DeckCard cardDeckRelation, string cardUuid)
         {
             int qty = cardDeckRelation.Quantity;
             Deck deck = await GetDeck(cardDeckRelation.DeckId);
@@ -1234,10 +1245,10 @@ namespace MageekService
         /// </summary>
         /// <param name="deckId"></param>
         /// <returns>Color identity string</returns>
-        public static async Task<string> FindDeckColorIdentity(string deckId)
+        public async Task<string> FindDeckColorIdentity(string deckId)
         {
             string retour = "";
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             List<DeckCard> cards = await GetDeckContent(deckId);
             if (cards.Count > 0)
             {
@@ -1256,7 +1267,7 @@ namespace MageekService
         /// <param name="deck"></param>
         /// <param name="color"></param>
         /// <returns>true if true</returns>
-        public static async Task<bool> DeckHasThisColorIdentity(List<DeckCard> deck, char color)
+        public async Task<bool> DeckHasThisColorIdentity(List<DeckCard> deck, char color)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             foreach (DeckCard card in deck)
@@ -1276,7 +1287,7 @@ namespace MageekService
         /// <param name="deckId"></param>
         /// <param name="color"></param>
         /// <returns>The devotion to this color</returns>
-        public static async Task<int> DeckDevotion(string deckId, char color)
+        public async Task<int> DeckDevotion(string deckId, char color)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             List<DeckCard> deckCards = await GetDeckContent(deckId);
@@ -1294,11 +1305,11 @@ namespace MageekService
         /// </summary>
         /// <param name="deckId"></param>
         /// <returns>The estimation</returns>
-        public static async Task<Tuple<decimal, List<string>>> EstimateDeckPrice(string deckId, string currency)
+        public async Task<Tuple<decimal, List<string>>> EstimateDeckPrice(string deckId, string currency)
         {
             decimal total = 0;
             List<string> missingList = new();
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             List<DeckCard> deckCards = await GetDeckContent(deckId);
             foreach (var deckCard in deckCards)
             {
@@ -1321,10 +1332,10 @@ namespace MageekService
         /// </summary>
         /// <param name="deckId"></param>
         /// <returns>the count regarding quantities</returns>
-        public static async Task<int> Count_Total(string deckId)
+        public async Task<int> Count_Total(string deckId)
         {
             int count = 0;
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             foreach (DeckCard card in await GetDeckContent(deckId))
             {
                 count += card.Quantity;
@@ -1339,10 +1350,10 @@ namespace MageekService
         /// <param name="deckId"></param>
         /// <param name="typeFilter"></param>
         /// <returns>The count</returns>
-        public static async Task<int> Count_Typed(string deckId, string typeFilter)
+        public async Task<int> Count_Typed(string deckId, string typeFilter)
         {
             int count = 0;
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             var d = await GetDeckContent(deckId);
             foreach (DeckCard card in d)
             {
@@ -1357,10 +1368,10 @@ namespace MageekService
         /// <param name="deckId"></param>
         /// <param name="typeFilter"></param>
         /// <returns>The count</returns>
-        public static async Task<int> Count_Related(string deckId, int relationType)
+        public async Task<int> Count_Related(string deckId, int relationType)
         {
             int count = 0;
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             var d = await GetDeckContent(deckId);
             foreach (DeckCard card in d)
             {
@@ -1379,11 +1390,11 @@ namespace MageekService
         /// <param name="deckId"></param>
         /// <param name="typeFilter"></param>
         /// <returns>The deck cards</returns>
-        public static async Task<List<DeckCard>> GetDeckContent_Related(string deckId, int relationType)
+        public async Task<List<DeckCard>> GetDeckContent_Related(string deckId, int relationType)
         {
             List<DeckCard> rels = new();
             try {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 var d = await GetDeckContent(deckId);
                 foreach (DeckCard card in d)
                 {
@@ -1402,12 +1413,12 @@ namespace MageekService
         /// <param name="deckId"></param>
         /// <param name="typeFilter"></param>
         /// <returns>The deck cards</returns>
-        public static async Task<List<DeckCard>> GetDeckContent_Typed(string deckId, string typeFilter)
+        public async Task<List<DeckCard>> GetDeckContent_Typed(string deckId, string typeFilter)
         {
             List<DeckCard> rels = new();
             try
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 var d = await GetDeckContent(deckId);
                 foreach (DeckCard card in d)
                 {
@@ -1418,7 +1429,7 @@ namespace MageekService
             return rels;
         }
 
-        //public static async Task<List<DeckCard>> GetDeckContent_Cmc(float cmc)
+        //public async Task<List<DeckCard>> GetDeckContent_Cmc(float cmc)
         //{
         //    if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
         //    List<DeckCard> cardRelations = new List<DeckCard>();
@@ -1445,12 +1456,12 @@ namespace MageekService
         /// </summary>
         /// <param name="deckId"></param>
         /// <returns>ManaCurve</returns>
-        public static async Task<int[]> GetManaCurve(string deckId)
+        public async Task<int[]> GetManaCurve(string deckId)
         {
             var manaCurve = new int[11] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             try 
             {
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 using MtgDbContext DB2 = await MtgDbManager.GetContext();
                 var content = await GetDeckContent(deckId);
                 foreach (DeckCard c in content)
@@ -1472,9 +1483,9 @@ namespace MageekService
         /// </summary>
         /// <param name="deckId"></param>
         /// <returns>percentage</returns>
-        public static async Task<int> OwnedRatio(string deckId)
+        public async Task<int> OwnedRatio(string deckId)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             using MtgDbContext DB2 = await MtgDbManager.GetContext();
             var content = await GetDeckContent(deckId);
             int total = 0;
@@ -1500,9 +1511,9 @@ namespace MageekService
         /// </summary>
         /// <param name="deckId"></param>
         /// <returns>a text formated as : X cardName\n</returns>
-        public static async Task<string> ListMissingCards(string deckId)
+        public async Task<string> ListMissingCards(string deckId)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             using MtgDbContext DB2 = await MtgDbManager.GetContext();
             var content = await GetDeckContent(deckId);
             string missList = "";
@@ -1530,7 +1541,7 @@ namespace MageekService
         /// <param name="deck"></param>
         /// <param name="format"></param>
         /// <returns>"OK" or an error msg</returns>
-        public static async Task<string> DeckValidity(Deck deck, string format)
+        public async Task<string> DeckValidity(Deck deck, string format)
         {
             if (deck == null) return "";
             int minCards = GetMinCardInFormat(format);
@@ -1593,7 +1604,7 @@ namespace MageekService
         /// </summary>
         /// <param name="format"></param>
         /// <returns>The number</returns>
-        private static int GetMinCardInFormat(string format)
+        private int GetMinCardInFormat(string format)
         {
             return format switch
             {
@@ -1627,7 +1638,7 @@ namespace MageekService
         /// </summary>
         /// <param name="format"></param>
         /// <returns>The number</returns>
-        private static int GetMaxCardInFormat(string format)
+        private int GetMaxCardInFormat(string format)
         {
             return format switch
             {
@@ -1643,7 +1654,7 @@ namespace MageekService
         /// </summary>
         /// <param name="format"></param>
         /// <returns>The number</returns>
-        private static int GetMaxOccurenceInFormat(string format)
+        private int GetMaxOccurenceInFormat(string format)
         {
             return format switch
             {
@@ -1658,7 +1669,7 @@ namespace MageekService
 
         #region Sets
 
-        public async static Task<Sets> RetrieveSet(string setCode)
+        public async Task<Sets> RetrieveSet(string setCode)
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             return await DB.sets.FirstOrDefaultAsync(x=>x.Code==setCode);
@@ -1668,7 +1679,7 @@ namespace MageekService
         /// Get all sets
         /// </summary>
         /// <returns>List of sets</returns>
-        public async static Task<List<Sets>> LoadSets()
+        public async Task<List<Sets>> LoadSets()
         {
             using MtgDbContext DB = await MtgDbManager.GetContext();
             return DB.sets.OrderByDescending(x => x.ReleaseDate).ToList();
@@ -1679,7 +1690,7 @@ namespace MageekService
         /// </summary>
         /// <param name="setCode"></param>
         /// <returns>Uuid list of cards in set</returns>
-        public async static Task<List<Cards>> GetCardsFromSet(string setCode)
+        public async Task<List<Cards>> GetCardsFromSet(string setCode)
         {
             List<Cards> cards = new();
             if (!string.IsNullOrEmpty(setCode))
@@ -1706,13 +1717,13 @@ namespace MageekService
         /// <param name="setCode"></param>
         /// <param name="strict">if set to false, the archetype from any set counts</param>
         /// <returns>the distinct count</returns>
-        public static async Task<int> GetMtgSetCompletion(string setCode, bool strict)
+        public async Task<int> GetMtgSetCompletion(string setCode, bool strict)
         {
             int nb = 0;
             try
             {
                 var cardUuids = await GetCardsFromSet(setCode);
-                using CollectionDbContext DB = await CollectionDbManager.GetContext();
+                using CollectionDbContext DB = await collection.GetContext();
                 foreach (var card in cardUuids)
                 {
                     if (await Collected(card.Uuid, strict) > 0) nb++;
@@ -1733,10 +1744,10 @@ namespace MageekService
         /// List all existing tags
         /// </summary>
         /// <returns>List of distinct tags</returns>
-        public static async Task<List<Tag>> GetTags()
+        public async Task<List<Tag>> GetTags()
         {
             List<Tag> tags = new();
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             tags.Add(null);
             tags.AddRange(
                     DB.Tag.GroupBy(x => x.TagContent).Select(x => x.First())
@@ -1750,7 +1761,7 @@ namespace MageekService
         /// <param name="cardId"></param>
         /// <param name="tagFilterSelected"></param>
         /// <returns>true if this card has this tag</returns>
-        public static async Task<bool> HasTag(string cardId, string tagFilterSelected)
+        public async Task<bool> HasTag(string cardId, string tagFilterSelected)
         {
             return (await GetTags(cardId)).Where(x => x.TagContent == tagFilterSelected).Any();
         }
@@ -1760,9 +1771,9 @@ namespace MageekService
         /// </summary>
         /// <param name="archetypeId"></param>
         /// <param name="text"></param>
-        public static async Task TagCard(string archetypeId, string text)
+        public async Task TagCard(string archetypeId, string text)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             DB.Tag.Add(new Tag()
             {
                 TagContent = text,
@@ -1775,9 +1786,9 @@ namespace MageekService
         /// Remove a tag from a card
         /// </summary>
         /// <param name="cardTag"></param>
-        public static async Task UnTagCard(string archetypeId, string text)
+        public async Task UnTagCard(string archetypeId, string text)
         {
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             var cardTag = DB.Tag.Where(x => x.ArchetypeId == archetypeId && x.TagContent==text).FirstOrDefault();
             if (cardTag != null)
             {
@@ -1791,10 +1802,10 @@ namespace MageekService
         /// </summary>
         /// <param name="archetypeId"></param>
         /// <returns>List of tags</returns>
-        public static async Task<List<Tag>> GetTags(string archetypeId)
+        public async Task<List<Tag>> GetTags(string archetypeId)
         {
             List<Tag> tags = new();
-            using CollectionDbContext DB = await CollectionDbManager.GetContext();
+            using CollectionDbContext DB = await collection.GetContext();
             tags.AddRange(DB.Tag.Where(x => x.ArchetypeId == archetypeId));
             return tags;
         }

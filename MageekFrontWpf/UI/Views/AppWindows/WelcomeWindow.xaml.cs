@@ -18,9 +18,9 @@ namespace MageekFrontWpf.UI.Views.AppWindows
             InitializeComponent();
         }
 
-        protected override void OnActivated(EventArgs e)
+        protected override void OnInitialized(EventArgs e)
         {
-            base.OnActivated(e);
+            base.OnInitialized(e);
             vm.Init().ConfigureAwait(false);
         }
 

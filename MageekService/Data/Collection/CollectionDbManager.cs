@@ -7,6 +7,7 @@ using MageekService.Data.Mtg.Entities;
 using MageekService.Tools;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ScryfallApi.Client.Models;
 using System.Net;
 using System.Text.Json;
@@ -19,16 +20,23 @@ namespace MageekService.Data.Collection
     /// Call Initialize() first, then you can use GetContext()
     /// to access data through entity framework.
     /// </summary>
-    public static class CollectionDbManager
+    public class CollectionDbManager
     {
 
-        public static async Task<CollectionDbContext?> GetContext()
+        private readonly ILogger<CollectionDbManager> logger;
+
+        public CollectionDbManager(ILogger<CollectionDbManager> logger)
+        {
+            this.logger = logger;
+        }
+
+        public async Task<CollectionDbContext?> GetContext()
         {
             await Task.Delay(0);
             return new CollectionDbContext(Folders.DB);
         }
 
-        private static string[] MageekDbDescription { get; } = new string[] {
+        private string[] MageekDbDescription { get; } = new string[] {
             "CREATE TABLE \"CardArchetypes\" (\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"ArchetypeId\"\tTEXT\r\n);",
             "CREATE TABLE \"CardTraductions\" (\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"Language\"\tTEXT,\r\n\t\"Traduction\"\tTEXT,\r\n\t\"NormalizedTraduction\"\tTEXT\r\n);",
             "CREATE TABLE \"CollectedCard\" (\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"Collected\"\tINTEGER\r\n);",
@@ -40,7 +48,7 @@ namespace MageekService.Data.Collection
             "CREATE TABLE \"Tag\" (\r\n\t\"TagId\"\tTEXT,\r\n\t\"TagContent\"\tTEXT,\r\n\t\"ArchetypeId\"\tTEXT\r\n);"
         };
 
-        public static void CreateDb()
+        public void CreateDb()
         {
             SqliteConnection dbCo = new SqliteConnection("Data Source = " + Folders.DB);
             dbCo.Open();
@@ -48,11 +56,11 @@ namespace MageekService.Data.Collection
             dbCo.Close();
         }
 
-        public static async Task FetchMtg()
+        public async Task FetchMtg()
         {
             try
             {
-                Logger.Log("Start");
+                logger.LogInformation("Start");
                 List<Task> tasks = new()
                 {
                     FetchMtg_Archetypes(),
@@ -60,20 +68,20 @@ namespace MageekService.Data.Collection
                     FetchMtg_SetIcons()
                 };
                 await Task.WhenAll(tasks);
-                Logger.Log("Done");
+                logger.LogInformation("Done");
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                logger.LogError(e.Message);
             }
         }
 
-        public static async Task FetchMtg_Archetypes()
+        public async Task FetchMtg_Archetypes()
         {
             try
             {
                 List<ArchetypeCard> archetypes = new();
-                Logger.Log("Parsing...");
+                logger.LogInformation("Parsing...");
                 using (MtgDbContext mtgSqliveContext = await MtgDbManager.GetContext())
                 {
                     foreach (Cards card in mtgSqliveContext.cards)
@@ -87,8 +95,8 @@ namespace MageekService.Data.Collection
                         );
                     }
                 }
-                Logger.Log("Saving...");
-                using (CollectionDbContext collectionDbContext = await CollectionDbManager.GetContext())
+                logger.LogInformation("Saving...");
+                using (CollectionDbContext collectionDbContext = await GetContext())
                 {
                     await collectionDbContext.CardArchetypes.ExecuteDeleteAsync();
                     using var transaction = collectionDbContext.Database.BeginTransaction();
@@ -96,20 +104,20 @@ namespace MageekService.Data.Collection
                     await collectionDbContext.SaveChangesAsync();
                     transaction.Commit();
                 }
-                Logger.Log("Done");
+                logger.LogInformation("Done");
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                logger.LogError(e.Message);
             }
         }
 
-        public static async Task FetchMtg_Traductions()
+        public async Task FetchMtg_Traductions()
         {
             try
             {
                 List<CardTraduction> traductions = new();
-                Logger.Log("Parsing...");
+                logger.LogInformation("Parsing...");
                 using (MtgDbContext mtgSqliveContext = await MtgDbManager.GetContext())
                 {
                     foreach (CardForeignData traduction in mtgSqliveContext.cardForeignData)
@@ -144,8 +152,8 @@ namespace MageekService.Data.Collection
                         }
                     }
                 }
-                Logger.Log("Saving...");
-                using (CollectionDbContext collectionDbContext = await CollectionDbManager.GetContext())
+                logger.LogInformation("Saving...");
+                using (CollectionDbContext collectionDbContext = await GetContext())
                 {
                     await collectionDbContext.CardTraductions.ExecuteDeleteAsync();
                     using var transaction = collectionDbContext.Database.BeginTransaction();
@@ -153,17 +161,17 @@ namespace MageekService.Data.Collection
                     await collectionDbContext.SaveChangesAsync();
                     transaction.Commit();
                 }
-                Logger.Log("Done");
+                logger.LogInformation("Done");
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                logger.LogError(e.Message);
             }
         }
 
-        public static async Task FetchMtg_SetIcons()
+        public async Task FetchMtg_SetIcons()
         {
-            Logger.Log("Start");
+            logger.LogInformation("Start");
             try
             {
                 string json_data = await HttpUtils.Get("https://api.scryfall.com/sets/");
@@ -181,8 +189,8 @@ namespace MageekService.Data.Collection
                     }
                 }
             }
-            catch (Exception e) { Logger.Log(e); }
-            Logger.Log("Done");
+            catch (Exception e) { logger.LogError(e.Message); }
+            logger.LogInformation("Done");
         }
 
     }
