@@ -3,6 +3,22 @@
 namespace MageekService
 {
 
+
+    public enum MageekInitReturn
+    {
+        Error,
+        MtgUpToDate,
+        MtgOutdated,
+    }
+
+    public enum MageekUpdateReturn
+    {
+        ErrorDownloading,
+        ErrorFetching,
+        Success,
+    }
+
+
     /// <summary>
     /// Relations beetween cards incliding tokens, melds and combos
     /// </summary>

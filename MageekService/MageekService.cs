@@ -15,23 +15,9 @@ using MageekService.Tools;
 
 namespace MageekService
 {
-    public enum MageekInitReturn
-    {
-        Error,
-        MtgUpToDate,
-        MtgOutdated,
-    }
-    public enum MageekUpdateReturn
-    {
-        ErrorDownloading,
-        ErrorFetching,
-        Success,
-    }
 
     public static class MageekService
     {
-
-
 
         public static async Task<MageekInitReturn> InitializeService()
         {
@@ -322,12 +308,12 @@ namespace MageekService
                 .FirstOrDefaultAsync();
         }
 
-        public static async Task<List<CardCardRelation>> FindCard_Related(Cards inputCard) 
+        public static async Task<List<CardCardRelation>> FindCard_Related(string uuid, string originalarchetype) 
         {
             // TODO cache data
             List<CardCardRelation> outputCards = new();
-            if (inputCard == null) return outputCards;
-            var scryCard = await GetScryfallCard(inputCard.Uuid);
+            if (string.IsNullOrEmpty(uuid)) return outputCards;
+            var scryCard = await GetScryfallCard(uuid);
             if (scryCard.AllParts == null) return outputCards;
             try
             {
@@ -337,7 +323,7 @@ namespace MageekService
                     part.TryGetValue("name", out string archetype);
                     if (!string.IsNullOrEmpty(component) && !string.IsNullOrEmpty(archetype))
                     {
-                        if (archetype!=inputCard.Name)
+                        if (archetype!= originalarchetype)
                         {
                             CardCardRelationRole? role = null;
                             switch(component)

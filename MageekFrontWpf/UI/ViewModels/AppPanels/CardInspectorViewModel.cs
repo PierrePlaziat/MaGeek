@@ -78,6 +78,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             );
             IsLoading = false;
         }
+
         private async Task GetCardVariants()
         {
             SelectedVariant = null;
@@ -109,11 +110,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
         private async Task GetRelatedCards()
         {
-            RelatedCards = await MageekService.MageekService.FindCard_Related(SelectedVariant.Card); 
+            RelatedCards = await MageekService.MageekService.FindCard_Related(SelectedUuid, selectedArchetype); 
         }
         private async Task GetTags()
         {
-            Tags = await MageekService.MageekService.GetTags(SelectedVariant.Card.Name);
+            Tags = await MageekService.MageekService.GetTags(SelectedArchetype);
         }
         private async Task GetTotalGot() 
         {
