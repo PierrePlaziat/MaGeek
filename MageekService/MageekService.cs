@@ -231,11 +231,11 @@ namespace MageekService
                     retour = new List<Cards>(tagged);
                 }
 
-                if (onlyGot)
-                {
-                    using CollectionDbContext DB = await collection.GetContext();
-                    retour = retour.Where(x => x.Collected > 0).ToList();
-                }
+                //if (onlyGot)
+                //{
+                //    using CollectionDbContext DB = await collection.GetContext();
+                //    retour = retour.Where(x => x.Collected > 0).ToList();
+                //}
             }
             catch (Exception e) { Logger.Log(e); }
             return retour;
@@ -321,7 +321,7 @@ namespace MageekService
                 .FirstOrDefaultAsync();
         }
 
-        public static async Task<List<CardCardRelation>> FindCard_Related(string uuid, string originalarchetype) 
+        public async Task<List<CardCardRelation>> FindCard_Related(string uuid, string originalarchetype) 
         {
             // TODO cache data
             List<CardCardRelation> outputCards = new();
@@ -696,7 +696,7 @@ namespace MageekService
                 return -1;
             }
         }
-        private async Task<int> Collected_AllVariants(string archetypeId)
+        public async Task<int> Collected_AllVariants(string archetypeId)
         {
             if (string.IsNullOrEmpty(archetypeId)) return 0;
             int count = 0;

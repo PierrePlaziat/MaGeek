@@ -26,60 +26,66 @@ namespace MageekService
 
     public class MageekServer : IMageekServer
     {
+        private MageekService mageek;
+
+        public MageekServer(MageekService mageek)
+        {
+            this.mageek = mageek;
+        }
 
         public async Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification)
         {
-            return await MageekService.CollecMove(cardUuid,quantityModification);
+            return await mageek.CollecMove(cardUuid,quantityModification);
         }
         public async Task<int> Collected(string cardUuid, bool onlyThisVariant)
         {
-            return await MageekService.Collected(cardUuid, onlyThisVariant);
+            return await mageek.Collected(cardUuid, onlyThisVariant);
         }
 
         public async Task CreateDeck(string title, string description, IEnumerable<DeckCard> content)
         {
-            await MageekService.CreateDeck_Contructed(title, description, content);
+            await mageek.CreateDeck_Contructed(title, description, content);
         }
         public async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
         {
-            await MageekService.UpdateDeck(deckId, title, description, content);
+            await mageek.UpdateDeck(deckId, title, description, content);
         }
         public async Task DeleteDeck(string deckId)
         {
-            await MageekService.DeleteDeck(deckId);
+            await mageek.DeleteDeck(deckId);
         }
         public async Task<IEnumerable<Tag>> GetCardTags(string archetypeId)
         {
-            return await MageekService.GetTags(archetypeId);
+            return await mageek.GetTags(archetypeId);
         }
         public async Task<IEnumerable<DeckCard>> GetDeckContent(string deckId)
         {
-            return await MageekService.GetDeckContent(deckId);
+            return await mageek.GetDeckContent(deckId);
         }
         public async Task<Deck> GetDeckInfo(string deckId)
         {
-            return await MageekService.GetDeck(deckId);
+            return await mageek.GetDeck(deckId);
         }
         public async Task<IEnumerable<Deck>> GetDecks()
         {
-            return await MageekService.GetDecks();
+            return await mageek.GetDecks();
         }
 
         public async Task<IEnumerable<Tag>> GetExistingTags()
         {
-            return await MageekService.GetTags();
+            return await mageek.GetTags();
         }
         public async Task<bool> HasTag(string archetypeId, string tag)
         {
-            return await MageekService.HasTag(archetypeId,tag);
+            return await mageek.HasTag(archetypeId,tag);
         }
         public async Task TagCard(string archetypeId, string tag)
         {
-            await MageekService.TagCard(archetypeId, tag);
+            await mageek.TagCard(archetypeId, tag);
         }
         public async Task UnTagCard(string archetypeId, string tag)
         {
-            await MageekService.UnTagCard(archetypeId, tag);
+            await mageek.UnTagCard(archetypeId, tag);
         }
 
     }

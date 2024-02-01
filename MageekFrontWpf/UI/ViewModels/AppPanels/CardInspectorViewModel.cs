@@ -23,7 +23,8 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         public CardInspectorViewModel(
             MageekService.MageekService mageek
-        ){
+        )
+        {
             this.mageek = mageek;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
@@ -114,23 +115,27 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
         private async Task GetRelatedCards()
         {
-            RelatedCards = await MageekService.MageekService.FindCard_Related(SelectedUuid, selectedArchetype); 
+            RelatedCards = await mageek.FindCard_Related(SelectedUuid, SelectedArchetype); 
         }
         private async Task GetTags()
         {
-            Tags = await MageekService.MageekService.GetTags(SelectedArchetype);
+            Tags = await mageek.GetTags(SelectedArchetype);
         }
         private async Task GetTotalGot() 
         {
-            TotalGot = Variants.Sum(x => x.Card.Collected);
+            TotalGot = await mageek.Collected_AllVariants(SelectedArchetype);
         }
         private async Task GetMeanPrice()
         {
-            MeanPrice = Variants.Count == 0 ? 0 : Variants.Where(x => x.GetPrice.HasValue).Sum(x => x.GetPrice.Value) / Variants.Count;
+            await Task.Run(() => {
+                MeanPrice = Variants.Count == 0 ? 0 : Variants.Where(x => x.GetPrice.HasValue).Sum(x => x.GetPrice.Value) / Variants.Count;
+            });
         }
         private async Task GetVariantCount()
         {
-            VariantCount = Variants.Count;
+            await Task.Run(() => {
+                VariantCount = Variants.Count;
+            });
         }
 
         [RelayCommand]
@@ -143,9 +148,8 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task AddToCurrentDeck(string uuid)
         {
-            //TODO
-            //await MageekService.MageekService.AddCardToDeck(uuid, state.SelectedDeck, 1);
-            //events.RaiseUpdateDeck();
+            await mageek.AddCardToDeck(uuid, state.SelectedDeck, 1);
+            events.RaiseUpdateDeck();
         }
 
         [RelayCommand] 

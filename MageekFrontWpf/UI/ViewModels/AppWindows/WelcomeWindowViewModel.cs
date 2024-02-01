@@ -13,11 +13,13 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     {
 
         private readonly WindowsService winManager;
+        private readonly DialogService dialog;
         private readonly MageekService.MageekService mageek;
 
         public WelcomeWindowViewModel(
             WindowsService winManager,
-            MageekService.MageekService mageek
+            MageekService.MageekService mageek,
+            DialogService dialog
         ){
             this.mageek = mageek;
             this.winManager = winManager;

@@ -36,6 +36,8 @@ namespace MageekService
         }
 
         private string infoText = "";
+        private MageekService mageek;
+
         public string InfoText
         {
             get { return infoText; }
@@ -48,8 +50,9 @@ namespace MageekService
 
         #region CTOR
 
-        public CollectionImporter()
+        public CollectionImporter(MageekService mageek)
         {
+            this.mageek = mageek;
             ConfigureTimer();
             if (PendingCount > 0)
             {
@@ -196,7 +199,7 @@ namespace MageekService
         {
             List<DeckCard> importLines;
             importLines = await ParseCardList(importing.Content);
-            await MageekService.CreateDeck_Contructed(
+            await mageek.CreateDeck_Contructed(
                 importing.Title ?? DateTime.Now.ToString(),
                 "",
                 importLines

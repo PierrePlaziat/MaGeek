@@ -10,9 +10,6 @@ namespace MageekService.Data.Collection.Entities
     public class DeckCard
     {
 
-        public Cards Card { get { return MageekService.FindCard_Data(CardUuid).Result; } }
-
-
         [Key, Column(Order = 0)]
         public string DeckId { get; set; }
         [Key, Column(Order = 1)]
@@ -23,7 +20,6 @@ namespace MageekService.Data.Collection.Entities
         /// </summary>
         public int RelationType { get; set; }
 
-
-
     }
+
 }
