@@ -18,8 +18,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<UpdateDeckMessage>
     {
 
-        public DeckTableViewModel()
+        public DeckTableViewModel(MageekService.MageekService mageek)
         {
+            this.mageek = mageek;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
@@ -41,7 +42,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] private bool hasLands;
         [ObservableProperty] private bool isLoading;
         [ObservableProperty] private int currentCardSize;
-
+        private MageekService.MageekService mageek;
         private readonly Dictionary<DeckCard, Cards> cardData = new();
 
         const int CardSize_Complete = 207;
@@ -57,7 +58,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         public void Receive(DeckSelectMessage message)
         {
-            CurrentDeck = MageekService.MageekService.GetDeck(message.Value).Result;
+            CurrentDeck = mageek.GetDeck(message.Value).Result;
         }
 
         private void FullRefresh()
@@ -79,10 +80,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             {
                 IsLoading = true;
                 OnPropertyChanged(nameof(IsActive));
-                CardRelations_Content = await MageekService.MageekService.GetDeckContent_Related(CurrentDeck.DeckId, 0);
-                CardRelations_Commandant = await MageekService.MageekService.GetDeckContent_Related(CurrentDeck.DeckId, 1);
-                CardRelations_Side = await MageekService.MageekService.GetDeckContent_Related(CurrentDeck.DeckId, 2);
-                CardRelations_Lands = await MageekService.MageekService.GetDeckContent_Typed(CurrentDeck.DeckId, "Land");
+                CardRelations_Content = await mageek.GetDeckContent_Related(CurrentDeck.DeckId, 0);
+                CardRelations_Commandant = await mageek.GetDeckContent_Related(CurrentDeck.DeckId, 1);
+                CardRelations_Side = await mageek.GetDeckContent_Related(CurrentDeck.DeckId, 2);
+                CardRelations_Lands = await mageek.GetDeckContent_Typed(CurrentDeck.DeckId, "Land");
                 OnPropertyChanged(nameof(CardRelations_Content));
                 OnPropertyChanged(nameof(CardRelations_Commandant));
                 OnPropertyChanged(nameof(CardRelations_Side));
@@ -126,7 +127,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             cardRelations.AddRange(CardRelations_Commandant);
             foreach (var cardRelation in cardRelations)
             {
-                var data = await MageekService.MageekService.FindCard_Data(cardRelation.CardUuid);
+                var data = await mageek.FindCard_Data(cardRelation.CardUuid);
                 cardData.Add(cardRelation, data);
             }
         }
@@ -170,31 +171,31 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task SetCommandant_Click(DeckCard cr)
         {
-            await MageekService.MageekService.ChangeDeckRelationType(cr, 1);
+            await mageek.ChangeDeckRelationType(cr, 1);
         }
 
         [RelayCommand]
         private async Task UnsetCommandant_Click(DeckCard cr)
         {
-            await MageekService.MageekService.ChangeDeckRelationType(cr, 0);
+            await mageek.ChangeDeckRelationType(cr, 0);
         }
 
         [RelayCommand]
         private async Task ToSide_Click(DeckCard cr)
         {
-            await MageekService.MageekService.ChangeDeckRelationType(cr, 2);
+            await mageek.ChangeDeckRelationType(cr, 2);
         }
 
         [RelayCommand]
         private async Task AddOne_Click(DeckCard cr)
         {
-            await MageekService.MageekService.AddCardToDeck(cr.CardUuid, CurrentDeck, 1);
+            await mageek.AddCardToDeck(cr.CardUuid, CurrentDeck, 1);
         }
 
         [RelayCommand]
         private async Task RemoveOne_Click(DeckCard cr)
         {
-            await MageekService.MageekService.RemoveCardFromDeck(cr.CardUuid, CurrentDeck);
+            await mageek.RemoveCardFromDeck(cr.CardUuid, CurrentDeck);
         }
 
     }

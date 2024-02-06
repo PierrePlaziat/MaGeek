@@ -7,6 +7,7 @@ using MageekService;
 using MageekService.Data.Collection.Entities;
 using MageekService.Data.Mtg.Entities;
 using MageekService.Tools;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -148,8 +149,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task AddToCurrentDeck(string uuid)
         {
-            await mageek.AddCardToDeck(uuid, state.SelectedDeck, 1);
-            events.RaiseUpdateDeck();
+            // TODO think a system to select deck
+            throw new NotImplementedException();
+            //await mageek.AddCardToDeck(uuid, state.SelectedDeck, 1);
+            //events.RaiseUpdateDeck();
         }
 
         [RelayCommand] 

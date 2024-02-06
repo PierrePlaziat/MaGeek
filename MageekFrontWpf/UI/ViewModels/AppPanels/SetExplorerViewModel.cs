@@ -12,7 +12,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
     public partial class SetExplorerViewModel : BaseViewModel
     {
 
-        public SetExplorerViewModel(){}
+        private MageekService.MageekService mageek;
+
+        public SetExplorerViewModel(MageekService.MageekService mageek)
+        {
+            this.mageek = mageek;
+        }
 
         [ObservableProperty] List<Sets> setList = new();
         [ObservableProperty] List<string> types = new();
@@ -23,12 +28,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         private async void LoadSets()
         {
-            SetList = await MageekService.MageekService.LoadSets();
+            SetList = await mageek.LoadSets();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetList = MageekService.MageekService.LoadSets().Result.Where(x => FilterBlock == "All blocks" || x.Block == FilterBlock)
+            SetList = mageek.LoadSets().Result.Where(x => FilterBlock == "All blocks" || x.Block == FilterBlock)
                                 .Where(x => FilterType == "All types" || x.Type == FilterType).ToList();
         }
 
@@ -36,7 +41,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         {
             var s = ((ListView)sender).SelectedItem as Sets;
             Variants = null;
-            Variants = await MageekService.MageekService.GetCardsFromSet(s.Code);
+            Variants = await mageek.GetCardsFromSet(s.Code);
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

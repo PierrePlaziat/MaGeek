@@ -14,8 +14,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     public class ProxyPrintViewModel : BaseViewModel
     {
 
-        public ProxyPrintViewModel()
+        private MageekService.MageekService mageek;
+
+        public ProxyPrintViewModel(MageekService.MageekService mageek)
         {
+            this.mageek = mageek;
             if (selectedDeck != null)
             {
                 SelectedDeck = selectedDeck;
@@ -69,7 +72,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         private bool IncludeBasicLands = false;
         private bool OnlyMissing = false;
 
-
         private async Task DelayLoad()
         {
             await Task.Delay(1);
@@ -95,12 +97,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         private async Task DetermineListOfCardsToPrint()
         {
             ListOfCardsToPrint = new List<string>();
-            foreach (var v in await MageekService.MageekService.GetDeckContent(selectedDeck.DeckId))
+            foreach (var v in await mageek.GetDeckContent(selectedDeck.DeckId))
             {
                 ;
-                if (IncludeBasicLands || !await MageekService.MageekService.CardHasType(v.CardUuid, "Basic Land"))
+                if (IncludeBasicLands || !await mageek.CardHasType(v.CardUuid, "Basic Land"))
                 {
-                    if (!OnlyMissing || await MageekService.MageekService.Collected(v.CardUuid) == 0)
+                    if (!OnlyMissing || await mageek.Collected(v.CardUuid) == 0)
                     {
                         for (int i = 0; i < v.Quantity; i++)
                         {

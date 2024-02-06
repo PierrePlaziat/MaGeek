@@ -11,11 +11,12 @@ namespace MageekFrontWpf.UI.Views.AppPanels
 
     public partial class CardInspector : BaseUserControl
     {
-
+        private MageekService.MageekService mageek;
         private CardInspectorViewModel vm;
 
-        public CardInspector(CardInspectorViewModel vm)
+        public CardInspector(CardInspectorViewModel vm,MageekService.MageekService mageek)
         {
+            this.mageek = mageek;
             this.vm = vm;
             DataContext = vm;
             InitializeComponent();
@@ -25,7 +26,7 @@ namespace MageekFrontWpf.UI.Views.AppPanels
         {
             bool found = false;
             var border = (resultStack.Parent as ScrollViewer).Parent as Border;
-            var data = await MageekService.MageekService.GetTags();
+            var data = await mageek.GetTags();
             string query = (sender as TextBox).Text;
             if (query.Length == 0)
             {
@@ -84,7 +85,7 @@ namespace MageekFrontWpf.UI.Views.AppPanels
         private void SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ListView sendedBy = (sender as ListView);
-            if (sendedBy.SelectedItem is DeckCard cardRel) vm.Reload(cardRel.Card.Uuid).ConfigureAwait(false);
+            if (sendedBy.SelectedItem is DeckCard cardRel) vm.Reload(cardRel.CardUuid).ConfigureAwait(false);
             sendedBy.UnselectAll();
         }
 

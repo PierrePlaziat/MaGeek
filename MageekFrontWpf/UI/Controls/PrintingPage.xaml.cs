@@ -11,6 +11,8 @@ namespace MaGeek.UI.Controls
     public partial class PrintingPage : BaseUserControl
     {
 
+        private MageekService.MageekService mageek;
+
         private BitmapImage card0;
         public BitmapImage Card0
         {
@@ -68,6 +70,7 @@ namespace MaGeek.UI.Controls
         }
 
         private BitmapImage card8;
+
         public BitmapImage Card8
         {
             get { return card8; }
@@ -76,13 +79,14 @@ namespace MaGeek.UI.Controls
 
         public PrintingPage()
         {
+            mageek = ServiceHelper.GetService<MageekService.MageekService>();
             InitializeComponent();
             DataContext = this;
         }
 
         public async Task SetCard(string cardUuid, int emplacement)
         {
-            BitmapImage bmp = new BitmapImage(await MageekService.MageekService.RetrieveImage(cardUuid, CardImageFormat.png));
+            BitmapImage bmp = new BitmapImage(await mageek.RetrieveImage(cardUuid, CardImageFormat.png));
             switch (emplacement)
             {
                 case 0: Card0 = bmp; break;

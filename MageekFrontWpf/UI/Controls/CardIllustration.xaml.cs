@@ -1,4 +1,5 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekService;
 using MageekService.Data.Mtg.Entities;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace MaGeek.UI
 
     public partial class CardIllustration : BaseUserControl
     {
+
+        private MageekService.MageekService mageek;
 
         public static readonly DependencyProperty CardUuidProperty =  DependencyProperty.Register(nameof(CardUuid), typeof(string), typeof(CardIllustration), new FrameworkPropertyMetadata(null, OnCardUuidChanged));
 
@@ -66,6 +69,7 @@ namespace MaGeek.UI
         bool flipped;
 
         private bool showHud = false;
+
         public bool ShowHud
         {
             get { return showHud; }
@@ -76,6 +80,7 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
+            mageek = ServiceHelper.GetService<MageekService.MageekService>();
         }
 
         private static void OnCardUuidChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs)
@@ -87,13 +92,13 @@ namespace MaGeek.UI
         private async Task SelectCard(string uuid)
         {
             flipped = false;
-            Cards cardFront = await MageekService.MageekService.FindCard_Data(uuid);
+            Cards cardFront = await mageek.FindCard_Data(uuid);
             Cards cardBack = null;
             SelectedCard = cardFront;
             if (cardFront != null && cardFront.OtherFaceIds != null)
             {
                 string backUuid = cardFront.OtherFaceIds;
-                cardBack = await MageekService.MageekService.FindCard_Data(backUuid);
+                cardBack = await mageek.FindCard_Data(backUuid);
             }
             await Task.WhenAll(
                 new List<Task>
@@ -109,7 +114,7 @@ namespace MaGeek.UI
         {
             CardFront = cardFront;
             ImageFront = null;
-            var url = await MageekService.MageekService.RetrieveImage(cardFront.Uuid, CardImageFormat.png);
+            var url = await mageek.RetrieveImage(cardFront.Uuid, CardImageFormat.png);
             if (url != null) ImageFront = new BitmapImage(url);
         }
 
@@ -117,7 +122,7 @@ namespace MaGeek.UI
         {
             CardBack = cardBack;
             ImageBack = null;
-            var url = await MageekService.MageekService.RetrieveImage(cardBack.Uuid, CardImageFormat.png);
+            var url = await mageek.RetrieveImage(cardBack.Uuid, CardImageFormat.png);
             if (url != null) ImageBack = new BitmapImage(url);
         }
 

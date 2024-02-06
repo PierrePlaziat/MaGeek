@@ -16,14 +16,16 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
     //events.UpdateDeckListEvent += async () => { await Reload(); };
     public partial class DeckListViewModel : BaseViewModel
     {
-
+        private MageekService.MageekService mageek;
         private SettingService config;
         private DialogService dialog;
 
         public DeckListViewModel(
             SettingService config,
-            DialogService dialog
-        ){
+            DialogService dialog, 
+            MageekService.MageekService mageek)
+        {
+            this.mageek = mageek;
             this.config = config;
             this.dialog = dialog;
         }
@@ -42,7 +44,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         private async Task Reload()
         {
             IsLoading = true;
-            Decks = FilterDeck(await MageekService.MageekService.GetDecks());
+            Decks = FilterDeck(await mageek.GetDecks());
             IsLoading = false;
         }
 
@@ -50,7 +52,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         private async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await MageekService.MageekService.CreateDeck_Empty(title, "");
+            await mageek.CreateDeck_Empty(title, "");
             await Reload();
         }
 
@@ -58,28 +60,28 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         private async Task RenameDeck(string deckId)
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await MageekService.MageekService.RenameDeck(deckId, title);
+            await mageek.RenameDeck(deckId, title);
             await Reload();
         }
 
         [RelayCommand]
         private async Task DuplicateDeck(string deckId)
         {
-            await MageekService.MageekService.DuplicateDeck(deckId);
+            await mageek.DuplicateDeck(deckId);
             await Reload();
         }
 
         [RelayCommand]
         private async Task DeleteDeck(string deckId)
         {
-            await MageekService.MageekService.DeleteDeck(deckId);
+            await mageek.DeleteDeck(deckId);
             await Reload();
         }
 
         [RelayCommand]
         private async Task EstimateDeckPrice(string deckId)
         {
-            var totalPrice = await MageekService.MageekService.EstimateDeckPrice(deckId, config.Settings[AppSetting.Currency]);
+            var totalPrice = await mageek.EstimateDeckPrice(deckId, config.Settings[AppSetting.Currency]);
             MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + "\n" +
                             "Missing : " + totalPrice.Item2);
         }
@@ -87,7 +89,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task GetAsTxtList(string deckId)
         {
-            string txt = await MageekService.MageekService.DeckToTxt(deckId);
+            string txt = await mageek.DeckToTxt(deckId);
             if (!string.IsNullOrEmpty(txt))
             {
                 Clipboard.SetText(txt);
