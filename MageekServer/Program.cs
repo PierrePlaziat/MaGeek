@@ -9,6 +9,6 @@ app.MapGrpcService<CollectionnerService>();
 app.MapGet("/", () => "Mageek Grpc endpoint");
 
 // MAGEEK
-await MageekService.MageekService.InitializeService();
+//await MageekService.MageekService.InitializeService();
 
 app.Run();

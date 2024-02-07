@@ -1,7 +1,7 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekService;
-using MageekService.Data.Mtg.Entities;
+using MageekServices.Data;
+using MageekServices.Data.Mtg.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,7 +14,7 @@ namespace MaGeek.UI
     public partial class CardIllustration : BaseUserControl
     {
 
-        private MageekService.MageekService mageek;
+        private MageekServices.MageekService mageek;
 
         public static readonly DependencyProperty CardUuidProperty =  DependencyProperty.Register(nameof(CardUuid), typeof(string), typeof(CardIllustration), new FrameworkPropertyMetadata(null, OnCardUuidChanged));
 
@@ -80,7 +80,7 @@ namespace MaGeek.UI
         {
             InitializeComponent();
             DataContext = this;
-            mageek = ServiceHelper.GetService<MageekService.MageekService>();
+            mageek = ServiceHelper.GetService<MageekServices.MageekService>();
         }
 
         private static void OnCardUuidChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs)

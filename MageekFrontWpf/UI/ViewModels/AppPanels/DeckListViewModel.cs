@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekService.Data.Collection.Entities;
+using MageekServices;
+using MageekServices.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,32 +14,45 @@ using System.Windows;
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
-    //events.UpdateDeckEvent += async () => { await Reload(); };
-    //events.UpdateDeckListEvent += async () => { await Reload(); };
-    public partial class DeckListViewModel : BaseViewModel
+    public partial class DeckListViewModel : BaseViewModel, IRecipient<UpdateDeckListMessage>, IRecipient<UpdateDeckMessage>
     {
-        private MageekService.MageekService mageek;
+        private WindowsService wins;
+        private MageekService mageek;
         private SettingService config;
         private DialogService dialog;
 
         public DeckListViewModel(
+            WindowsService wins,
             SettingService config,
             DialogService dialog, 
-            MageekService.MageekService mageek)
+            MageekService mageek)
         {
+            this.wins = wins;
             this.mageek = mageek;
             this.config = config;
             this.dialog = dialog;
+            WeakReferenceMessenger.Default.RegisterAll(this);
+            Reload().ConfigureAwait(false);
         }
 
         [ObservableProperty] private IEnumerable<Deck> decks;
         [ObservableProperty] private string filterString = "";
         [ObservableProperty] private bool isLoading = false;
 
-        protected override void OnActivated()
+        public void Receive(UpdateDeckListMessage message)
         {
-            base.OnActivated();
             Reload().ConfigureAwait(false);
+        }
+
+        public void Receive(UpdateDeckMessage message)
+        {
+            Reload().ConfigureAwait(false);
+        }
+
+        [RelayCommand]
+        private async Task SelectDeck(string deckId)
+        {
+            wins.OpenDocument(deckId);
         }
 
         [RelayCommand]

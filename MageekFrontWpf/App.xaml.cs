@@ -5,8 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using WPFNotification.Services;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekFrontWpf.AppValues;
 using MageekFrontWpf.UI.Views.AppWindows;
+using MageekFrontWpf.AppValues;
 
 namespace MageekFrontWpf
 {
@@ -21,6 +21,9 @@ namespace MageekFrontWpf
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton<INotificationDialogService, NotificationDialogService>();
             services.AddLogging();
+            services.AddSingleton<WindowsService>();
+            services.AddSingleton<DialogService>();
+            services.AddSingleton<SettingService>();
             services.AddMageek();
             serviceProvider = services.BuildServiceProvider();
             ServiceHelper.Initialize(serviceProvider);

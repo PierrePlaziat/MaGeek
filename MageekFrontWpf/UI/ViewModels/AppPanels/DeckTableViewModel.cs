@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekService.Data.Collection.Entities;
-using MageekService.Data.Mtg.Entities;
-using MageekService.Tools;
+using MageekServices.Data.Collection.Entities;
+using MageekServices.Data.Mtg.Entities;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,8 +18,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<UpdateDeckMessage>
     {
 
-        public DeckTableViewModel(MageekService.MageekService mageek)
-        {
+        private MageekServices.MageekService mageek;
+        private readonly ILogger<DeckTableViewModel> logger;
+
+        public DeckTableViewModel(
+            MageekServices.MageekService mageek,
+            ILogger<DeckTableViewModel> logger
+        ){
+            this.logger = logger;
             this.mageek = mageek;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
@@ -42,7 +48,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] private bool hasLands;
         [ObservableProperty] private bool isLoading;
         [ObservableProperty] private int currentCardSize;
-        private MageekService.MageekService mageek;
         private readonly Dictionary<DeckCard, Cards> cardData = new();
 
         const int CardSize_Complete = 207;
@@ -114,7 +119,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                 OnPropertyChanged(nameof(CardRelations_Cmc7));
                 IsLoading = false;
             }
-            catch (Exception ex) { Logger.Log(ex); }
+            catch (Exception ex) { logger.LogError(ex.Message); }
             finally { IsLoading = false; }
         }
 

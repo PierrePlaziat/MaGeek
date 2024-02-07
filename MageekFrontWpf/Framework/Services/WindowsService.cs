@@ -1,24 +1,46 @@
-﻿using AvalonDock.Layout.Serialization;
-using AvalonDock.Layout;
-using System.IO;
+﻿using System.IO;
 using System;
 using System.Collections.Generic;
-using MageekService.Tools;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using AvalonDock;
-using MageekFrontWpf.Framework.BaseMvvm;
 using CommunityToolkit.Mvvm.Messaging;
+using AvalonDock;
+using AvalonDock.Layout.Serialization;
+using AvalonDock.Layout;
+using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.UI.Views.AppWindows;
+using MageekServices.Data;
 
 namespace MageekFrontWpf.Framework.Services
 {
 
-    public class WindowsService : 
-        IRecipient<LoadLayoutMessage>,
-        IRecipient<SaveLayoutMessage>
+    public class AppWindow
     {
+        public AppWindowEnum id;
+        public BaseWindow window;
+        public BaseViewModel vm;
+    }
+
+    public class AppTool
+    {
+        public AppToolsEnum id;
+        public BaseUserControl tool;
+        public BaseViewModel vm;
+    }
+
+    public class WindowsService : IRecipient<LoadLayoutMessage>, IRecipient<SaveLayoutMessage>
+    {
+
+        #region construction
+
+        private readonly string Path_LayoutFolder = Path.Combine(Folders.Roaming, "Layout");
+
+        private List<AppWindow> windows = new();
+        private List<AppTool> tools = new();
+
+        private LayoutRoot rootLayout;
+        private DockingManager dockingManager;
 
         private readonly ILogger<WindowsService> logger;
 
@@ -28,141 +50,151 @@ namespace MageekFrontWpf.Framework.Services
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
-        private readonly string Path_LayoutFolder = Path.Combine(MageekService.Folders.Roaming, "Layout");
-        private List<AppWindow> appWindows = new();
-        private List<AppPanel> appPanels = new();
-
-        LayoutRoot rootLayout;
-        DockingManager dockingManager;
-
         public void Init()
         {
             if (!File.Exists(Path_LayoutFolder)) Directory.CreateDirectory(Path_LayoutFolder);
             rootLayout = ServiceHelper.GetService<MainWindow>().RootLayout;
             dockingManager = ServiceHelper.GetService<MainWindow>().DockingManager;
-            appWindows = WindowsAndPanels.GetWindows();
-            appPanels = WindowsAndPanels.GetPanels();
+            windows = WindowsAndTools.GetWindows();
+            tools = WindowsAndTools.GetTools();
         }
+
+        #endregion
+
+        public void OpenWindow(AppWindowEnum win)
+        {
+            logger.LogTrace("OpenWindow : " + win);
+            try
+            {
+                AppWindow appWindow = windows.Where(x => x.id == win).First();
+                appWindow.window.Show();
+            }
+            catch (Exception e) { logger.LogError(e.Message); }
+        }
+
+        public void CloseWindow(AppWindowEnum win)
+        {
+            logger.LogTrace("CloseWindow");
+            try
+            {
+                AppWindow appWindow = windows.Where(x => x.id == win).First();
+                appWindow.window.Close();
+            }
+            catch (Exception e) { logger.LogError(e.Message); }
+        }
+
+        public void OpenTool(AppToolsEnum tool)
+        {
+            logger.LogTrace("OpenTool : " + tool);
+            try
+            {
+                BaseUserControl control = tools.Find(t => t.id == tool).tool;
+                if (control == null) return;
+
+                var anch = new LayoutAnchorable()
+                {
+                    IsSelected = true,
+                    Content = control,
+                    Title = tool.ToString(),
+                    FloatingHeight = 500,
+                    FloatingWidth = 300,
+                };
+                var anchPane = new LayoutAnchorablePane
+                {
+                    Name = tool.ToString(),
+                    Children = {
+                        anch
+                    },
+                    DockMinWidth = 200,
+                    DockMinHeight = 100,
+                };
+                rootLayout.RootPanel.Children.Add(anchPane);
+            }
+            catch (Exception e) { logger.LogError(e.Message); }
+        }
+
+        public void OpenDocument(string arg)
+        {
+            logger.LogTrace("OpenDocument : " + arg);
+            try
+            {
+                BaseUserControl control = tools.Find(tool => tool.id == AppToolsEnum.DeckContent).tool;
+                if (control == null) return;
+
+                var doc = new LayoutDocument()
+                {
+                    IsSelected = true,
+                    Content = control,
+                    Title = "A deck",
+                    FloatingHeight = 500,
+                    FloatingWidth = 300,
+                };
+                var anchPane = new LayoutDocumentPane
+                {
+                    Children = { doc },
+                    DockMinWidth = 200,
+                    DockMinHeight = 100,
+                };
+                rootLayout.RootPanel.Children.Add(anchPane);
+            }
+            catch (Exception e) { logger.LogError(e.Message); }
+        }
+
+        #region Layout gestion
 
         public void Receive(LoadLayoutMessage message)
         {
             LoadLayout(message.Value);
         }
-        
+
         public void Receive(SaveLayoutMessage message)
         {
             SaveLayout(message.Value);
         }
 
-        public void OpenWindow(AppWindowEnum id)
+        public void SaveLayout(string arg)
         {
-            logger.LogTrace("OpenWindow");
+            logger.LogTrace("SaveLayout : " + arg);
             try
             {
-                AppWindow appWindow = appWindows.Where(x => x.id == id).First();
-                appWindow.window.Show();
+                string xmlLayoutString = "";
+                using (StringWriter fs = new StringWriter())
+                {
+                    XmlLayoutSerializer xmlLayout = new XmlLayoutSerializer(dockingManager);
+                    xmlLayout.Serialize(fs);
+                    xmlLayoutString = fs.ToString();
+                }
+                File.WriteAllText(GetLayoutPath("Layout"), xmlLayoutString);
             }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
+            catch (Exception e) { logger.LogError(e.Message); }
         }
 
-        public void CloseWindow(AppWindowEnum id)
+        public void LoadLayout(string arg)
         {
-            try
-            {
-                AppWindow appWindow = appWindows.Where(x => x.id == id).First();
-                appWindow.window.Close();
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
-        }
-
-        public void OpenPanel(AppPanelEnum controlName)
-        {
-            //// Guard from an already openned panel
-            //foreach (var item in rootLayout.RootPanel.Children)
-            //{
-            //    if (item is LayoutAnchorablePane && (LayoutAnchorablePane)item == controlName) return;
-            //}
-            // Find corresponding control
-            BaseUserControl control = appPanels.Find(tool => tool.id == controlName).window;
-            if (control == null) return;
-            // Open the control in Avalon
-
-            var anch = new LayoutAnchorable()
-            {
-                IsSelected = true,
-                Content = control,
-                Title = controlName.ToString(),
-                FloatingHeight = 500,
-                FloatingWidth = 300,
-            };
-            var panel = new LayoutAnchorablePane
-            {
-                Name = controlName.ToString(),
-                Children = {
-                    anch
-                },
-                DockMinWidth = 200,
-                DockMinHeight = 100,
-            };
-            rootLayout.RootPanel.Children.Add(panel);
-
-        }
-
-        public void SaveLayout(string layoutName)
-        {
-            string xmlLayoutString = "";
-            using (StringWriter fs = new StringWriter())
-            {
-                XmlLayoutSerializer xmlLayout = new XmlLayoutSerializer(dockingManager);
-                xmlLayout.Serialize(fs);
-                xmlLayoutString = fs.ToString();
-            }
-            File.WriteAllText(GetLayoutPath("Layout"), xmlLayoutString);
-        }
-
-        public void LoadLayout(string layoutName)
-        {
+            logger.LogTrace("LoadLayout : " + arg);
             try
             {
                 var serializer = new XmlLayoutSerializer(dockingManager);
                 serializer.LayoutSerializationCallback += (s, args) => { };
-                serializer.Deserialize(GetLayoutPath(layoutName));
+                serializer.Deserialize(GetLayoutPath(arg));
                 foreach (var element in dockingManager.Layout.Descendents().OfType<LayoutAnchorable>())
                 {
-                    var panel = appPanels.Find(control => control.window.ControlName == element.Title);
+                    var panel = tools.Find(control => control.tool.ControlName == element.Title);
                     if (panel != null)
                     {
                         element.Content = panel;
                     }
                 }
             }
-            catch (Exception e) { Logger.Log(e); }
+            catch (Exception e) { logger.LogError(e.Message); }
         }
 
-        public string GetLayoutPath(string layoutName)
+        private string GetLayoutPath(string layoutName)
         {
             return Path_LayoutFolder + "\\" + layoutName + ".avalonXml";
         }
 
-        public class AppWindow
-        {
-            public AppWindowEnum id;
-            public BaseWindow window;
-            public BaseViewModel viewModel;
-        }
-
-        public class AppPanel
-        {
-            public AppPanelEnum id;
-            public BaseUserControl window;
-            public BaseViewModel viewModel;
-        }
+        #endregion
 
     }
 

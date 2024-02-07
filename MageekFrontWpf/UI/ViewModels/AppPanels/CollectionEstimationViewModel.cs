@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekService.Tools;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,17 +11,20 @@ using System.Threading.Tasks;
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
-    public partial class CollectionEstimationViewModel : BaseViewModel
+    public partial class CollecEstimationViewModel : BaseViewModel
     {
 
-        private MageekService.MageekService mageek;
+        private MageekServices.MageekService mageek;
         private SettingService config;
+        private ILogger<CollecEstimationViewModel> logger;
 
-        public CollectionEstimationViewModel(
+        public CollecEstimationViewModel(
             SettingService config,
-            MageekService.MageekService mageek
+            MageekServices.MageekService mageek,
+            ILogger<CollecEstimationViewModel> logger
         )
         {
+            this.logger = logger;
             this.mageek = mageek;
             this.config = config;
             DelayLoad().ConfigureAwait(false);
@@ -71,7 +74,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                logger.LogError(e.Message);
             }
         }
 

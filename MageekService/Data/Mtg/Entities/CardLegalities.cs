@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekService.Data.Mtg.Entities
+namespace MageekServices.Data.Mtg.Entities
 {
     public class CardLegalities
     {

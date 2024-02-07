@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekService.Data.Collection.Entities;
+using MageekServices.Data.Collection.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +18,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<DeckSelectMessage>,
         IRecipient<UpdateDeckMessage>
     {
-        private MageekService.MageekService mageek;
+        private MageekServices.MageekService mageek;
         private DialogService dialog;
 
-        public DeckStatsViewModel(DialogService dialog, MageekService.MageekService mageek)
+        public DeckStatsViewModel(DialogService dialog, MageekServices.MageekService mageek)
         {
             this.mageek = mageek;
             this.dialog = dialog;

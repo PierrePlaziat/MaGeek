@@ -1,6 +1,6 @@
-﻿namespace MageekService
+﻿namespace MageekServices.Data
 {
- 
+
     public static class Folders
     {
 

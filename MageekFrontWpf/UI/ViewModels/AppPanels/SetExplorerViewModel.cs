@@ -2,19 +2,19 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekService.Data.Mtg.Entities;
+using MageekServices.Data.Mtg.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
-    public partial class SetExplorerViewModel : BaseViewModel
+    public partial class SetListViewModel : BaseViewModel
     {
 
-        private MageekService.MageekService mageek;
+        private MageekServices.MageekService mageek;
 
-        public SetExplorerViewModel(MageekService.MageekService mageek)
+        public SetListViewModel(MageekServices.MageekService mageek)
         {
             this.mageek = mageek;
         }

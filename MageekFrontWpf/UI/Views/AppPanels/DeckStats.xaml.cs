@@ -1,6 +1,6 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekService.Data.Collection.Entities;
+using MageekServices.Data.Collection.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

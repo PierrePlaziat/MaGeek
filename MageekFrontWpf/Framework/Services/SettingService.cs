@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Collections.Generic;
-using MageekService;
 using MageekFrontWpf.AppValues;
+using MageekServices.Data;
 
 namespace MageekFrontWpf.Framework.Services
 {
@@ -10,7 +10,7 @@ namespace MageekFrontWpf.Framework.Services
     public class SettingService
     {
 
-        private static string Path_Settings { get; } = Path.Combine(MageekService.Folders.Roaming, "Settings.json");
+        private static string Path_Settings { get; } = Path.Combine(Folders.Roaming, "Settings.json");
         public Dictionary<AppSetting, string> Settings { get; private set; } = new Dictionary<AppSetting, string>();
 
         public SettingService()

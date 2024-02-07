@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MageekService\MageekService.csproj" />
+    <ProjectReference Include="..\MageekService\MageekServices.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,7 +51,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="UI\Views\AppWindows\CollectionEstimation.xaml.cs">
+    <Compile Update="UI\Views\AppPanels\CollectionEstimation.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

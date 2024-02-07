@@ -2,7 +2,7 @@
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekService.Data.Collection.Entities;
+using MageekServices.Data.Collection.Entities;
 using System.Windows.Controls;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
@@ -20,7 +20,7 @@ namespace MageekFrontWpf.UI.Views.AppPanels
         private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var deck = decklistbox.SelectedItem as Deck;
-            WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(deck.DeckId));
+                WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(deck.DeckId));
         }
 
         private void Decklistbox_SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)

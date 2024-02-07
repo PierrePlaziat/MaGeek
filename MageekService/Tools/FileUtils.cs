@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace MageekService.Tools
+namespace MageekServices.Tools
 {
     public static class FileUtils
     {

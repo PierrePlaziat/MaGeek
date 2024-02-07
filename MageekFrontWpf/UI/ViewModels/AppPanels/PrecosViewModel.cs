@@ -1,31 +1,31 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekService;
+using MageekServices;
+using MageekServices.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
-    public partial class PrecosViewModel : BaseViewModel
+    public partial class PrecoListViewModel : BaseViewModel
     {
 
         private const string path = "D:\\PROJECTS\\VS\\MaGeek\\Preco";
         private WindowsService winManager;
-        private CollectionImporter importer;
+        private MageekService mageek;
         private bool importingSeveral = false;
 
-        public PrecosViewModel
+        public PrecoListViewModel
         (
-            CollectionImporter importer,
-            WindowsService winManager
+            WindowsService winManager,
+            MageekService mageek
         )
         {
             this.winManager = winManager;
-            this.importer = importer;
+            this.mageek = mageek;
         }
 
         [ObservableProperty] bool asOwned = false;
@@ -49,21 +49,20 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             List<Task> tasks = new List<Task>();
             foreach (string preco in titles) ImportPreco(preco);
             importingSeveral = false;
-            winManager.CloseWindow(AppWindowEnum.Precos);
+            //winManager.CloseWindow(AppWindowEnum.Precos);
         }
         
         [RelayCommand]
         private async Task ImportPreco(string title)
         {
-            importer.AddImportToQueue(
-                new PendingImport
-                {
-                    Title = "[Preco] " + title,
-                    Content = File.ReadAllText(path + "\\" + title + ".txt"),
-                    AsOwned = AsOwned
-                }
+            List<DeckCard> importLines = new();
+            //importLines = await mageek.ParseCardList(content); // TODO recup preco content
+            await mageek.CreateDeck_Contructed(
+                title,
+                "Preco",
+                importLines
             );
-            if (!importingSeveral) winManager.CloseWindow(AppWindowEnum.Precos);
+            //TODO asOwned
         }
 
     }

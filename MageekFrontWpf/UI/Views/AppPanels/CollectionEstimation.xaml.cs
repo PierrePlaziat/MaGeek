@@ -4,10 +4,10 @@ using MageekFrontWpf.UI.ViewModels.AppWindows;
 namespace MageekFrontWpf.UI.Views.AppWindows
 {
 
-    public partial class ImportWindow : BaseWindow
+    public partial class CollecEstimation : BaseUserControl
     {
 
-        public ImportWindow(ImportViewModel vm)
+        public CollecEstimation(CollecEstimationViewModel vm)
         {
             DataContext = vm;
             InitializeComponent();

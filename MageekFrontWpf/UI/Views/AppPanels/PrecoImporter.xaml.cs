@@ -5,21 +5,21 @@ using System;
 namespace MageekFrontWpf.UI.Views.AppWindows
 {
 
-    public partial class PrecosWindow : BaseWindow
+    public partial class PrecoList : BaseUserControl
     {
 
-        PrecosViewModel vm;
+        PrecoListViewModel vm;
 
-        public PrecosWindow(PrecosViewModel vm)
+        public PrecoList(PrecoListViewModel vm)
         {
             this.vm = vm;
             DataContext = vm;
             InitializeComponent();
         }
 
-        protected override void OnActivated(EventArgs e)
+        protected override void OnInitialized(EventArgs e)
         {
-            base.OnActivated(e);
+            base.OnInitialized(e);
             vm.Init().ConfigureAwait(false);
         }
 

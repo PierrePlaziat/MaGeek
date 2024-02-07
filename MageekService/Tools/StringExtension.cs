@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
 
-namespace MageekService.Tools
+namespace MageekServices.Tools
 {
     public abstract class StringExtension
     {

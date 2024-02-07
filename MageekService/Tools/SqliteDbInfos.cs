@@ -1,4 +1,4 @@
-﻿namespace MageekService.Tools
+﻿namespace MageekServices.Tools
 {
 
     public class SqliteDbInfos

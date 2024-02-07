@@ -4,10 +4,10 @@ using MageekFrontWpf.UI.ViewModels.AppPanels;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {
-    public partial class SetExplorer : BaseUserControl
+    public partial class SetList : BaseUserControl
     {
 
-        public SetExplorer(SetExplorerViewModel vm)
+        public SetList(SetListViewModel vm)
         {
             DataContext = vm;
             InitializeComponent();

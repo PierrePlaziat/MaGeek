@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MageekService\MageekService.csproj" />
+    <ProjectReference Include="..\MageekService\MageekServices.csproj" />
   </ItemGroup>
 
 </Project>

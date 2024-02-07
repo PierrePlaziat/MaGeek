@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
+using MageekServices.Data;
 using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -13,17 +13,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     {
 
         private readonly WindowsService winManager;
-        private readonly DialogService dialog;
-        private readonly MageekService.MageekService mageek;
+        private readonly MageekServices.MageekService mageek;
 
         public WelcomeWindowViewModel(
             WindowsService winManager,
-            MageekService.MageekService mageek,
-            DialogService dialog
+            MageekServices.MageekService mageek
         ){
             this.mageek = mageek;
             this.winManager = winManager;
-            this.dialog = dialog;
         }
 
         [ObservableProperty] bool updateAvailable = false;
@@ -34,23 +31,23 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         public async Task Init()
         {
             IsLoading = true;
-            dialog.Notif("Test: ", "test message");
             await Task.Delay(100);
             Message = "Init...";
             var retour = await mageek.InitializeService();
             switch (retour)
             {
-                case MageekService.MageekInitReturn.Error:
+                case MageekInitReturn.Error:
                     CanLaunch = false;
                     UpdateAvailable = false;
                     Message = "Error";
                     break;
-                case MageekService.MageekInitReturn.MtgUpToDate:
+                case MageekInitReturn.MtgUpToDate:
                     CanLaunch = true;
                     UpdateAvailable = false;
                     Message = "Up to date";
+                    await Launch();
                     break;
-                case MageekService.MageekInitReturn.MtgOutdated:
+                case MageekInitReturn.MtgOutdated:
                     CanLaunch = true;
                     UpdateAvailable = true;
                     Message = "Update available";
@@ -70,17 +67,17 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             var retour = await mageek.UpdateMtg();
             switch (retour)
             {
-                case MageekService.MageekUpdateReturn.Success:
+                case MageekUpdateReturn.Success:
                     CanLaunch = true;
                     UpdateAvailable = false;
                     Message = "Updated";
                     break;
-                case MageekService.MageekUpdateReturn.ErrorDownloading:
+                case MageekUpdateReturn.ErrorDownloading:
                     CanLaunch = true;
                     UpdateAvailable = true;
                     Message = "Update failed";
                     break;
-                case MageekService.MageekUpdateReturn.ErrorFetching:
+                case MageekUpdateReturn.ErrorFetching:
                     CanLaunch = false;
                     UpdateAvailable = false;
                     Message = "/!\\ Fatal Error /!\\"; // todo backup system

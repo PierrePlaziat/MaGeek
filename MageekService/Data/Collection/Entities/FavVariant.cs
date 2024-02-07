@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekService.Data.Collection.Entities
+namespace MageekServices.Data.Collection.Entities
 {
     public class FavVariant
     {

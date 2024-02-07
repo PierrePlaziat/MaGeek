@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekService.Data.Collection.Entities;
+using MageekServices.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +14,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
     public partial class DeckContentViewModel : BaseViewModel
     {
 
-        private MageekService.MageekService mageek;
+        private MageekServices.MageekService mageek;
 
-        public DeckContentViewModel(MageekService.MageekService mageek)
+        public DeckContentViewModel(MageekServices.MageekService mageek)
         {
             this.mageek = mageek;
         }

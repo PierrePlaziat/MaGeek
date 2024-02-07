@@ -5,10 +5,10 @@ using System.ComponentModel;
 namespace MageekFrontWpf.UI.Views.AppWindows
 {
 
-    public partial class ProxyPrint : BaseWindow, INotifyPropertyChanged
+    public partial class PrintWindow : BaseWindow, INotifyPropertyChanged
     {
 
-        public ProxyPrint(ProxyPrintViewModel vm)
+        public PrintWindow(PrintViewModel vm)
         {
             DataContext = vm;
             InitializeComponent();

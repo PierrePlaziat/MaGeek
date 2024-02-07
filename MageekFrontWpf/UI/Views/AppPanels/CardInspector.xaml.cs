@@ -1,6 +1,6 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekService.Data.Collection.Entities;
+using MageekServices.Data.Collection.Entities;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,10 +11,10 @@ namespace MageekFrontWpf.UI.Views.AppPanels
 
     public partial class CardInspector : BaseUserControl
     {
-        private MageekService.MageekService mageek;
+        private MageekServices.MageekService mageek;
         private CardInspectorViewModel vm;
 
-        public CardInspector(CardInspectorViewModel vm,MageekService.MageekService mageek)
+        public CardInspector(CardInspectorViewModel vm,MageekServices.MageekService mageek)
         {
             this.mageek = mageek;
             this.vm = vm;

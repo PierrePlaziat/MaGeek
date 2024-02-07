@@ -11,57 +11,66 @@
     <Menu Background="Black"
           Foreground="White">
 
-        <MenuItem Header="Utils">
-            <MenuItem Header="Txt Importer"
-                      Foreground="Black"
-                      Command="{Binding OpenWindowCommand}"
-                      CommandParameter="Import"/>
-            <MenuItem Header="Preco Importer"
-                      Foreground="Black"
-                      Command="{Binding OpenWindowCommand}"
-                      CommandParameter="Precos" />
-            <Separator />
-            <MenuItem Header="Proxy Printer"
-                      Foreground="Black"
-                      Command="{Binding OpenWindowCommand}"
-                      CommandParameter="Print" />
-            <MenuItem Header="Collection Estimator"
-                      Foreground="Black"
-                      Command="{Binding OpenWindowCommand}"
-                      CommandParameter="Estimation" />
-        </MenuItem>
-
         <MenuItem Header="Tools">
-            <MenuItem Header="Set Explorer"
-                      Foreground="Black"
-                      Command="{Binding OpenPanelCommand}"
-                      CommandParameter="Sets" />
-            <Separator />
             <MenuItem Header="Card Searcher"
                       Foreground="Black"
-                      Command="{Binding OpenPanelCommand}"
-                      CommandParameter="CardSearcher" />
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="CardSearcher" >
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconCard.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem Header="Card Inspector"
                       Foreground="Black"
-                      Command="{Binding OpenPanelCommand}"
-                      CommandParameter="CardInspector" />
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="CardInspector" >
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconCard.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
             <Separator />
+            <MenuItem Header="Set List"
+                      Foreground="Black"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="SetList" >
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconDeck.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem Header="Deck List"
                       Foreground="Black"
-                      Command="{Binding OpenPanelCommand}"
-                      CommandParameter="DeckList" />
-            <MenuItem Header="Deck Content"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="DeckList" >
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconDeck.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Preco List"
                       Foreground="Black"
-                      Command="{Binding OpenPanelCommand}"
-                      CommandParameter="DeckContent" />
-            <MenuItem Header="Deck Stats"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="PrecoList" >
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconDeck.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="Txt Input"
                       Foreground="Black"
-                      Command="{Binding OpenPanelCommand}"
-                      CommandParameter="DeckStats" />
-            <MenuItem Header="Deck Table"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="TxtInput">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Backup.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="Collec Estimation"
                       Foreground="Black"
-                      Command="{Binding OpenPanelCommand}"
-                      CommandParameter="DeckTable" />
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="CollecEstimation" >
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Currency.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
         </MenuItem>
 
         <MenuItem Header="Layout">

@@ -1,6 +1,6 @@
-﻿using MageekService.Data.Collection.Entities;
+﻿using MageekServices.Data.Collection.Entities;
 
-namespace MageekService
+namespace MageekServer
 {
 
     public interface IMageekServer
@@ -26,11 +26,12 @@ namespace MageekService
 
     public class MageekServer : IMageekServer
     {
-        private MageekService mageek;
+        private MageekServices.MageekService mageek;
 
-        public MageekServer(MageekService mageek)
+        public MageekServer(MageekServices.MageekService mageek)
         {
             this.mageek = mageek;
+            mageek.InitializeService().ConfigureAwait(true);
         }
 
         public async Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification)

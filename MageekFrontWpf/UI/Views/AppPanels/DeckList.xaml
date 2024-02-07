@@ -39,7 +39,7 @@
                     <Setter Property="Margin" Value="0"/>
                 </Style>
             </ListView.ItemContainerStyle>
-            
+
             <ListView.ItemTemplate >
 
                 <DataTemplate>
@@ -50,24 +50,36 @@
                             <!--<ColumnDefinition Width="100"></ColumnDefinition>-->
                             <ColumnDefinition Width="*"></ColumnDefinition>
                             <ColumnDefinition Width="65"></ColumnDefinition>
+                            <ColumnDefinition Width="65"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
+                        
+                        
                         <Grid.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Header="Open" 
+                                          Command="{Binding DataContext.SelectDeckCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                                          CommandParameter="{Binding DeckId}"/>
+                                <MenuItem Header="Open" 
+                                          Command="{Binding SelectDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          CommandParameter="{Binding DeckId}"/>
                                 <MenuItem Header="Create" 
-                                          Command="{Binding AddDeckCommand}"/>
+                                          Command="{Binding AddDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
                                 <MenuItem Header="Rename"
-                                          Command="{Binding RenameDeckCommand}"/>
+                                          Command="{Binding RenameDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          CommandParameter="{Binding DeckId}"/>
                                 <MenuItem Header="Duplicate"
-                                          Command="{Binding DuplicateDeckCommand}"/>
+                                          Command="{Binding DuplicateDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          CommandParameter="{Binding DeckId}"/>
                                 <Separator />
                                 <MenuItem Header="Get List"
-                                          Command="{Binding GetAsTxtListCommand}" />
+                                          Command="{Binding GetAsTxtListCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <MenuItem Header="Estimate price"
-                                          Command="{Binding EstimateDeckPriceCommand}"/>
+                                          Command="{Binding EstimateDeckPriceCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
                                 <Separator />
                                 <MenuItem Header="Delete"
-                                          Command="{Binding DeleteDeckCommand}"/>
+                                          Command="{Binding DeleteDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          CommandParameter="{Binding DeckId}"/>
                             </ContextMenu>
                         </Grid.ContextMenu>
                         

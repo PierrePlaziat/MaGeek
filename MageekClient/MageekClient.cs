@@ -23,7 +23,6 @@ namespace MageekMaui
         abstract Task<Reply_Default> UpdateDeck(Request_UpdateDeck request);
         abstract Task<Reply_Default> DeleteDeck(Request_DeckId request);
 
-
         abstract Task<Reply_TagList> GetExistingTags(Request_Default request);
         abstract Task<Reply_TagList> GetCardTags(Request_archetypeId request);
         abstract Task<Reply_Default> TagCard(Request_CardTag request);

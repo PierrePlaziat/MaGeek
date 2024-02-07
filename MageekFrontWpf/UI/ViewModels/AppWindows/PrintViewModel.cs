@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MaGeek.UI.Controls;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekService.Data.Collection.Entities;
+using MageekServices.Data.Collection.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,12 +11,12 @@ using System.Windows.Input;
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
-    public class ProxyPrintViewModel : BaseViewModel
+    public class PrintViewModel : BaseViewModel
     {
 
-        private MageekService.MageekService mageek;
+        private MageekServices.MageekService mageek;
 
-        public ProxyPrintViewModel(MageekService.MageekService mageek)
+        public PrintViewModel(MageekServices.MageekService mageek)
         {
             this.mageek = mageek;
             if (selectedDeck != null)

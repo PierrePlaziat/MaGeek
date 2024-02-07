@@ -1,10 +1,10 @@
 ﻿#pragma warning disable CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
 #pragma warning disable CS8602 // Déréférencement d'une éventuelle référence null.
 
-using MageekService.Data.Collection.Entities;
-using MageekService.Data.Mtg;
-using MageekService.Data.Mtg.Entities;
-using MageekService.Tools;
+using MageekServices.Data.Collection.Entities;
+using MageekServices.Data.Mtg;
+using MageekServices.Data.Mtg.Entities;
+using MageekServices.Tools;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,7 +12,7 @@ using ScryfallApi.Client.Models;
 using System.Net;
 using System.Text.Json;
 
-namespace MageekService.Data.Collection
+namespace MageekServices.Data.Collection
 {
 
     /// <summary>
@@ -22,11 +22,14 @@ namespace MageekService.Data.Collection
     /// </summary>
     public class CollectionDbManager
     {
-
+        private readonly MtgDbManager mtgDb;
         private readonly ILogger<CollectionDbManager> logger;
 
-        public CollectionDbManager(ILogger<CollectionDbManager> logger)
-        {
+        public CollectionDbManager(
+            ILogger<CollectionDbManager> logger,
+            MtgDbManager mtgDb
+        ){
+            this.mtgDb = mtgDb;
             this.logger = logger;
         }
 
@@ -82,7 +85,7 @@ namespace MageekService.Data.Collection
             {
                 List<ArchetypeCard> archetypes = new();
                 logger.LogInformation("Parsing...");
-                using (MtgDbContext mtgSqliveContext = await MtgDbManager.GetContext())
+                using (MtgDbContext mtgSqliveContext = await mtgDb.GetContext())
                 {
 
                     foreach (Cards card in mtgSqliveContext.cards)
@@ -122,7 +125,7 @@ namespace MageekService.Data.Collection
             {
                 List<CardTraduction> traductions = new();
                 logger.LogInformation("Parsing...");
-                using (MtgDbContext mtgSqliveContext = await MtgDbManager.GetContext())
+                using (MtgDbContext mtgSqliveContext = await mtgDb.GetContext())
                 {
                     foreach (CardForeignData traduction in mtgSqliveContext.cardForeignData)
                     {
@@ -196,15 +199,15 @@ namespace MageekService.Data.Collection
                     }
                     catch (Exception e)
                     {
-                        Logger.Log(e);
+                        logger.LogError(e.Message);
                     }
                 }
             }
             catch (Exception e) 
-            { 
-                Logger.Log(e); 
+            {
+                logger.LogError(e.Message);
             }
-            Logger.Log("Done");
+            logger.LogInformation("Done");
         }
 
     }

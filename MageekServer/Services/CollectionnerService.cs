@@ -1,5 +1,5 @@
 using Grpc.Core;
-using MageekService;
+using MageekServices;
 
 namespace MageekServer.Services
 {
@@ -10,10 +10,13 @@ namespace MageekServer.Services
         private readonly ILogger<CollectionnerService> _logger;
         private readonly IMageekServer _server;
         
-        public CollectionnerService(ILogger<CollectionnerService> logger)
+        public CollectionnerService(
+            ILogger<CollectionnerService> logger,
+            IMageekServer server
+        )
         {
             _logger = logger;
-            _server = new MageekService.MageekServer();
+            _server = server;
         }
 
         public override Task<Reply_CollecMove> CollecMove(

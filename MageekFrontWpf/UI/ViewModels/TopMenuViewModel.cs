@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.Services;
-using MageekService.Tools;
+using MageekServices.Tools;
 using System;
 
 namespace MageekFrontWpf.UI.ViewModels
@@ -28,11 +28,11 @@ namespace MageekFrontWpf.UI.ViewModels
         }
 
         [RelayCommand]
-        private void OpenPanel(string panel)
+        private void OpenTool(string panel)
         {
-            bool success = Enum.TryParse(panel, out AppPanelEnum value);
+            bool success = Enum.TryParse(panel, out AppToolsEnum value);
             if (!success) return;
-            win.OpenPanel(value);
+            win.OpenTool(value);
         }
 
         [RelayCommand]

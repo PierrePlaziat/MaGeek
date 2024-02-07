@@ -3,10 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekService;
-using MageekService.Data.Collection.Entities;
-using MageekService.Data.Mtg.Entities;
-using MageekService.Tools;
+using MageekServices.Data;
+using MageekServices.Data.Collection.Entities;
+using MageekServices.Data.Mtg.Entities;
+using MageekServices.Tools;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,10 +20,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<CardSelectedMessage>
     {
 
-        private MageekService.MageekService mageek;
+        private MageekServices.MageekService mageek;
 
         public CardInspectorViewModel(
-            MageekService.MageekService mageek
+            MageekServices.MageekService mageek
         )
         {
             this.mageek = mageek;
