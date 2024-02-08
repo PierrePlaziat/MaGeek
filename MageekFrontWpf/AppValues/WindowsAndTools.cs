@@ -25,10 +25,6 @@ namespace MageekFrontWpf.AppValues
         DeckList,
         CollecEstimation,
         TxtInput,
-
-        DeckStats,
-        DeckContent,
-        DeckTable,
     }
 
     public static class WindowsAndTools
@@ -54,12 +50,7 @@ namespace MageekFrontWpf.AppValues
                 new AppTool() { id = AppToolsEnum.PrecoList, vm = ServiceHelper.GetService<PrecoListViewModel>(), tool = ServiceHelper.GetService<PrecoList>() },
                 new AppTool() { id = AppToolsEnum.DeckList, vm = ServiceHelper.GetService<DeckListViewModel>(), tool = ServiceHelper.GetService<DeckList>() },
                 new AppTool() { id = AppToolsEnum.CollecEstimation, vm = ServiceHelper.GetService<CollecEstimationViewModel>(), tool = ServiceHelper.GetService<CollecEstimation>() },
-                new AppTool() { id = AppToolsEnum.TxtInput, vm = ServiceHelper.GetService<TxtInputViewModel>(), tool = ServiceHelper.GetService<TxtInputWindow>() },
-
-                new AppTool() { id = AppToolsEnum.DeckStats, vm = ServiceHelper.GetService<DeckStatsViewModel>(), tool = ServiceHelper.GetService<DeckStats>() },
-                new AppTool() { id = AppToolsEnum.DeckContent, vm = ServiceHelper.GetService<DeckContentViewModel>(), tool = ServiceHelper.GetService<DeckContent>() },
-                new AppTool() { id = AppToolsEnum.DeckTable, vm = ServiceHelper.GetService<DeckTableViewModel>(), tool = ServiceHelper.GetService<DeckTable>() },
-
+                new AppTool() { id = AppToolsEnum.TxtInput, vm = ServiceHelper.GetService<TxtInputViewModel>(), tool = ServiceHelper.GetService<TxtInputPanel>() },
             };
         }
 

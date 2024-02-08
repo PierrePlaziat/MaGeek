@@ -23,13 +23,10 @@
         </Grid.RowDefinitions>
 
         <panels:DeckStats Background="Black"></panels:DeckStats>
-
         <panels:DeckContent Background="Black" Grid.Row="2"></panels:DeckContent>
-
         <panels:DeckTable Background="Black" Grid.Column="2" Grid.RowSpan="3"></panels:DeckTable>
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="3" Background="#444" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></GridSplitter>
-
         <GridSplitter Grid.Row="1" Background="#444" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></GridSplitter>
         
     </Grid>

@@ -30,7 +30,6 @@ namespace MageekFrontWpf.AppValues
             services.AddSingleton<WelcomeWindow>();
             services.AddSingleton<MainWindow>();
             services.AddSingleton<PrintWindow>();
-            services.AddSingleton<TxtInputWindow>();
             // Tools
             services.AddSingleton<CardInspector>();
             services.AddSingleton<CardSearcher>();
@@ -38,6 +37,12 @@ namespace MageekFrontWpf.AppValues
             services.AddSingleton<DeckList>();
             services.AddSingleton<SetList>();
             services.AddSingleton<CollecEstimation>();
+            services.AddSingleton<TxtInput>();
+            // Documents
+            services.AddTransient<DeckDocument>();
+            services.AddTransient<DeckContent>();
+            services.AddTransient<DeckTable>();
+            services.AddTransient<DeckStats>();
 
             // ViewModels //////////////////////////////////////////////////////////////
 
@@ -46,7 +51,6 @@ namespace MageekFrontWpf.AppValues
             services.AddSingleton<WelcomeWindowViewModel>();
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<PrintViewModel>();
-            services.AddSingleton<TxtInputViewModel>();
             // Tools
             services.AddSingleton<CardInspectorViewModel>();
             services.AddSingleton<CardSearcherViewModel>();
@@ -54,21 +58,19 @@ namespace MageekFrontWpf.AppValues
             services.AddSingleton<DeckListViewModel>();
             services.AddSingleton<SetListViewModel>();
             services.AddSingleton<CollecEstimationViewModel>();
-
-            // Opened decks ////////////////////////////////////////////////////////////
-            
-            services.AddTransient<DeckDocument>();
+            services.AddSingleton<TxtInputViewModel>();
+            // Documents
             services.AddTransient<DeckDocumentViewModel>();
-            //services.AddTransient<DeckContent>();
-            //services.AddTransient<DeckContentViewModel>();
-            //services.AddTransient<DeckTable>();
-            //services.AddTransient<DeckStats>();
-            //services.AddTransient<DeckTableViewModel>();
-            //services.AddTransient<DeckStatsViewModel>();
+            services.AddTransient<DeckContentViewModel>();
+            services.AddTransient<DeckTableViewModel>();
+            services.AddTransient<DeckStatsViewModel>();
 
-            ///////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////
 
             return services;
+
         }
+
     }
+
 }
