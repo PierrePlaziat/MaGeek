@@ -1,13 +1,14 @@
 ﻿<mvvm:BaseUserControl x:Class="MageekFrontWpf.UI.Views.AppPanels.DeckList"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:local="clr-namespace:MaGeek.UI"
                       xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
                       xmlns:controls="clr-namespace:MaGeek.UI.Controls"
-      mc:Ignorable="d" 
-      d:DesignHeight="500" d:DesignWidth="500">
+                      mc:Ignorable="d" 
+                      d:DesignHeight="500" d:DesignWidth="500"
+                      x:Name="thisControl">
 
     <Grid>
 
@@ -58,11 +59,8 @@
                         <Grid.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Open" 
-                                          Command="{Binding DataContext.SelectDeckCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
-                                          CommandParameter="{Binding DeckId}"/>
-                                <MenuItem Header="Open" 
-                                          Command="{Binding SelectDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                          CommandParameter="{Binding DeckId}"/>
+                                          CommandParameter="{Binding DeckId}"
+                                          Click="MenuItem_OpenDeckClick"/>
                                 <MenuItem Header="Create" 
                                           Command="{Binding AddDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
                                 <MenuItem Header="Rename"

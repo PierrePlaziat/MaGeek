@@ -11,6 +11,9 @@ using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.UI.Views.AppWindows;
 using MageekServices.Data;
+using MageekServices.Data.Collection.Entities;
+using MageekFrontWpf.UI.Views;
+using MageekFrontWpf.UI.ViewModels;
 
 namespace MageekFrontWpf.Framework.Services
 {
@@ -41,6 +44,7 @@ namespace MageekFrontWpf.Framework.Services
 
         private LayoutRoot rootLayout;
         private DockingManager dockingManager;
+        
 
         private readonly ILogger<WindowsService> logger;
 
@@ -113,29 +117,40 @@ namespace MageekFrontWpf.Framework.Services
             catch (Exception e) { logger.LogError(e.Message); }
         }
 
-        public void OpenDocument(string arg)
+        public void OpenDoc(Deck deck)
         {
-            logger.LogTrace("OpenDocument : " + arg);
+            logger.LogTrace("OpenDocument : " + deck.Title);
             try
             {
-                BaseUserControl control = tools.Find(tool => tool.id == AppToolsEnum.DeckContent).tool;
-                if (control == null) return;
+
+                var view = ServiceHelper.GetService<DeckDocument>();
+                var vm = ServiceHelper.GetService<DeckDocumentViewModel>();
+                view.DataContext = vm;
+
+                //BaseUserControl control = tools.Find(tool => tool.id == AppToolsEnum.DeckContent).tool;
+                //if (control == null) return;
+
+                LayoutDocumentPane docPane = (LayoutDocumentPane)rootLayout.RootPanel.Children.Where(x=>x.GetType() == typeof(LayoutDocumentPane)).FirstOrDefault();
+                if (docPane == null)
+                {
+                    docPane = new LayoutDocumentPane
+                    {
+                        DockMinWidth = 200,
+                        DockMinHeight = 100,
+                    };
+                    rootLayout.RootPanel.Children.Add(docPane);
+                }
 
                 var doc = new LayoutDocument()
                 {
                     IsSelected = true,
-                    Content = control,
-                    Title = "A deck",
+                    Content = view,
+                    Title = deck.Title,
                     FloatingHeight = 500,
                     FloatingWidth = 300,
                 };
-                var anchPane = new LayoutDocumentPane
-                {
-                    Children = { doc },
-                    DockMinWidth = 200,
-                    DockMinHeight = 100,
-                };
-                rootLayout.RootPanel.Children.Add(anchPane);
+
+                docPane.Children.Add(doc);
             }
             catch (Exception e) { logger.LogError(e.Message); }
         }

@@ -8,6 +8,10 @@ namespace MageekFrontWpf.UI.Views.AppPanels
     {
         private DeckContentViewModel vm;
 
+        public DeckContent()
+        {
+        }
+        
         public DeckContent(DeckContentViewModel vm)
         {
             this.vm = vm;

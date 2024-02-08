@@ -8,6 +8,7 @@ using MageekFrontWpf.UI.Views.AppPanels;
 using MageekFrontWpf.UI.ViewModels;
 using MageekServices.Data.Collection;
 using MageekServices.Data.Mtg;
+using MageekFrontWpf.UI.Views;
 
 namespace MageekFrontWpf.AppValues
 {
@@ -54,16 +55,16 @@ namespace MageekFrontWpf.AppValues
             services.AddSingleton<SetListViewModel>();
             services.AddSingleton<CollecEstimationViewModel>();
 
-            ///////////////////////////////////////////////////////////////////////////
+            // Opened decks ////////////////////////////////////////////////////////////
             
-            /// Those will be replaced with document logic
-
-            services.AddSingleton<DeckContent>();
-            services.AddSingleton<DeckTable>();
-            services.AddSingleton<DeckStats>();
-            services.AddSingleton<DeckContentViewModel>();
-            services.AddSingleton<DeckTableViewModel>();
-            services.AddSingleton<DeckStatsViewModel>();
+            services.AddTransient<DeckDocument>();
+            services.AddTransient<DeckDocumentViewModel>();
+            //services.AddTransient<DeckContent>();
+            //services.AddTransient<DeckContentViewModel>();
+            //services.AddTransient<DeckTable>();
+            //services.AddTransient<DeckStats>();
+            //services.AddTransient<DeckTableViewModel>();
+            //services.AddTransient<DeckStatsViewModel>();
 
             ///////////////////////////////////////////////////////////////////////////
 

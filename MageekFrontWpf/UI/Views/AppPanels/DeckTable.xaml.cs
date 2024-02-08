@@ -8,6 +8,10 @@ namespace MageekFrontWpf.UI.Views.AppPanels
     public partial class DeckTable : BaseUserControl
     {
 
+        public DeckTable()
+        {
+        }
+        
         public DeckTable(DeckTableViewModel vm)
         {
             DataContext = vm;
