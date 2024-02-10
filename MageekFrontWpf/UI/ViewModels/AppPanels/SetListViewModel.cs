@@ -1,10 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekServices.Data.Mtg.Entities;
+using MageekCore.Data.Mtg.Entities;
+using MageekCore.Tools;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
@@ -12,9 +15,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
     public partial class SetListViewModel : BaseViewModel
     {
 
-        private MageekServices.MageekService mageek;
+        private MageekCore.MageekService mageek;
 
-        public SetListViewModel(MageekServices.MageekService mageek)
+        public SetListViewModel(MageekCore.MageekService mageek)
         {
             this.mageek = mageek;
         }
@@ -26,8 +29,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] string filterBlock = "All blocks";
         [ObservableProperty] List<Cards> variants = new();
 
-        private async void LoadSets()
+        [RelayCommand]
+        private async Task Reload()
         {
+            Logger.Log("Reload");
             SetList = await mageek.LoadSets();
         }
 

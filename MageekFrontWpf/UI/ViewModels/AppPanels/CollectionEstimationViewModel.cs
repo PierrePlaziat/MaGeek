@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
+using MageekCore.Tools;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,20 +15,19 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     public partial class CollecEstimationViewModel : BaseViewModel
     {
 
-        private MageekServices.MageekService mageek;
+        private MageekCore.MageekService mageek;
         private SettingService config;
         private ILogger<CollecEstimationViewModel> logger;
 
         public CollecEstimationViewModel(
             SettingService config,
-            MageekServices.MageekService mageek,
+            MageekCore.MageekService mageek,
             ILogger<CollecEstimationViewModel> logger
         )
         {
             this.logger = logger;
             this.mageek = mageek;
             this.config = config;
-            DelayLoad().ConfigureAwait(false);
         }
 
         [ObservableProperty] private int totalGot = 0;
@@ -45,14 +45,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             throw new NotImplementedException();
         }
 
-        private async Task DelayLoad()
-        {
-            await Task.Delay(1);
-            await AutoEstimate();
-        }
-
         private async Task AutoEstimate()
         {
+            Logger.Log("AutoEstimate");
             try
             {
                 IsLoading = true;

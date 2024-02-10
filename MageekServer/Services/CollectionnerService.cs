@@ -1,5 +1,5 @@
 using Grpc.Core;
-using MageekServices;
+using MageekCore;
 
 namespace MageekServer.Services
 {

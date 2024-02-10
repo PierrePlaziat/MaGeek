@@ -3,10 +3,10 @@ using System;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using System.Windows.Controls;
-using MageekServices.Data.Mtg.Entities;
+using MageekCore.Data.Mtg.Entities;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
-using MageekServices.Data;
+using MageekCore.Data;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {

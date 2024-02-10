@@ -3,7 +3,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MageekServices.Data.Mtg.Entities
+namespace MageekCore.Data.Mtg.Entities
 {
     public class CardForeignData
     {

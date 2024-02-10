@@ -13,4 +13,8 @@
     <PackageReference Include="ScryfallAPI.Client" Version="3.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PlaziatTools\PlaziatTools.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MageekServices.Data.Collection.Entities;
+using MageekCore.Data.Collection.Entities;
 
-namespace MageekServices.Data.Collection
+namespace MageekCore.Data.Collection
 {
 
     public class CollectionDbContext : DbContext

@@ -2,7 +2,7 @@
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekServices.Data.Collection.Entities;
+using MageekCore.Data.Collection.Entities;
 using System;
 using System.Windows.Controls;
 

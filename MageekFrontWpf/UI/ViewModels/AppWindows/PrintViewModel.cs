@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MaGeek.UI.Controls;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekServices.Data.Collection.Entities;
+using MageekCore.Data.Collection.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,9 +14,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     public class PrintViewModel : BaseViewModel
     {
 
-        private MageekServices.MageekService mageek;
+        private MageekCore.MageekService mageek;
 
-        public PrintViewModel(MageekServices.MageekService mageek)
+        public PrintViewModel(MageekCore.MageekService mageek)
         {
             this.mageek = mageek;
             if (selectedDeck != null)

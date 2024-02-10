@@ -1,9 +1,9 @@
-﻿using MageekServices.Data.Collection;
-using MageekServices.Tools;
+﻿using MageekCore.Data.Collection;
+using MageekCore.Tools;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
 
-namespace MageekServices.Data.Mtg
+namespace MageekCore.Data.Mtg
 {
 
     /// <summary>
@@ -19,11 +19,8 @@ namespace MageekServices.Data.Mtg
         const string Url_MtgjsonPrices = "https://mtgjson.com/api/v5/AllPricesToday.json";
         const string Url_MtgjsonDecks ="https://mtgjson.com/api/v5/AllDeckFiles.zip";
 
-        private readonly ILogger<MtgDbManager> logger;
-
-        public MtgDbManager(ILogger<MtgDbManager> logger)
+        public MtgDbManager()
         {
-            this.logger = logger;
         }
 
         public async Task<MtgDbContext?> GetContext()
@@ -36,18 +33,18 @@ namespace MageekServices.Data.Mtg
         {
             try
             {
-                logger.LogInformation("Downloading...");
+                Logger.Log("Downloading...");
                 using (var client = new HttpClient())
                 {
                     var hash = await client.GetStreamAsync(Url_MtgjsonHash);
                     using var fs_NewHash = new FileStream(Folders.MtgJson_NewHash, FileMode.Create);
                     await hash.CopyToAsync(fs_NewHash);
                 }
-                logger.LogInformation("Done!");
+                Logger.Log("Done!");
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
             }
         }
 
@@ -55,7 +52,7 @@ namespace MageekServices.Data.Mtg
         {
             try
             {
-                logger.LogTrace("Checking...");
+                Logger.Log("Checking...");
                 bool check = true;
                 if (File.Exists(Folders.MtgJson_OldHash))
                 {
@@ -64,12 +61,12 @@ namespace MageekServices.Data.Mtg
                         Folders.MtgJson_OldHash
                     );
                 }
-                logger.LogInformation("Done!");
+                Logger.Log("Done!");
                 return check;
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return true;
             }
         }
@@ -78,13 +75,13 @@ namespace MageekServices.Data.Mtg
         {
             try
             {
-                logger.LogInformation("Copying...");
+                Logger.Log("Copying...");
                 File.Copy(Folders.MtgJson_NewHash, Folders.MtgJson_OldHash, true);
-                logger.LogInformation("Done!");
+                Logger.Log("Done!");
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
             }
         }
 
@@ -92,40 +89,40 @@ namespace MageekServices.Data.Mtg
         {
             try
             {
-                logger.LogInformation("Downloading...");
+                Logger.Log("Downloading...");
                 using (var client = new HttpClient())
                 using (var mtgjson_sqlite = await client.GetStreamAsync(Url_MtgjsonData))
                 {
                     using var fs_mtgjson_sqlite = new FileStream(Folders.MtgJson_DB, FileMode.Create);
                     await mtgjson_sqlite.CopyToAsync(fs_mtgjson_sqlite);
                 }
-                logger.LogInformation("Done!");
+                Logger.Log("Done!");
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
             }
         }
 
         public async Task<bool> UpdateAvailable()
         {
-            logger.LogInformation("Is update needed?");
+            Logger.Log("Is update needed?");
             try
             {
                 bool? tooOld = FileUtils.IsFileOlder(Folders.MtgJson_OldHash, new TimeSpan(2, 0, 0, 0));
                 if (tooOld.HasValue && !tooOld.Value)
                 {
-                    logger.LogInformation("Already updated recently.");
+                    Logger.Log("Already updated recently.");
                     return false;
                 }
                 await HashDownload();
                 bool check = HashCheck();
-                logger.LogInformation(check ? "Update available!" : "Already up to date!");
+                Logger.Log(check ? "Update available!" : "Already up to date!");
                 return check;
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return false;
             }
         }

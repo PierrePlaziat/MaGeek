@@ -10,10 +10,12 @@ using AvalonDock.Layout;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.UI.Views.AppWindows;
-using MageekServices.Data;
-using MageekServices.Data.Collection.Entities;
+using MageekCore.Data;
+using MageekCore.Data.Collection.Entities;
 using MageekFrontWpf.UI.Views;
 using MageekFrontWpf.UI.ViewModels;
+using System.Diagnostics;
+using MageekCore.Tools;
 
 namespace MageekFrontWpf.Framework.Services
 {
@@ -44,18 +46,15 @@ namespace MageekFrontWpf.Framework.Services
 
         private LayoutRoot rootLayout;
         private DockingManager dockingManager;
-        
 
-        private readonly ILogger<WindowsService> logger;
-
-        public WindowsService(ILogger<WindowsService> logger)
+        public WindowsService()
         {
-            this.logger = logger;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
         public void Init()
         {
+            Logger.Log("");
             if (!File.Exists(Path_LayoutFolder)) Directory.CreateDirectory(Path_LayoutFolder);
             rootLayout = ServiceHelper.GetService<MainWindow>().RootLayout;
             dockingManager = ServiceHelper.GetService<MainWindow>().DockingManager;
@@ -67,29 +66,29 @@ namespace MageekFrontWpf.Framework.Services
 
         public void OpenWindow(AppWindowEnum win)
         {
-            logger.LogTrace("OpenWindow : " + win);
+            Logger.Log("OpenWindow : " + win);
             try
             {
                 AppWindow appWindow = windows.Where(x => x.id == win).First();
                 appWindow.window.Show();
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         public void CloseWindow(AppWindowEnum win)
         {
-            logger.LogTrace("CloseWindow");
+            Logger.Log("CloseWindow");
             try
             {
                 AppWindow appWindow = windows.Where(x => x.id == win).First();
                 appWindow.window.Close();
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         public void OpenTool(AppToolsEnum tool)
         {
-            logger.LogTrace("OpenTool : " + tool);
+            Logger.Log("OpenTool : " + tool);
             try
             {
                 BaseUserControl control = tools.Find(t => t.id == tool).tool;
@@ -114,12 +113,12 @@ namespace MageekFrontWpf.Framework.Services
                 };
                 rootLayout.RootPanel.Children.Add(anchPane);
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         public void OpenDoc(Deck deck)
         {
-            logger.LogTrace("OpenDocument : " + deck.Title);
+            Logger.Log("OpenDocument : " + deck.Title);
             try
             {
 
@@ -152,7 +151,7 @@ namespace MageekFrontWpf.Framework.Services
 
                 docPane.Children.Add(doc);
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         #region Layout gestion
@@ -169,7 +168,7 @@ namespace MageekFrontWpf.Framework.Services
 
         public void SaveLayout(string arg)
         {
-            logger.LogTrace("SaveLayout : " + arg);
+            Logger.Log("SaveLayout : " + arg);
             try
             {
                 string xmlLayoutString = "";
@@ -181,12 +180,12 @@ namespace MageekFrontWpf.Framework.Services
                 }
                 File.WriteAllText(GetLayoutPath("Layout"), xmlLayoutString);
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         public void LoadLayout(string arg)
         {
-            logger.LogTrace("LoadLayout : " + arg);
+            Logger.Log("LoadLayout : " + arg);
             try
             {
                 var serializer = new XmlLayoutSerializer(dockingManager);
@@ -201,7 +200,7 @@ namespace MageekFrontWpf.Framework.Services
                     }
                 }
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         private string GetLayoutPath(string layoutName)

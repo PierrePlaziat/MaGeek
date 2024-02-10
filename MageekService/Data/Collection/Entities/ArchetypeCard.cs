@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekServices.Data.Collection.Entities
+namespace MageekCore.Data.Collection.Entities
 {
 
     public class ArchetypeCard

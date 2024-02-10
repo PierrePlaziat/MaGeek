@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MageekServices;
+using MageekCore;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.UI.ViewModels.AppWindows;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekFrontWpf.UI.Views.AppWindows;
 using MageekFrontWpf.UI.Views.AppPanels;
 using MageekFrontWpf.UI.ViewModels;
-using MageekServices.Data.Collection;
-using MageekServices.Data.Mtg;
+using MageekCore.Data.Collection;
+using MageekCore.Data.Mtg;
 using MageekFrontWpf.UI.Views;
 
 namespace MageekFrontWpf.AppValues

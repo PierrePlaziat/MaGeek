@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekServices.Data;
+using MageekCore.Data;
 using System.Threading.Tasks;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
@@ -13,11 +13,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     {
 
         private readonly WindowsService winManager;
-        private readonly MageekServices.MageekService mageek;
+        private readonly MageekCore.MageekService mageek;
 
         public WelcomeWindowViewModel(
             WindowsService winManager,
-            MageekServices.MageekService mageek
+            MageekCore.MageekService mageek
         ){
             this.mageek = mageek;
             this.winManager = winManager;

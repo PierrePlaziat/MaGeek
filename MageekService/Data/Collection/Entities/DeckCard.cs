@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MageekServices.Data.Collection.Entities
+namespace MageekCore.Data.Collection.Entities
 {
 
     public class DeckCard

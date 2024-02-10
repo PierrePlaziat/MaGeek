@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekServices.Data;
-using MageekServices.Data.Collection.Entities;
-using MageekServices.Data.Mtg.Entities;
+using MageekCore.Data;
+using MageekCore.Data.Collection.Entities;
+using MageekCore.Data.Mtg.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,11 +15,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
     {
 
         private SettingService config;
-        private MageekServices.MageekService mageek;
+        private MageekCore.MageekService mageek;
 
         public CardSearcherViewModel(
             SettingService config,
-            MageekServices.MageekService mageek
+            MageekCore.MageekService mageek
         ){
             this.mageek = mageek;
             this.config = config;

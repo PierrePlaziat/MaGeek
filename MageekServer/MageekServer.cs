@@ -1,4 +1,4 @@
-﻿using MageekServices.Data.Collection.Entities;
+﻿using MageekCore.Data.Collection.Entities;
 
 namespace MageekServer
 {
@@ -26,9 +26,9 @@ namespace MageekServer
 
     public class MageekServer : IMageekServer
     {
-        private MageekServices.MageekService mageek;
+        private MageekCore.MageekService mageek;
 
-        public MageekServer(MageekServices.MageekService mageek)
+        public MageekServer(MageekCore.MageekService mageek)
         {
             this.mageek = mageek;
             mageek.InitializeService().ConfigureAwait(true);

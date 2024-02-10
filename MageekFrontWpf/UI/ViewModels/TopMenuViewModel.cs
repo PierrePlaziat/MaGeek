@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.Services;
-using MageekServices.Tools;
+using MageekCore.Tools;
 using System;
 
 namespace MageekFrontWpf.UI.ViewModels

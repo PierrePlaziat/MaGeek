@@ -1,7 +1,7 @@
-﻿using MageekServices.Data.Mtg.Entities;
+﻿using MageekCore.Data.Mtg.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace MageekServices.Data.Mtg
+namespace MageekCore.Data.Mtg
 {
 
     public class MtgDbContext : DbContext

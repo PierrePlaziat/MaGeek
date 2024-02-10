@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekServices;
-using MageekServices.Data.Collection.Entities;
+using MageekCore;
+using MageekCore.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;

@@ -6,10 +6,12 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>True</UseWindowsForms>
     <ApplicationIcon>Resources\Images\Icone.ico</ApplicationIcon>
+    <StartupObject></StartupObject>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MageekService\MageekServices.csproj" />
+    <ProjectReference Include="..\MageekService\MageekCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

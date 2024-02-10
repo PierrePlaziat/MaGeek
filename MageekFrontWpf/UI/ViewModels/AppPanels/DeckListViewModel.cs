@@ -4,8 +4,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekServices;
-using MageekServices.Data.Collection.Entities;
+using MageekCore;
+using MageekCore.Data.Collection.Entities;
+using MageekCore.Tools;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,7 +33,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             this.config = config;
             this.dialog = dialog;
             WeakReferenceMessenger.Default.RegisterAll(this);
-            Reload().ConfigureAwait(false);
         }
 
         [ObservableProperty] private IEnumerable<Deck> decks;
@@ -58,6 +58,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task Reload()
         {
+            Logger.Log("Reload");
             IsLoading = true;
             Decks = FilterDeck(await mageek.GetDecks());
             IsLoading = false;

@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekServices.Data.Collection.Entities;
-using MageekServices.Data.Mtg.Entities;
+using MageekCore.Data.Collection.Entities;
+using MageekCore.Data.Mtg.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -18,11 +18,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<UpdateDeckMessage>
     {
 
-        private MageekServices.MageekService mageek;
+        private MageekCore.MageekService mageek;
         private readonly ILogger<DeckTableViewModel> logger;
 
         public DeckTableViewModel(
-            MageekServices.MageekService mageek,
+            MageekCore.MageekService mageek,
             ILogger<DeckTableViewModel> logger
         ){
             this.logger = logger;

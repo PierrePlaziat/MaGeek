@@ -2,7 +2,11 @@
 using System.Text.Json;
 using System.Collections.Generic;
 using MageekFrontWpf.AppValues;
-using MageekServices.Data;
+using MageekCore.Data;
+using System.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using MageekCore.Tools;
 
 namespace MageekFrontWpf.Framework.Services
 {
@@ -15,12 +19,20 @@ namespace MageekFrontWpf.Framework.Services
 
         public SettingService()
         {
+            AppSettings.InitSettings(this);
             LoadSettings();
+        }
+
+        private void InitSettings(SettingService Settings)
+        {
+            Logger.Log("");
+            if (!Settings.Settings.ContainsKey(AppSetting.ForeignLanguage)) Settings.Settings.Add(AppSetting.ForeignLanguage, "French");
+            if (!Settings.Settings.ContainsKey(AppSetting.Currency)) Settings.Settings.Add(AppSetting.Currency, "Eur");
         }
 
         private void LoadSettings()
         {
-            Folders.InitFolders();
+            Logger.Log("");
             if (!File.Exists(Path_Settings))
             {
                 SaveSettings();
@@ -32,6 +44,7 @@ namespace MageekFrontWpf.Framework.Services
 
         private void SaveSettings()
         {
+            Logger.Log(DateTime.Now.ToString());
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(Settings, options);
             File.WriteAllText(Path_Settings, jsonString);
@@ -39,6 +52,7 @@ namespace MageekFrontWpf.Framework.Services
 
         public void SetSetting(AppSetting key, string value)
         {
+            Logger.Log(DateTime.Now.ToString() + key + " - " + value);
             Settings[key] = value;
             SaveSettings();
         }

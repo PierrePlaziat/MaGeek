@@ -7,15 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Text.Json;
 using ScryfallApi.Client.Models;
-using MageekServices.Data.Collection;
-using MageekServices.Data.Mtg;
-using MageekServices.Data.Collection.Entities;
-using MageekServices.Data.Mtg.Entities;
-using MageekServices.Tools;
-using Microsoft.Extensions.Logging;
-using MageekServices.Data;
+using MageekCore.Data.Collection;
+using MageekCore.Data.Mtg;
+using MageekCore.Data.Collection.Entities;
+using MageekCore.Data.Mtg.Entities;
+using MageekCore.Tools;
+using MageekCore.Data;
 
-namespace MageekServices
+namespace MageekCore
 {
 
     public class MageekService
@@ -23,22 +22,19 @@ namespace MageekServices
 
         private readonly MtgDbManager mtg;
         private readonly CollectionDbManager collec;
-        private readonly ILogger<MageekService> logger;
 
         public MageekService(
-            ILogger<MageekService> logger,
             CollectionDbManager collec,
             MtgDbManager mtg
         )
         {
             this.mtg = mtg;
-            this.logger = logger;
             this.collec = collec;
         }
 
         public async Task<MageekInitReturn> InitializeService()
         {
-            logger.LogInformation("Start");
+            Logger.Log("");
             try
             {
                 Folders.InitFolders();
@@ -49,13 +45,14 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return MageekInitReturn.Error;
             }
         }
 
         public async Task<MageekUpdateReturn> UpdateMtg()
         {
+            Logger.Log("");
             try
             {
                 await mtg.DatabaseDownload();
@@ -63,7 +60,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return MageekUpdateReturn.ErrorDownloading;
             }
             try
@@ -73,13 +70,14 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return MageekUpdateReturn.ErrorFetching;
             }
         }
 
         public async Task<List<DeckCard>> ParseCardList(string cardlist)
         {
+            Logger.Log("");
             List<DeckCard> cards = new();
             try
             {
@@ -103,7 +101,7 @@ namespace MageekServices
                                 }
                                 catch (Exception e)
                                 {
-                                    logger.LogError(e.Message);
+                                    Logger.Log(e);
                                 }
 
                             }
@@ -113,7 +111,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
             }
             return cards;
         }
@@ -128,6 +126,7 @@ namespace MageekServices
         /// <returns>List of cards</returns>
         public async Task<List<Cards>> NormalSearch(string lang, string filterName)
         {
+            Logger.Log("");
             List<Cards> retour = new();
             string lowerFilterName = filterName.ToLower();
             string normalizedFilterName = StringExtension.RemoveDiacritics(filterName).Replace('-', ' ').ToLower();
@@ -158,6 +157,7 @@ namespace MageekServices
         /// <returns>List of cards</returns>
         public async Task<List<Cards>> AdvancedSearch(string lang, string filterName, string filterType, string filterKeyword, string filterText, string filterColor, string filterTag, bool onlyGot, bool colorisOr)
         {
+            Logger.Log("");
             List<Cards> retour = await NormalSearch(lang, filterName);
 
             try
@@ -282,7 +282,7 @@ namespace MageekServices
                 //    retour = retour.Where(x => x.Collected > 0).ToList();
                 //}
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
             return retour;
         }
 
@@ -293,6 +293,7 @@ namespace MageekServices
         /// <returns>a list of uuid</returns>
         public async Task<List<string>> FindCard_Variants(string archetypeId)
         {
+            Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.ArchetypeId == archetypeId)
@@ -307,6 +308,7 @@ namespace MageekServices
         /// <returns>a single archetype id</returns>
         public async Task<string> FindCard_Archetype(string cardUuid)
         {
+            Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.CardUuid == cardUuid)
@@ -321,6 +323,7 @@ namespace MageekServices
         /// <returns>Archetype</returns>
         public async Task<ArchetypeCard> FindCard_Ref(string cardUuid)
         {
+            Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.CardUuid == cardUuid)
@@ -334,6 +337,7 @@ namespace MageekServices
         /// <returns>Archetype</returns>
         public async Task<Cards> FindCard_ArchetypeData(string name)
         {
+            Logger.Log("");
             using MtgDbContext DB = await mtg.GetContext();
             return await DB.cards
                 .Where(x => x.Name == name)
@@ -347,6 +351,7 @@ namespace MageekServices
         /// <returns>Archetype</returns>
         public async Task<Tokens> FindToken(string name)
         {
+            Logger.Log("");
             using MtgDbContext DB = await mtg.GetContext();
             return await DB.tokens
                 .Where(x => x.Name == name)
@@ -360,6 +365,7 @@ namespace MageekServices
         /// <returns>Archetype</returns>
         public async Task<Cards> FindCard_Data(string cardUuid)
         {
+            Logger.Log("");
             using MtgDbContext DB = await mtg.GetContext();
             return await DB.cards
                 .Where(x => x.Uuid == cardUuid)
@@ -368,6 +374,7 @@ namespace MageekServices
 
         public async Task<List<CardCardRelation>> FindCard_Related(string uuid, string originalarchetype)
         {
+            Logger.Log("");
             // TODO cache data
             List<CardCardRelation> outputCards = new();
             if (string.IsNullOrEmpty(uuid)) return outputCards;
@@ -414,7 +421,7 @@ namespace MageekServices
                     }
                 }
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
             return outputCards;
         }
 
@@ -426,6 +433,7 @@ namespace MageekServices
         /// <param name="cardUuid"></param>
         public async Task SetFav(string archetypeId, string cardUuid)
         {
+            Logger.Log("");
             try
             {
                 if (string.IsNullOrEmpty(archetypeId)) return;
@@ -448,7 +456,7 @@ namespace MageekServices
                 }
                 await DB.SaveChangesAsync();
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         /// <summary>
@@ -459,6 +467,7 @@ namespace MageekServices
         /// <returns>Traducted name of english one if not found</returns>
         public async Task<string> GetTraduction(string archetypeId, string lang)
         {
+            Logger.Log("");
             string foreignName = "";
             try
             {
@@ -466,7 +475,7 @@ namespace MageekServices
                 var t = await DB.CardTraductions.Where(x => x.CardUuid == archetypeId && x.Language == lang).FirstOrDefaultAsync();
                 if (t != null) foreignName = t.Traduction;
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
             if (string.IsNullOrEmpty(foreignName)) foreignName = string.Empty;
             return foreignName;
         }
@@ -479,6 +488,7 @@ namespace MageekServices
         /// <returns>The data if any</returns>
         public async Task<CardForeignData> GetTraductedData(string cardUuid, string lang)
         {
+            Logger.Log("");
             try
             {
                 using MtgDbContext DB = await mtg.GetContext();
@@ -489,7 +499,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return null;
             }
         }
@@ -502,6 +512,7 @@ namespace MageekServices
         /// <returns>true if it has it</returns>
         public async Task<bool> CardHasType(string cardUuid, string typeFilter)
         {
+            Logger.Log("");
             using MtgDbContext DB = await mtg.GetContext();
             string type = await DB.cards.Where(x => x.Uuid == cardUuid).Select(x => x.Type).FirstOrDefaultAsync();
             return type.Contains(typeFilter);
@@ -515,6 +526,7 @@ namespace MageekServices
         /// <returns>The estimation</returns>
         public async Task<PriceLine> EstimateCardPrice(string cardUuid)
         {
+            Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             PriceLine? price = DB.PriceLine.Where(x => x.CardUuid == cardUuid).FirstOrDefault();
             if (price != null)
@@ -559,6 +571,7 @@ namespace MageekServices
         /// <returns>The devotion to this color</returns>
         public int Devotion(string manaCost, char color)
         {
+            Logger.Log("");
             return manaCost.Length - manaCost.Replace(color.ToString(), "").Length;
         }
 
@@ -569,6 +582,7 @@ namespace MageekServices
         /// <returns>a local url to a jpg</returns>
         public async Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type)
         {
+            Logger.Log("");
             try
             {
                 string localFileName = Path.Combine(Folders.Illustrations, cardUuid + "_" + type.ToString());
@@ -585,7 +599,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return null;
             }
         }
@@ -597,6 +611,7 @@ namespace MageekServices
         /// <returns>The card uuid of the back</returns>
         public async Task<string?> GetCardBack(string cardUuid)
         {
+            Logger.Log("");
             using MtgDbContext DB = await mtg.GetContext();
             return await DB.cards.Where(x => x.Uuid == cardUuid).Select(x => x.OtherFaceIds).FirstOrDefaultAsync();
         }
@@ -608,6 +623,7 @@ namespace MageekServices
         /// <returns>List of legalities</returns>
         public async Task<CardLegalities> GetLegalities(string CardUuid)
         {
+            Logger.Log("");
             using MtgDbContext DB = await mtg.GetContext();
             return await DB.cardLegalities.Where(x => x.Uuid == CardUuid).FirstOrDefaultAsync();
         }
@@ -619,6 +635,7 @@ namespace MageekServices
         /// <returns>List of rulings</returns>
         public async Task<List<CardRulings>> GetRulings(string CardUuid)
         {
+            Logger.Log("");
             using MtgDbContext DB = await mtg.GetContext();
             return await DB.cardRulings.Where(x => x.Uuid == CardUuid).ToListAsync();
         }
@@ -631,6 +648,7 @@ namespace MageekServices
         /// <returns>A scryfall card</returns>
         private async Task<Card?> GetScryfallCard(string cardUuid)
         {
+            Logger.Log("");
             try
             {
                 using MtgDbContext DB2 = await mtg.GetContext();
@@ -645,21 +663,21 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return null;
             }
         }
 
         public async Task ConvertCollectedFromScryfallIdToUuid()
         {
-            logger.LogInformation("start!");
+            Logger.Log("start!");
             using (CollectionDbContext DB = await collec.GetContext())
             using (MtgDbContext DB2 = await mtg.GetContext())
             {
                 int i = 0;
                 foreach (var v in DB.CollectedCard)
                 {
-                    logger.LogInformation(i++.ToString());
+                    Logger.Log(i++.ToString());
                     string newuuid = (await DB2.cardIdentifiers.Where(x => x.ScryfallId == v.CardUuid).FirstOrDefaultAsync()).Uuid;
                     int q = v.Collected;
                     DB.Entry(v).State = EntityState.Deleted;
@@ -671,7 +689,7 @@ namespace MageekServices
                 }
                 await DB.SaveChangesAsync();
             }
-            logger.LogInformation("end!");
+            Logger.Log("end!");
         }
 
         #endregion
@@ -686,6 +704,7 @@ namespace MageekServices
         /// <returns>Quantity in collec before and after the move</returns>
         public async Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification)
         {
+            Logger.Log("");
             // Guard
             if (string.IsNullOrEmpty(cardUuid)) return new Tuple<int, int>(0, 0);
             // Get or create collected card
@@ -718,6 +737,7 @@ namespace MageekServices
         /// <returns>The count</returns>
         public async Task<int> Collected(string cardUuid, bool onlyThisVariant = true)
         {
+            Logger.Log("");
             try
             {
                 if (string.IsNullOrEmpty(cardUuid)) return 0;
@@ -735,12 +755,13 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return -1;
             }
         }
         public async Task<int> Collected_AllVariants(string archetypeId)
         {
+            Logger.Log("");
             if (string.IsNullOrEmpty(archetypeId)) return 0;
             int count = 0;
             using CollectionDbContext DB = await collec.GetContext();
@@ -765,7 +786,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
             }
             return total;
         }
@@ -783,7 +804,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return 0;
             }
         }
@@ -801,7 +822,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return 0;
             }
         }
@@ -823,7 +844,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
             }
             return total;
         }
@@ -852,7 +873,7 @@ namespace MageekServices
                     else missingList.Add(collectedCard.CardUuid);
                 }
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
             return new Tuple<decimal, List<string>>(total, missingList);
         }
 
@@ -868,13 +889,14 @@ namespace MageekServices
         /// <returns>A list containing the decks</returns>
         public async Task<List<Deck>> GetDecks()
         {
+            Logger.Log("");
             List<Deck> decks = new();
             try
             {
                 using CollectionDbContext DB = await collec.GetContext();
                 decks = await DB.Decks.ToListAsync();
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
             return decks;
         }
 
@@ -885,6 +907,7 @@ namespace MageekServices
         /// <returns>The found deck or null</returns>
         public async Task<Deck> GetDeck(string deckId)
         {
+            Logger.Log("");
             try
             {
                 using CollectionDbContext DB = await collec.GetContext();
@@ -893,7 +916,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return null;
             }
         }
@@ -905,6 +928,7 @@ namespace MageekServices
         /// <returns>A list of deck-card relations</returns>
         public async Task<List<DeckCard>> GetDeckContent(string deckId)
         {
+            Logger.Log("");
             try
             {
                 using CollectionDbContext DB = await collec.GetContext();
@@ -912,7 +936,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return new List<DeckCard>();
             }
         }
@@ -925,6 +949,7 @@ namespace MageekServices
         /// <returns>a reference to the deck</returns>
         public async Task<Deck> CreateDeck_Empty(string title, string description)
         {
+            Logger.Log("");
             if (string.IsNullOrEmpty(title)) return null;
             try
             {
@@ -942,7 +967,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
                 return null;
             }
         }
@@ -956,6 +981,7 @@ namespace MageekServices
         /// <returns>A list of messages, empty if everything went well</returns>
         public async Task<List<string>> CreateDeck_Contructed(string title, string description, IEnumerable<DeckCard> deckLines)
         {
+            Logger.Log("");
             List<string> messages = new();
             Deck deck = await CreateDeck_Empty(title, description);
             if (deck == null)
@@ -994,7 +1020,7 @@ namespace MageekServices
                 catch (Exception e)
                 {
                     messages.Add("[error]" + e.Message);
-                    logger.LogError(e.Message);
+                    Logger.Log(e);
                 }
             }
             return messages;
@@ -1007,6 +1033,7 @@ namespace MageekServices
         /// <param name="title"></param>
         public async Task RenameDeck(string deckId, string title)
         {
+            Logger.Log("");
             if (string.IsNullOrEmpty(title)) return;
             using CollectionDbContext DB = await collec.GetContext();
             var deck = await DB.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
@@ -1024,6 +1051,7 @@ namespace MageekServices
         /// <param name="deckToCopy"></param>
         public async Task DuplicateDeck(Deck deckToCopy)
         {
+            Logger.Log("");
             if (deckToCopy == null) return;
             var newDeck = await CreateDeck_Empty(
                 deckToCopy.Title + " - Copy",
@@ -1051,6 +1079,7 @@ namespace MageekServices
 
         public async Task DuplicateDeck(string deckId)
         {
+            Logger.Log("");
             var deck = await GetDeck(deckId);
             await DuplicateDeck(deck);
         }
@@ -1065,6 +1094,7 @@ namespace MageekServices
         /// <returns>the formated decklist</returns>
         public async Task<string> DeckToTxt(string deckId, bool withSetCode = false)
         {
+            Logger.Log("");
             using CollectionDbContext collecDb = await collec.GetContext();
             using MtgDbContext cardInfos = await mtg.GetContext();
             var deck = await collecDb.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
@@ -1121,6 +1151,7 @@ namespace MageekServices
         /// <exception cref="NotImplementedException"></exception>
         public async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
         {
+            Logger.Log("");
             await DeleteDeck(deckId);
             await CreateDeck_Contructed(title, description, content);
         }
@@ -1131,6 +1162,7 @@ namespace MageekServices
         /// <param name="deck"></param>
         public async Task DeleteDeck(Deck deck)
         {
+            Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             DB.Decks.Remove(deck);
             await DB.SaveChangesAsync();
@@ -1142,6 +1174,7 @@ namespace MageekServices
         /// <param name="deck"></param>
         public async Task DeleteDeck(string deckId)
         {
+            Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             var deck = await GetDeck(deckId);
             DB.Decks.Remove(deck);
@@ -1154,6 +1187,7 @@ namespace MageekServices
         /// <param name="decks"></param>
         public async Task DeleteDecks(List<Deck> decks)
         {
+            Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             DB.Decks.RemoveRange(decks);
             await DB.SaveChangesAsync();
@@ -1168,6 +1202,7 @@ namespace MageekServices
         /// <param name="relation"></param>
         public async Task AddCardToDeck_WithoutSet(string archetypeId, Deck deck, int qty, int relation = 0)
         {
+            Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             List<string> cardUuids = await FindCard_Variants(archetypeId);
             if (cardUuids.Count > 0) await AddCardToDeck(cardUuids[0], deck, qty, relation);
@@ -1183,6 +1218,7 @@ namespace MageekServices
         /// <returns></returns>
         public async Task AddCardToDeck(string cardUuid, Deck deck, int qty, int relation = 0)
         {
+            Logger.Log("");
             if (string.IsNullOrEmpty(cardUuid) || deck == null) return;
             try
             {
@@ -1208,7 +1244,7 @@ namespace MageekServices
                 DB.Entry(deck).State = EntityState.Modified;
                 await DB.SaveChangesAsync();
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         /// <summary>
@@ -1219,6 +1255,7 @@ namespace MageekServices
         /// <param name="qty"></param>
         public async Task RemoveCardFromDeck(string cardUuid, Deck deck, int qty = 1)
         {
+            Logger.Log("");
             if (string.IsNullOrEmpty(cardUuid) || deck == null) return;
             try
             {
@@ -1232,7 +1269,7 @@ namespace MageekServices
                 DB.Entry(deck).State = EntityState.Modified;
                 await DB.SaveChangesAsync();
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
         }
 
         /// <summary>
@@ -1242,6 +1279,7 @@ namespace MageekServices
         /// <param name="type"></param>
         public async Task ChangeDeckRelationType(DeckCard relation, int type)
         {
+            Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             relation.RelationType = type;
             DB.Entry(relation).State = EntityState.Modified;
@@ -1255,6 +1293,7 @@ namespace MageekServices
         /// <param name="cardUuid"></param>
         public async Task SwitchCardInDeck(DeckCard cardDeckRelation, string cardUuid)
         {
+            Logger.Log("");
             int qty = cardDeckRelation.Quantity;
             Deck deck = await GetDeck(cardDeckRelation.DeckId);
             int rel = cardDeckRelation.RelationType;
@@ -1269,6 +1308,7 @@ namespace MageekServices
         /// <returns>Color identity string</returns>
         public async Task<string> FindDeckColorIdentity(string deckId)
         {
+            Logger.Log("");
             string retour = "";
             using CollectionDbContext DB = await collec.GetContext();
             List<DeckCard> cards = await GetDeckContent(deckId);
@@ -1291,6 +1331,7 @@ namespace MageekServices
         /// <returns>true if true</returns>
         public async Task<bool> DeckHasThisColorIdentity(List<DeckCard> deck, char color)
         {
+            Logger.Log("");
             using MtgDbContext DB = await mtg.GetContext();
             foreach (DeckCard card in deck)
             {
@@ -1311,6 +1352,7 @@ namespace MageekServices
         /// <returns>The devotion to this color</returns>
         public async Task<int> DeckDevotion(string deckId, char color)
         {
+            Logger.Log("");
             using MtgDbContext DB = await mtg.GetContext();
             List<DeckCard> deckCards = await GetDeckContent(deckId);
             int devotion = 0;
@@ -1329,6 +1371,7 @@ namespace MageekServices
         /// <returns>The estimation</returns>
         public async Task<Tuple<decimal, List<string>>> EstimateDeckPrice(string deckId, string currency)
         {
+            Logger.Log("");
             decimal total = 0;
             List<string> missingList = new();
             using CollectionDbContext DB = await collec.GetContext();
@@ -1425,7 +1468,7 @@ namespace MageekServices
                         rels.Add(card);
                 }
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
             return rels;
         }
 
@@ -1448,7 +1491,7 @@ namespace MageekServices
                     if (await CardHasType(card.CardUuid, typeFilter)) rels.Add(card);
                 }
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
             return rels;
         }
 
@@ -1497,7 +1540,7 @@ namespace MageekServices
                     }
                 }
             }
-            catch (Exception e) { logger.LogError(e.Message); }
+            catch (Exception e) { Logger.Log(e); }
             return manaCurve;
         }
 
@@ -1728,7 +1771,7 @@ namespace MageekServices
                 }
                 catch (Exception e)
                 {
-                    logger.LogError(e.Message);
+                    Logger.Log(e);
                 }
             }
             return cards;
@@ -1754,7 +1797,7 @@ namespace MageekServices
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
             }
             return nb;
         }

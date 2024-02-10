@@ -3,10 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekServices.Data;
-using MageekServices.Data.Collection.Entities;
-using MageekServices.Data.Mtg.Entities;
-using MageekServices.Tools;
+using MageekCore.Data;
+using MageekCore.Data.Collection.Entities;
+using MageekCore.Data.Mtg.Entities;
+using MageekCore.Tools;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,10 +20,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<CardSelectedMessage>
     {
 
-        private MageekServices.MageekService mageek;
+        private MageekCore.MageekService mageek;
 
         public CardInspectorViewModel(
-            MageekServices.MageekService mageek
+            MageekCore.MageekService mageek
         )
         {
             this.mageek = mageek;
@@ -53,6 +53,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task Reload(string uuid)
         {
+            Logger.Log("Reload");
             if (uuid == null) return;
             IsLoading = true;
             await Task.Delay(100);

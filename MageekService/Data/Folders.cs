@@ -1,4 +1,7 @@
-﻿namespace MageekServices.Data
+﻿using MageekCore.Tools;
+using System.Diagnostics;
+
+namespace MageekCore.Data
 {
 
     public static class Folders
@@ -17,6 +20,7 @@
 
         public static void InitFolders()
         {
+            Logger.Log("");
             if (!File.Exists(Roaming)) Directory.CreateDirectory(Roaming);
             if (!File.Exists(SDK)) Directory.CreateDirectory(SDK);
             if (!File.Exists(DbFolder)) Directory.CreateDirectory(DbFolder);
