@@ -25,34 +25,37 @@ namespace MageekFrontWpf.Framework.Services
 
         private void InitSettings(SettingService Settings)
         {
-            Logger.Log("");
             if (!Settings.Settings.ContainsKey(AppSetting.ForeignLanguage)) Settings.Settings.Add(AppSetting.ForeignLanguage, "French");
             if (!Settings.Settings.ContainsKey(AppSetting.Currency)) Settings.Settings.Add(AppSetting.Currency, "Eur");
+            Logger.Log("Done");
         }
 
         private void LoadSettings()
         {
-            Logger.Log("");
             if (!File.Exists(Path_Settings))
             {
+                Logger.Log("No settings found");
                 SaveSettings();
-                return;
             }
-            string jsonString = File.ReadAllText(Path_Settings);
-            Settings = JsonSerializer.Deserialize<Dictionary<AppSetting, string>>(jsonString);
+            else
+            {
+                string jsonString = File.ReadAllText(Path_Settings);
+                Settings = JsonSerializer.Deserialize<Dictionary<AppSetting, string>>(jsonString);
+                Logger.Log("Done");
+            }
         }
 
         private void SaveSettings()
         {
-            Logger.Log(DateTime.Now.ToString());
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(Settings, options);
             File.WriteAllText(Path_Settings, jsonString);
+            Logger.Log("Done");
         }
 
         public void SetSetting(AppSetting key, string value)
         {
-            Logger.Log(DateTime.Now.ToString() + key + " - " + value);
+            Logger.Log(key + " - " + value);
             Settings[key] = value;
             SaveSettings();
         }

@@ -104,9 +104,8 @@ namespace MageekCore.Data.Mtg
             }
         }
 
-        public async Task<bool> UpdateAvailable()
+        public async Task<bool> CheckUpdate()
         {
-            Logger.Log("Is update needed?");
             try
             {
                 bool? tooOld = FileUtils.IsFileOlder(Folders.MtgJson_OldHash, new TimeSpan(2, 0, 0, 0));
@@ -115,6 +114,7 @@ namespace MageekCore.Data.Mtg
                     Logger.Log("Already updated recently.");
                     return false;
                 }
+                Logger.Log("Checking update...");
                 await HashDownload();
                 bool check = HashCheck();
                 Logger.Log(check ? "Update available!" : "Already up to date!");

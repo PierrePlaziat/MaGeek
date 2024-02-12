@@ -51,7 +51,7 @@
             <Label></Label>
 
             <DockPanel HorizontalAlignment="Right">
-                <Button Command="{Binding AddManualEstimationsCommand}"
+                <Button Command="{Binding AddManualEstimationCommand}"
                         Content="Add manual estimations" />
                 <Label Content="{Binding FinalEstimation}"
                        Foreground="White"
@@ -86,7 +86,7 @@
 
         </ScrollViewer>
 
-        <Grid Visibility="{Binding IsLoading}"
+        <Grid Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"
               Grid.RowSpan="3"
               Background="Black"
               HorizontalAlignment="Stretch"

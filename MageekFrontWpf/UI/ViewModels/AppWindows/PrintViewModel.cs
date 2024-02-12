@@ -2,16 +2,15 @@
 using MaGeek.UI.Controls;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekCore.Data.Collection.Entities;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
-    public class PrintViewModel : BaseViewModel
+    public partial class PrintViewModel : BaseViewModel
     {
 
         private MageekCore.MageekService mageek;
@@ -19,85 +18,30 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         public PrintViewModel(MageekCore.MageekService mageek)
         {
             this.mageek = mageek;
-            if (selectedDeck != null)
-            {
-                SelectedDeck = selectedDeck;
-                DelayLoad().ConfigureAwait(false);
-            }
-
         }
 
-        public ICommand PreviousPageCommand { get; } = new AsyncRelayCommand(DoPreviousPageCommand);
-        public ICommand NextPageCommand { get; } = new AsyncRelayCommand(DoNextPageCommand);
-        public ICommand LaunchPrintCommand { get; } = new AsyncRelayCommand(DoLaunchPrintCommand);
+        [ObservableProperty] Deck selectedDeck;
+        [ObservableProperty] List<PrintingPage> pages = new();
+        [ObservableProperty] PrintingPage showedPage = null;
+        [ObservableProperty] bool includeBasicLands = false;
+        [ObservableProperty] private bool onlyMissing = false;
+        [ObservableProperty] int currentPage;
+        [ObservableProperty] List<string> listOfCardsToPrint;
 
-
-        private static Task DoPreviousPageCommand()
-        {
-            throw new NotImplementedException();
-        }
-        private static Task DoNextPageCommand()
-        {
-            throw new NotImplementedException();
-        }
-        private static Task DoLaunchPrintCommand()
-        {
-            throw new NotImplementedException();
-        }
-
-        Deck selectedDeck;
-        public Deck SelectedDeck
-        {
-            get { return selectedDeck; }
-            set { selectedDeck = value; OnPropertyChanged(); }
-        }
-
-        List<string> ListOfCardsToPrint;
-        List<PrintingPage> Pages = new();
-        PrintingPage ShowedPage;
-
-        private int currentPage;
-
-        public int CurrentPage
-        {
-            get { return currentPage; }
-            set { currentPage = value; OnPropertyChanged(); OnPropertyChanged(nameof(CurrentPageP1)); }
-        }
-
-        public int CurrentPageP1
-        {
-            get { return currentPage + 1; }
-        }
-
-        private bool IncludeBasicLands = false;
-        private bool OnlyMissing = false;
-
-        private async Task DelayLoad()
-        {
-            await Task.Delay(1);
-            await Reload();
-        }
-
-        private async Task Reload()
+        [RelayCommand]
+        private async Task Reload(Deck deck)
         {
             Pages.Clear();
             ShowedPage = null;
             CurrentPage = 0;
-            await DetermineListOfCardsToPrint();
-            for (int page = 0; page <= ListOfCardsToPrint.Count / 9 + 1; page++)
-            {
-                Pages.Add(await GeneratePage(page));
-            }
-            if (Pages.Count > 0)
-            {
-                ShowedPage = Pages[0];
-            }
+            SelectedDeck = deck;
+            await DetermineListOfCardsToPrint(deck);
+            await MakePrintingPages(deck);
         }
-
-        private async Task DetermineListOfCardsToPrint()
+        private async Task DetermineListOfCardsToPrint(Deck deck)
         {
             ListOfCardsToPrint = new List<string>();
-            foreach (var v in await mageek.GetDeckContent(selectedDeck.DeckId))
+            foreach (var v in await mageek.GetDeckContent(deck.DeckId))
             {
                 ;
                 if (IncludeBasicLands || !await mageek.CardHasType(v.CardUuid, "Basic Land"))
@@ -112,47 +56,31 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
                 }
             }
         }
-
-        private async Task<PrintingPage> GeneratePage(int pageNb)
+        private async Task MakePrintingPages(Deck deck)
+        {
+            for (int page = 0; page <= ListOfCardsToPrint.Count / 9 + 1; page++)
+            {
+                Pages.Add(await GeneratePage(deck, page));
+            }
+            if (Pages.Count > 0)
+            {
+                ShowedPage = Pages[0];
+            }
+        }
+        private async Task<PrintingPage> GeneratePage(Deck deck,int pageNb)
         {
             PrintingPage printing = new();
             for (int emplacement = 0; emplacement < 9; emplacement++)
             {
                 string cardUuid = null;
-                if (9 * pageNb + emplacement < selectedDeck.CardCount) cardUuid = ListOfCardsToPrint[9 * pageNb + emplacement];
+                if (9 * pageNb + emplacement < deck.CardCount) cardUuid = ListOfCardsToPrint[9 * pageNb + emplacement];
                 if (cardUuid != null) await printing.SetCard(cardUuid, emplacement);
             }
             return printing;
         }
 
-        private void Print(PrintDialog printer)
-        {
-            foreach (var page in Pages)
-            {
-                printer.PrintVisual(page.ContentToPrint, "Mageek Proxy : " + selectedDeck.Title + " - page " + page);
-            }
-        }
-
-        private void LaunchPrint(object sender, System.Windows.RoutedEventArgs e)
-        {
-            PrintDialog printer = new();
-            if (printer.ShowDialog() == true)
-            {
-                Print(printer);
-            }
-        }
-
-        private void NextPageButton(object sender, System.Windows.RoutedEventArgs e)
-        {
-            CurrentPage++;
-            if (CurrentPage == Pages.Count - 1) CurrentPage = 0;
-            if (Pages.Count > 0)
-            {
-                ShowedPage = Pages[CurrentPage];
-            }
-        }
-
-        private void PreviousPageButton(object sender, System.Windows.RoutedEventArgs e)
+        [RelayCommand]
+        private async Task PreviousPage()
         {
             CurrentPage--;
             if (CurrentPage < 0) CurrentPage = Pages.Count - 2;
@@ -162,16 +90,44 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             }
         }
 
-        private void CheckBox_IncludeBasicLands(object sender, System.Windows.RoutedEventArgs e)
+        [RelayCommand]
+        private async Task NextPage()
         {
-            IncludeBasicLands = ((CheckBox)sender).IsChecked ?? false;
-            Reload().ConfigureAwait(false);
+            CurrentPage++;
+            if (CurrentPage == Pages.Count - 1) CurrentPage = 0;
+            if (Pages.Count > 0)
+            {
+                ShowedPage = Pages[CurrentPage];
+            }
         }
 
-        private void CheckBox_OnlyMissing(object sender, System.Windows.RoutedEventArgs e)
+        [RelayCommand]
+        private async Task LaunchPrint()
         {
-            OnlyMissing = ((CheckBox)sender).IsChecked ?? false;
-            Reload().ConfigureAwait(false);
+            PrintDialog printer = new();
+            if (printer.ShowDialog() == true) Print(SelectedDeck, printer);
+        }
+        private void Print(Deck deck, PrintDialog printer)
+        {
+            foreach (var page in Pages)
+            {
+                printer.PrintVisual(page.ContentToPrint, "Mageek Proxy : " + deck.Title + " - page " + page);
+            }
+        }
+
+
+        [RelayCommand]
+        private async Task CheckBoxIncludeBasicLands()
+        {
+            IncludeBasicLands = !IncludeBasicLands;
+            await Reload(SelectedDeck);
+        }
+
+        [RelayCommand]
+        private async Task CheckBoxOnlyMissing()
+        {
+            OnlyMissing = !OnlyMissing;
+            await Reload(SelectedDeck);
         }
 
     }

@@ -1,5 +1,4 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekCore.Data;
 using MageekCore.Data.Mtg.Entities;
 using System.Collections.Generic;
@@ -17,7 +16,6 @@ namespace MaGeek.UI
         private MageekCore.MageekService mageek;
 
         public static readonly DependencyProperty CardUuidProperty =  DependencyProperty.Register(nameof(CardUuid), typeof(string), typeof(CardIllustration), new FrameworkPropertyMetadata(null, OnCardUuidChanged));
-
         public string CardUuid
         {
             get => (string)GetValue(CardUuidProperty);

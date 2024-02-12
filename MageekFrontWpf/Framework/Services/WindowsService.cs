@@ -39,7 +39,6 @@ namespace MageekFrontWpf.Framework.Services
 
         #region construction
 
-        private readonly string Path_LayoutFolder = Path.Combine(Folders.Roaming, "Layout");
 
         private List<AppWindow> windows = new();
         private List<AppTool> tools = new();
@@ -54,19 +53,20 @@ namespace MageekFrontWpf.Framework.Services
 
         public void Init()
         {
-            Logger.Log("");
-            if (!File.Exists(Path_LayoutFolder)) Directory.CreateDirectory(Path_LayoutFolder);
+            Logger.Log("Start");
+            Folders.InitClientFolders();
             rootLayout = ServiceHelper.GetService<MainWindow>().RootLayout;
             dockingManager = ServiceHelper.GetService<MainWindow>().DockingManager;
-            windows = WindowsAndTools.GetWindows();
-            tools = WindowsAndTools.GetTools();
+            windows = WindowsAndTools.LoadWindows();
+            tools = WindowsAndTools.LoadTools();
+            Logger.Log("Done");
         }
 
         #endregion
 
         public void OpenWindow(AppWindowEnum win)
         {
-            Logger.Log("OpenWindow : " + win);
+            Logger.Log(win.ToString());
             try
             {
                 AppWindow appWindow = windows.Where(x => x.id == win).First();
@@ -77,7 +77,7 @@ namespace MageekFrontWpf.Framework.Services
 
         public void CloseWindow(AppWindowEnum win)
         {
-            Logger.Log("CloseWindow");
+            Logger.Log(win.ToString());
             try
             {
                 AppWindow appWindow = windows.Where(x => x.id == win).First();
@@ -88,7 +88,7 @@ namespace MageekFrontWpf.Framework.Services
 
         public void OpenTool(AppToolsEnum tool)
         {
-            Logger.Log("OpenTool : " + tool);
+            Logger.Log(tool.ToString());
             try
             {
                 BaseUserControl control = tools.Find(t => t.id == tool).tool;
@@ -118,7 +118,7 @@ namespace MageekFrontWpf.Framework.Services
 
         public void OpenDoc(Deck deck)
         {
-            Logger.Log("OpenDocument : " + deck.Title);
+            Logger.Log(deck.DeckId + " - " + deck.Title);
             try
             {
 
@@ -168,7 +168,7 @@ namespace MageekFrontWpf.Framework.Services
 
         public void SaveLayout(string arg)
         {
-            Logger.Log("SaveLayout : " + arg);
+            Logger.Log(arg);
             try
             {
                 string xmlLayoutString = "";
@@ -185,7 +185,7 @@ namespace MageekFrontWpf.Framework.Services
 
         public void LoadLayout(string arg)
         {
-            Logger.Log("LoadLayout : " + arg);
+            Logger.Log(arg);
             try
             {
                 var serializer = new XmlLayoutSerializer(dockingManager);
@@ -205,7 +205,7 @@ namespace MageekFrontWpf.Framework.Services
 
         private string GetLayoutPath(string layoutName)
         {
-            return Path_LayoutFolder + "\\" + layoutName + ".avalonXml";
+            return Folders.LayoutFolder + "\\" + layoutName + ".avalonXml";
         }
 
         #endregion

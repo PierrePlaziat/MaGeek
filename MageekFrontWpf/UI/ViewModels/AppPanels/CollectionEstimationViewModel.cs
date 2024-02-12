@@ -40,7 +40,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [ObservableProperty] private List<string> missingList = new();
 
         [RelayCommand]
-        private static void DoAddManualEstimation()
+        private async Task AddManualEstimation()
         {
             throw new NotImplementedException();
         }

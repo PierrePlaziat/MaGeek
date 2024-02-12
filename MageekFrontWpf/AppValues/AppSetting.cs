@@ -18,9 +18,10 @@ namespace MageekFrontWpf.AppValues
 
         internal static void InitSettings(SettingService Settings)
         {
-            Logger.Log("");
+            Logger.Log("Start");
             if (!Settings.Settings.ContainsKey(AppSetting.ForeignLanguage)) Settings.Settings.Add(AppSetting.ForeignLanguage, "French");
             if (!Settings.Settings.ContainsKey(AppSetting.Currency)) Settings.Settings.Add(AppSetting.Currency, "Eur");
+            Logger.Log("Done");
         }
 
     }

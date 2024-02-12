@@ -26,7 +26,7 @@
                     Background="Black">
             <DockPanel>
                 <Button Command="{Binding PreviousPageCommand}">Previous</Button>
-                <Label Content="{Binding CurrentPageP1}"></Label>
+                <Label Content="{Binding CurrentPage}"></Label>
                 <Label Content="/"></Label>
                 <Label Content="{Binding Pages.Count}"></Label>
                 <Button Command="{Binding NextPageCommand}">Next</Button>

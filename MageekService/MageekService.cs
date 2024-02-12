@@ -34,14 +34,14 @@ namespace MageekCore
 
         public async Task<MageekInitReturn> InitializeService()
         {
-            Logger.Log("");
+            Logger.Log("Start");
             try
             {
-                Folders.InitFolders();
+                Folders.InitServerFolders();
                 if (!File.Exists(Folders.DB)) collec.CreateDb();
-                bool needsUpdate = await mtg.UpdateAvailable();
-                if (needsUpdate) return MageekInitReturn.MtgOutdated;
-                else return MageekInitReturn.MtgUpToDate;
+                bool needsUpdate = await mtg.CheckUpdate();
+                Logger.Log("Done");
+                return needsUpdate ? MageekInitReturn.MtgOutdated : MageekInitReturn.MtgUpToDate;
             }
             catch (Exception e)
             {
@@ -52,11 +52,12 @@ namespace MageekCore
 
         public async Task<MageekUpdateReturn> UpdateMtg()
         {
-            Logger.Log("");
             try
             {
+                Logger.Log("DatabaseDownload");
                 await mtg.DatabaseDownload();
                 mtg.HashSave();
+                Logger.Log("Done");
             }
             catch (Exception e)
             {
@@ -65,7 +66,9 @@ namespace MageekCore
             }
             try
             {
+                Logger.Log("FetchMtg");
                 await collec.FetchMtg();
+                Logger.Log("Done");
                 return MageekUpdateReturn.Success;
             }
             catch (Exception e)
