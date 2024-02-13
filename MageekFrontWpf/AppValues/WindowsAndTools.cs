@@ -33,7 +33,6 @@ namespace MageekFrontWpf.AppValues
 
         internal static List<AppWindow> LoadWindows()
         {
-            Logger.Log("Start");
             var wins = new List<AppWindow>()
             {
                 new AppWindow() { id = AppWindowEnum.Main, vm = ServiceHelper.GetService<MainWindowViewModel>(), window = ServiceHelper.GetService<MainWindow>() },
@@ -46,7 +45,6 @@ namespace MageekFrontWpf.AppValues
 
         internal static List<AppTool> LoadTools()
         {
-            Logger.Log("Start");
             var panels = new List<AppTool>()
             {
                 new AppTool() { id = AppToolsEnum.CardSearcher, vm = ServiceHelper.GetService<CardSearcherViewModel>(), tool = ServiceHelper.GetService<CardSearcher>() },

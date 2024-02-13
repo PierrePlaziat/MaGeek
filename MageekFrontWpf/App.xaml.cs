@@ -33,7 +33,7 @@ namespace MageekFrontWpf
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            serviceProvider.GetService<WindowsService>().Init();
+            serviceProvider.GetService<WindowsService>().Initialize();
             WelcomeWindow welcome = serviceProvider.GetService<WelcomeWindow>();
             welcome.Show();
         }

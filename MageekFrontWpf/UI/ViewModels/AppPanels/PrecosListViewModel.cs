@@ -1,73 +1,51 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.Framework.Services;
 using MageekCore;
-using MageekCore.Data.Collection.Entities;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using MageekCore.Tools;
+using System;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
-
-    // TODO find io error on startup
     public partial class PrecoListViewModel : BaseViewModel
     {
 
-        private const string path = "D:\\PROJECTS\\VS\\MaGeek\\Preco";
-        private WindowsService winManager;
         private MageekService mageek;
-        private bool importingSeveral = false;
 
-        public PrecoListViewModel
-        (
-            WindowsService winManager,
-            MageekService mageek
-        )
+        public PrecoListViewModel(MageekService mageek)
         {
-            this.winManager = winManager;
             this.mageek = mageek;
-            Logger.Log("Done");
         }
 
         [ObservableProperty] bool asOwned = false;
-        [ObservableProperty] List<string> precoList = new();
+        [ObservableProperty] List<Tuple<string,string>> precoList = new();
 
-        public async Task Init()
+        public void Reload() // TODO
         {
-            string[] files = Directory.GetFiles(path);
-            foreach (string file in files)
-            {
-                var splited = file.Split("\\");
-                string title = splited[splited.Length - 1].Replace(".txt", "");
-                PrecoList.Add(title);
-            }
-            OnPropertyChanged(nameof(PrecoList));
+           
+            //string[] files = Directory.GetFiles(Folders.PrecosFolder);
+            //foreach (string file in files)
+            //{
+            //    var splited = file.Split("\\");
+            //    string title = splited[splited.Length - 1].Replace(".txt", "");
+            //    content
+            //    PrecoList.Add(new PrecoDeck(title,content));
+            //}
         }
 
-        private async Task ImportPrecos(List<string> titles)
-        {
-            importingSeveral = true;
-            List<Task> tasks = new List<Task>();
-            foreach (string preco in titles) ImportPreco(preco);
-            importingSeveral = false;
-            //winManager.CloseWindow(AppWindowEnum.Precos);
-        }
-        
         [RelayCommand]
-        private async Task ImportPreco(string title)
+        public async Task ImportPreco(string title) // TODO
         {
-            List<DeckCard> importLines = new();
-            //importLines = await mageek.ParseCardList(content); // TODO recup preco content
-            await mageek.CreateDeck_Contructed(
-                title,
-                "Preco",
-                importLines
-            );
-            //TODO asOwned
+           
+            //List<DeckCard> importLines = new();
+            //importLines = await mageek.ParseCardList(PrecoDeck.CardList); // TODO recup preco content
+            //await mageek.CreateDeck_Contructed(
+            //    title,
+            //    "Preco",
+            //    importLines
+            //);
         }
 
     }

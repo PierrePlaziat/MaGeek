@@ -32,7 +32,7 @@ namespace MageekCore
             this.collec = collec;
         }
 
-        public async Task<MageekInitReturn> InitializeService()
+        public async Task<MageekInitReturn> Initialize()
         {
             Logger.Log("Start");
             try
@@ -1877,6 +1877,11 @@ namespace MageekCore
             using CollectionDbContext DB = await collec.GetContext();
             tags.AddRange(DB.Tag.Where(x => x.ArchetypeId == archetypeId));
             return tags;
+        }
+
+        public Task<List<DeckCard>> ParseCardList(object cardList)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

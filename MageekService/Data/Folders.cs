@@ -17,6 +17,7 @@ namespace MageekCore.Data
         public static string Illustrations { get; } = Path.Combine(Roaming, "CardsIllus");
         public static string SetIcon { get; } = Path.Combine(Roaming, "SetIcons");
         public static string LayoutFolder { get; } = Path.Combine(Roaming, "Layout");
+        //public static string PrecosFolder { get; } = Path.Combine(Roaming, "Precos");
 
         public static void InitServerFolders()
         {
@@ -31,6 +32,7 @@ namespace MageekCore.Data
             if (!File.Exists(LayoutFolder)) Directory.CreateDirectory(LayoutFolder);
             if (!File.Exists(Illustrations)) Directory.CreateDirectory(Illustrations);
             if (!File.Exists(SetIcon)) Directory.CreateDirectory(SetIcon);
+            //if (!File.Exists(PrecosFolder)) Directory.CreateDirectory(PrecosFolder);
             Logger.Log("Done");
         }
 

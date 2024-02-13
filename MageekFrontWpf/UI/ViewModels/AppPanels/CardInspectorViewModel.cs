@@ -28,7 +28,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         {
             this.mageek = mageek;
             WeakReferenceMessenger.Default.RegisterAll(this);
-            Logger.Log("Done");
         }
 
         [ObservableProperty] private string selectedArchetype;

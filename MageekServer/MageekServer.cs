@@ -31,7 +31,7 @@ namespace MageekServer
         public MageekServer(MageekCore.MageekService mageek)
         {
             this.mageek = mageek;
-            mageek.InitializeService().ConfigureAwait(true);
+            mageek.Initialize().ConfigureAwait(true);
         }
 
         public async Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification)

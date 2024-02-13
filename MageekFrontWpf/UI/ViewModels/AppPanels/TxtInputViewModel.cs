@@ -20,7 +20,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         )
         {
             this.mageek = mageek;
-            Logger.Log("Done");
         }
 
         [ObservableProperty] private string title;

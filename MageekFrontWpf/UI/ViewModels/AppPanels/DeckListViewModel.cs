@@ -28,13 +28,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             DialogService dialog, 
             MageekService mageek)
         {
-            Logger.Log("Start");
             this.wins = wins;
             this.mageek = mageek;
             this.config = config;
             this.dialog = dialog;
             WeakReferenceMessenger.Default.RegisterAll(this);
-            Logger.Log("Done");
         }
 
         [ObservableProperty] private IEnumerable<Deck> decks;

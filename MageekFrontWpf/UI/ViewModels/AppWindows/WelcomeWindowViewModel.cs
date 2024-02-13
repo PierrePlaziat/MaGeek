@@ -33,7 +33,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             IsLoading = true;
             await Task.Delay(100);
             Message = "Init...";
-            var retour = await mageek.InitializeService();
+            var retour = await mageek.Initialize();
             switch (retour)
             {
                 case MageekInitReturn.Error:

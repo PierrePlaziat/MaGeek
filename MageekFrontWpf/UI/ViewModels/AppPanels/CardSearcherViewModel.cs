@@ -24,7 +24,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         ){
             this.mageek = mageek;
             this.config = config;
-            Logger.Log("Done");
         }
 
         [ObservableProperty] private bool colorIsOr;

@@ -33,14 +33,12 @@ namespace MageekCore.Data.Mtg
         {
             try
             {
-                Logger.Log("Downloading...");
                 using (var client = new HttpClient())
                 {
                     var hash = await client.GetStreamAsync(Url_MtgjsonHash);
                     using var fs_NewHash = new FileStream(Folders.MtgJson_NewHash, FileMode.Create);
                     await hash.CopyToAsync(fs_NewHash);
                 }
-                Logger.Log("Done!");
             }
             catch (Exception e)
             {
@@ -52,7 +50,6 @@ namespace MageekCore.Data.Mtg
         {
             try
             {
-                Logger.Log("Checking...");
                 bool check = true;
                 if (File.Exists(Folders.MtgJson_OldHash))
                 {
@@ -61,7 +58,6 @@ namespace MageekCore.Data.Mtg
                         Folders.MtgJson_OldHash
                     );
                 }
-                Logger.Log("Done!");
                 return check;
             }
             catch (Exception e)
@@ -75,9 +71,9 @@ namespace MageekCore.Data.Mtg
         {
             try
             {
-                Logger.Log("Copying...");
+                Logger.Log("Copying");
                 File.Copy(Folders.MtgJson_NewHash, Folders.MtgJson_OldHash, true);
-                Logger.Log("Done!");
+                Logger.Log("Done");
             }
             catch (Exception e)
             {
@@ -89,14 +85,14 @@ namespace MageekCore.Data.Mtg
         {
             try
             {
-                Logger.Log("Downloading...");
+                Logger.Log("Downloading");
                 using (var client = new HttpClient())
                 using (var mtgjson_sqlite = await client.GetStreamAsync(Url_MtgjsonData))
                 {
                     using var fs_mtgjson_sqlite = new FileStream(Folders.MtgJson_DB, FileMode.Create);
                     await mtgjson_sqlite.CopyToAsync(fs_mtgjson_sqlite);
                 }
-                Logger.Log("Done!");
+                Logger.Log("Done");
             }
             catch (Exception e)
             {
@@ -111,13 +107,13 @@ namespace MageekCore.Data.Mtg
                 bool? tooOld = FileUtils.IsFileOlder(Folders.MtgJson_OldHash, new TimeSpan(2, 0, 0, 0));
                 if (tooOld.HasValue && !tooOld.Value)
                 {
-                    Logger.Log("Already updated recently.");
+                    Logger.Log("Already updated recently");
                     return false;
                 }
-                Logger.Log("Checking update...");
+                Logger.Log("Checking...");
                 await HashDownload();
                 bool check = HashCheck();
-                Logger.Log(check ? "Update available!" : "Already up to date!");
+                Logger.Log(check ? "Update available" : "Already up to date");
                 return check;
             }
             catch (Exception e)

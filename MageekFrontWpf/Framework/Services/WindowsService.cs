@@ -51,7 +51,7 @@ namespace MageekFrontWpf.Framework.Services
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
-        public void Init()
+        public void Initialize()
         {
             Logger.Log("Start");
             Folders.InitClientFolders();
@@ -99,17 +99,22 @@ namespace MageekFrontWpf.Framework.Services
                     IsSelected = true,
                     Content = control,
                     Title = tool.ToString(),
-                    FloatingHeight = 500,
-                    FloatingWidth = 300,
+                    FloatingTop = 200,
+                    FloatingLeft = 200,
+                    FloatingHeight = 200,
+                    FloatingWidth = 320,
+                    CanFloat = true,
+                    
                 };
-                var anchPane = new LayoutAnchorablePane
+                var anchPane = new LayoutAnchorablePane(anch)
                 {
                     Name = tool.ToString(),
-                    Children = {
-                        anch
-                    },
                     DockMinWidth = 200,
                     DockMinHeight = 100,
+                    FloatingTop = 200,
+                    FloatingLeft = 200,
+                    FloatingHeight = 200,
+                    FloatingWidth = 320,
                 };
                 rootLayout.RootPanel.Children.Add(anchPane);
             }

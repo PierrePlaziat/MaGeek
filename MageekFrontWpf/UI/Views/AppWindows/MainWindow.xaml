@@ -7,7 +7,7 @@
                  xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
                  xmlns:menu="clr-namespace:MageekFrontWpf.UI.Views"
                  mc:Ignorable="d"
-                 Title="MaGeek V1.0"
+                 Title="MaGeek"
                  Height="800"
                  Width="1200"
                  BorderThickness="0">
