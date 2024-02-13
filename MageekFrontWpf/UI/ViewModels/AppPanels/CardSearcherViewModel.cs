@@ -8,6 +8,7 @@ using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MageekCore.Tools;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -23,6 +24,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         ){
             this.mageek = mageek;
             this.config = config;
+            Logger.Log("Done");
         }
 
         [ObservableProperty] private bool colorIsOr;

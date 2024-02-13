@@ -12,38 +12,39 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using MageekCore;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
-    public partial class CardInspectorViewModel : BaseViewModel, 
+    public partial class CardInspectorViewModel : 
+        BaseViewModel, 
         IRecipient<CardSelectedMessage>
     {
 
-        private MageekCore.MageekService mageek;
+        MageekService mageek;
 
-        public CardInspectorViewModel(
-            MageekCore.MageekService mageek
-        )
+        public CardInspectorViewModel(MageekService mageek)
         {
             this.mageek = mageek;
             WeakReferenceMessenger.Default.RegisterAll(this);
+            Logger.Log("Done");
         }
 
-        [ObservableProperty] private bool pinned = false;
-        [ObservableProperty] private bool isLoading = false;
         [ObservableProperty] private string selectedArchetype;
         [ObservableProperty] private string selectedUuid;
-        [ObservableProperty] private List<CardRulings> rulings;
-        [ObservableProperty] private List<CardCardRelation> relatedCards;
-        [ObservableProperty] private List<Tag> tags;
-        [ObservableProperty] private CardLegalities legalities;
-        [ObservableProperty] private bool isFav = false;
-        [ObservableProperty] private int totalGot;
-        [ObservableProperty] private decimal meanPrice;
-        [ObservableProperty] private int variantCount;
         [ObservableProperty] private CardVariant selectedVariant;
         [ObservableProperty] private List<CardVariant> variants;
+        [ObservableProperty] private List<CardCardRelation> relatedCards;
+        [ObservableProperty] private CardLegalities legalities;
+        [ObservableProperty] private List<CardRulings> rulings;
+        [ObservableProperty] private List<Tag> tags;
+        [ObservableProperty] private int variantCount;
+        [ObservableProperty] private int totalGot;
+        [ObservableProperty] private decimal meanPrice;
+        [ObservableProperty] private bool isFav = false;
+        [ObservableProperty] private bool pinned = false;
+        [ObservableProperty] private bool isLoading = false;
 
         public void Receive(CardSelectedMessage message)
         {

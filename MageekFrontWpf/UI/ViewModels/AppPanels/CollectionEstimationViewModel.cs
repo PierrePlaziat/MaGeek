@@ -28,6 +28,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             this.logger = logger;
             this.mageek = mageek;
             this.config = config;
+            Logger.Log("Done");
         }
 
         [ObservableProperty] private int totalGot = 0;

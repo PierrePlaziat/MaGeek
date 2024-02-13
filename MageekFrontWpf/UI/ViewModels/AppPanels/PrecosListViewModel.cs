@@ -7,9 +7,13 @@ using MageekCore.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using MageekCore.Tools;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
+
+
+    // TODO find io error on startup
     public partial class PrecoListViewModel : BaseViewModel
     {
 
@@ -26,6 +30,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         {
             this.winManager = winManager;
             this.mageek = mageek;
+            Logger.Log("Done");
         }
 
         [ObservableProperty] bool asOwned = false;

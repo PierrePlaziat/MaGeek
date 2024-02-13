@@ -20,6 +20,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public SetListViewModel(MageekCore.MageekService mageek)
         {
             this.mageek = mageek;
+            Logger.Log("Done");
         }
 
         [ObservableProperty] List<Sets> setList = new();

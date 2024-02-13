@@ -1,9 +1,5 @@
-﻿using MageekFrontWpf.Framework.Services;
-using MageekCore.Data;
-using MageekCore.Tools;
-using System;
-using System.Diagnostics;
-using System.IO;
+﻿using MageekCore.Tools;
+using MageekFrontWpf.Framework.Services;
 
 namespace MageekFrontWpf.AppValues
 {

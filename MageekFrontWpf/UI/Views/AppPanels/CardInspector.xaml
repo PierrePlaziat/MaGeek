@@ -25,7 +25,7 @@
                                 Margin="0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
-                                CardUuid="{Binding SelectedUuid}" />
+                                CardUuid="{Binding SelectedUuid, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>

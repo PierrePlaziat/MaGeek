@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using MageekCore;
 
 namespace MaGeek.UI
 {
@@ -13,14 +14,26 @@ namespace MaGeek.UI
     public partial class CardIllustration : BaseUserControl
     {
 
-        private MageekCore.MageekService mageek;
+        private MageekService mageek;
 
-        public static readonly DependencyProperty CardUuidProperty =  DependencyProperty.Register(nameof(CardUuid), typeof(string), typeof(CardIllustration), new FrameworkPropertyMetadata(null, OnCardUuidChanged));
+        public CardIllustration()
+        {
+            mageek = ServiceHelper.GetService<MageekService>();
+            DataContext = this;
+            InitializeComponent();
+        }
+
         public string CardUuid
         {
             get => (string)GetValue(CardUuidProperty);
             set => SetValue(CardUuidProperty, value);
         }
+        public static readonly DependencyProperty CardUuidProperty =  DependencyProperty.Register(
+            nameof(CardUuid),
+            typeof(string),
+            typeof(CardIllustration),
+            new FrameworkPropertyMetadata(null, OnCardUuidChanged)
+        );
 
         private Cards selectedCard;
         public Cards SelectedCard
@@ -72,13 +85,6 @@ namespace MaGeek.UI
         {
             get { return showHud; }
             set { showHud = value; OnPropertyChanged(); }
-        }
-
-        public CardIllustration()
-        {
-            InitializeComponent();
-            DataContext = this;
-            mageek = ServiceHelper.GetService<MageekCore.MageekService>();
         }
 
         private static void OnCardUuidChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs)

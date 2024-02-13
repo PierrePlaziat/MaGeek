@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekCore;
 using MageekCore.Data.Collection.Entities;
+using MageekCore.Tools;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -19,6 +20,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         )
         {
             this.mageek = mageek;
+            Logger.Log("Done");
         }
 
         [ObservableProperty] private string title;
