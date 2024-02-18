@@ -14,7 +14,6 @@ namespace MageekCore.Data.Mtg.Entities
         public string? Future { get; set; }
         public string? Gladiator { get; set; }
         public string? Historic { get; set; }
-        public string? Historicbrawl { get; set; }
         public string? Legacy { get; set; }
         public string? Modern { get; set; }
         public string? Oathbreaker { get; set; }
@@ -26,6 +25,8 @@ namespace MageekCore.Data.Mtg.Entities
         public string? Predh { get; set; }
         public string? Premodern { get; set; }
         public string? Standard { get; set; }
+        public string? Standardbrawl { get; set; }
+        public string? Timeless { get; set; }
         [Key]
         public string Uuid { get; set; }
         public string? Vintage { get; set; }

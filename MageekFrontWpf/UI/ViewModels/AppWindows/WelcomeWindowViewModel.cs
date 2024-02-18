@@ -5,6 +5,7 @@ using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekCore.Data;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -45,7 +46,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
                     CanLaunch = true;
                     UpdateAvailable = false;
                     Message = "Up to date";
-                    await Launch();
+                    Launch();
                     break;
                 case MageekInitReturn.MtgOutdated:
                     CanLaunch = true;
@@ -87,7 +88,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         }
 
         [RelayCommand]
-        public async Task Launch()
+        public void Launch()
         {
             IsLoading = true;
             winManager.CloseWindow(AppWindowEnum.Welcome);

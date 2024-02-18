@@ -30,14 +30,14 @@ namespace MageekFrontWpf.UI.Views.AppPanels
                 e.Handled = true;
                 var binding = ((TextBox)sender).GetBindingExpression(TextBox.TextProperty);
                 binding.UpdateSource();
-                vm.ReloadData().ConfigureAwait(false);
+                vm.DoSearch().ConfigureAwait(false);
             }
         }
 
         private void CardGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (CardGrid.SelectedItem is Cards card)
-                WeakReferenceMessenger.Default.Send(new CardSelectedMessage(card.Uuid));
+            var v = CardGrid.SelectedItem as SearchedCards;
+            WeakReferenceMessenger.Default.Send(new CardSelectedMessage(v.Card.Uuid));
         }
 
         private void FillColorFilterCombo()
@@ -49,6 +49,15 @@ namespace MageekFrontWpf.UI.Views.AppPanels
         {
             vm.FilterName = ((MenuItem)e.OriginalSource).Header.ToString();
         }
+
+        //private async void AddToDeck(object sender, RoutedEventArgs e)
+        //{
+        //    foreach (Cards c in CardGrid.SelectedItems)
+        //    {
+        //        await MageekService.MageekService.AddCardToDeck(c.Uuid, App.State.SelectedDeck, 1);
+        //    }
+        //    App.Events.RaiseUpdateDeck();
+        //}
 
     }
 

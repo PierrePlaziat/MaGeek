@@ -5,10 +5,10 @@ using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
-using MageekCore.Data.Mtg.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MageekCore.Tools;
+using MageekCore;
+using System;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -16,11 +16,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
     {
 
         private SettingService config;
-        private MageekCore.MageekService mageek;
+        private MageekService mageek;
 
         public CardSearcherViewModel(
             SettingService config,
-            MageekCore.MageekService mageek
+            MageekService mageek
         ){
             this.mageek = mageek;
             this.config = config;
@@ -28,11 +28,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         [ObservableProperty] private bool colorIsOr;
         [ObservableProperty] private List<string> historic = new();
-        [ObservableProperty] private List<Cards> cardList;
+        [ObservableProperty] private List<SearchedCards> cardList;
         [ObservableProperty] private List<Tag> availableTags;
         [ObservableProperty] private bool isLoading = false;
-        [ObservableProperty] private bool showAdvanced = false;
-        [ObservableProperty] private bool showNormal = true;
+        [ObservableProperty] private bool advancedMode = false;
         [ObservableProperty] private string filterName = "";
         [ObservableProperty] private string filterType = "";
         [ObservableProperty] string filterKeyword = "";
@@ -40,60 +39,22 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] private MtgColorFilter filterColor = MtgColorFilter._;
         [ObservableProperty] private Tag filterTag = null;
         [ObservableProperty] private bool onlyGot = false;
+        [ObservableProperty] private int currentPage = 0;
+        [ObservableProperty] private int nbResulsts = 200;
 
-        public async Task ReloadData()
+        [RelayCommand] private async Task Search()
         {
-            IsLoading = true;
-
-            await Task.Delay(100);
-
-            if (!string.IsNullOrEmpty(FilterName) && !Historic.Contains(FilterName))
-            {
-                Historic.Add(FilterName);
-                if (Historic.Count > 30) Historic.RemoveAt(0);
-                OnPropertyChanged(nameof(Historic));
-            }
-
-            if (ShowAdvanced == false)
-            {
-                CardList = await mageek.NormalSearch(
-                    config.Settings[AppSetting.ForeignLanguage],
-                    FilterName
-                );
-            }
-            else
-            {
-                var lang = config.Settings[AppSetting.ForeignLanguage];
-                var color = FilterColor.ToString();
-                string tagz = "";// FilterTag.TagContent;
-                CardList = await mageek.AdvancedSearch(
-                    lang,
-                    FilterName,
-                    FilterType,
-                    FilterKeyword,
-                    FilterText,
-                    color,
-                    tagz,
-                    OnlyGot,
-                    ColorIsOr
-                );
-            }
-            OnPropertyChanged(nameof(CardList));
-            await Task.Delay(50);
-            IsLoading = false;
+            await DoSearch();
         }
 
-        [RelayCommand]
-        private void Search()
+        [RelayCommand] private void AdvancedSearch()
         {
-            ReloadData().ConfigureAwait(false);
+            AdvancedMode = !AdvancedMode;
         }
 
-        [RelayCommand]
-        private void ResetFilters()
+        [RelayCommand] private void ResetFilters()
         {
-            ShowAdvanced = false;
-            ShowNormal = true;
+            AdvancedMode = false;
             FilterName = "";
             FilterType = "";
             FilterKeyword = "";
@@ -103,31 +64,42 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             OnlyGot = false;
         }
 
-        [RelayCommand]
-        private void AdvancedSearch()
+        public async Task DoSearch()
         {
-            if (ShowAdvanced == false)
-            {
-                ShowAdvanced = true;
-                ShowNormal = false;
-            }
-            else if (ShowAdvanced == true)
-            {
-                ShowAdvanced = false    ;
-                ShowNormal = true;
-            }
+            IsLoading = true;
+            await Task.Run(async () => {
+                FillHistoric();
+                if (!AdvancedMode)
+                {
+                    CardList = await mageek.NormalSearch(
+                        FilterName, config.Settings[AppSetting.ForeignLanguage],
+                        CurrentPage, NbResulsts
+                    );
+                }
+                if (AdvancedMode)
+                {
+                    CardList = await mageek.AdvancedSearch(
+                        FilterName, config.Settings[AppSetting.ForeignLanguage],
+                        FilterType, FilterKeyword, FilterText,
+                        FilterColor.ToString(),
+                        "", // FilterTag.TagContent;
+                        OnlyGot, ColorIsOr,
+                        CurrentPage, NbResulsts
+                    );
+                }
+            });
+            IsLoading = false;
         }
 
-        //private async void AddToDeck(object sender, RoutedEventArgs e)
-        //{
-        //    foreach (Cards c in CardGrid.SelectedItems)
-        //    {
-        //        await MageekService.MageekService.AddCardToDeck(c.Uuid, App.State.SelectedDeck, 1);
-        //    }
-        //    App.Events.RaiseUpdateDeck();
-        //}
-
+        private void FillHistoric()
+        {
+            if (!string.IsNullOrEmpty(FilterName) && !Historic.Contains(FilterName))
+            {
+                Historic.Add(FilterName);
+                if (Historic.Count > 30) Historic.RemoveAt(0);
+                OnPropertyChanged(nameof(Historic));
+            }
+        }
     }
-
 
 }

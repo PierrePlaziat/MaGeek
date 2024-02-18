@@ -18,15 +18,16 @@ namespace MageekCore.Tools
             Trace.WriteLine(msg);
         }
 
-        public static void Log(Exception e, [CallerFilePath] string fileName = "", [CallerMemberName] string memberName = "")
+        public static void Log(Exception e, bool showInner = false, [CallerFilePath] string fileName = "", [CallerMemberName] string memberName = "")
         {
             string msg = string.Concat(
                 "[", DateTime.Now, "] ",
                 fileName.Split('\\').Last().Split('/').Last().Split(".cs").First(), " :: ",
-                memberName, " : /!\\ ERROR /!\\ ",
+                memberName, " : ERROR - ",
                 e.Message
             );
             Trace.WriteLine(msg);
+            if (showInner && e.InnerException != null ) { Log(e.InnerException); }
         }
 
     }

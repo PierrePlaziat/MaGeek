@@ -1,7 +1,4 @@
-﻿using MageekCore.Data.Collection;
-using MageekCore.Tools;
-using Microsoft.Extensions.Logging;
-using System.Configuration;
+﻿using MageekCore.Tools;
 
 namespace MageekCore.Data.Mtg
 {
@@ -71,9 +68,7 @@ namespace MageekCore.Data.Mtg
         {
             try
             {
-                Logger.Log("Copying");
                 File.Copy(Folders.MtgJson_NewHash, Folders.MtgJson_OldHash, true);
-                Logger.Log("Done");
             }
             catch (Exception e)
             {
@@ -85,7 +80,7 @@ namespace MageekCore.Data.Mtg
         {
             try
             {
-                Logger.Log("Downloading");
+                Logger.Log("Downloading...");
                 using (var client = new HttpClient())
                 using (var mtgjson_sqlite = await client.GetStreamAsync(Url_MtgjsonData))
                 {

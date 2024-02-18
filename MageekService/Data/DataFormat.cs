@@ -3,6 +3,21 @@
 namespace MageekCore.Data
 {
 
+    public class SearchedCards
+    {
+
+        public SearchedCards(Cards card, string translation, int collected)
+        {
+            Card = card;
+            Translation = translation;
+            Collected = collected;
+        }
+
+        public Cards Card { get; }
+        public string Translation { get; }
+        public int Collected { get; }
+
+    }
 
     public enum MageekInitReturn
     {

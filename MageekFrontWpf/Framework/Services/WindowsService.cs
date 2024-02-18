@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging;
 using CommunityToolkit.Mvvm.Messaging;
 using AvalonDock;
 using AvalonDock.Layout.Serialization;
@@ -14,7 +13,6 @@ using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using MageekFrontWpf.UI.Views;
 using MageekFrontWpf.UI.ViewModels;
-using System.Diagnostics;
 using MageekCore.Tools;
 
 namespace MageekFrontWpf.Framework.Services
@@ -183,7 +181,7 @@ namespace MageekFrontWpf.Framework.Services
                     xmlLayout.Serialize(fs);
                     xmlLayoutString = fs.ToString();
                 }
-                File.WriteAllText(GetLayoutPath("Layout"), xmlLayoutString);
+                File.WriteAllText(GetLayoutPath(arg), xmlLayoutString);
             }
             catch (Exception e) { Logger.Log(e); }
         }

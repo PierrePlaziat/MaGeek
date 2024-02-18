@@ -62,7 +62,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
                     OnPropertyChanged(nameof(TotalDiffGot));
                     OnPropertyChanged(nameof(TotalGot));
                     OnPropertyChanged(nameof(AutoEstimation));
-                    OnPropertyChanged(nameof(missingList));
+                    OnPropertyChanged(nameof(MissingList));
                     OnPropertyChanged(nameof(MissingCount));
                 });
                 IsLoading = false;

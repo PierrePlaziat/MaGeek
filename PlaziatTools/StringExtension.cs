@@ -3,9 +3,9 @@ using System.Text;
 
 namespace MageekCore.Tools
 {
-    public abstract class StringExtension
+    public static class StringExtension
     {
-        public static string RemoveDiacritics(string Text)
+        public static string RemoveDiacritics(this string Text)
         {
             ReadOnlySpan<char> normalizedString = Text.Normalize(NormalizationForm.FormD);
             int i = 0;
