@@ -771,7 +771,6 @@ namespace MageekCore
         /// <returns>The count</returns>
         public async Task<int> Collected(string cardUuid, bool onlyThisVariant = true)
         {
-            Logger.Log("");
             try
             {
                 if (string.IsNullOrEmpty(cardUuid)) return 0;

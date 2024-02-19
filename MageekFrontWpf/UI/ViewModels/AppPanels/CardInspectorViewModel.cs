@@ -205,24 +205,15 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public class CardVariant
         {
             public Cards Card { get; set; }
-
+            //public int VariantCollected
+            //{
+            //    get
+            //    {
+            //        return mageek.
+            //    }
+            //}
             public PriceLine PriceValue { get; set; }
 
-            public Brush GetRarityColor
-            {
-                get
-                {
-                    return Card.Rarity switch
-                    {
-                        "common" => Brushes.White,
-                        "uncommon" => Brushes.Gray,
-                        "rare" => Brushes.Gold,
-                        "mythic" => Brushes.Orange,
-                        "bonus" => Brushes.Cyan,
-                        _ => Brushes.Purple,
-                    };
-                }
-            }
             public decimal? GetPrice
             {
                 get

@@ -11,7 +11,7 @@ namespace MageekCore.Data.Mtg.Entities
         {
             get
             {
-                string s = Path.Combine(Folders.SetIcon, Code + ".svg");
+                string s = Path.Combine(Folders.SetIcon, Code + "_.svg");
                 if (File.Exists(s)) return s;
                 else return @"\Resources\wut.svg";
             }
@@ -23,7 +23,6 @@ namespace MageekCore.Data.Mtg.Entities
         public int TotalSetSize { get; set; }
         public string Type { get; set; }
         public int BaseSetSize { get; set; }
-
         public string? Block { get; set; }
         public bool? IsFoilOnly { get; set; }
         public bool? IsForeignOnly { get; set; }

@@ -8,39 +8,8 @@ namespace MageekCore.Data.Mtg.Entities
     public class Cards
     {
 
-        //public int Collected
-        //{
-        //    get
-        //    {
-        //        return MageekService.Collected(Uuid, false).Result;
-        //    }
-        //}
-
-        //public int VariantCollected
-        //{
-        //    get
-        //    {
-        //        return MageekService.Collected(Uuid, true).Result;
-        //    }
-        //}
-
-        //public string CardForeignName
-        //{
-        //    get
-        //    {
-        //        string lang = "French";
-        //        return MageekService.GetTraduction(Uuid, lang).Result;
-        //    }
-        //}
-
-        //public Sets Set
-        //{
-        //    get
-        //    {
-        //        return MageekService.RetrieveSet(SetCode).Result;
-        //    }
-        //}
-
+        [Key]
+        public string Uuid { get; set; }
         public string? Artist { get; set; }
         public string? AsciiName { get; set; }
         public string? AttractionLights { get; set; }
@@ -114,8 +83,6 @@ namespace MageekCore.Data.Mtg.Entities
         public string? Toughness { get; set; }
         public string Type { get; set; }
         public string Types { get; set; }
-        [Key]
-        public string Uuid { get; set; }
         public string? Variations { get; set; }
         public string? Watermark { get; set; }
 
