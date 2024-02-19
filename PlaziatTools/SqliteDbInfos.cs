@@ -1,6 +1,9 @@
 ﻿namespace MageekCore.Tools
 {
 
+    /// <summary>
+    /// Structure containing usefull data for a local sqlite database
+    /// </summary>
     public class SqliteDbInfos
     {
 

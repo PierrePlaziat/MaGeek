@@ -7,16 +7,6 @@ namespace MageekCore.Data.Mtg.Entities
     public class Sets
     {
 
-        public string Svg
-        {
-            get
-            {
-                string s = Path.Combine(Folders.SetIcon, Code + "_.svg");
-                if (File.Exists(s)) return s;
-                else return @"\Resources\wut.svg";
-            }
-        }
-
         [Key]
         public string Code { get; set; }
         public string Name { get; set; }

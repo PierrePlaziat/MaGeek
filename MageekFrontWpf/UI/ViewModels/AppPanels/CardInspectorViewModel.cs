@@ -9,7 +9,6 @@ using MageekCore.Data.Mtg.Entities;
 using MageekCore.Tools;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using MageekCore;
@@ -53,8 +52,8 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task Reload(string uuid)
         {
-            Logger.Log("Reload");
             if (uuid == null) return;
+            Logger.Log("Reload");
             IsLoading = true;
             await Task.Delay(100);
             string archetype = await mageek.FindCard_Archetype(uuid);
@@ -94,16 +93,17 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
             foreach (string variant in await mageek.FindCard_Variants(SelectedArchetype))
             {
-                var x = await mageek.FindCard_Data(variant);
-                if (x != null)
+                var card = await mageek.FindCard_Data(variant);
+                if (card != null)
                 {
-                    CardVariant v = new()
-                    {
-                        Card = x,
-                        PriceValue = await mageek.EstimateCardPrice(x.Uuid)
-                    };
+                    CardVariant v = new(
+                        card,
+                        await mageek.GetSet(card.SetCode),
+                        await mageek.Collected(card.Uuid),
+                        await mageek.EstimateCardPrice(card.Uuid)
+                    );
                     Variants.Add(v);
-                    if (x.Uuid == SelectedUuid) SelectedVariant = v;
+                    if (card.Uuid == SelectedUuid) SelectedVariant = v;
                 }
             }
         }
@@ -196,33 +196,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         {
             switch (linkto)
             {
-                case "Cardmarket": HttpUtils.HyperLink("https://www.cardmarket.com/en/Magic/Products/Search?searchString=" + SelectedVariant.Card.Name); break;
-                case "EdhRec": HttpUtils.HyperLink("https://edhrec.com/cards/" + SelectedVariant.Card.Name.Split(" // ")[0].ToLower().Replace(' ', '-').Replace("\"", "").Replace(",", "").Replace("'", "")); break;
-                case "Scryfall": HttpUtils.HyperLink("https://scryfall.com/search?q=" + SelectedVariant.Card.Name); break;
+                case "Cardmarket": HttpUtils.OpenLink("https://www.cardmarket.com/en/Magic/Products/Search?searchString=" + SelectedVariant.Card.Name); break;
+                case "EdhRec": HttpUtils.OpenLink("https://edhrec.com/cards/" + SelectedVariant.Card.Name.Split(" // ")[0].ToLower().Replace(' ', '-').Replace("\"", "").Replace(",", "").Replace("'", "")); break;
+                case "Scryfall": HttpUtils.OpenLink("https://scryfall.com/search?q=" + SelectedVariant.Card.Name); break;
             }
-        }
-
-        public class CardVariant
-        {
-            public Cards Card { get; set; }
-            //public int VariantCollected
-            //{
-            //    get
-            //    {
-            //        return mageek.
-            //    }
-            //}
-            public PriceLine PriceValue { get; set; }
-
-            public decimal? GetPrice
-            {
-                get
-                {
-                    if (PriceValue == null) return null;
-                    if (PriceValue.PriceEur == null) return null;
-                    return PriceValue.PriceEur;
-                }
-            } //TODO multi monaie & colors
         }
 
     }

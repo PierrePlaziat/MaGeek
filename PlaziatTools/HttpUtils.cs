@@ -1,29 +1,37 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Diagnostics;
 
 namespace MageekCore.Tools
 {
 
+    /// <summary>
+    /// Common http manipulations
+    /// </summary>
     public static class HttpUtils
     {
 
-        public static void HyperLink(string v)
+        /// <summary>
+        /// Open an hyperlink in default navigator
+        /// </summary>
+        /// <param name="link">Address</param>
+        public static void OpenLink(string link)
         {
-            Process.Start(new ProcessStartInfo(v) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
         }
 
-        public static async Task<string> Get(string v)
+        /// <summary>
+        /// Retrieve response to an hyperlink
+        /// Used to call public api
+        /// </summary>
+        /// <param name="link">Address</param>
+        /// <returns>Response to the http call</returns>
+        public static async Task<string> Get(string link)
         {
             var retour = string.Empty;
             try
             {
                 using var httpClient = new HttpClient();
                 {
-                    var request = new HttpRequestMessage(HttpMethod.Get, v);
+                    var request = new HttpRequestMessage(HttpMethod.Get, link);
                     var response = await httpClient.SendAsync(request);
 
                     using var reader = new StreamReader(response.Content.ReadAsStream());

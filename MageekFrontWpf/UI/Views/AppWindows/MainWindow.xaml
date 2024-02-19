@@ -26,7 +26,7 @@
                                    x:Name="DockingManager">
 
             <avalonDock:DockingManager.Theme>
-                <avalonDock:ExpressionDarkTheme />
+                <avalonDock:Vs2013DarkTheme />
             </avalonDock:DockingManager.Theme>
 
             <avalonDock:LayoutRoot x:Name="RootLayout">

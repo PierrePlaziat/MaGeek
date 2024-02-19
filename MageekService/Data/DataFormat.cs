@@ -1,7 +1,35 @@
-﻿using MageekCore.Data.Mtg.Entities;
+﻿using MageekCore.Data.Collection.Entities;
+using MageekCore.Data.Mtg.Entities;
 
 namespace MageekCore.Data
 {
+
+    public class CardVariant
+    {
+
+        public Cards Card { get; set; }
+        public Sets Set { get; set; }
+        public int Collected { get; set; }
+        public PriceLine Price { get; set; }
+
+        public CardVariant(Cards card, Sets set, int collected, PriceLine price)
+        {
+            Card = card;
+            Set = set;
+            Collected = collected;
+            Price = price;
+        }
+
+        public decimal? GetPrice //TODO multi monaie & colors
+        {
+            get
+            {
+                if (Price == null) return null;
+                if (Price.PriceEur == null) return null;
+                return Price.PriceEur;
+            }
+        }
+    }
 
     public class SearchedCards
     {

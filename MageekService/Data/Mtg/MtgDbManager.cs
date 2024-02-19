@@ -50,7 +50,7 @@ namespace MageekCore.Data.Mtg
                 bool check = true;
                 if (File.Exists(Folders.MtgJson_OldHash))
                 {
-                    check = FileUtils.FileContentDiffers(
+                    check = FileUtils.ContentDiffers(
                         Folders.MtgJson_NewHash,
                         Folders.MtgJson_OldHash
                     );

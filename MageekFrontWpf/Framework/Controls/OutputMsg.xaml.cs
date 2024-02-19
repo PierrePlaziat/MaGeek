@@ -62,5 +62,7 @@ namespace MaGeek.UI
             OnPropertyChanged(nameof(Msg));
             OnPropertyChanged(nameof(Msgs));
         }
+
     }
+
 }

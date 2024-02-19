@@ -400,16 +400,16 @@ namespace MageekCore
                 .FirstOrDefaultAsync();
         }
 
+        // TODO cache data
         public async Task<List<CardCardRelation>> FindCard_Related(string uuid, string originalarchetype)
         {
             Logger.Log("");
-            // TODO cache data
             List<CardCardRelation> outputCards = new();
-            if (string.IsNullOrEmpty(uuid)) return outputCards;
-            var scryCard = await GetScryfallCard(uuid);
-            if (scryCard.AllParts == null) return outputCards;
             try
             {
+                if (string.IsNullOrEmpty(uuid)) return outputCards;
+                var scryCard = await GetScryfallCard(uuid);
+                if (scryCard.AllParts == null) return outputCards;
                 foreach (var part in scryCard.AllParts)
                 {
                     part.TryGetValue("component", out string component);
@@ -1784,6 +1784,12 @@ namespace MageekCore
             return DB.sets.OrderByDescending(x => x.ReleaseDate).ToList();
         }
 
+        public async Task<Sets> GetSet(string setCode)
+        {
+            using MtgDbContext DB = await mtg.GetContext();
+            return await DB.sets.Where(x => x.Code==setCode).FirstOrDefaultAsync();
+        }
+
         /// <summary>
         /// Get cards in a set
         /// </summary>
@@ -1909,7 +1915,7 @@ namespace MageekCore
             return tags;
         }
 
-        public Task<List<DeckCard>> ParseCardList(object cardList)
+        public async Task<List<DeckCard>> ParseCardList(object cardList)
         {
             throw new NotImplementedException();
         }

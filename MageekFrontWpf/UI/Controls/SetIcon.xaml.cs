@@ -89,7 +89,7 @@ namespace MaGeek.UI.Controls
         {
             string s = Path.Combine(Folders.SetIcon, SetCode + "_.svg");
             if (File.Exists(s)) return s;
-            else return @"\Resources\wut.svg";
+            else return "wut.svg";
         }
 
         private string GetColor()

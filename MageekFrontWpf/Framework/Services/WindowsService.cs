@@ -103,6 +103,8 @@ namespace MageekFrontWpf.Framework.Services
                     FloatingWidth = 320,
                     CanFloat = true,
                     
+                    
+                    ContentId = tool.ToString(),
                 };
                 var anchPane = new LayoutAnchorablePane(anch)
                 {
@@ -114,6 +116,7 @@ namespace MageekFrontWpf.Framework.Services
                     FloatingHeight = 200,
                     FloatingWidth = 320,
                 };
+
                 rootLayout.RootPanel.Children.Add(anchPane);
             }
             catch (Exception e) { Logger.Log(e); }

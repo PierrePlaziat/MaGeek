@@ -17,13 +17,12 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Dirkster.AvalonDock" Version="4.72.1" />
-    <PackageReference Include="Dirkster.AvalonDock.Themes.Expression" Version="4.72.1" />
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.72.1" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="ScryfallAPI.Client" Version="3.1.0" />
-    <PackageReference Include="SharpVectors.Wpf" Version="1.8.2" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.7" />
-    <PackageReference Include="WPFNotification" Version="1.1.0" />
+    <PackageReference Include="SharpVectors.Wpf" Version="1.8.4" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.8" />
   </ItemGroup>
   
   <ItemGroup>
@@ -57,5 +56,9 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo F | xcopy /Y &quot;$(ProjectDir)Resources\Images\wut.svg&quot; &quot;$(TargetDir)wut.svg&quot;" />
+  </Target>
 
 </Project>

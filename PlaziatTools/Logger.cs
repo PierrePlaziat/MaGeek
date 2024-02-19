@@ -4,30 +4,46 @@ using System.Runtime.CompilerServices;
 namespace MageekCore.Tools
 {
 
+    /// <summary>
+    /// A custom logger
+    /// </summary>
     public static class Logger
     {
 
-        public static void Log(string log, [CallerFilePath] string fileName = "", [CallerMemberName] string memberName = "")
+        /// <summary>
+        /// Log a message
+        /// </summary>
+        /// <param name="message">Message to log</param>
+        /// <param name="sourceFile">Automatically retrieved, dont fill it</param>
+        /// <param name="memberName">Automatically retrieved, dont fill it</param>
+        public static void Log(string message, [CallerFilePath] string sourceFile = "", [CallerMemberName] string memberName = "")
         {
             string msg = string.Concat(
                 "[",DateTime.Now,"] ",
-                fileName.Split('\\').Last().Split('/').Last().Split(".cs").First(), " :: ",
+                sourceFile.Split('\\').Last().Split('/').Last().Split(".cs").First(), " :: ",
                 memberName, " : ",
-                log
+                message
             );
             Trace.WriteLine(msg);
         }
 
-        public static void Log(Exception e, bool showInner = false, [CallerFilePath] string fileName = "", [CallerMemberName] string memberName = "")
+        /// <summary>
+        /// Log an exception
+        /// </summary>
+        /// <param name="exception">Exception to log</param>
+        /// <param name="inner">Also log inner exceptions recursively</param>
+        /// <param name="sourceFile">Automatically retrieved, dont fill it</param>
+        /// <param name="memberName">Automatically retrieved, dont fill it</param>
+        public static void Log(Exception exception, bool inner = false, [CallerFilePath] string sourceFile = "", [CallerMemberName] string memberName = "")
         {
             string msg = string.Concat(
                 "[", DateTime.Now, "] ",
-                fileName.Split('\\').Last().Split('/').Last().Split(".cs").First(), " :: ",
+                sourceFile.Split('\\').Last().Split('/').Last().Split(".cs").First(), " :: ",
                 memberName, " : ERROR - ",
-                e.Message
+                exception.Message
             );
             Trace.WriteLine(msg);
-            if (showInner && e.InnerException != null ) { Log(e.InnerException); }
+            if (inner && exception.InnerException != null ) { Log(exception.InnerException); }
         }
 
     }

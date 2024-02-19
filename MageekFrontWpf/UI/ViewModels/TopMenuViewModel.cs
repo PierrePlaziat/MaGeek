@@ -62,7 +62,7 @@ namespace MageekFrontWpf.UI.ViewModels
         [RelayCommand]
         private void About()
         {
-            HttpUtils.HyperLink("https://github.com/PierrePlaziat/MaGeek");
+            HttpUtils.OpenLink("https://github.com/PierrePlaziat/MaGeek");
         }
 
     }
