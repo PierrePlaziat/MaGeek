@@ -94,6 +94,8 @@ namespace MaGeek.UI.Controls
 
         private string GetColor()
         {
+            return
+                "#777777";
             //TODO fine tune
             return Rarity switch
             {

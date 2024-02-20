@@ -3,7 +3,6 @@ using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekCore.Data.Collection.Entities;
-using System;
 using System.Windows.Controls;
 
 namespace MageekFrontWpf.UI.Views.AppPanels

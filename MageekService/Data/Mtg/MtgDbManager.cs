@@ -1,4 +1,8 @@
 ﻿using MageekCore.Tools;
+using Newtonsoft.Json.Linq;
+using System.Dynamic;
+using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MageekCore.Data.Mtg
 {
@@ -13,8 +17,8 @@ namespace MageekCore.Data.Mtg
 
         const string Url_MtgjsonHash = "https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256";
         const string Url_MtgjsonData ="https://mtgjson.com/api/v5/AllPrintings.sqlite";
+        const string Url_MtgjsonPrecos ="https://mtgjson.com/api/v5/AllDeckFiles.zip";
         const string Url_MtgjsonPrices = "https://mtgjson.com/api/v5/AllPricesToday.json";
-        const string Url_MtgjsonDecks ="https://mtgjson.com/api/v5/AllDeckFiles.zip";
 
         public MtgDbManager()
         {
@@ -118,6 +122,70 @@ namespace MageekCore.Data.Mtg
             }
         }
 
+        public async Task RetrievePrecos()
+        {
+            string tmpPath = Path.Combine(Folders.PrecosFolder,"temp");
+            if (!Directory.Exists(tmpPath)) Directory.CreateDirectory(tmpPath);
+            string zipPath = Path.Combine(tmpPath, "precos.zip");
+            Logger.Log("Downloading...");
+            using (var client = new HttpClient())
+            using (var precosZip = await client.GetStreamAsync(Url_MtgjsonPrecos))
+            {
+                using var fs_PrecosZip = new FileStream(zipPath, FileMode.Create);
+                await precosZip.CopyToAsync(fs_PrecosZip);
+            }
+            Logger.Log("Uncompressing...");
+            System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, tmpPath);
+            File.Delete(zipPath);
+            Logger.Log("Parsing...");
+            await ParsePrecos(tmpPath, Folders.PrecosFolder);
+            Logger.Log("Done");
+        }
+
+        public async Task ParsePrecos(string tmpPath, string precosFolder)
+        {
+            foreach (string precoPath in Directory.GetFiles(tmpPath))
+            {
+                await ParsePreco(precoPath);
+            }
+        }
+
+        private async Task ParsePreco(string precoPath)
+        {
+
+            // READ
+
+            using StreamReader reader = new(precoPath);
+            string jsonString = reader.ReadToEnd();
+            dynamic d = JObject.Parse(jsonString);
+
+            string code = d.data.code;
+            string name = d.data.name;
+            string releaseDate = d.data.releaseDate;
+            string type = d.data.type;
+
+            List<string> CommanderCardUuids = new List<string>();
+            foreach(dynamic dd in d.data.commander)
+            {
+                CommanderCardUuids.Add(dd.uuid as string);
+            }
+            
+            List<string> mainCardUuids = new List<string>();
+            foreach(dynamic dd in d.data.mainBoard)
+            {
+                mainCardUuids.Add(dd.uuid as string);
+            }
+
+            List<string> sideCardUuids = new List<string>();
+            foreach (dynamic dd in d.data.sideBoard)
+            {
+                sideCardUuids.Add(dd.uuid as string);
+            }
+
+            // WRITE
+            //Folders.PrecosFolder;
+
+        }
     }
 
 }

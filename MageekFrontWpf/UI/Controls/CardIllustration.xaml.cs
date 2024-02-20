@@ -23,16 +23,19 @@ namespace MaGeek.UI
             InitializeComponent();
         }
 
+        private string cardUuid;
         public string CardUuid
         {
-            get => (string)GetValue(CardUuidProperty);
-            set => SetValue(CardUuidProperty, value);
+            get { return cardUuid; }
+            set { cardUuid = value; SetValue(CardUuidProperty, value); }
         }
         public static readonly DependencyProperty CardUuidProperty =  DependencyProperty.Register(
             nameof(CardUuid),
             typeof(string),
             typeof(CardIllustration),
-            new FrameworkPropertyMetadata(null, OnCardUuidChanged)
+            new FrameworkPropertyMetadata(null,
+            FrameworkPropertyMetadataOptions.AffectsRender,
+            OnCardUuidChanged)
         );
 
         private Cards selectedCard;

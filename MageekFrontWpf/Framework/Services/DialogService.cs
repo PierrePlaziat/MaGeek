@@ -4,9 +4,6 @@ using System;
 using System.Windows;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
-using WPFNotification.Services;
-using WPFNotification.Core.Configuration;
-using WPFNotification.Model;
 
 namespace MageekFrontWpf.Framework.Services
 {
@@ -14,23 +11,21 @@ namespace MageekFrontWpf.Framework.Services
     public class DialogService
     {
 
-        private readonly INotificationDialogService notificator;
-
-        public DialogService(INotificationDialogService notificator)
+        public DialogService()
         {
-            this.notificator = notificator;
         }
 
         public void Notif(string title, string message)
         {
-            var notificationConfiguration = NotificationConfiguration.DefaultConfiguration;
-            var newNotification = new Notification()
-            {
-                Title = title,
-                Message = message,
-                ImgURL = "pack://application:,,,a/Resources/Images/TickOn.jpg"
-            };
-            notificator.ShowNotificationWindow(newNotification, notificationConfiguration);
+            // TODO
+            //var notificationConfiguration = NotificationConfiguration.DefaultConfiguration;
+            //var newNotification = new Notification()
+            //{
+            //    Title = title,
+            //    Message = message,
+            //    ImgURL = "pack://application:,,,a/Resources/Images/TickOn.jpg"
+            //};
+            //notificator.ShowNotificationWindow(newNotification, notificationConfiguration);
         }
 
         public string SelectAFolder()

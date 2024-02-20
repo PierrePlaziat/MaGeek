@@ -8,15 +8,16 @@ using MageekCore;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Tools;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Linq;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
     public partial class DeckListViewModel : BaseViewModel, IRecipient<UpdateDeckListMessage>, IRecipient<UpdateDeckMessage>
     {
+
         private WindowsService wins;
         private MageekService mageek;
         private SettingService config;
@@ -52,7 +53,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task SelectDeck(string deckId)
         {
-            wins.OpenDoc(decks.Where(x=>x.DeckId==deckId).FirstOrDefault());
+            wins.OpenDoc(await mageek.GetDeck(deckId));
         }
 
         [RelayCommand]
@@ -60,7 +61,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         {
             Logger.Log("Reload");
             IsLoading = true;
-            Decks = FilterDeck(await mageek.GetDecks());
+            Decks = FilterDeck(Decks);
             IsLoading = false;
         }
 

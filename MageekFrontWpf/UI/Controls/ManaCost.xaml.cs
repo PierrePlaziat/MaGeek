@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace MaGeek.UI
@@ -20,10 +19,10 @@ namespace MaGeek.UI
             "Cost", typeof(string), typeof(ManaCost),
             new FrameworkPropertyMetadata(null,
             FrameworkPropertyMetadataOptions.AffectsRender,
-            OnDefectIdChanged)
+            OnCostChanged)
         );
 
-        private static void OnDefectIdChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs)
+        private static void OnCostChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs)
         {
             var control = (ManaCost)_control;
             //control.EmptyPanel();

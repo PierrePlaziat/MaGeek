@@ -55,6 +55,7 @@ namespace MageekCore
             try
             {
                 await mtg.DatabaseDownload();
+                await mtg.RetrievePrecos();
                 mtg.HashSave();
             }
             catch (Exception e)
@@ -65,14 +66,14 @@ namespace MageekCore
             try
             {
                 await collec.FetchMtgData();
-                Logger.Log("Done");
-                return MageekUpdateReturn.Success;
             }
             catch (Exception e)
             {
                 Logger.Log(e);
                 return MageekUpdateReturn.ErrorFetching;
             }
+            Logger.Log("Done");
+            return MageekUpdateReturn.Success;
         }
 
         public async Task<List<DeckCard>> ParseCardList(string cardlist)
@@ -109,10 +110,7 @@ namespace MageekCore
                     }
                 });
             }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
+            catch (Exception e) { Logger.Log(e); }
             return cards;
         }
 
@@ -409,6 +407,7 @@ namespace MageekCore
             {
                 if (string.IsNullOrEmpty(uuid)) return outputCards;
                 var scryCard = await GetScryfallCard(uuid);
+                if(scryCard == null) return outputCards;
                 if (scryCard.AllParts == null) return outputCards;
                 foreach (var part in scryCard.AllParts)
                 {
