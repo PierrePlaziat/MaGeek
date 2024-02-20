@@ -4,7 +4,7 @@ using MageekFrontWpf.Framework.BaseMvvm;
 using MageekCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
+using MageekCore.Data;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -17,35 +17,16 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         public PrecoListViewModel(MageekService mageek)
         {
             this.mageek = mageek;
+            PrecoList = mageek.GetAllPrecos();
         }
 
+        [ObservableProperty] List<Preco> precoList = new();
         [ObservableProperty] bool asOwned = false;
-        [ObservableProperty] List<Tuple<string,string>> precoList = new();
-
-        public void Reload() // TODO
-        {
-           
-            //string[] files = Directory.GetFiles(Folders.PrecosFolder);
-            //foreach (string file in files)
-            //{
-            //    var splited = file.Split("\\");
-            //    string title = splited[splited.Length - 1].Replace(".txt", "");
-            //    content
-            //    PrecoList.Add(new PrecoDeck(title,content));
-            //}
-        }
 
         [RelayCommand]
-        public async Task ImportPreco(string title) // TODO
+        public async Task ImportPreco(Preco deck)
         {
-           
-            //List<DeckCard> importLines = new();
-            //importLines = await mageek.ParseCardList(PrecoDeck.CardList); // TODO recup preco content
-            //await mageek.CreateDeck_Contructed(
-            //    title,
-            //    "Preco",
-            //    importLines
-            //);
+            await mageek.CreateDeck_Contructed(deck, asOwned);
         }
 
     }

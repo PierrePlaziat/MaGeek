@@ -4,6 +4,17 @@ using MageekCore.Data.Mtg.Entities;
 namespace MageekCore.Data
 {
 
+    public class Preco
+    {
+        public required string Code { get; set; }
+        public required string Title { get; set; }
+        public required string ReleaseDate { get; set; }
+        public required string Kind { get; set; }
+        public required List<string> CommanderCardUuids { get; set; }
+        public required List<string> MainCardUuids { get; set; }
+        public required List<string> SideCardUuids { get; set; }
+    }
+
     public class CardVariant
     {
 

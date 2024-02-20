@@ -135,7 +135,7 @@ namespace MageekCore.Data.Mtg
                 await precosZip.CopyToAsync(fs_PrecosZip);
             }
             Logger.Log("Uncompressing...");
-            System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, tmpPath);
+            System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, tmpPath, overwriteFiles: true);
             File.Delete(zipPath);
             Logger.Log("Parsing...");
             await ParsePrecos(tmpPath, Folders.PrecosFolder);
@@ -144,47 +144,62 @@ namespace MageekCore.Data.Mtg
 
         public async Task ParsePrecos(string tmpPath, string precosFolder)
         {
+            // READ
+            List<Preco> list = new List<Preco>();
             foreach (string precoPath in Directory.GetFiles(tmpPath))
             {
-                await ParsePreco(precoPath);
+                list.Add(await ParsePreco(precoPath));
             }
+            // WRITE
+            Console.WriteLine(DateTime.Now);
+            var options = new JsonSerializerOptions { IncludeFields=true};
+            string jsonString = JsonSerializer.Serialize(list, options);
+            File.WriteAllText(Path.Combine(Folders.PrecosFolder, "precos.json"), jsonString);
+
         }
 
-        private async Task ParsePreco(string precoPath)
+        private async Task<Preco> ParsePreco(string precoPath)
         {
-
-            // READ
-
             using StreamReader reader = new(precoPath);
-            string jsonString = reader.ReadToEnd();
-            dynamic d = JObject.Parse(jsonString);
+            string jsonString = await reader.ReadToEndAsync();
+            dynamic dynData = JObject.Parse(jsonString);
 
-            string code = d.data.code;
-            string name = d.data.name;
-            string releaseDate = d.data.releaseDate;
-            string type = d.data.type;
+            string code = dynData.data.code;
+            string name = dynData.data.name;
+            string releaseDate = dynData.data.releaseDate;
+            string type = dynData.data.type;
 
             List<string> CommanderCardUuids = new List<string>();
-            foreach(dynamic dd in d.data.commander)
+            foreach(dynamic card in dynData.data.commander)
             {
-                CommanderCardUuids.Add(dd.uuid as string);
+                string uuid = card.uuid;
+                CommanderCardUuids.Add(uuid);
             }
             
             List<string> mainCardUuids = new List<string>();
-            foreach(dynamic dd in d.data.mainBoard)
+            foreach(dynamic card in dynData.data.mainBoard)
             {
-                mainCardUuids.Add(dd.uuid as string);
+                string uuid = card.uuid;
+                mainCardUuids.Add(uuid);
             }
 
             List<string> sideCardUuids = new List<string>();
-            foreach (dynamic dd in d.data.sideBoard)
+            foreach (dynamic card in dynData.data.sideBoard)
             {
-                sideCardUuids.Add(dd.uuid as string);
+                string uuid = card.uuid;
+                sideCardUuids.Add(uuid);
             }
 
-            // WRITE
-            //Folders.PrecosFolder;
-
+            return new Preco()
+            {
+                Title = name,
+                Code = code,
+                ReleaseDate = releaseDate,
+                Kind = type,
+                CommanderCardUuids = CommanderCardUuids,
+                MainCardUuids = mainCardUuids,
+                SideCardUuids = sideCardUuids
+            };
         }
     }
 

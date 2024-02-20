@@ -1057,6 +1057,12 @@ namespace MageekCore
             return messages;
         }
 
+        public Task CreateDeck_Contructed(Preco deck, bool asOwned)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Rename a deck
         /// </summary>
@@ -1914,9 +1920,10 @@ namespace MageekCore
             return tags;
         }
 
-        public async Task<List<DeckCard>> ParseCardList(object cardList)
+        public List<Preco> GetAllPrecos()
         {
-            throw new NotImplementedException();
+            string data = File.ReadAllText(Path.Combine(Folders.PrecosFolder, "precos.json"));
+            return JsonSerializer.Deserialize<List<Preco>>(data, new JsonSerializerOptions { IncludeFields = true });
         }
 
         #endregion
