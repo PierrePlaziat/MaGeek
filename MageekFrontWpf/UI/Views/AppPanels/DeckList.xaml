@@ -62,21 +62,21 @@
                                           CommandParameter="{Binding DeckId}"
                                           Click="MenuItem_OpenDeckClick"/>
                                 <MenuItem Header="Create" 
-                                          Command="{Binding AddDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+                                          Command="{Binding AddDeckCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                 <MenuItem Header="Rename"
-                                          Command="{Binding RenameDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          Command="{Binding RenameDeckCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                           CommandParameter="{Binding DeckId}"/>
                                 <MenuItem Header="Duplicate"
-                                          Command="{Binding DuplicateDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          Command="{Binding DuplicateDeckCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                           CommandParameter="{Binding DeckId}"/>
                                 <Separator />
                                 <MenuItem Header="Get List"
-                                          Command="{Binding GetAsTxtListCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                          Command="{Binding GetAsTxtListCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
                                 <MenuItem Header="Estimate price"
-                                          Command="{Binding EstimateDeckPriceCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+                                          Command="{Binding EstimateDeckPriceCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                                 <Separator />
                                 <MenuItem Header="Delete"
-                                          Command="{Binding DeleteDeckCommand, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          Command="{Binding DeleteDeckCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                           CommandParameter="{Binding DeckId}"/>
                             </ContextMenu>
                         </Grid.ContextMenu>

@@ -1,6 +1,7 @@
 ﻿using MageekCore.Tools;
 using Newtonsoft.Json.Linq;
 using System.Dynamic;
+using System.IO;
 using System.Text.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -136,9 +137,10 @@ namespace MageekCore.Data.Mtg
             }
             Logger.Log("Uncompressing...");
             System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, tmpPath, overwriteFiles: true);
-            File.Delete(zipPath);
             Logger.Log("Parsing...");
             await ParsePrecos(tmpPath, Folders.PrecosFolder);
+            Logger.Log("Cleaning");
+            Directory.Delete(tmpPath, true);
             Logger.Log("Done");
         }
 
@@ -148,7 +150,11 @@ namespace MageekCore.Data.Mtg
             List<Preco> list = new List<Preco>();
             foreach (string precoPath in Directory.GetFiles(tmpPath))
             {
-                list.Add(await ParsePreco(precoPath));
+                try
+                {
+                    list.Add(await ParsePreco(precoPath));
+                }
+                catch (Exception e) { Logger.Log(e); }
             }
             // WRITE
             Console.WriteLine(DateTime.Now);
@@ -169,25 +175,28 @@ namespace MageekCore.Data.Mtg
             string releaseDate = dynData.data.releaseDate;
             string type = dynData.data.type;
 
-            List<string> CommanderCardUuids = new List<string>();
+            List<Tuple<string, int>> CommanderCardUuids = new List<Tuple<string, int>>();
             foreach(dynamic card in dynData.data.commander)
             {
                 string uuid = card.uuid;
-                CommanderCardUuids.Add(uuid);
+                int quantity = card.count;
+                CommanderCardUuids.Add(new Tuple<string,int>(uuid, quantity));
             }
             
-            List<string> mainCardUuids = new List<string>();
+            List<Tuple<string, int>> mainCardUuids = new List<Tuple<string, int>>();
             foreach(dynamic card in dynData.data.mainBoard)
             {
                 string uuid = card.uuid;
-                mainCardUuids.Add(uuid);
+                int quantity = card.count;
+                mainCardUuids.Add(new Tuple<string, int>(uuid, quantity));
             }
 
-            List<string> sideCardUuids = new List<string>();
+            List<Tuple<string, int>> sideCardUuids = new List<Tuple<string, int>>();
             foreach (dynamic card in dynData.data.sideBoard)
             {
                 string uuid = card.uuid;
-                sideCardUuids.Add(uuid);
+                int quantity = card.count;
+                sideCardUuids.Add(new Tuple<string, int>(uuid, quantity));
             }
 
             return new Preco()
@@ -200,7 +209,9 @@ namespace MageekCore.Data.Mtg
                 MainCardUuids = mainCardUuids,
                 SideCardUuids = sideCardUuids
             };
+
         }
+    
     }
 
 }

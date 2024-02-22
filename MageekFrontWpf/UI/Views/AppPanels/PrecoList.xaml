@@ -16,30 +16,55 @@
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <ListView Name="PrecoListView"
-                  ItemsSource="{Binding PrecoList}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel>
-                        <Button Content="Import"
-                                Command="{Binding ImportPrecoCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                CommandParameter="{Binding}"/>
-                        <Label Content="{Binding Code}"></Label>
-                        <Label Content="{Binding Title}"></Label>
-                        <Label Content="{Binding Kind}"></Label>
-                        <Label Content="{Binding ReleaseDate}"></Label>
-                    </DockPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <DataGrid ItemsSource="{Binding PrecoList}"
+                      CanUserAddRows="False"
+                      CanUserResizeRows="False"
+                      CanUserResizeColumns="True"
+                      CanUserReorderColumns="True"
+                      SelectionMode="Extended"
+                      CanUserSortColumns="True"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      RowHeaderWidth="0"
+                      RowHeight="20"
+                      AutoGenerateColumns="False"
+                      MouseDoubleClick="DataGrid_MouseDoubleClick">
+            
+            <DataGrid.Resources>
+                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"
+                           TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background"
+                                Value="#555" />
+                </Style>
+            </DataGrid.Resources>
 
-        <DockPanel Grid.Row="1">
-            <!--<Button Command="{Binding ImportPrecos}"
-                    Content="Import Selected Decks" />-->
-            <CheckBox IsChecked="{Binding AsOwned}"
-                      Foreground="White"
-                      Margin="1.5">As Owned</CheckBox>
-        </DockPanel>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="| Code   "
+                                        Binding="{Binding Code}" />
+                <DataGridTextColumn Header="| Title   "
+                                        Binding="{Binding Title}" />
+                <DataGridTextColumn Header="| Release Date   "
+                                        Binding="{Binding ReleaseDate}" />
+                <DataGridTextColumn Header="| Kind   "
+                                        Binding="{Binding Kind}" />
+                <DataGridTextColumn Header="| NbCards   "
+                                        Binding="{Binding NbCards}" />
+                <DataGridTextColumn Header="| NbCardsSide   "
+                                        Binding="{Binding NbCardsSide}" />
+            </DataGrid.Columns>
+
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Import in deck list"
+                                  Command="{Binding AddToDeckCommand}" 
+                                  CommandParameter="{Binding}"/>
+                    <MenuItem Header="Import in deck list as owned"
+                                  Command="{Binding AddToDeckCommand}" 
+                                  CommandParameter="{Binding}"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+
+        </DataGrid>
 
     </Grid>
 

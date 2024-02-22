@@ -38,8 +38,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] bool isActive;
         [ObservableProperty] bool isLoading = false;
 
-        #region Loading
-
         private async void HandleDeckSelected(string deck)
         {
             IsLoading = true;
@@ -89,37 +87,37 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         private async Task<IEnumerable<DeckCard>> GetCurrentCreatures()
         { 
-            return DeckCards.Where(card => card.RelationType == 0 && card.Type.Contains("Creature"));
+            return DeckCards.Where(card => card.RelationType == 0 && card.CardType.Contains("Creature"));
         }
 
         private async Task<IEnumerable<DeckCard>> GetCurrentInstants()
         {
-            return DeckCards.Where(card => card.RelationType == 0 && card.Type.Contains("Instant"));
+            return DeckCards.Where(card => card.RelationType == 0 && card.CardType.Contains("Instant"));
         }
 
         private async Task<IEnumerable<DeckCard>> GetCurrentSorceries() 
         { 
-            return DeckCards.Where(card => card.RelationType == 0 && card.Type.Contains("Sorcery")); 
+            return DeckCards.Where(card => card.RelationType == 0 && card.CardType.Contains("Sorcery")); 
         }
 
         private async Task<IEnumerable<DeckCard>> GetCurrentEnchantments() 
         {
-            return DeckCards.Where(card => card.RelationType == 0 && card.Type.Contains("Enchantment")); 
+            return DeckCards.Where(card => card.RelationType == 0 && card.CardType.Contains("Enchantment")); 
         }
 
         private async Task<IEnumerable<DeckCard>> GetCurrentArtifacts() 
         { 
-            return DeckCards.Where(card => card.RelationType == 0 && card.Type.Contains("Artifact"));
+            return DeckCards.Where(card => card.RelationType == 0 && card.CardType.Contains("Artifact"));
         }
 
         private async Task<IEnumerable<DeckCard>> GetCurrentPlaneswalkers() 
         {
-            return DeckCards.Where(card => card.RelationType == 0 && card.Type.Contains("Planeswalker"));
+            return DeckCards.Where(card => card.RelationType == 0 && card.CardType.Contains("Planeswalker"));
         }
 
         private async Task<IEnumerable<DeckCard>> GetCurrentLands()
         {
-            return DeckCards.Where(card => card.RelationType == 0 && card.Type.Contains("Land"));
+            return DeckCards.Where(card => card.RelationType == 0 && card.CardType.Contains("Land"));
         }
 
         private async Task<IEnumerable<DeckCard>> GetCurrentSide() 
@@ -148,8 +146,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         //                 || card.Card.CardForeignName.ToLower().Contains(FilterString.ToLower())
         //    );
         //}
-
-        #endregion
 
         [RelayCommand]
         private void LessCard(Button b)

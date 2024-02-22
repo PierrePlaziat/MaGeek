@@ -15,7 +15,9 @@ using System.Linq;
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
-    public partial class DeckListViewModel : BaseViewModel, IRecipient<UpdateDeckListMessage>, IRecipient<UpdateDeckMessage>
+    public partial class DeckListViewModel : BaseViewModel, 
+        IRecipient<UpdateDeckListMessage>, 
+        IRecipient<UpdateDeckMessage>
     {
 
         private WindowsService wins;
@@ -27,13 +29,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             WindowsService wins,
             SettingService config,
             DialogService dialog, 
-            MageekService mageek)
-        {
+            MageekService mageek
+        ){
             this.wins = wins;
             this.mageek = mageek;
             this.config = config;
             this.dialog = dialog;
             WeakReferenceMessenger.Default.RegisterAll(this);
+            Reload().ConfigureAwait(false);
         }
 
         [ObservableProperty] private IEnumerable<Deck> decks;
@@ -51,18 +54,18 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
 
         [RelayCommand]
-        public async Task SelectDeck(string deckId)
-        {
-            wins.OpenDoc(await mageek.GetDeck(deckId));
-        }
-
-        [RelayCommand]
         private async Task Reload()
         {
             Logger.Log("Reload");
             IsLoading = true;
-            Decks = FilterDeck(Decks);
+            Decks = FilterDeck(await mageek.GetDecks());
             IsLoading = false;
+        }
+
+        [RelayCommand]
+        public async Task SelectDeck(string deckId)
+        {
+            wins.OpenDoc(await mageek.GetDeck(deckId));
         }
 
         [RelayCommand]

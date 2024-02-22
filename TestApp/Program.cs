@@ -9,7 +9,7 @@ MtgDbManager mtg = new MtgDbManager();
 CollectionDbManager collec = new CollectionDbManager(mtg);
 MageekService mageek = new MageekService(collec,mtg);
 var v = await mageek.Initialize();
-if (v != MageekCore.Data.MageekInitReturn.Error)
+if (v != MageekInitReturn.Error)
 { 
     Console.WriteLine("Done");
     Console.WriteLine("");

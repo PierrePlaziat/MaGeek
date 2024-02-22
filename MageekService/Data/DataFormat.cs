@@ -10,9 +10,37 @@ namespace MageekCore.Data
         public required string Title { get; set; }
         public required string ReleaseDate { get; set; }
         public required string Kind { get; set; }
-        public required List<string> CommanderCardUuids { get; set; }
-        public required List<string> MainCardUuids { get; set; }
-        public required List<string> SideCardUuids { get; set; }
+        public required List<Tuple<string,int>> CommanderCardUuids { get; set; }
+        public required List<Tuple<string, int>> MainCardUuids { get; set; }
+        public required List<Tuple<string, int>> SideCardUuids { get; set; }
+
+        public  int NbCards {
+            get 
+            {
+                int i = 0;
+                foreach(var card in CommanderCardUuids)
+                {
+                    i += card.Item2;
+                }
+                foreach(var card in MainCardUuids)
+                {
+                    i += card.Item2;
+                }
+                return i;
+            }
+        }
+        public  int NbCardsSide
+        {
+            get
+            {
+                int i = 0;
+                foreach (var card in SideCardUuids)
+                {
+                    i += card.Item2;
+                }
+                return i;
+            }
+        }
     }
 
     public class CardVariant

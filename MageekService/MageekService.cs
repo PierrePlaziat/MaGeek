@@ -914,6 +914,12 @@ namespace MageekCore
 
         #region Decks
 
+        public List<Preco> GetAllPrecos()
+        {
+            string data = File.ReadAllText(Path.Combine(Folders.PrecosFolder, "precos.json"));
+            return JsonSerializer.Deserialize<List<Preco>>(data, new JsonSerializerOptions { IncludeFields = true });
+        }
+
         /// <summary>
         /// Get decks registered
         /// </summary>
@@ -1057,10 +1063,33 @@ namespace MageekCore
             return messages;
         }
 
-        public Task CreateDeck_Contructed(Preco deck, bool asOwned)
+        //TODO asowned
+        public async Task<Deck> CreateDeck_Contructed(Preco preco, bool asOwned)
         {
-            //TODO
-            throw new NotImplementedException();
+            Deck deck = await CreateDeck_Empty(preco.Title, string.Concat(preco.ReleaseDate, " - ", preco.Kind));
+            try
+            {
+                foreach (Tuple<string, int> line in preco.CommanderCardUuids)
+                {
+                    await AddCardToDeck(line.Item1, deck, line.Item2, 1);
+                    if (asOwned) await CollecMove(line.Item1, line.Item2);
+                }
+                foreach (Tuple<string, int> line in preco.MainCardUuids)
+                {
+                    await AddCardToDeck(line.Item1, deck, line.Item2, 0);
+                    if (asOwned) await CollecMove(line.Item1, line.Item2);
+                }
+                foreach (Tuple<string, int> line in preco.SideCardUuids)
+                {
+                    await AddCardToDeck(line.Item1, deck, line.Item2, 2);
+                    if (asOwned) await CollecMove(line.Item1, line.Item2);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+            return deck;
         }
 
         /// <summary>
@@ -1918,12 +1947,6 @@ namespace MageekCore
             using CollectionDbContext DB = await collec.GetContext();
             tags.AddRange(DB.Tag.Where(x => x.ArchetypeId == archetypeId));
             return tags;
-        }
-
-        public List<Preco> GetAllPrecos()
-        {
-            string data = File.ReadAllText(Path.Combine(Folders.PrecosFolder, "precos.json"));
-            return JsonSerializer.Deserialize<List<Preco>>(data, new JsonSerializerOptions { IncludeFields = true });
         }
 
         #endregion
