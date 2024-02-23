@@ -69,7 +69,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
 
         [RelayCommand]
-        private async Task AddDeck()
+        public async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
             await mageek.CreateDeck_Empty(title, "");
@@ -77,7 +77,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
 
         [RelayCommand]
-        private async Task RenameDeck(string deckId)
+        public async Task RenameDeck(string deckId)
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
             await mageek.RenameDeck(deckId, title);
@@ -85,21 +85,21 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
 
         [RelayCommand]
-        private async Task DuplicateDeck(string deckId)
+        public async Task DuplicateDeck(string deckId)
         {
             await mageek.DuplicateDeck(deckId);
             await Reload();
         }
 
         [RelayCommand]
-        private async Task DeleteDeck(string deckId)
+        public async Task DeleteDeck(string deckId)
         {
             await mageek.DeleteDeck(deckId);
             await Reload();
         }
 
         [RelayCommand]
-        private async Task EstimateDeckPrice(string deckId)
+        public async Task EstimateDeckPrice(string deckId)
         {
             var totalPrice = await mageek.EstimateDeckPrice(deckId, config.Settings[AppSetting.Currency]);
             MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + "\n" +
@@ -107,7 +107,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
 
         [RelayCommand]
-        private async Task GetAsTxtList(string deckId)
+        public async Task GetAsTxtList(string deckId)
         {
             string txt = await mageek.DeckToTxt(deckId);
             if (!string.IsNullOrEmpty(txt))

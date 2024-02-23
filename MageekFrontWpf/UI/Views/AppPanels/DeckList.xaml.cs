@@ -37,6 +37,41 @@ namespace MageekFrontWpf.UI.Views.AppPanels
             vm.SelectDeck((string)item.CommandParameter).ConfigureAwait(false); 
         }
 
+        private void MenuItem_CreateDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        {
+            vm.AddDeck().ConfigureAwait(false);
+        }
+
+        private void MenuItem_RenameDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.RenameDeck((string)item.CommandParameter).ConfigureAwait(false);
+        }
+
+        private void MenuItem_DuplicateDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.DuplicateDeck((string)item.CommandParameter).ConfigureAwait(false);
+        }
+
+        private void MenuItem_ListDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.GetAsTxtList((string)item.CommandParameter).ConfigureAwait(false);
+        }
+
+        private void MenuItem_EstimateDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.EstimateDeckPrice((string)item.CommandParameter).ConfigureAwait(false);
+        }
+
+        private void MenuItem_DeleteDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.DeleteDeck((string)item.CommandParameter).ConfigureAwait(false);
+        }
+
     }
 
 }

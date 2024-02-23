@@ -62,21 +62,23 @@
                                           CommandParameter="{Binding DeckId}"
                                           Click="MenuItem_OpenDeckClick"/>
                                 <MenuItem Header="Create" 
-                                          Command="{Binding AddDeckCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                          Click="MenuItem_CreateDeckClick"/>
                                 <MenuItem Header="Rename"
-                                          Command="{Binding RenameDeckCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                          Click="MenuItem_RenameDeckClick"
                                           CommandParameter="{Binding DeckId}"/>
                                 <MenuItem Header="Duplicate"
-                                          Command="{Binding DuplicateDeckCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                          Click="MenuItem_DuplicateDeckClick"
                                           CommandParameter="{Binding DeckId}"/>
                                 <Separator />
                                 <MenuItem Header="Get List"
-                                          Command="{Binding GetAsTxtListCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                          Click="MenuItem_ListDeckClick" 
+                                          CommandParameter="{Binding DeckId}"/>
                                 <MenuItem Header="Estimate price"
-                                          Command="{Binding EstimateDeckPriceCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                                          Click="MenuItem_EstimateDeckClick" 
+                                          CommandParameter="{Binding DeckId}"/>
                                 <Separator />
                                 <MenuItem Header="Delete"
-                                          Command="{Binding DeleteDeckCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                          Click="MenuItem_DeleteDeckClick" 
                                           CommandParameter="{Binding DeckId}"/>
                             </ContextMenu>
                         </Grid.ContextMenu>
