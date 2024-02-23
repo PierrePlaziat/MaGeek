@@ -791,6 +791,7 @@ namespace MageekCore
                 return -1;
             }
         }
+
         public async Task<int> Collected_AllVariants(string archetypeId)
         {
             if (string.IsNullOrEmpty(archetypeId)) return 0;

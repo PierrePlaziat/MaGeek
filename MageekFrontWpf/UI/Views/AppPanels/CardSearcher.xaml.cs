@@ -3,7 +3,6 @@ using System;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using System.Windows.Controls;
-using MageekCore.Data.Mtg.Entities;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekCore.Data;

@@ -5,7 +5,8 @@ using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekCore.Data;
 using System.Threading.Tasks;
-using System.Diagnostics;
+using System;
+using MageekCore.Tools;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -81,7 +82,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
                 case MageekUpdateReturn.ErrorFetching:
                     CanLaunch = false;
                     UpdateAvailable = false;
-                    Message = "/!\\ Fatal Error /!\\"; // todo backup system
+                    Message = "/!\\ Fatal Error /!\\"; //TODO backup system
                     break;
             }
             IsLoading = false;
@@ -93,6 +94,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             IsLoading = true;
             winManager.CloseWindow(AppWindowEnum.Welcome);
             winManager.OpenWindow(AppWindowEnum.Main);
+            //try
+            //{
+            //    winManager.LoadLayout("Default");
+            //}
+            //catch (Exception e) { Logger.Log(e); }
         }
 
     }

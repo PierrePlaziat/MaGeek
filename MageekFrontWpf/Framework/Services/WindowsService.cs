@@ -14,6 +14,8 @@ using MageekCore.Data.Collection.Entities;
 using MageekFrontWpf.UI.Views;
 using MageekFrontWpf.UI.ViewModels;
 using MageekCore.Tools;
+using System.Windows.Controls;
+using AvalonDock.Controls;
 
 namespace MageekFrontWpf.Framework.Services
 {
@@ -41,7 +43,7 @@ namespace MageekFrontWpf.Framework.Services
         private List<AppWindow> windows = new();
         private List<AppTool> tools = new();
 
-        private LayoutRoot rootLayout;
+        private LayoutPanel rootPanel;
         private DockingManager dockingManager;
 
         public WindowsService()
@@ -53,7 +55,7 @@ namespace MageekFrontWpf.Framework.Services
         {
             Logger.Log("Start");
             Folders.InitClientFolders();
-            rootLayout = ServiceHelper.GetService<MainWindow>().RootLayout;
+            rootPanel = ServiceHelper.GetService<MainWindow>().RootLayout.RootPanel;
             dockingManager = ServiceHelper.GetService<MainWindow>().DockingManager;
             windows = WindowsAndTools.LoadWindows();
             tools = WindowsAndTools.LoadTools();
@@ -89,8 +91,31 @@ namespace MageekFrontWpf.Framework.Services
             Logger.Log(tool.ToString());
             try
             {
+
+                // not first time
+
+                LayoutAnchorablePane anchPane = dockingManager.Layout
+                    .Descendents().OfType<LayoutAnchorablePane>()
+                    .FirstOrDefault(d => d.Name == tool.ToString());
+
+                if (anchPane != null)
+                {
+
+                    if (anchPane.IsVisible) return;
+                    else
+                    {
+                        //dockingManager.Layout.
+                        //AnchorablePaneTabPanel.UnloadedEvent
+                        //anchPane
+                        //anchPane.ch.Dock();
+                        //anchPane.Parent.ReplaceChild = anchPane.Parent;
+                        //return;
+                    }
+                }
+
+                //  first time
+
                 BaseUserControl control = tools.Find(t => t.id == tool).tool;
-                if (control == null) return;
 
                 var anch = new LayoutAnchorable()
                 {
@@ -106,7 +131,7 @@ namespace MageekFrontWpf.Framework.Services
                     
                     ContentId = tool.ToString(),
                 };
-                var anchPane = new LayoutAnchorablePane(anch)
+                anchPane = new LayoutAnchorablePane(anch)
                 {
                     Name = tool.ToString(),
                     DockMinWidth = 200,
@@ -117,7 +142,8 @@ namespace MageekFrontWpf.Framework.Services
                     FloatingWidth = 320,
                 };
 
-                rootLayout.RootPanel.Children.Add(anchPane);
+                var GrpPane = new LayoutAnchorablePaneGroup(anchPane);
+                rootPanel.Children.Add(GrpPane);
             }
             catch (Exception e) { Logger.Log(e); }
         }
@@ -127,37 +153,37 @@ namespace MageekFrontWpf.Framework.Services
             Logger.Log(deck.DeckId + " - " + deck.Title);
             try
             {
+                //LayoutDocumentPane docPane = (LayoutDocumentPane)rootLayout.RootPanel.Children.Where(x => x.GetType() == typeof(LayoutDocumentPane)).FirstOrDefault();
+                //if (docPane == null)
+                //{
 
-                var view = ServiceHelper.GetService<DeckDocument>();
-                var vm = ServiceHelper.GetService<DeckDocumentViewModel>();
-                view.DataContext = vm;
-
-                //BaseUserControl control = tools.Find(tool => tool.id == AppToolsEnum.DeckContent).tool;
-                //if (control == null) return;
-
-                LayoutDocumentPane docPane = (LayoutDocumentPane)rootLayout.RootPanel.Children.Where(x=>x.GetType() == typeof(LayoutDocumentPane)).FirstOrDefault();
-                if (docPane == null)
+                //}
+                LayoutDocumentPane docPane = new LayoutDocumentPane
                 {
-                    docPane = new LayoutDocumentPane
-                    {
-                        DockMinWidth = 200,
-                        DockMinHeight = 100,
-                    };
-                    rootLayout.RootPanel.Children.Add(docPane);
-                }
-
-                var doc = new LayoutDocument()
-                {
-                    IsSelected = true,
-                    Content = view,
-                    Title = deck.Title,
-                    FloatingHeight = 500,
-                    FloatingWidth = 300,
+                    DockMinWidth = 200,
+                    DockMinHeight = 100,
                 };
-
+                rootPanel.Children.Add(docPane);
+                LayoutDocument doc = MakeDoc(deck.Title);
                 docPane.Children.Add(doc);
             }
             catch (Exception e) { Logger.Log(e); }
+        }
+
+        private LayoutDocument MakeDoc(string deckTitle)
+        {
+            DeckDocument view = ServiceHelper.GetService<DeckDocument>();
+            DeckDocumentViewModel vm = ServiceHelper.GetService<DeckDocumentViewModel>();
+            view.DataContext = vm;
+            LayoutDocument doc = new LayoutDocument()
+            {
+                //IsSelected = true,
+                Content = view,
+                Title = deckTitle,
+                FloatingHeight = 500,
+                FloatingWidth = 300,
+            };
+            return doc;
         }
 
         #region Layout gestion
@@ -202,9 +228,10 @@ namespace MageekFrontWpf.Framework.Services
                     var panel = tools.Find(control => control.tool.ControlName == element.Title);
                     if (panel != null)
                     {
-                        element.Content = panel;
+                        element.Content = panel.tool;
                     }
                 }
+                rootPanel = dockingManager.Layout.RootPanel;
             }
             catch (Exception e) { Logger.Log(e); }
         }

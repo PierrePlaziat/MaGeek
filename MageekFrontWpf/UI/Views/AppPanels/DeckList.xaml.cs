@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using MageekFrontWpf.AppValues;
-using MageekFrontWpf.Framework.BaseMvvm;
+﻿using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekCore.Data.Collection.Entities;
 using System.Windows.Controls;
@@ -19,16 +17,10 @@ namespace MageekFrontWpf.UI.Views.AppPanels
             InitializeComponent();
         }
 
-        private void decklistbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var deck = decklistbox.SelectedItem as Deck;
-                WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(deck.DeckId));
-        }
-
         private void Decklistbox_SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (decklistbox.SelectedItem is Deck deck)
-                WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(deck.DeckId));
+            Deck deck = (Deck)decklistbox.SelectedItem;
+            vm.SelectDeck(deck.DeckId).ConfigureAwait(false);
         }
 
         private void MenuItem_OpenDeckClick(object sender, System.Windows.RoutedEventArgs e)
