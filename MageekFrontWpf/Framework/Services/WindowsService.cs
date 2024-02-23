@@ -94,22 +94,21 @@ namespace MageekFrontWpf.Framework.Services
 
                 // not first time
 
-                LayoutAnchorablePane anchPane = dockingManager.Layout
-                    .Descendents().OfType<LayoutAnchorablePane>()
-                    .FirstOrDefault(d => d.Name == tool.ToString());
+                LayoutAnchorable anch = dockingManager.Layout
+                    .Descendents().OfType<LayoutAnchorable>()
+                    .FirstOrDefault(d => d.Title == tool.ToString());
 
-                if (anchPane != null)
+                if (anch != null)
                 {
-
-                    if (anchPane.IsVisible) return;
+                    // already opened
+                    if (anch.IsVisible) return;
+                    // reopen
                     else
                     {
-                        //dockingManager.Layout.
-                        //AnchorablePaneTabPanel.UnloadedEvent
-                        //anchPane
-                        //anchPane.ch.Dock();
-                        //anchPane.Parent.ReplaceChild = anchPane.Parent;
-                        //return;
+                        anch.Show();
+                        return;
+                        //dockingManager.Layout.CollectGarbage();
+                        // ??? //
                     }
                 }
 
@@ -117,29 +116,17 @@ namespace MageekFrontWpf.Framework.Services
 
                 BaseUserControl control = tools.Find(t => t.id == tool).tool;
 
-                var anch = new LayoutAnchorable()
+                anch = new LayoutAnchorable()
                 {
-                    IsSelected = true,
                     Content = control,
                     Title = tool.ToString(),
-                    FloatingTop = 200,
-                    FloatingLeft = 200,
-                    FloatingHeight = 200,
-                    FloatingWidth = 320,
                     CanFloat = true,
-                    
-                    
-                    ContentId = tool.ToString(),
                 };
-                anchPane = new LayoutAnchorablePane(anch)
+                var anchPane = new LayoutAnchorablePane(anch)
                 {
                     Name = tool.ToString(),
                     DockMinWidth = 200,
                     DockMinHeight = 100,
-                    FloatingTop = 200,
-                    FloatingLeft = 200,
-                    FloatingHeight = 200,
-                    FloatingWidth = 320,
                 };
 
                 var GrpPane = new LayoutAnchorablePaneGroup(anchPane);
@@ -153,11 +140,6 @@ namespace MageekFrontWpf.Framework.Services
             Logger.Log(deck.DeckId + " - " + deck.Title);
             try
             {
-                //LayoutDocumentPane docPane = (LayoutDocumentPane)rootLayout.RootPanel.Children.Where(x => x.GetType() == typeof(LayoutDocumentPane)).FirstOrDefault();
-                //if (docPane == null)
-                //{
-
-                //}
                 LayoutDocumentPane docPane = new LayoutDocumentPane
                 {
                     DockMinWidth = 200,
