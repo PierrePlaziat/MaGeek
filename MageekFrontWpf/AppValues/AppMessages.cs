@@ -8,11 +8,6 @@ namespace MageekFrontWpf.AppValues
         public CardSelectedMessage(string uuid) : base(uuid) {}
     }
 
-    public class DeckSelectMessage : ValueChangedMessage<string>
-    {
-        public DeckSelectMessage(string id) : base(id) {}
-    }
-
     public class UpdateCardCollecMessage : ValueChangedMessage<string>
     {
         public UpdateCardCollecMessage(string data) : base(data) {}

@@ -1,12 +1,5 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekCore.Data.Collection.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
+using MageekFrontWpf.UI.ViewModels;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {
@@ -14,12 +7,13 @@ namespace MageekFrontWpf.UI.Views.AppPanels
     public partial class DeckStats : BaseUserControl
     {
 
-        public DeckStats()
-        {
-        }
+        private DeckDocumentViewModel vm;
 
-        public DeckStats(DeckStatsViewModel vm)
+        public DeckStats() {}
+
+        public void SetDataContext(DeckDocumentViewModel vm)
         {
+            this.vm = vm;
             DataContext = vm;
             InitializeComponent();
         }

@@ -94,11 +94,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             IsLoading = true;
             winManager.CloseWindow(AppWindowEnum.Welcome);
             winManager.OpenWindow(AppWindowEnum.Main);
-            //try
-            //{
-            //    winManager.LoadLayout("Default");
-            //}
-            //catch (Exception e) { Logger.Log(e); }
+            try
+            {
+                winManager.LoadLayout("Default");
+            }
+            catch (Exception e) { Logger.Log(e); }
         }
 
     }

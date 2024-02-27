@@ -65,7 +65,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task SelectDeck(string deckId)
         {
-            wins.OpenDoc(await mageek.GetDeck(deckId));
+            wins.OpenDoc(await mageek.GetDeck(deckId),null);
         }
 
         [RelayCommand]

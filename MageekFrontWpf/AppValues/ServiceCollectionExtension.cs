@@ -40,9 +40,6 @@ namespace MageekFrontWpf.AppValues
             services.AddSingleton<TxtInput>();
             // Documents
             services.AddTransient<DeckDocument>();
-            services.AddTransient<DeckContent>();
-            services.AddTransient<DeckTable>();
-            services.AddTransient<DeckStats>();
 
             // ViewModels //////////////////////////////////////////////////////////////
 
@@ -61,9 +58,6 @@ namespace MageekFrontWpf.AppValues
             services.AddSingleton<TxtInputViewModel>();
             // Documents
             services.AddTransient<DeckDocumentViewModel>();
-            services.AddTransient<DeckContentViewModel>();
-            services.AddTransient<DeckTableViewModel>();
-            services.AddTransient<DeckStatsViewModel>();
 
             ////////////////////////////////////////////////////////////////////////////
 

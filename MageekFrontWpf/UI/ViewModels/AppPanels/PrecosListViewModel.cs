@@ -43,9 +43,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [RelayCommand]
         public async Task SelectDeck(Preco preco)
         {
-            Deck deck = await mageek.CreateDeck_Contructed(preco,false);
-            WeakReferenceMessenger.Default.Send(new UpdateDeckMessage(deck.DeckId));
-            win.OpenDoc(deck);
+            win.OpenDoc(null, preco);
         }
 
     }

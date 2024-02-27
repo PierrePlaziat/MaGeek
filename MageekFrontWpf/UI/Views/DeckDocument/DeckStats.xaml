@@ -66,10 +66,10 @@
                             <PathGeometry>
                                 <PathGeometry.Figures>
                                     <PathFigureCollection>
-                                        <PathFigure StartPoint="{Binding CurveStart}">
+                                        <PathFigure StartPoint="{Binding Deck.CurveStart}">
                                             <PathFigure.Segments>
                                                 <PathSegmentCollection>
-                                                    <PolyLineSegment Points="{Binding CurvePoints}" />
+                                                    <PolyLineSegment Points="{Binding Deck.CurvePoints}" />
                                                 </PathSegmentCollection>
                                             </PathFigure.Segments>
                                         </PathFigure>
@@ -93,7 +93,7 @@
                            Foreground="#DDD"
                            Margin="0"
                            Padding="0" />
-                    <Label Content="{Binding DevotionB}"
+                    <Label Content="{Binding Deck.DevotionB}"
                            FontWeight="Bold"
                            Foreground="White"
                            Padding="3" />
@@ -107,7 +107,7 @@
                            Foreground="#DDD"
                            Margin="0"
                            Padding="0" />
-                    <Label Content="{Binding DevotionW}"
+                    <Label Content="{Binding Deck.DevotionW}"
                            FontWeight="Bold"
                            Foreground="White"
                            Padding="3" />
@@ -121,7 +121,7 @@
                            Foreground="#DDD"
                            Margin="0"
                            Padding="0" />
-                    <Label Content="{Binding DevotionU}"
+                    <Label Content="{Binding Deck.DevotionU}"
                            FontWeight="Bold"
                            Foreground="White"
                            Padding="3" />
@@ -135,7 +135,7 @@
                            Foreground="#DDD"
                            Margin="0"
                            Padding="0" />
-                    <Label Content="{Binding DevotionG}"
+                    <Label Content="{Binding Deck.DevotionG}"
                            FontWeight="Bold"
                            Foreground="White"
                            Padding="3" />
@@ -149,7 +149,7 @@
                            Foreground="#DDD"
                            Margin="0"
                            Padding="0" />
-                    <Label Content="{Binding DevotionR}"
+                    <Label Content="{Binding Deck.DevotionR}"
                            FontWeight="Bold"
                            Foreground="White"
                            Padding="3" />
@@ -165,25 +165,25 @@
 
                     <Label Content="Creatures"
                            Foreground="#DDD" />
-                    <Label Content="{Binding CreatureCount}"
+                    <Label Content="{Binding Deck.count_Creature}"
                            FontWeight="Bold"
                            Foreground="White" />
 
                     <Label Content="Instant"
                            Foreground="#DDD" />
-                    <Label Content="{Binding InstantCount}"
+                    <Label Content="{Binding Deck.count_instant}"
                            FontWeight="Bold"
                            Foreground="White" />
 
                     <Label Content="Sorcery"
                            Foreground="#DDD" />
-                    <Label Content="{Binding SorceryCount}"
+                    <Label Content="{Binding Deck.count_Sorcery}"
                            FontWeight="Bold"
                            Foreground="White" />
 
                     <Label Content="Enchantment"
                            Foreground="#DDD" />
-                    <Label Content="{Binding EnchantmentCount}"
+                    <Label Content="{Binding Deck.count_Enchantment}"
                            FontWeight="Bold"
                            Foreground="White" />
 
@@ -199,25 +199,25 @@
 
                     <Label Content="Artifact"
                            Foreground="#DDD" />
-                    <Label Content="{Binding ArtifactCount}"
+                    <Label Content="{Binding Deck.count_Artifact}"
                            FontWeight="Bold"
                            Foreground="White" />
 
                     <Label Content="BasicLand"
                            Foreground="#DDD" />
-                    <Label Content="{Binding BasicLandCount}"
+                    <Label Content="{Binding Deck.count_BasicLand}"
                            FontWeight="Bold"
                            Foreground="White" />
 
                     <Label Content="SpecialLand"
                            Foreground="#DDD" />
-                    <Label Content="{Binding SpecialLandCount}"
+                    <Label Content="{Binding Deck.count_specialLand}"
                            FontWeight="Bold"
                            Foreground="White" />
 
                     <Label Content="Other"
                            Foreground="#DDD" />
-                    <Label Content="{Binding OtherCount}"
+                    <Label Content="{Binding Deck.count_Other}"
                            FontWeight="Bold"
                            Foreground="White" />
 
@@ -264,7 +264,7 @@
 
                     <Label Content="Legacy"
                            Foreground="#DDD" />
-                    <Label Content="{Binding StandardOk}"
+                    <Label Content="{Binding Deck.StandardOk}"
                            FontWeight="Bold"
                            Foreground="White" />
 
@@ -273,7 +273,7 @@
 
                     <Label Content="Commander"
                            Foreground="#DDD" />
-                    <Label Content="{Binding CommanderOk}"
+                    <Label Content="{Binding Deck.CommanderOk}"
                            FontWeight="Bold"
                            Foreground="White" />
 
@@ -286,7 +286,7 @@
                     <Separator Width="20"
                                Background="Transparent" />
 
-                    <Label Content="{Binding OwnedRatio}"
+                    <Label Content="{Binding Deck.OwnedRatio}"
                            FontWeight="Bold"
                            Foreground="White" />
                     <Label Content="%"
@@ -305,16 +305,6 @@
             </StackPanel>
 
         </ScrollViewer>
-
-        <Grid Visibility="{Binding IsActive, Converter={StaticResource BoolToVis}}"
-              Background="#222"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch"
-              Grid.RowSpan="2">
-            <Label HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   Content="No deck selected" />
-        </Grid>
 
         <Grid Background="Black"
               Grid.RowSpan="5"

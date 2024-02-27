@@ -15,30 +15,12 @@ using MageekFrontWpf.UI.Views;
 using MageekFrontWpf.UI.ViewModels;
 using MageekCore.Tools;
 using System.Windows.Controls;
-using AvalonDock.Controls;
 
 namespace MageekFrontWpf.Framework.Services
 {
 
-    public class AppWindow
+    public class WindowsService
     {
-        public AppWindowEnum id;
-        public BaseWindow window;
-        public BaseViewModel vm;
-    }
-
-    public class AppTool
-    {
-        public AppToolsEnum id;
-        public BaseUserControl tool;
-        public BaseViewModel vm;
-    }
-
-    public class WindowsService : IRecipient<LoadLayoutMessage>, IRecipient<SaveLayoutMessage>
-    {
-
-        #region construction
-
 
         private List<AppWindow> windows = new();
         private List<AppTool> tools = new();
@@ -61,8 +43,6 @@ namespace MageekFrontWpf.Framework.Services
             tools = WindowsAndTools.LoadTools();
             Logger.Log("Done");
         }
-
-        #endregion
 
         public void OpenWindow(AppWindowEnum win)
         {
@@ -91,13 +71,10 @@ namespace MageekFrontWpf.Framework.Services
             Logger.Log(tool.ToString());
             try
             {
-
                 // not first time
-
                 LayoutAnchorable anch = dockingManager.Layout
                     .Descendents().OfType<LayoutAnchorable>()
                     .FirstOrDefault(d => d.Title == tool.ToString());
-
                 if (anch != null)
                 {
                     // already opened
@@ -107,15 +84,10 @@ namespace MageekFrontWpf.Framework.Services
                     {
                         anch.Show();
                         return;
-                        //dockingManager.Layout.CollectGarbage();
-                        // ??? //
                     }
                 }
-
                 //  first time
-
                 BaseUserControl control = tools.Find(t => t.id == tool).tool;
-
                 anch = new LayoutAnchorable()
                 {
                     Content = control,
@@ -128,56 +100,65 @@ namespace MageekFrontWpf.Framework.Services
                     DockMinWidth = 200,
                     DockMinHeight = 100,
                 };
-
                 var GrpPane = new LayoutAnchorablePaneGroup(anchPane);
+                // add to layout
                 rootPanel.Children.Add(GrpPane);
             }
             catch (Exception e) { Logger.Log(e); }
         }
 
-        public void OpenDoc(Deck deck)
+        // not generic //
+        public void OpenDoc(Deck? deck, Preco? preco)
         {
-            Logger.Log(deck.DeckId + " - " + deck.Title);
+            if (deck == null && preco == null) return;
+            string _id = string.Empty;
+            string _title = string.Empty;
+            if (deck != null)
+            {
+                _id = deck.DeckId;
+                _title = deck.Title;
+            }
+            else if (preco != null)
+            {
+                _id = string.Concat("[",preco.Code,"] ",preco.Title);
+                _title = _id;
+            }
             try
             {
-                LayoutDocumentPane docPane = new LayoutDocumentPane
+                // not first time
+                LayoutDocument anch = dockingManager.Layout
+                    .Descendents().OfType<LayoutDocument>()
+                    .FirstOrDefault(d => d.ContentId == _id);
+                if (anch == null)
                 {
-                    DockMinWidth = 200,
-                    DockMinHeight = 100,
-                };
-                rootPanel.Children.Add(docPane);
-                LayoutDocument doc = MakeDoc(deck.Title);
-                docPane.Children.Add(doc);
+                    //  first time
+                    DeckDocument view = ServiceHelper.GetService<DeckDocument>();
+                    anch = new LayoutDocument()
+                    {
+                        Content = view,
+                        Title = _title,
+                        ContentId = _id,
+                        CanFloat = true,
+                    };
+                    LayoutDocumentPane anchPane = dockingManager.Layout
+                        .Descendents().OfType<LayoutDocumentPane>()
+                        .FirstOrDefault();
+                    if (anchPane == null)
+                    {
+                        anchPane = new LayoutDocumentPane(anch);
+                        LayoutDocumentPaneGroup GrpPane = new LayoutDocumentPaneGroup(anchPane);
+                        rootPanel.Children.Add(GrpPane);
+                    }
+                    else
+                    {
+                        anchPane.Children.Add(anch);
+                    }
+                    // Launch document initialization
+                    if (deck != null) view.Initialize(deck);
+                    else if (preco != null) view.Initialize(preco);
+                }
             }
             catch (Exception e) { Logger.Log(e); }
-        }
-
-        private LayoutDocument MakeDoc(string deckTitle)
-        {
-            DeckDocument view = ServiceHelper.GetService<DeckDocument>();
-            DeckDocumentViewModel vm = ServiceHelper.GetService<DeckDocumentViewModel>();
-            view.DataContext = vm;
-            LayoutDocument doc = new LayoutDocument()
-            {
-                //IsSelected = true,
-                Content = view,
-                Title = deckTitle,
-                FloatingHeight = 500,
-                FloatingWidth = 300,
-            };
-            return doc;
-        }
-
-        #region Layout gestion
-
-        public void Receive(LoadLayoutMessage message)
-        {
-            LoadLayout(message.Value);
-        }
-
-        public void Receive(SaveLayoutMessage message)
-        {
-            SaveLayout(message.Value);
         }
 
         public void SaveLayout(string arg)
@@ -223,8 +204,20 @@ namespace MageekFrontWpf.Framework.Services
             return Folders.LayoutFolder + "\\" + layoutName + ".avalonXml";
         }
 
-        #endregion
+    }
 
+    public class AppWindow
+    {
+        public AppWindowEnum id;
+        public BaseWindow window;
+        public BaseViewModel vm;
+    }
+
+    public class AppTool
+    {
+        public AppToolsEnum id;
+        public BaseUserControl tool;
+        public BaseViewModel vm;
     }
 
 }

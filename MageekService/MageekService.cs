@@ -20,6 +20,8 @@ namespace MageekCore
     public class MageekService
     {
 
+        #region CTOR
+
         private readonly MtgDbManager mtg;
         private readonly CollectionDbManager collec;
 
@@ -76,43 +78,7 @@ namespace MageekCore
             return MageekUpdateReturn.Success;
         }
 
-        public async Task<List<DeckCard>> ParseCardList(string cardlist)
-        {
-            Logger.Log("");
-            List<DeckCard> cards = new();
-            try
-            {
-                await Task.Run(() =>
-                {
-                    var lines = cardlist.Split(Environment.NewLine).ToList();
-                    bool side = false;
-                    foreach (string line in lines)
-                    {
-                        if (!string.IsNullOrEmpty(line))
-                        {
-                            if (line.StartsWith("Sideboard")) side = true;
-                            else
-                            {
-                                try
-                                {
-                                    int quantity = int.Parse(line.Split(" ")[0]);
-                                    string name = line[(line.IndexOf(' ') + 1)..];
-                                    name = name.Split(" // ")[0];
-                                    cards.Add(new DeckCard() { Quantity = quantity, CardUuid = name.Trim(), RelationType = side ? 2 : 0 });
-                                }
-                                catch (Exception e)
-                                {
-                                    Logger.Log(e);
-                                }
-
-                            }
-                        }
-                    }
-                });
-            }
-            catch (Exception e) { Logger.Log(e); }
-            return cards;
-        }
+        #endregion
 
         #region Cards
 
@@ -391,7 +357,7 @@ namespace MageekCore
         /// <returns>Archetype</returns>
         public async Task<Cards> FindCard_Data(string cardUuid)
         {
-            Logger.Log("");
+            Logger.Log(cardUuid);
             using MtgDbContext DB = await mtg.GetContext();
             return await DB.cards
                 .Where(x => x.Uuid == cardUuid)
@@ -915,6 +881,44 @@ namespace MageekCore
 
         #region Decks
 
+        public async Task<List<DeckCard>> ParseCardList(string cardlist)
+        {
+            Logger.Log("");
+            List<DeckCard> cards = new();
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var lines = cardlist.Split(Environment.NewLine).ToList();
+                    bool side = false;
+                    foreach (string line in lines)
+                    {
+                        if (!string.IsNullOrEmpty(line))
+                        {
+                            if (line.StartsWith("Sideboard")) side = true;
+                            else
+                            {
+                                try
+                                {
+                                    int quantity = int.Parse(line.Split(" ")[0]);
+                                    string name = line[(line.IndexOf(' ') + 1)..];
+                                    name = name.Split(" // ")[0];
+                                    cards.Add(new DeckCard() { Quantity = quantity, CardUuid = name.Trim(), RelationType = side ? 2 : 0 });
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Log(e);
+                                }
+
+                            }
+                        }
+                    }
+                });
+            }
+            catch (Exception e) { Logger.Log(e); }
+            return cards;
+        }
+
         public List<Preco> GetAllPrecos()
         {
             string data = File.ReadAllText(Path.Combine(Folders.PrecosFolder, "precos.json"));
@@ -945,7 +949,7 @@ namespace MageekCore
         /// <returns>The found deck or null</returns>
         public async Task<Deck> GetDeck(string deckId)
         {
-            Logger.Log("");
+            Logger.Log(deckId);
             try
             {
                 using CollectionDbContext DB = await collec.GetContext();
@@ -966,7 +970,6 @@ namespace MageekCore
         /// <returns>A list of deck-card relations</returns>
         public async Task<List<DeckCard>> GetDeckContent(string deckId)
         {
-            Logger.Log("");
             try
             {
                 using CollectionDbContext DB = await collec.GetContext();
@@ -1064,8 +1067,8 @@ namespace MageekCore
             return messages;
         }
 
-        //TODO asowned
-        public async Task<Deck> CreateDeck_Contructed(Preco preco, bool asOwned)
+        
+        public async Task<Deck> CreateDeck_Contructed(Preco preco, bool asOwned) //TODO asowned
         {
             Deck deck = await CreateDeck_Empty(preco.Title, string.Concat(preco.ReleaseDate, " - ", preco.Kind));
             try
@@ -1369,69 +1372,6 @@ namespace MageekCore
         }
 
         /// <summary>
-        /// Find deck color identity
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <returns>Color identity string</returns>
-        public async Task<string> FindDeckColorIdentity(string deckId)
-        {
-            Logger.Log("");
-            string retour = "";
-            using CollectionDbContext DB = await collec.GetContext();
-            List<DeckCard> cards = await GetDeckContent(deckId);
-            if (cards.Count > 0)
-            {
-                if (await DeckHasThisColorIdentity(cards, 'B')) retour += "B";
-                if (await DeckHasThisColorIdentity(cards, 'W')) retour += "W";
-                if (await DeckHasThisColorIdentity(cards, 'U')) retour += "U";
-                if (await DeckHasThisColorIdentity(cards, 'G')) retour += "G";
-                if (await DeckHasThisColorIdentity(cards, 'R')) retour += "R";
-            }
-            return retour;
-        }
-
-        /// <summary>
-        /// Find if a deck has a card with this color identity
-        /// </summary>
-        /// <param name="deck"></param>
-        /// <param name="color"></param>
-        /// <returns>true if true</returns>
-        public async Task<bool> DeckHasThisColorIdentity(List<DeckCard> deck, char color)
-        {
-            Logger.Log("");
-            using MtgDbContext DB = await mtg.GetContext();
-            foreach (DeckCard card in deck)
-            {
-                var c = DB.cards.Where(x => x.Uuid == card.CardUuid).FirstOrDefault();
-                if (c != null)
-                {
-                    if (c.ColorIdentity.Contains(color)) return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Get the devotion to a color of a deck
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <param name="color"></param>
-        /// <returns>The devotion to this color</returns>
-        public async Task<int> DeckDevotion(string deckId, char color)
-        {
-            Logger.Log("");
-            using MtgDbContext DB = await mtg.GetContext();
-            List<DeckCard> deckCards = await GetDeckContent(deckId);
-            int devotion = 0;
-            foreach (var card in deckCards)
-            {
-                var c = DB.cards.Where(x => x.Uuid == card.CardUuid).FirstOrDefault();
-                devotion += Devotion(c.ManaCost, color);
-            }
-            return devotion;
-        }
-
-        /// <summary>
         /// Estimate the price of a deck
         /// </summary>
         /// <param name="deckId"></param>
@@ -1456,348 +1396,6 @@ namespace MageekCore
             }
             return new Tuple<decimal, List<string>>(total, missingList);
         }
-
-        #region counts
-
-        /// <summary>
-        /// Count total deck cards
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <returns>the count regarding quantities</returns>
-        public async Task<int> Count_Total(string deckId)
-        {
-            int count = 0;
-            using CollectionDbContext DB = await collec.GetContext();
-            foreach (DeckCard card in await GetDeckContent(deckId))
-            {
-                count += card.Quantity;
-            }
-            return count;
-        }
-
-        /// <summary>
-        /// Existing types are:
-        /// Land, Creature, Artifact, Enchantment, Planeswalker, Instant, Sorcery.
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <param name="typeFilter"></param>
-        /// <returns>The count</returns>
-        public async Task<int> Count_Typed(string deckId, string typeFilter)
-        {
-            int count = 0;
-            using CollectionDbContext DB = await collec.GetContext();
-            var d = await GetDeckContent(deckId);
-            foreach (DeckCard card in d)
-            {
-                if (await CardHasType(card.CardUuid, typeFilter)) count += card.Quantity;
-            }
-            return count;
-        }
-
-        /// <summary>
-        /// Count by relation
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <param name="typeFilter"></param>
-        /// <returns>The count</returns>
-        public async Task<int> Count_Related(string deckId, int relationType)
-        {
-            int count = 0;
-            using CollectionDbContext DB = await collec.GetContext();
-            var d = await GetDeckContent(deckId);
-            foreach (DeckCard card in d)
-            {
-                if (card.RelationType == relationType) count += card.Quantity;
-            }
-            return count;
-        }
-
-        #endregion
-
-        #region Types
-
-        /// <summary>
-        /// Count by relation
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <param name="typeFilter"></param>
-        /// <returns>The deck cards</returns>
-        public async Task<List<DeckCard>> GetDeckContent_Related(string deckId, int relationType)
-        {
-            List<DeckCard> rels = new();
-            try
-            {
-                using CollectionDbContext DB = await collec.GetContext();
-                var d = await GetDeckContent(deckId);
-                foreach (DeckCard card in d)
-                {
-                    if (card.RelationType == relationType)
-                        rels.Add(card);
-                }
-            }
-            catch (Exception e) { Logger.Log(e); }
-            return rels;
-        }
-
-        /// <summary>
-        /// Existing types are:
-        /// Land, Creature, Artifact, Enchantment, Planeswalker, Instant, Sorcery.
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <param name="typeFilter"></param>
-        /// <returns>The deck cards</returns>
-        public async Task<List<DeckCard>> GetDeckContent_Typed(string deckId, string typeFilter)
-        {
-            List<DeckCard> rels = new();
-            try
-            {
-                using CollectionDbContext DB = await collec.GetContext();
-                var d = await GetDeckContent(deckId);
-                foreach (DeckCard card in d)
-                {
-                    if (await CardHasType(card.CardUuid, typeFilter)) rels.Add(card);
-                }
-            }
-            catch (Exception e) { Logger.Log(e); }
-            return rels;
-        }
-
-        //public async Task<List<DeckCard>> GetDeckContent_Cmc(float cmc)
-        //{
-        //    if (CurrentDeck == null || CurrentDeck.DeckCards == null) return null;
-        //    List<DeckCard> cardRelations = new List<DeckCard>();
-        //    foreach (var card in CurrentDeck.DeckCards.Where(x =>
-        //            x.RelationType == 0
-        //        && !x.Card.Card.Type.ToLower().Contains("land")
-        //        && x.Card.Card.Cmc == 0
-        //    ))
-        //    {
-        //        for (int i = 0; i < card.Quantity; i++)
-        //        {
-        //            cardRelations.Add(card);
-        //        }
-        //    }
-        //    return cardRelations;
-        //}
-
-        #endregion
-
-        #region Indicators
-
-        /// <summary>
-        /// Get the mana curve
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <returns>ManaCurve</returns>
-        public async Task<int[]> GetManaCurve(string deckId)
-        {
-            var manaCurve = new int[11] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            try
-            {
-                using CollectionDbContext DB = await collec.GetContext();
-                using MtgDbContext DB2 = await mtg.GetContext();
-                var content = await GetDeckContent(deckId);
-                foreach (DeckCard c in content)
-                {
-                    Cards card = await DB2.cards.Where(x => x.Uuid == c.CardUuid).FirstOrDefaultAsync();
-                    if (card != null && !card.Type.Contains("Land"))
-                    {
-                        int manacost = (int)card.ManaValue;
-                        manaCurve[manacost <= 10 ? manacost : 10]++;
-                    }
-                }
-            }
-            catch (Exception e) { Logger.Log(e); }
-            return manaCurve;
-        }
-
-        /// <summary>
-        /// Get owned ratio in percents
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <returns>percentage</returns>
-        public async Task<int> OwnedRatio(string deckId)
-        {
-            using CollectionDbContext DB = await collec.GetContext();
-            using MtgDbContext DB2 = await mtg.GetContext();
-            var content = await GetDeckContent(deckId);
-            int total = 0;
-            int miss = 0;
-            foreach (var v in content)
-            {
-                Cards card = await DB2.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
-                if (!card.Type.Contains("Basic Land"))
-                {
-                    total += v.Quantity;
-                    int got = await Collected(v.CardUuid, false);
-                    int need = v.Quantity;
-                    int diff = need - got;
-                    if (diff > 0) miss += diff;
-                }
-            }
-            if (total == 0) return 100;
-            return 100 - miss * 100 / total;
-        }
-
-        /// <summary>
-        /// Get txt list of missing cards
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <returns>a text formated as : X cardName\n</returns>
-        public async Task<string> ListMissingCards(string deckId)
-        {
-            using CollectionDbContext DB = await collec.GetContext();
-            using MtgDbContext DB2 = await mtg.GetContext();
-            var content = await GetDeckContent(deckId);
-            string missList = "";
-            foreach (var v in content)
-            {
-                Cards card = await DB2.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
-                if (!card.Type.Contains("Basic Land"))
-                {
-                    int got = await Collected(v.CardUuid, false);
-                    int need = v.Quantity;
-                    int diff = need - got;
-                    if (diff > 0) missList += diff + " " + card.Name + "\n";
-                }
-            }
-            return missList;
-        }
-
-        #endregion
-
-        #region Validities
-
-        /// <summary>
-        /// Get deck validity in a given format
-        /// </summary>
-        /// <param name="deck"></param>
-        /// <param name="format"></param>
-        /// <returns>"OK" or an error msg</returns>
-        public async Task<string> DeckValidity(Deck deck, string format)
-        {
-            if (deck == null) return "";
-            int minCards = GetMinCardInFormat(format);
-            int maxCards = GetMaxCardInFormat(format);
-            if (deck.CardCount > maxCards) return "Maximum " + maxCards + " cards.";
-            if (deck.CardCount < minCards) return "Minimum " + maxCards + " cards.";
-            int maxOccurence = GetMaxOccurenceInFormat(format);
-
-            using MtgDbContext DB = await mtg.GetContext();
-            foreach (var v in await GetDeckContent(deck.DeckId))
-            {
-                Cards card = await DB.cards.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
-                if (!card.Type.Contains("Basic Land"))
-                {
-                    CardLegalities cardLegalities = await DB.cardLegalities.Where(x => x.Uuid == v.CardUuid).FirstOrDefaultAsync();
-                    string legal = "";
-                    switch (format)
-                    {
-                        case "Alchemy": legal = cardLegalities.Alchemy; break;
-                        case "Brawl": legal = cardLegalities.Brawl; break;
-                        case "Commander": legal = cardLegalities.Commander; break;
-                        case "Duel": legal = cardLegalities.Duel; break;
-                        case "Explorer": legal = cardLegalities.Explorer; break;
-                        case "Future": legal = cardLegalities.Future; break;
-                        case "Gladiator": legal = cardLegalities.Gladiator; break;
-                        case "Historic": legal = cardLegalities.Historic; break;
-                        case "Legacy": legal = cardLegalities.Legacy; break;
-                        case "Modern": legal = cardLegalities.Modern; break;
-                        case "Oathbreaker": legal = cardLegalities.Oathbreaker; break;
-                        case "Oldschool": legal = cardLegalities.Oldschool; break;
-                        case "Pauper": legal = cardLegalities.Pauper; break;
-                        case "Paupercommander": legal = cardLegalities.Paupercommander; break;
-                        case "Penny": legal = cardLegalities.Penny; break;
-                        case "Pioneer": legal = cardLegalities.Pioneer; break;
-                        case "Predh": legal = cardLegalities.Predh; break;
-                        case "Premodern": legal = cardLegalities.Premodern; break;
-                        case "Standard": legal = cardLegalities.Standard; break;
-                        case "StandardBrawl": legal = cardLegalities.Standardbrawl; break;
-                        case "Timeless": legal = cardLegalities.Timeless; break;
-                        case "Vintage": legal = cardLegalities.Vintage; break;
-                    }
-                    if (legal == null || legal == "Legal")
-                    {
-                        if (v.Quantity > maxOccurence) return "Too many " + card.Name + ".";
-                    }
-                    if (legal == "Restricted")
-                    {
-                        if (v.Quantity > 1) return card.Name + " restricted.";
-                    }
-                    if (legal == "Banned")
-                    {
-                        if (v.Quantity > maxOccurence) return card.Name + " banned.";
-                    }
-                }
-            }
-            return "OK";
-        }
-
-        /// <summary>
-        /// Get the minimum cards in a deck for a given format
-        /// </summary>
-        /// <param name="format"></param>
-        /// <returns>The number</returns>
-        private int GetMinCardInFormat(string format)
-        {
-            return format switch
-            {
-                "Alchemy" => 60,
-                "Brawl" => 60,
-                "Commander" => 100,
-                "Duel" => 60,
-                "Explorer" => 60,
-                "Future" => 60,
-                "Gladiator" => 60,
-                "Historic" => 60,
-                "Historicbrawl" => 60,
-                "Legacy" => 60,
-                "Modern" => 60,
-                "Oathbreaker" => 60,
-                "Oldschool" => 60,
-                "Pauper" => 60,
-                "Paupercommander" => 100,
-                "Penny" => 60,
-                "Pioneer" => 60,
-                "Predh" => 60,
-                "Premodern" => 60,
-                "Standard" => 60,
-                "Vintage" => 60,
-                _ => 60,
-            };
-        }
-
-        /// <summary>
-        /// Get the maximum cards in a deck for a given format
-        /// </summary>
-        /// <param name="format"></param>
-        /// <returns>The number</returns>
-        private int GetMaxCardInFormat(string format)
-        {
-            return format switch
-            {
-                "Commander" => 100,
-                "Paupercommander" => 100,
-                "Explorer" => 250,
-                _ => -1,
-            };
-        }
-
-        /// <summary>
-        /// Get the maximum occurences of a cards in a deck for a given format
-        /// </summary>
-        /// <param name="format"></param>
-        /// <returns>The number</returns>
-        private int GetMaxOccurenceInFormat(string format)
-        {
-            return format switch
-            {
-                "commander" => 1,
-                _ => 4,
-            };
-        }
-
-        #endregion
 
         #endregion
 

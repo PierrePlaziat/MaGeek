@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.Services;
 using MageekCore.Tools;
@@ -38,13 +37,13 @@ namespace MageekFrontWpf.UI.ViewModels
         [RelayCommand]
         private void LayoutBackup(string obj)
         {
-            WeakReferenceMessenger.Default.Send(new SaveLayoutMessage("Default"));
+            win.SaveLayout(obj);
         }
 
         [RelayCommand]
         private void LayoutRestore(string obj)
         {
-            WeakReferenceMessenger.Default.Send(new LoadLayoutMessage("Default"));
+            win.LoadLayout(obj);
         }
 
         [RelayCommand]

@@ -6,728 +6,189 @@
                       xmlns:local="clr-namespace:MaGeek.UI"
                       xmlns:controls="clr-namespace:MaGeek.UI.Controls"
                       xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
-                      mc:Ignorable="d"
-                      d:DesignHeight="450"
-                      d:DesignWidth="800">
+                      mc:Ignorable="d">
+
+    <mvvm:BaseUserControl.Resources>
+
+        <DataTemplate x:Key="OpenedDeckEntryLineTemplate">
+            <Grid Height="20" 
+                  MouseWheel="ScrollViewer_MouseWheel">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Foreground="White"
+                       Padding="4,1,1,1"
+                       Grid.Column="3"
+                       Content="{Binding Card.Name}" />
+                <local:ManaCost Grid.Column="4"
+                                Cost="{Binding Card.ManaCost}"
+                                HorizontalAlignment="Right"
+                                Foreground="Black" />
+                <Button Grid.Column="0"
+                        Height="20"
+                        Foreground="Black"
+                        Content="-"
+                        Click="ButtonLess_Click" 
+                        CommandParameter="{Binding}"/>
+                <Label  Grid.Column="1"
+                        Height="20"
+                        Padding="2"
+                        Foreground="White"
+                        Content="{Binding Line.Quantity}"
+                        HorizontalAlignment="Center" />
+                <Button Grid.Column="2"
+                        Height="20"
+                        Foreground="Black"
+                        Content="+"
+                        Click="ButtonMore_Click"
+                        CommandParameter="{Binding}" />
+            </Grid>
+        </DataTemplate>
+
+        <ContextMenu x:Key="OpenedDeckEntryLineMenu">
+            <MenuItem Header="Set Commandant"
+                      Click="SetCommandant"
+                      CommandParameter="{Binding}" />
+            <MenuItem Header="To Side"
+                      Click="ToSide"
+                      CommandParameter="{Binding}" />
+        </ContextMenu>
+
+        <Style TargetType="ListView" 
+               x:Key="OpenedDeckEntryListStyle">
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="Background"
+                    Value="#000" />
+            <Setter Property="SelectionMode"
+                    Value="Single" />
+        </Style>
+
+        <Style TargetType="ListViewItem" 
+               x:Key="OpenedDeckEntryLineItemContainerStyle">
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="Background"
+                    Value="#222" />
+        </Style>
+
+    </mvvm:BaseUserControl.Resources>
+
+    <ScrollViewer Name="ScrollViewerName"
+                    MouseWheel="ScrollViewer_MouseWheel">
+
+        <StackPanel>
+
+            <Label Visibility="{Binding Deck.HasCommandant, Converter={StaticResource BoolToVis}}">Commander:</Label>
+            <ListView ItemsSource="{Binding Deck.entries_Commanders}"
+                      ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                      ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                      BorderThickness="0"
+                      Background="DarkOrange"
+                      MouseDoubleClick="SelectionChanged"
+                      Grid.Row="2" 
+                      Visibility="{Binding Deck.HasCommandant, Converter={StaticResource BoolToVis}}"
+                      SelectionMode="Single">
+
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Unset Commandant"
+                                    Click="ToDeck"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+
+            </ListView>
+
+            <Label Visibility="{Binding Deck.HasCreatures, Converter={StaticResource BoolToVis}}">Creatures :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Creatures}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"/>
+            <Label Visibility="{Binding Deck.HasInstants, Converter={StaticResource BoolToVis}}">Instants :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Instants}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"/>
+            <Label Visibility="{Binding Deck.HasSorceries, Converter={StaticResource BoolToVis}}">Sorceries :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Sorceries}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"/>
+            <Label Visibility="{Binding Deck.HasEnchantments, Converter={StaticResource BoolToVis}}">Enchantments :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Enchantments}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"/>
+            <Label Visibility="{Binding Deck.HasArtifacts, Converter={StaticResource BoolToVis}}">Artifacts :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Artifacts}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"/>
+            <Label Visibility="{Binding Deck.HasOther, Converter={StaticResource BoolToVis}}">Others :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Other}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"/>
+
+            <Label Visibility="{Binding Deck.HasLands, Converter={StaticResource BoolToVis}}">Lands :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_BasicLands}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"/>
+            <ListView ItemsSource="{Binding Deck.deck_SpecialLands}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"/>
+
+            <Label Visibility="{Binding Deck.HasSide, Converter={StaticResource BoolToVis}}">Side :</Label>
+            <ListView ItemsSource="{Binding Deck.entries_Side}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged">
+
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="To Deck"
+                                    Click="ToDeck"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+
+            </ListView>
 
-    <Grid Background="#222">
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="26" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto"
-                           MaxHeight="100" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="auto"
-                           MaxHeight="100" />
-        </Grid.RowDefinitions>
-
-        <!-- TITLE -->
-
-        <Label Grid.Row="0"
-               FontWeight="Bold"
-               Foreground="White"
-               HorizontalAlignment="Center"
-               Content="{Binding CurrentDeck.Title}"></Label>
-
-        <!-- Filter -->
-
-        <DockPanel Grid.Row="1">
-            <Label>Filter :</Label>
-            <TextBox Text="{Binding FilterString}"></TextBox>
-        </DockPanel>
-
-        <!-- Main -->
-
-        <ScrollViewer Name="ScrollViewerName"
-                      Grid.Row="3"
-                      Background="#222"
-                      MouseWheel="ScrollViewer_MouseWheel">
-
-            <StackPanel Background="#222">
-
-                <Label>Commander:</Label>
-                <ListView ItemsSource="{Binding CurrentCommanders}"
-                          BorderThickness="0"
-                          Background="DarkOrange"
-                          MouseDoubleClick="SelectionChanged"
-                          Grid.Row="2"
-                          Visibility="{Binding HasCommander, Converter={StaticResource BoolToVis}}"
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Background"
-                                    Value="#000" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Unset Commandant"
-                                      Click="UnsetCommandant"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-
-                        <DataTemplate>
-
-                            <Grid Height="20"
-                                  MouseWheel="ScrollViewer_MouseWheel">
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="White"
-                                       Padding="4,1,1,1"
-                                       Grid.Column="3"
-                                       Content="{Binding Card.Name}" />
-
-                                <local:ManaCost Grid.Column="4"
-                                                Cost="{Binding Card.ManaCost}"
-                                                HorizontalAlignment="Right"
-                                                Foreground="Black" />
-
-                                <Button Grid.Column="0"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="-"
-                                        Command="{Binding LessCard}" />
-                                <Label  Grid.Column="1"
-                                        Height="20"
-                                        Padding="2"
-                                        Foreground="White"
-                                        Content="{Binding Quantity}"
-                                        HorizontalAlignment="Center" />
-                                <Button Grid.Column="2"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="+"
-                                        Command="{Binding MoreCard}" />
-
-                            </Grid>
-
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-                <Label>Creatures :</Label>
-                <ListView ItemsSource="{Binding CurrentCreatures}"
-                          BorderThickness="0"
-                          Background="#222"
-                          MouseDoubleClick="SelectionChanged"
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Background"
-                                    Value="#000" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set Commandant"
-                                      Click="SetCommandant"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                            <MenuItem Header="To Side"
-                                      Click="ToSide"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="20"
-                                  MouseWheel="ScrollViewer_MouseWheel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="White"
-                                       Padding="4,1,1,1"
-                                       Grid.Column="3"
-                                       Content="{Binding Card.Name}" />
-
-                                <local:ManaCost Grid.Column="4"
-                                                Cost="{Binding Card.ManaCost}"
-                                                HorizontalAlignment="Right" />
-
-                                <Button Grid.Column="0"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="-"
-                                        Command="{Binding LessCard}" />
-                                <Label  Grid.Column="1"
-                                        Height="20"
-                                        Padding="2"
-                                        Foreground="White"
-                                        Content="{Binding Quantity}"
-                                        HorizontalAlignment="Center" />
-                                <Button Grid.Column="2"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="+"
-                                        Command="{Binding MoreCard}" />
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-                <Label>Instants :</Label>
-                <ListView ItemsSource="{Binding CurrentInstants}"
-                          BorderThickness="0"
-                          Background="#222"
-                          MouseDoubleClick="SelectionChanged"
-                          Grid.Row="3"
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Background"
-                                    Value="#000" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set Commandant"
-                                      Click="SetCommandant"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                            <MenuItem Header="To Side"
-                                      Click="ToSide"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="20"
-                                  MouseWheel="ScrollViewer_MouseWheel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="White"
-                                       Padding="4,1,1,1"
-                                       Grid.Column="3"
-                                       Content="{Binding Card.Name}"></Label>
-
-                                <local:ManaCost Grid.Column="4"
-                                                Cost="{Binding Card.ManaCost}"
-                                                HorizontalAlignment="Right" />
-
-                                <Button Grid.Column="0"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="-"
-                                        Command="{Binding LessCard}" />
-                                <Label  Grid.Column="1"
-                                        Height="20"
-                                        Padding="2"
-                                        Foreground="White"
-                                        Content="{Binding Quantity}"
-                                        HorizontalAlignment="Center" />
-                                <Button Grid.Column="2"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="+"
-                                        Command="{Binding MoreCard}" />
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-                <Label>Sorceries :</Label>
-                <ListView ItemsSource="{Binding CurrentSorceries}"
-                          BorderThickness="0"
-                          Background="#222"
-                          MouseDoubleClick="SelectionChanged"
-                          Grid.Row="3"
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Background"
-                                    Value="#000" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set Commandant"
-                                      Click="SetCommandant"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                            <MenuItem Header="To Side"
-                                      Click="ToSide"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="20"
-                                  MouseWheel="ScrollViewer_MouseWheel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="White"
-                                       Padding="4,1,1,1"
-                                       Grid.Column="3"
-                                       Content="{Binding Card.Name}"></Label>
-
-                                <local:ManaCost Grid.Column="4"
-                                                Cost="{Binding Card.ManaCost}"
-                                                HorizontalAlignment="Right" />
-
-                                <Button Grid.Column="0"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="-"
-                                        Command="{Binding LessCard}" />
-                                <Label  Grid.Column="1"
-                                        Height="20"
-                                        Padding="2"
-                                        Foreground="White"
-                                        Content="{Binding Quantity}"
-                                        HorizontalAlignment="Center"></Label>
-                                <Button Grid.Column="2"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="+"
-                                        Command="{Binding MoreCard}" />
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-                <Label>Enchantments :</Label>
-                <ListView ItemsSource="{Binding CurrentEnchantments}"
-                          BorderThickness="0"
-                          Background="#222"
-                          MouseDoubleClick="SelectionChanged"
-                          Grid.Row="3"
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Background"
-                                    Value="#000" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set Commandant"
-                                      Click="SetCommandant"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                            <MenuItem Header="To Side"
-                                      Click="ToSide"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="20"
-                                  MouseWheel="ScrollViewer_MouseWheel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="White"
-                                       Padding="4,1,1,1"
-                                       Grid.Column="3"
-                                       Content="{Binding Card.Name}"></Label>
-
-                                <local:ManaCost Grid.Column="4"
-                                                Cost="{Binding Card.ManaCost}"
-                                                HorizontalAlignment="Right" />
-
-                                <Button Grid.Column="0"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Command="{Binding LessCard}"
-                                        Content="-" />
-                                <Label  Grid.Column="1"
-                                        Height="20"
-                                        Padding="2"
-                                        Foreground="White"
-                                        Content="{Binding Quantity}"
-                                        HorizontalAlignment="Center"></Label>
-                                <Button Grid.Column="2"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="+"
-                                        Command="{Binding MoreCard}" />
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-                <Label>Artifacts :</Label>
-                <ListView ItemsSource="{Binding CurrentArtifacts}"
-                          BorderThickness="0"
-                          Background="#222"
-                          MouseDoubleClick="SelectionChanged"
-                          Grid.Row="3"
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Background"
-                                    Value="#000" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set Commandant"
-                                      Click="SetCommandant"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                            <MenuItem Header="To Side"
-                                      Click="ToSide"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="20"
-                                  MouseWheel="ScrollViewer_MouseWheel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="White"
-                                       Padding="4,1,1,1"
-                                       Grid.Column="3"
-                                       Content="{Binding Card.Name}"></Label>
-
-                                <local:ManaCost Grid.Column="4"
-                                                Cost="{Binding Card.ManaCost}"
-                                                HorizontalAlignment="Right" />
-
-                                <Button Grid.Column="0"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="-"
-                                        Command="{Binding LessCard}" />
-                                <Label  Grid.Column="1"
-                                        Height="20"
-                                        Padding="2"
-                                        Foreground="White"
-                                        Content="{Binding Quantity}"
-                                        HorizontalAlignment="Center"></Label>
-                                <Button Grid.Column="2"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="+"
-                                        Command="{Binding MoreCard}" />
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-                <Label>Planeswalkers :</Label>
-                <ListView ItemsSource="{Binding CurrentPlaneswalkers}"
-                          BorderThickness="0"
-                          Background="#222"
-                          MouseDoubleClick="SelectionChanged"
-                          Grid.Row="3"
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Background"
-                                    Value="#000" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set Commandant"
-                                      Click="SetCommandant"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                            <MenuItem Header="To Side"
-                                      Click="ToSide"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="20"
-                                  MouseWheel="ScrollViewer_MouseWheel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="White"
-                                       Padding="4,1,1,1"
-                                       Grid.Column="3"
-                                       Content="{Binding Card.Name}"></Label>
-
-                                <local:ManaCost Grid.Column="4"
-                                                Cost="{Binding Card.ManaCost}"
-                                                HorizontalAlignment="Right" />
-
-                                <Button Grid.Column="0"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="-"
-                                        Command="{Binding LessCard}" />
-                                <Label  Grid.Column="1"
-                                        Height="20"
-                                        Padding="2"
-                                        Foreground="White"
-                                        Content="{Binding Quantity}"
-                                        HorizontalAlignment="Center"></Label>
-                                <Button Grid.Column="2"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="+"
-                                        Command="{Binding MoreCard}" />
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-                <Label>Lands :</Label>
-                <ListView ItemsSource="{Binding CurrentLands}"
-                          BorderThickness="0"
-                          Background="#222"
-                          MouseDoubleClick="SelectionChanged"
-                          Grid.Row="3"
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Background"
-                                    Value="#000" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Set Commandant"
-                                      Click="SetCommandant"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                            <MenuItem Header="To Side"
-                                      Click="ToSide"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="20"
-                                  MouseWheel="ScrollViewer_MouseWheel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="White"
-                                       Padding="4,1,1,1"
-                                       Grid.Column="3"
-                                       Content="{Binding Card.Name}" />
-
-                                <local:ManaCost Grid.Column="4"
-                                                Cost="{Binding Card.ManaCost}"
-                                                HorizontalAlignment="Right" />
-
-                                <Button Grid.Column="0"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="-"
-                                        Command="{Binding LessCard}" />
-                                <Label  Grid.Column="1"
-                                        Height="20"
-                                        Padding="2"
-                                        Foreground="White"
-                                        Content="{Binding Quantity}"
-                                        HorizontalAlignment="Center" />
-                                <Button Grid.Column="2"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="+"
-                                        Command="{Binding MoreCard}" />
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-                <Label>Side :</Label>
-                <ListView ItemsSource="{Binding CurrentSide}"
-                          BorderThickness="0"
-                          Background="#222"
-                          MouseDoubleClick="SelectionChanged"
-                          SelectionMode="Single">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Background"
-                                    Value="#444" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="To Deck"
-                                      Click="ToDeck"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="20"
-                                  MouseWheel="ScrollViewer_MouseWheel">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="20"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Foreground="Gray"
-                                       Padding="4,1,1,1"
-                                       Grid.Column="3"
-                                       Content="{Binding Card.Name}"></Label>
-
-                                <local:ManaCost Grid.Column="4"
-                                                Cost="{Binding Card.ManaCost}"
-                                                HorizontalAlignment="Right" />
-
-                                <Button Grid.Column="0"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="-"
-                                        Command="{Binding LessCard}" />
-                                <Label  Grid.Column="1"
-                                        Height="20"
-                                        Padding="2"
-                                        Foreground="Gray"
-                                        Content="{Binding Quantity}"
-                                        HorizontalAlignment="Center"></Label>
-                                <Button Grid.Column="2"
-                                        Height="20"
-                                        Foreground="Black"
-                                        Content="+"
-                                        Command="{Binding MoreCard}" />
-
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
-            </StackPanel>
-
-        </ScrollViewer>
-
-        <StackPanel Visibility="{Binding IsActive, Converter={StaticResource BoolToVis}}"
-                    Grid.RowSpan="4"
-                    Grid.ColumnSpan="2"
-                    Background="#222">
-            <Label HorizontalAlignment="Center"
-                   VerticalAlignment="Center">No deck selected</Label>
         </StackPanel>
 
-        <Grid Background="Black"
-              Grid.RowSpan="5"
-              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
-            <controls:BusyIndicator></controls:BusyIndicator>
-        </Grid>
-
-    </Grid>
+    </ScrollViewer>
 
 </mvvm:BaseUserControl>

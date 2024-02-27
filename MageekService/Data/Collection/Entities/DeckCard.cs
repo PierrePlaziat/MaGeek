@@ -17,8 +17,6 @@ namespace MageekCore.Data.Collection.Entities
         /// </summary>
         public int RelationType { get; set; }
 
-        public string CardType { get; set; } // TODO
-
     }
 
 }
