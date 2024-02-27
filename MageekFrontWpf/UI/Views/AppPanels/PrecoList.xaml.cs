@@ -18,11 +18,17 @@ namespace MageekFrontWpf.UI.Views.AppWindows
             InitializeComponent();
         }
 
-        private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OpenDeck(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             DataGrid d = (DataGrid)sender;
             vm.SelectDeck((Preco)d.SelectedItem).ConfigureAwait(false);
         }
+
+        private void AddContentToCollec(object sender, System.Windows.RoutedEventArgs e)
+        {
+            //TODO
+        }
+
     }
 
 }

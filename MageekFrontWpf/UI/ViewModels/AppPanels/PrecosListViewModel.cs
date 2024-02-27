@@ -23,22 +23,24 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         {
             this.mageek = mageek;
             this.win = win;
-            PrecoList = mageek.GetAllPrecos();
+            PrecoList = mageek.GetPrecos();
         }
 
         [ObservableProperty] List<Preco> precoList = new();
 
-        [RelayCommand]
-        public async Task ImportPreco(Preco deck)
-        {
-            await mageek.CreateDeck_Contructed(deck, false);
-        }
+        // TODO : better system
+
+        //[RelayCommand]
+        //public async Task ImportPreco(Preco deck)
+        //{
+        //    await mageek.CreateDeck(deck);
+        //}
         
-        [RelayCommand]
-        public async Task ImportPrecoAsOwned(Preco deck)
-        {
-            await mageek.CreateDeck_Contructed(deck, true);
-        }
+        //[RelayCommand]
+        //public async Task ImportPrecoAsOwned(Preco deck)
+        //{
+        //    await mageek.CreateDeck(deck);
+        //}
 
         [RelayCommand]
         public async Task SelectDeck(Preco preco)

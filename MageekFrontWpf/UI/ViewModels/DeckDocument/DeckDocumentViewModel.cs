@@ -47,9 +47,10 @@ namespace MageekFrontWpf.UI.ViewModels
 
         #region Manipulate Deck
 
-        //TODO SaveDeck
+        [RelayCommand]
         public async Task SaveDeck()
         {
+            await mageek.SaveDeck(Deck.Header,Deck.GetLines());
         }
 
         [RelayCommand]

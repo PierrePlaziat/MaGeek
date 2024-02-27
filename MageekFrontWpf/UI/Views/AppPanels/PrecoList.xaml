@@ -28,7 +28,7 @@
                       RowHeaderWidth="0"
                       RowHeight="20"
                       AutoGenerateColumns="False"
-                      MouseDoubleClick="DataGrid_MouseDoubleClick">
+                      MouseDoubleClick="OpenDeck">
             
             <DataGrid.Resources>
                 <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"
@@ -55,12 +55,9 @@
 
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Import in deck list"
-                                  Command="{Binding AddToDeckCommand}" 
-                                  CommandParameter="{Binding}"/>
-                    <MenuItem Header="Import in deck list as owned"
-                                  Command="{Binding AddToDeckCommand}" 
-                                  CommandParameter="{Binding}"/>
+                    <MenuItem Header="Add content to collection"
+                              Click="AddContentToCollec"
+                              CommandParameter="{Binding}"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
 

@@ -30,7 +30,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         private async Task LaunchImportation(string content)
         {
             List<DeckCard> importLines = await mageek.ParseCardList(content);
-            await mageek.CreateDeck_Contructed(
+            await mageek.CreateDeck(
                 Title,
                 Description,
                 importLines

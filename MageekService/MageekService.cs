@@ -881,50 +881,11 @@ namespace MageekCore
 
         #region Decks
 
-        public async Task<List<DeckCard>> ParseCardList(string cardlist)
-        {
-            Logger.Log("");
-            List<DeckCard> cards = new();
-            try
-            {
-                await Task.Run(() =>
-                {
-                    var lines = cardlist.Split(Environment.NewLine).ToList();
-                    bool side = false;
-                    foreach (string line in lines)
-                    {
-                        if (!string.IsNullOrEmpty(line))
-                        {
-                            if (line.StartsWith("Sideboard")) side = true;
-                            else
-                            {
-                                try
-                                {
-                                    int quantity = int.Parse(line.Split(" ")[0]);
-                                    string name = line[(line.IndexOf(' ') + 1)..];
-                                    name = name.Split(" // ")[0];
-                                    cards.Add(new DeckCard() { Quantity = quantity, CardUuid = name.Trim(), RelationType = side ? 2 : 0 });
-                                }
-                                catch (Exception e)
-                                {
-                                    Logger.Log(e);
-                                }
-
-                            }
-                        }
-                    }
-                });
-            }
-            catch (Exception e) { Logger.Log(e); }
-            return cards;
-        }
-
-        public List<Preco> GetAllPrecos()
+        public List<Preco> GetPrecos()
         {
             string data = File.ReadAllText(Path.Combine(Folders.PrecosFolder, "precos.json"));
             return JsonSerializer.Deserialize<List<Preco>>(data, new JsonSerializerOptions { IncludeFields = true });
         }
-
         /// <summary>
         /// Get decks registered
         /// </summary>
@@ -941,7 +902,6 @@ namespace MageekCore
             catch (Exception e) { Logger.Log(e); }
             return decks;
         }
-
         /// <summary>
         /// Get a deck by its id
         /// </summary>
@@ -962,7 +922,6 @@ namespace MageekCore
                 return null;
             }
         }
-
         /// <summary>
         /// Gets deck cards
         /// </summary>
@@ -988,7 +947,7 @@ namespace MageekCore
         /// <param name="title"></param>
         /// <param name="description"></param>
         /// <returns>a reference to the deck</returns>
-        public async Task<Deck> CreateDeck_Empty(string title, string description)
+        public async Task<Deck> CreateDeck(string title, string description)
         {
             Logger.Log("");
             if (string.IsNullOrEmpty(title)) return null;
@@ -1012,7 +971,6 @@ namespace MageekCore
                 return null;
             }
         }
-
         /// <summary>
         /// Creates a filled deck
         /// </summary>
@@ -1020,79 +978,44 @@ namespace MageekCore
         /// <param name="description"></param>
         /// <param name="deckLines"></param>
         /// <returns>A list of messages, empty if everything went well</returns>
-        public async Task<List<string>> CreateDeck_Contructed(string title, string description, IEnumerable<DeckCard> deckLines)
+        public async Task<Deck> CreateDeck(string title, string description, IEnumerable<DeckCard> deckLines)
         {
             Logger.Log("");
             List<string> messages = new();
-            Deck deck = await CreateDeck_Empty(title, description);
-            if (deck == null)
-            {
-                messages.Add("[Error]Couldnt create the deck.");
-                return messages;
-            }
-            else
-            {
-                try
-                {
-                    using CollectionDbContext DB = await collec.GetContext();
-                    foreach (DeckCard deckLine in deckLines)
-                    {
-                        if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.CardUuid).Any())
-                        {
-                            DB.DeckCard.Add(
-                                new DeckCard()
-                                {
-                                    DeckId = deck.DeckId,
-                                    CardUuid = deckLine.CardUuid,
-                                    Quantity = deckLine.Quantity,
-                                    RelationType = deckLine.RelationType
-                                }
-                            );
-                            deck.CardCount += deckLine.Quantity;
-                        }
-                        else
-                        {
-                            messages.Add("[CardNotFoud]" + deckLine.CardUuid);
-                        }
-                    }
-
-                    await DB.SaveChangesAsync();
-                }
-                catch (Exception e)
-                {
-                    messages.Add("[error]" + e.Message);
-                    Logger.Log(e);
-                }
-            }
-            return messages;
-        }
-
-        
-        public async Task<Deck> CreateDeck_Contructed(Preco preco, bool asOwned) //TODO asowned
-        {
-            Deck deck = await CreateDeck_Empty(preco.Title, string.Concat(preco.ReleaseDate, " - ", preco.Kind));
+            Deck deck = await CreateDeck(title, description);
+            //TODO determine deck count and colors
             try
             {
-                foreach (Tuple<string, int> line in preco.CommanderCardUuids)
+                using CollectionDbContext DB = await collec.GetContext();
+                foreach (DeckCard deckLine in deckLines)
                 {
-                    await AddCardToDeck(line.Item1, deck, line.Item2, 1);
-                    if (asOwned) await CollecMove(line.Item1, line.Item2);
+                    if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.CardUuid).Any())
+                    {
+                        DB.DeckCard.Add(
+                            new DeckCard()
+                            {
+                                DeckId = deck.DeckId,
+                                CardUuid = deckLine.CardUuid,
+                                Quantity = deckLine.Quantity,
+                                RelationType = deckLine.RelationType
+                            }
+                        );
+                        deck.CardCount += deckLine.Quantity;
+                    }
+                    else
+                    {
+                        messages.Add("[CardNotFoud]" + deckLine.CardUuid);
+                    }
                 }
-                foreach (Tuple<string, int> line in preco.MainCardUuids)
-                {
-                    await AddCardToDeck(line.Item1, deck, line.Item2, 0);
-                    if (asOwned) await CollecMove(line.Item1, line.Item2);
-                }
-                foreach (Tuple<string, int> line in preco.SideCardUuids)
-                {
-                    await AddCardToDeck(line.Item1, deck, line.Item2, 2);
-                    if (asOwned) await CollecMove(line.Item1, line.Item2);
-                }
+
+                await DB.SaveChangesAsync();
             }
             catch (Exception e)
             {
+                messages.Add("[error]" + e.Message);
                 Logger.Log(e);
             }
+            
             return deck;
         }
 
@@ -1119,11 +1042,11 @@ namespace MageekCore
         /// Duplicate a deck
         /// </summary>
         /// <param name="deckToCopy"></param>
-        public async Task DuplicateDeck(Deck deckToCopy)
+        private async Task DuplicateDeck(Deck deckToCopy)
         {
             Logger.Log("");
             if (deckToCopy == null) return;
-            var newDeck = await CreateDeck_Empty(
+            var newDeck = await CreateDeck(
                 deckToCopy.Title + " - Copy",
                 deckToCopy.Description);
             if (newDeck == null) return;
@@ -1146,12 +1069,61 @@ namespace MageekCore
             DB.Entry(newDeck).State = EntityState.Modified;
             await DB.SaveChangesAsync();
         }
-
         public async Task DuplicateDeck(string deckId)
         {
             Logger.Log("");
             var deck = await GetDeck(deckId);
             await DuplicateDeck(deck);
+        }
+
+        public async Task SaveDeck(Deck header, List<DeckCard> lines)
+        {
+            try
+            {
+                using CollectionDbContext DB = await collec.GetContext();
+                Deck d = DB.Decks.Where(x=>x.DeckId== header.DeckId).FirstOrDefault();
+                if (d!=null) await UpdateDeck(d.DeckId,d.Title,d.Description,lines);
+                else await CreateDeck(header.Title,header.Description,lines);
+            }
+            catch (Exception e) { Logger.Log(e); }
+        }
+        /// <summary>
+        /// Change deck entirely
+        /// </summary>
+        /// <param name="deckId"></param>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
+        {
+            Logger.Log("");
+            await DeleteDeck(deckId);
+            await CreateDeck(title, description, content);
+        }
+
+        /// <summary>
+        /// Delete a deck
+        /// </summary>
+        /// <param name="deck"></param>
+        public async Task DeleteDeck(string deckId)
+        {
+            var deck = await GetDeck(deckId);
+            await DeleteDeck(deck);
+        }
+        /// <summary>
+        /// Delete a deck
+        /// </summary>
+        /// <param name="deck"></param>
+        public async Task DeleteDeck(Deck deck)
+        {
+            Logger.Log("");
+            using CollectionDbContext DB = await collec.GetContext();
+            DB.Decks.Remove(deck);
+            var cards = DB.DeckCard.Where(x => x.DeckId == deck.DeckId).ToList();
+            DB.DeckCard.RemoveRange(cards);
+            await DB.SaveChangesAsync();
         }
 
         /// <summary>
@@ -1209,168 +1181,43 @@ namespace MageekCore
             }
             return result.ToString();
         }
-
-        /// <summary>
-        /// Change deck entirely
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <param name="title"></param>
-        /// <param name="description"></param>
-        /// <param name="content"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
+        public async Task<List<DeckCard>> ParseCardList(string cardlist)
         {
             Logger.Log("");
-            await DeleteDeck(deckId);
-            await CreateDeck_Contructed(title, description, content);
-        }
-
-        /// <summary>
-        /// Delete a deck
-        /// </summary>
-        /// <param name="deck"></param>
-        public async Task DeleteDeck(Deck deck)
-        {
-            Logger.Log("");
-            using CollectionDbContext DB = await collec.GetContext();
-            DB.Decks.Remove(deck);
-            await DB.SaveChangesAsync();
-        }
-
-        /// <summary>
-        /// Delete a deck
-        /// </summary>
-        /// <param name="deck"></param>
-        public async Task DeleteDeck(string deckId)
-        {
-            Logger.Log("");
-            using CollectionDbContext DB = await collec.GetContext();
-            var deck = await GetDeck(deckId);
-            DB.Decks.Remove(deck);
-            await DB.SaveChangesAsync();
-        }
-
-        /// <summary>
-        /// Deletes some decks
-        /// </summary>
-        /// <param name="decks"></param>
-        public async Task DeleteDecks(List<Deck> decks)
-        {
-            Logger.Log("");
-            using CollectionDbContext DB = await collec.GetContext();
-            DB.Decks.RemoveRange(decks);
-            await DB.SaveChangesAsync();
-        }
-
-        /// <summary>
-        /// Add a card to a deck without knowing which set
-        /// </summary>
-        /// <param name="archetypeId"></param>
-        /// <param name="deck"></param>
-        /// <param name="qty"></param>
-        /// <param name="relation"></param>
-        public async Task AddCardToDeck_WithoutSet(string archetypeId, Deck deck, int qty, int relation = 0)
-        {
-            Logger.Log("");
-            using CollectionDbContext DB = await collec.GetContext();
-            List<string> cardUuids = await FindCard_Variants(archetypeId);
-            if (cardUuids.Count > 0) await AddCardToDeck(cardUuids[0], deck, qty, relation);
-        }
-
-        /// <summary>
-        /// Add a card to a deck knowing which set
-        /// </summary>
-        /// <param name="cardUuid"></param>
-        /// <param name="deck"></param>
-        /// <param name="qty"></param>
-        /// <param name="relation"></param>
-        /// <returns></returns>
-        public async Task AddCardToDeck(string cardUuid, Deck deck, int qty, int relation = 0)
-        {
-            Logger.Log("");
-            if (string.IsNullOrEmpty(cardUuid) || deck == null) return;
+            List<DeckCard> cards = new();
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
-                var cardRelation = await DB.DeckCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-                if (cardRelation == null)
+                await Task.Run(() =>
                 {
-                    cardRelation = new DeckCard()
+                    var lines = cardlist.Split(Environment.NewLine).ToList();
+                    bool side = false;
+                    foreach (string line in lines)
                     {
-                        CardUuid = cardUuid,
-                        DeckId = deck.DeckId,
-                        Quantity = qty,
-                        RelationType = relation
-                    };
-                    DB.Entry(cardRelation).State = EntityState.Added;
-                }
-                else
-                {
-                    cardRelation.Quantity += qty;
-                    DB.Entry(cardRelation).State = EntityState.Modified;
-                }
-                deck.CardCount += qty;
-                DB.Entry(deck).State = EntityState.Modified;
-                await DB.SaveChangesAsync();
+                        if (!string.IsNullOrEmpty(line))
+                        {
+                            if (line.StartsWith("Sideboard")) side = true;
+                            else
+                            {
+                                try
+                                {
+                                    int quantity = int.Parse(line.Split(" ")[0]);
+                                    string name = line[(line.IndexOf(' ') + 1)..];
+                                    name = name.Split(" // ")[0];
+                                    cards.Add(new DeckCard() { Quantity = quantity, CardUuid = name.Trim(), RelationType = side ? 2 : 0 });
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Log(e);
+                                }
+
+                            }
+                        }
+                    }
+                });
             }
             catch (Exception e) { Logger.Log(e); }
+            return cards;
         }
-
-        /// <summary>
-        /// Remove card from a deck
-        /// </summary>
-        /// <param name="cardUuid"></param>
-        /// <param name="deck"></param>
-        /// <param name="qty"></param>
-        public async Task RemoveCardFromDeck(string cardUuid, Deck deck, int qty = 1)
-        {
-            Logger.Log("");
-            if (string.IsNullOrEmpty(cardUuid) || deck == null) return;
-            try
-            {
-                using CollectionDbContext DB = await collec.GetContext();
-                var cardRelation = await DB.DeckCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-                if (cardRelation == null) return;
-                cardRelation.Quantity -= qty;
-                if (cardRelation.Quantity <= 0) DB.Entry(cardRelation).State = EntityState.Deleted;
-                else DB.Entry(cardRelation).State = EntityState.Modified;
-                deck.CardCount -= qty;
-                DB.Entry(deck).State = EntityState.Modified;
-                await DB.SaveChangesAsync();
-            }
-            catch (Exception e) { Logger.Log(e); }
-        }
-
-        /// <summary>
-        /// Change the relation type of this card to this deck
-        /// </summary>
-        /// <param name="relation"></param>
-        /// <param name="type"></param>
-        public async Task ChangeDeckRelationType(DeckCard relation, int type)
-        {
-            Logger.Log("");
-            using CollectionDbContext DB = await collec.GetContext();
-            relation.RelationType = type;
-            DB.Entry(relation).State = EntityState.Modified;
-            await DB.SaveChangesAsync();
-        }
-
-        /// <summary>
-        /// Switch a card in a deck
-        /// </summary>
-        /// <param name="cardDeckRelation"></param>
-        /// <param name="cardUuid"></param>
-        public async Task SwitchCardInDeck(DeckCard cardDeckRelation, string cardUuid)
-        {
-            Logger.Log("");
-            int qty = cardDeckRelation.Quantity;
-            Deck deck = await GetDeck(cardDeckRelation.DeckId);
-            int rel = cardDeckRelation.RelationType;
-            await RemoveCardFromDeck(cardDeckRelation.CardUuid, deck, qty);
-            await AddCardToDeck(cardUuid, deck, qty, rel);
-        }
-
         /// <summary>
         /// Estimate the price of a deck
         /// </summary>

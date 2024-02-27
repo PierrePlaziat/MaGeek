@@ -502,6 +502,13 @@ namespace MageekFrontWpf.UI.ViewModels
             };
         }
 
+        internal List<DeckCard> GetLines()
+        {
+            List <DeckCard> lines = new List<DeckCard>();
+            foreach (var v in entries) lines.Add(v.Line);
+            return lines;
+        }
+
         #endregion
 
     }

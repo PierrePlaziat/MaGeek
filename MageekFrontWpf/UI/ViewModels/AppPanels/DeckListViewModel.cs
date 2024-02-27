@@ -72,7 +72,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.CreateDeck_Empty(title, "");
+            await mageek.CreateDeck(title, "");
             await Reload();
         }
 
