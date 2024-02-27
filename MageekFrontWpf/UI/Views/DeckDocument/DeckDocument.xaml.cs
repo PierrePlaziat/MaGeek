@@ -29,6 +29,9 @@ namespace MageekFrontWpf.UI.Views
 
         public void Initialize(Preco preco)
         {
+            DeckContentPanel.SetDataContext(vm);
+            DeckStatsPanel.SetDataContext(vm);
+            DeckTablePanel.SetDataContext(vm);
             vm.Initialize(preco).ConfigureAwait(false);
         }
 

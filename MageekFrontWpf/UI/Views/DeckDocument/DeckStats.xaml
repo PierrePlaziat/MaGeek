@@ -306,11 +306,11 @@
 
         </ScrollViewer>
 
-        <Grid Background="Black"
+        <!--<Grid Background="Black"
               Grid.RowSpan="5"
               Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
             <controls:BusyIndicator></controls:BusyIndicator>
-        </Grid>
+        </Grid>-->
 
     </Grid>
 </mvvm:BaseUserControl>

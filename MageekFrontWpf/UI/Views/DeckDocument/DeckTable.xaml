@@ -87,9 +87,9 @@
             </DockPanel>-->
 
             <Label FontWeight="Bold" 
-                    FontSize="20" 
-                    Visibility="{Binding Deck.HasCommandant, Converter={StaticResource BoolToVis}}"
-                    Content="Commandement"/>
+                   FontSize="20" 
+                   Visibility="{Binding Deck.HasCommandant, Converter={StaticResource BoolToVis}}"
+                   Content="Commandement"/>
 
             <ItemsControl ItemsSource="{Binding Deck.entries_Commanders}"
                             Style="{StaticResource CustomItemsControlStyle}"

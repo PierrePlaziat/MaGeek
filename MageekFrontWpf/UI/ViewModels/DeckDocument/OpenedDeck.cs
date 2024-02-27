@@ -198,11 +198,79 @@ namespace MageekFrontWpf.UI.ViewModels
         public bool HasArtifacts{ get { return count_Artifact > 0; } }
         public bool HasOther{ get { return count_Other > 0; } }
 
-        public int DevotionB { get { return FindDevotion(entries_Deck, 'B'); } }
-        public int DevotionW { get { return FindDevotion(entries_Deck, 'W'); } }
-        public int DevotionU { get { return FindDevotion(entries_Deck, 'U'); } }
-        public int DevotionG { get { return FindDevotion(entries_Deck, 'G'); } }
-        public int DevotionR { get { return FindDevotion(entries_Deck, 'R'); } }
+        public int DevotionB 
+        {
+            get { 
+                try
+                {
+                    return FindDevotion(entries_Deck, 'B');
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    return 0;
+                }
+            }
+        }
+        public int DevotionW
+        {
+            get { 
+                try
+                {
+                    return FindDevotion(entries_Deck, 'W');
+    }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    return 0;
+                }
+            }
+        }
+        public int DevotionU
+        {
+            get
+            {
+                try
+                {
+                    return FindDevotion(entries_Deck, 'U');
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    return 0;
+                }
+            }
+        }
+        public int DevotionG
+        {
+            get
+            {
+                try
+                {
+                    return FindDevotion(entries_Deck, 'G');
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    return 0;
+                }
+            }
+        }
+        public int DevotionR
+        {
+            get
+            {
+                try
+                {
+                    return FindDevotion(entries_Deck, 'R');
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                    return 0;
+                }
+            }
+        }
         private int FindDevotion(IEnumerable<OpenedDeckEntry> entries, char color)
         {
             int devotion = 0;
@@ -214,6 +282,7 @@ namespace MageekFrontWpf.UI.ViewModels
         }
         private int FindDevotion(string manaCost, char color)
         {
+            if (manaCost == null) return 0;
             return manaCost.Length - manaCost.Replace(color.ToString(), "").Length;
         }
 
