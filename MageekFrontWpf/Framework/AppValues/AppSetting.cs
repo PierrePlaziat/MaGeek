@@ -1,7 +1,7 @@
-﻿using MageekCore.Tools;
+﻿using PlaziatTools;
 using MageekFrontWpf.Framework.Services;
 
-namespace MageekFrontWpf.AppValues
+namespace MageekFrontWpf.Framework.AppValues
 {
     public enum AppSetting
     {

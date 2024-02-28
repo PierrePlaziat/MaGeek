@@ -4,9 +4,9 @@
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg;
 using MageekCore.Data.Mtg.Entities;
-using MageekCore.Tools;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using PlaziatTools;
 using ScryfallApi.Client.Models;
 using System.Text.Json;
 

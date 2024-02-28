@@ -2,12 +2,12 @@
 using System.Windows;
 using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using PlaziatTools;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.UI.Views.AppWindows;
-using MageekFrontWpf.AppValues;
+using MageekFrontWpf.Framework.AppValues;
 using MageekCore.Data;
-using MageekCore.Tools;
 
 namespace MageekFrontWpf
 {
@@ -31,7 +31,9 @@ namespace MageekFrontWpf
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            serviceProvider.GetService<WindowsService>().Initialize();
+            Folders.InitClientFolders();
+            MainWindow main = ServiceHelper.GetService<MainWindow>();
+            serviceProvider.GetService<WindowsService>().Initialize(main.DockingManager);
             WelcomeWindow welcome = serviceProvider.GetService<WelcomeWindow>();
             welcome.Show();
         }

@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MageekCore;
-using MageekCore.Data;
 using MageekFrontWpf.Framework.BaseMvvm;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
-using MageekCore.Data.Collection.Entities;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.Framework.AppValues;
 
 namespace MageekFrontWpf.UI.ViewModels
 {
@@ -26,21 +26,13 @@ namespace MageekFrontWpf.UI.ViewModels
         [ObservableProperty] string filter = string.Empty;
         [ObservableProperty] bool isLoading;
 
-        public async Task Initialize(Deck collecDeck)
+        public async Task Initialize(MageekDocumentInitArgs args)
         {
             IsLoading = true;
             OpenedDeck d = new OpenedDeck(mageek);
-            await d.Initialize(collecDeck);
-            Deck = d;
-            IsLoading = false;
-        }
-
-        public async Task Initialize(
-            Preco precoDeck
-        ){
-            IsLoading = true;
-            OpenedDeck d = new OpenedDeck(mageek);
-            await d.Initialize(precoDeck);
+            if (args.deck != null) await d.Initialize(args.deck).ConfigureAwait(false);
+            else if (args.preco != null) await d.Initialize(args.preco).ConfigureAwait(false);
+            else if (args.import != null) await d.Initialize(args.import).ConfigureAwait(false);
             Deck = d;
             IsLoading = false;
         }
@@ -50,14 +42,23 @@ namespace MageekFrontWpf.UI.ViewModels
         [RelayCommand]
         public async Task SaveDeck()
         {
+            Deck.Header.DeckColors = Deck.DetermineColors();
             await mageek.SaveDeck(Deck.Header,Deck.GetLines());
+            WeakReferenceMessenger.Default.Send(new UpdateDeckListMessage(Deck.Header.DeckId));
         }
 
         [RelayCommand]
         public async Task LessCard(OpenedDeckEntry entry)
         {
             entry.Line.Quantity--;
-            if (entry.Line.Quantity < 0) entry.Line.Quantity = 0;
+            if (entry.Line.Quantity < 0)
+            {
+                entry.Line.Quantity = 0; 
+            }
+            else
+            {
+                Deck.Header.CardCount--;
+            }
             OnPropertyChanged(nameof(Deck));
         }
 
@@ -65,6 +66,7 @@ namespace MageekFrontWpf.UI.ViewModels
         public async Task MoreCard(OpenedDeckEntry entry)
         {
             entry.Line.Quantity++;
+            Deck.Header.CardCount++;
             OnPropertyChanged(nameof(Deck));
         }
 

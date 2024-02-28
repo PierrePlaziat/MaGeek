@@ -1,4 +1,4 @@
-﻿namespace MageekCore.Tools
+﻿namespace PlaziatTools
 {
 
     /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace MageekCore.Tools
+namespace PlaziatTools
 {
 
     /// <summary>

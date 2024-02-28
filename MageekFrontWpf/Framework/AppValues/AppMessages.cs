@@ -1,36 +1,36 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 
-namespace MageekFrontWpf.AppValues
+namespace MageekFrontWpf.Framework.AppValues
 {
 
     public class CardSelectedMessage : ValueChangedMessage<string>
     {
-        public CardSelectedMessage(string uuid) : base(uuid) {}
+        public CardSelectedMessage(string uuid) : base(uuid) { }
     }
 
     public class UpdateCardCollecMessage : ValueChangedMessage<string>
     {
-        public UpdateCardCollecMessage(string data) : base(data) {}
+        public UpdateCardCollecMessage(string data) : base(data) { }
     }
 
     public class UpdateDeckMessage : ValueChangedMessage<string>
     {
-        public UpdateDeckMessage(string data) : base(data) {}
+        public UpdateDeckMessage(string data) : base(data) { }
     }
 
     public class UpdateDeckListMessage : ValueChangedMessage<string>
     {
-        public UpdateDeckListMessage(string data) : base(data) {}
+        public UpdateDeckListMessage(string data) : base(data) { }
     }
-        
+
     public class LoadLayoutMessage : ValueChangedMessage<string>
     {
-        public LoadLayoutMessage(string data) : base(data) {}
+        public LoadLayoutMessage(string data) : base(data) { }
     }
-        
+
     public class SaveLayoutMessage : ValueChangedMessage<string>
     {
-        public SaveLayoutMessage(string data) : base(data) {}
+        public SaveLayoutMessage(string data) : base(data) { }
     }
 
 }

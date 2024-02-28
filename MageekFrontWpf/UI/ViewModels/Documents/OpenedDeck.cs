@@ -6,7 +6,7 @@ using MageekCore;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
-using MageekCore.Tools;
+using PlaziatTools;
 using MageekCore.Data;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
@@ -41,14 +41,41 @@ namespace MageekFrontWpf.UI.ViewModels
             Header = deck;
             Entries = new ObservableCollection<OpenedDeckEntry>(await EntriesFromCollec(deck.DeckId));
         }
+        
+        public async Task Initialize(List<DeckCard> importLines)
+        {
+            Header = new Deck()
+            {
+                Title = "Importation ",
+                Description = "Imported at : "+DateTime.Now,
+            };
+            Entries = new ObservableCollection<OpenedDeckEntry>(await EntriesFromImport(importLines));
+            Header.DeckColors = DetermineColors();
+            Header.CardCount = CountCard(Entries);
+        }
 
         public async Task Initialize(Preco preco)
         {
             Header = await DeckFromPreco(preco);
             Entries = new ObservableCollection<OpenedDeckEntry>(await EntriesFromPreco(preco));
+            Header.DeckColors = DetermineColors();
+            Header.CardCount = CountCard(Entries);
+        }
 
-            //deck.DeckColors = ; //TODO 
-            //deck.CardCount = ; //TODO 
+        public string DetermineColors()
+        {
+            bool hasB = DevotionB > 0; 
+            bool hasW = DevotionW > 0; 
+            bool hasU = DevotionU > 0; 
+            bool hasR = DevotionR > 0; 
+            bool hasG = DevotionG > 0;
+            return string.Concat(
+                hasB ? "B" : "",
+                hasW ? "W" : "",
+                hasU ? "U" : "",
+                hasR ? "R" : "",
+                hasG ? "G" : ""
+            );
         }
 
         private async Task<List<OpenedDeckEntry>> EntriesFromCollec(string deckId)
@@ -120,6 +147,12 @@ namespace MageekFrontWpf.UI.ViewModels
                 });
             }
             return list;
+        }
+
+        private Task<IEnumerable<OpenedDeckEntry>> EntriesFromImport(List<DeckCard> importLines)
+        {
+            //TODO
+            throw new NotImplementedException();
         }
 
         #endregion

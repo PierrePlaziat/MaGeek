@@ -52,7 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="UI\Views\AppPanels\CollectionEstimation.xaml.cs">
+    <Compile Update="UI\Views\Panels\CollectionEstimation.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

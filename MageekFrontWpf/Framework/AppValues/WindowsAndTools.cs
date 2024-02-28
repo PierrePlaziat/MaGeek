@@ -5,9 +5,10 @@ using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekFrontWpf.UI.ViewModels.AppWindows;
 using MageekFrontWpf.UI.Views.AppWindows;
 using MageekFrontWpf.UI.Views.AppPanels;
-using MageekCore.Tools;
+using PlaziatTools;
+using MageekFrontWpf.UI.ViewModels.Windows;
 
-namespace MageekFrontWpf.AppValues
+namespace MageekFrontWpf.Framework.AppValues
 {
 
     public enum AppWindowEnum

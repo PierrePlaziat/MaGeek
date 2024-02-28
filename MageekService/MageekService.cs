@@ -11,7 +11,7 @@ using MageekCore.Data.Collection;
 using MageekCore.Data.Mtg;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
-using MageekCore.Tools;
+using PlaziatTools;
 using MageekCore.Data;
 
 namespace MageekCore
@@ -947,7 +947,7 @@ namespace MageekCore
         /// <param name="title"></param>
         /// <param name="description"></param>
         /// <returns>a reference to the deck</returns>
-        public async Task<Deck> CreateDeck(string title, string description)
+        public async Task<Deck> CreateDeck(string title, string description, string colors, int count)
         {
             Logger.Log("");
             if (string.IsNullOrEmpty(title)) return null;
@@ -957,8 +957,8 @@ namespace MageekCore
                 Deck deck = new()
                 {
                     Title = title,
-                    CardCount = 0,
-                    DeckColors = "",
+                    CardCount = count,
+                    DeckColors = colors,
                     Description = description
                 };
                 DB.Decks.Add(deck);
@@ -978,11 +978,11 @@ namespace MageekCore
         /// <param name="description"></param>
         /// <param name="deckLines"></param>
         /// <returns>A list of messages, empty if everything went well</returns>
-        public async Task<Deck> CreateDeck(string title, string description, IEnumerable<DeckCard> deckLines)
+        public async Task<Deck> CreateDeck(string title, string description, string colors, int count, IEnumerable<DeckCard> deckLines)
         {
             Logger.Log("");
             List<string> messages = new();
-            Deck deck = await CreateDeck(title, description);
+            Deck deck = await CreateDeck(title, description,colors, count);
             //TODO determine deck count and colors
             try
             {
@@ -1048,7 +1048,7 @@ namespace MageekCore
             if (deckToCopy == null) return;
             var newDeck = await CreateDeck(
                 deckToCopy.Title + " - Copy",
-                deckToCopy.Description);
+                deckToCopy.Description,deckToCopy.DeckColors,deckToCopy.CardCount);
             if (newDeck == null) return;
 
             using CollectionDbContext DB = await collec.GetContext();
@@ -1082,8 +1082,8 @@ namespace MageekCore
             {
                 using CollectionDbContext DB = await collec.GetContext();
                 Deck d = DB.Decks.Where(x=>x.DeckId== header.DeckId).FirstOrDefault();
-                if (d!=null) await UpdateDeck(d.DeckId,d.Title,d.Description,lines);
-                else await CreateDeck(header.Title,header.Description,lines);
+                if (d!=null) await UpdateDeck(d.DeckId,d.Title, header.Description, header.DeckColors, header.CardCount, lines);
+                else await CreateDeck(header.Title,header.Description,header.DeckColors,header.CardCount, lines);
             }
             catch (Exception e) { Logger.Log(e); }
         }
@@ -1096,11 +1096,11 @@ namespace MageekCore
         /// <param name="content"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
+        public async Task UpdateDeck(string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content)
         {
             Logger.Log("");
             await DeleteDeck(deckId);
-            await CreateDeck(title, description, content);
+            await CreateDeck(title, description,colors, count, content);
         }
 
         /// <summary>

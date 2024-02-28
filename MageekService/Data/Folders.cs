@@ -1,4 +1,4 @@
-﻿using MageekCore.Tools;
+﻿using PlaziatTools;
 
 namespace MageekCore.Data
 {

@@ -6,15 +6,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using AvalonDock;
 using AvalonDock.Layout.Serialization;
 using AvalonDock.Layout;
+using PlaziatTools;
+using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.AppValues;
-using MageekFrontWpf.UI.Views.AppWindows;
 using MageekCore.Data;
-using MageekCore.Data.Collection.Entities;
 using MageekFrontWpf.UI.Views;
-using MageekFrontWpf.UI.ViewModels;
-using MageekCore.Tools;
-using System.Windows.Controls;
 
 namespace MageekFrontWpf.Framework.Services
 {
@@ -33,12 +29,12 @@ namespace MageekFrontWpf.Framework.Services
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
-        public void Initialize()
+        public void Initialize(DockingManager avalon)
         {
             Logger.Log("Start");
             Folders.InitClientFolders();
-            rootPanel = ServiceHelper.GetService<MainWindow>().RootLayout.RootPanel;
-            dockingManager = ServiceHelper.GetService<MainWindow>().DockingManager;
+            dockingManager = avalon; 
+            rootPanel = avalon.Layout.RootPanel;
             windows = WindowsAndTools.LoadWindows();
             tools = WindowsAndTools.LoadTools();
             Logger.Log("Done");
@@ -108,36 +104,24 @@ namespace MageekFrontWpf.Framework.Services
         }
 
         // not generic //
-        public void OpenDoc(Deck? deck, Preco? preco)
+        public void OpenDoc(DocumentInitArgs args)
         {
-            if (deck == null && preco == null) return;
-            string _id = string.Empty;
-            string _title = string.Empty;
-            if (deck != null)
-            {
-                _id = deck.DeckId;
-                _title = deck.Title;
-            }
-            else if (preco != null)
-            {
-                _id = string.Concat("[",preco.Code,"] ",preco.Title);
-                _title = _id;
-            }
+            if (!args.validated) return;
             try
             {
                 // not first time
                 LayoutDocument anch = dockingManager.Layout
                     .Descendents().OfType<LayoutDocument>()
-                    .FirstOrDefault(d => d.ContentId == _id);
+                    .FirstOrDefault(d => d.ContentId == args.documentId);
                 if (anch == null)
                 {
                     //  first time
-                    DeckDocument view = ServiceHelper.GetService<DeckDocument>();
+                    IDocument view = ServiceHelper.GetService<DeckDocument>();
                     anch = new LayoutDocument()
                     {
                         Content = view,
-                        Title = _title,
-                        ContentId = _id,
+                        Title = args.documentTitle,
+                        ContentId = args.documentId,
                         CanFloat = true,
                     };
                     LayoutDocumentPane anchPane = dockingManager.Layout
@@ -153,9 +137,7 @@ namespace MageekFrontWpf.Framework.Services
                     {
                         anchPane.Children.Add(anch);
                     }
-                    // Launch document initialization
-                    if (deck != null) view.Initialize(deck);
-                    else if (preco != null) view.Initialize(preco);
+                    view.Initialize(args); 
                 }
             }
             catch (Exception e) { Logger.Log(e); }

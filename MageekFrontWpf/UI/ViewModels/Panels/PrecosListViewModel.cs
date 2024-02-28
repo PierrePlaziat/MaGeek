@@ -6,9 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MageekCore.Data;
 using MageekFrontWpf.Framework.Services;
-using MageekCore.Data.Collection.Entities;
-using CommunityToolkit.Mvvm.Messaging;
-using MageekFrontWpf.AppValues;
+using MageekFrontWpf.Framework.AppValues;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -45,7 +43,8 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [RelayCommand]
         public async Task SelectDeck(Preco preco)
         {
-            win.OpenDoc(null, preco);
+            MageekDocumentInitArgs doc = new MageekDocumentInitArgs(preco: preco);
+            win.OpenDoc(doc);
         }
 
     }

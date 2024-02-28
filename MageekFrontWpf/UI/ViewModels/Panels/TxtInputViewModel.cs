@@ -5,21 +5,21 @@ using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekCore;
 using MageekCore.Data.Collection.Entities;
-using MageekCore.Tools;
+using MageekFrontWpf.Framework.Services;
+using MageekFrontWpf.Framework.AppValues;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
     public partial class TxtInputViewModel : BaseViewModel
     {
 
-        private MageekService mageek;
+        MageekService mageek;
+        WindowsService win;
 
-        public TxtInputViewModel
-        (
-            MageekService mageek
-        )
+        public TxtInputViewModel(MageekService mageek, WindowsService win)
         {
             this.mageek = mageek;
+            this.win = win;
         }
 
         [ObservableProperty] private string title;
@@ -30,12 +30,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         private async Task LaunchImportation(string content)
         {
             List<DeckCard> importLines = await mageek.ParseCardList(content);
-            await mageek.CreateDeck(
-                Title,
-                Description,
-                importLines
-            );
-            //TODO asOwned
+            OpenedDeck deck = new OpenedDeck(mageek);
+            await deck.Initialize(importLines);
+            MageekDocumentInitArgs doc = new MageekDocumentInitArgs(import: importLines);
+            win.OpenDoc(doc);
         }
 
     }

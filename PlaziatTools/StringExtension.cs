@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
 
-namespace MageekCore.Tools
+namespace PlaziatTools
 {
 
     public static class StringExtension

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels.AppWindows;
+using MageekFrontWpf.UI.ViewModels.Windows;
 
 namespace MageekFrontWpf.UI.Views.AppWindows
 {

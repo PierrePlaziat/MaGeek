@@ -1,8 +1,7 @@
 ﻿using System.Text;
 using System.Net.Sockets;
-using MageekCore.Tools;
 
-namespace SocleSono.Tools
+namespace PlaziatTools
 {
 
     /// <summary>

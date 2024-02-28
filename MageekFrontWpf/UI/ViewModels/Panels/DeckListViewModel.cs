@@ -1,16 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using MageekFrontWpf.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekCore;
 using MageekCore.Data.Collection.Entities;
-using MageekCore.Tools;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Linq;
+using MageekFrontWpf.Framework.AppValues;
+using PlaziatTools;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -65,14 +65,15 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task SelectDeck(string deckId)
         {
-            wins.OpenDoc(await mageek.GetDeck(deckId),null);
+            MageekDocumentInitArgs doc = new MageekDocumentInitArgs(deck : await mageek.GetDeck(deckId));
+            wins.OpenDoc(doc);
         }
 
         [RelayCommand]
         public async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.CreateDeck(title, "");
+            await mageek.CreateDeck(title, "", "", 0);
             await Reload();
         }
 
@@ -94,6 +95,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task DeleteDeck(string deckId)
         {
+            if (deckId == null) return;
             await mageek.DeleteDeck(deckId);
             await Reload();
         }

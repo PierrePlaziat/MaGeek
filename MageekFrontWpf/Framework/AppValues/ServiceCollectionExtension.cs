@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MageekCore;
-using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.UI.ViewModels.AppWindows;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekFrontWpf.UI.Views.AppWindows;
@@ -9,8 +8,9 @@ using MageekFrontWpf.UI.ViewModels;
 using MageekCore.Data.Collection;
 using MageekCore.Data.Mtg;
 using MageekFrontWpf.UI.Views;
+using MageekFrontWpf.UI.ViewModels.Windows;
 
-namespace MageekFrontWpf.AppValues
+namespace MageekFrontWpf.Framework.AppValues
 {
     public static class ServiceCollectionExtensions
     {
