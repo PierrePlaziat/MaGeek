@@ -26,7 +26,7 @@ namespace MageekFrontWpf.UI.ViewModels
         [ObservableProperty] string filter = string.Empty;
         [ObservableProperty] bool isLoading;
 
-        public async Task Initialize(MageekDocumentInitArgs args)
+        public async Task Initialize(AppDocumentInitArgs args)
         {
             IsLoading = true;
             OpenedDeck d = new OpenedDeck(mageek);

@@ -22,7 +22,7 @@ namespace MageekFrontWpf.UI.Views
             DeckContentPanel.SetDataContext(vm);
             DeckStatsPanel.SetDataContext(vm);
             DeckTablePanel.SetDataContext(vm);
-            vm.Initialize((MageekDocumentInitArgs)args).ConfigureAwait(false);
+            vm.Initialize((AppDocumentInitArgs)args).ConfigureAwait(false);
         }
 
     }

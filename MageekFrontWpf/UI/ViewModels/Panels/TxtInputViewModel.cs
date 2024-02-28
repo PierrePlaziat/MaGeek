@@ -32,7 +32,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             List<DeckCard> importLines = await mageek.ParseCardList(content);
             OpenedDeck deck = new OpenedDeck(mageek);
             await deck.Initialize(importLines);
-            MageekDocumentInitArgs doc = new MageekDocumentInitArgs(import: importLines);
+            AppDocumentInitArgs doc = new AppDocumentInitArgs(import: importLines);
             win.OpenDoc(doc);
         }
 

@@ -7,7 +7,6 @@ using PlaziatTools;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using MageekFrontWpf.Framework.AppValues;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
@@ -20,6 +19,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public SetListViewModel(MageekCore.MageekService mageek)
         {
             this.mageek = mageek;
+            Reload().ConfigureAwait(false);
         }
 
         [ObservableProperty] List<Sets> setList = new();
@@ -30,34 +30,21 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] List<Cards> variants = new();
 
         [RelayCommand]
-        private async Task Reload()
+        public async Task Reload()
         {
             Logger.Log("Reload");
-            SetList = await mageek.LoadSets();
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
             SetList = mageek.LoadSets().Result.Where(x => FilterBlock == "All blocks" || x.Block == FilterBlock)
                                 .Where(x => FilterType == "All types" || x.Type == FilterType).ToList();
         }
 
-        private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public async void SelectSet(Sets s)
         {
-            var s = ((ListView)sender).SelectedItem as Sets;
-            Variants = null;
             Variants = await mageek.GetCardsFromSet(s.Code);
         }
 
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void SelectCard(Cards c)
         {
-        }
-
-        private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            var v = (DataGrid)sender;
-            if (v.SelectedItem == null) return;
-            WeakReferenceMessenger.Default.Send(new CardSelectedMessage((v.SelectedItem as Cards).Uuid));
+            WeakReferenceMessenger.Default.Send(new CardSelectedMessage(c.Uuid));
         }
 
 

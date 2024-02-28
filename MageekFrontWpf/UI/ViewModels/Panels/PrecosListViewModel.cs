@@ -43,7 +43,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [RelayCommand]
         public async Task SelectDeck(Preco preco)
         {
-            MageekDocumentInitArgs doc = new MageekDocumentInitArgs(preco: preco);
+            AppDocumentInitArgs doc = new AppDocumentInitArgs(preco: preco);
             win.OpenDoc(doc);
         }
 

@@ -7,14 +7,14 @@ using MageekFrontWpf.Framework.BaseMvvm;
 namespace MageekFrontWpf.Framework.AppValues
 {
 
-    public class MageekDocumentInitArgs : DocumentInitArgs
+    public class AppDocumentInitArgs : DocumentInitArgs
     {
 
         public Deck deck;
         public Preco preco;
         public List<DeckCard> import;
 
-        public MageekDocumentInitArgs(Deck deck = null, Preco preco = null, List<DeckCard> import = null)
+        public AppDocumentInitArgs(Deck deck = null, Preco preco = null, List<DeckCard> import = null)
         {
             this.deck = deck;
             this.preco = preco;

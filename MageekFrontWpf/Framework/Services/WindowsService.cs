@@ -9,8 +9,8 @@ using AvalonDock.Layout;
 using PlaziatTools;
 using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekCore.Data;
 using MageekFrontWpf.UI.Views;
+using MageekCore.Data;
 
 namespace MageekFrontWpf.Framework.Services
 {
