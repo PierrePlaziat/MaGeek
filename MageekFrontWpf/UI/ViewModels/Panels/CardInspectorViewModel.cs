@@ -17,7 +17,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
     public partial class CardInspectorViewModel : 
-        BaseViewModel, 
+        ObservableViewModel, 
         IRecipient<CardSelectedMessage>
     {
 

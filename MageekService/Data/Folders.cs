@@ -26,7 +26,7 @@ namespace MageekCore.Data
             Logger.Log("Done");
         }
         
-        public static void InitClientFolders()
+        public static void InitializeClientFolders()
         {
             if (!File.Exists(Roaming)) Directory.CreateDirectory(Roaming);
             if (!File.Exists(LayoutFolder)) Directory.CreateDirectory(LayoutFolder);

@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using MageekCore.Data.Collection.Entities;
 using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels;
@@ -21,12 +20,12 @@ namespace MageekFrontWpf.UI.Views
             InitializeComponent();
         }
 
-        public void Initialize(DocumentInitArgs args)
+        public void OpenDocument(Framework.BaseMvvm.AbstractDocumentArguments args)
         {
             DeckContentPanel.SetDataContext(vm);
             DeckStatsPanel.SetDataContext(vm);
             DeckTablePanel.SetDataContext(vm);
-            vm.Initialize((AppDocumentInitArgs)args).ConfigureAwait(false);
+            vm.Initialize((Framework.AppValues.DocumentArguments)args).ConfigureAwait(false);
         }
 
         private void Grid_Drop(object sender, System.Windows.DragEventArgs e)

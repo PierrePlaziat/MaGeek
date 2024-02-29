@@ -12,18 +12,18 @@ namespace MageekFrontWpf.Framework.Services
     {
 
         private static string Path_Settings { get; } = Path.Combine(Folders.Roaming, "Settings.json");
-        public Dictionary<AppSetting, string> Settings { get; private set; } = new Dictionary<AppSetting, string>();
+        public Dictionary<Setting, string> Settings { get; private set; } = new Dictionary<Setting, string>();
 
         public SettingService()
         {
-            AppSettings.InitSettings(this);
+            AppValues.Settings.InitSettings(this);
             LoadSettings();
         }
 
         private void InitSettings(SettingService Settings)
         {
-            if (!Settings.Settings.ContainsKey(AppSetting.ForeignLanguage)) Settings.Settings.Add(AppSetting.ForeignLanguage, "French");
-            if (!Settings.Settings.ContainsKey(AppSetting.Currency)) Settings.Settings.Add(AppSetting.Currency, "Eur");
+            if (!Settings.Settings.ContainsKey(Setting.ForeignLanguage)) Settings.Settings.Add(Setting.ForeignLanguage, "French");
+            if (!Settings.Settings.ContainsKey(Setting.Currency)) Settings.Settings.Add(Setting.Currency, "Eur");
             Logger.Log("Done");
         }
 
@@ -37,7 +37,7 @@ namespace MageekFrontWpf.Framework.Services
             else
             {
                 string jsonString = File.ReadAllText(Path_Settings);
-                Settings = JsonSerializer.Deserialize<Dictionary<AppSetting, string>>(jsonString);
+                Settings = JsonSerializer.Deserialize<Dictionary<Setting, string>>(jsonString);
                 Logger.Log("Done");
             }
         }
@@ -50,7 +50,7 @@ namespace MageekFrontWpf.Framework.Services
             Logger.Log("Done");
         }
 
-        public void SetSetting(AppSetting key, string value)
+        public void SetSetting(Setting key, string value)
         {
             Logger.Log(key + " - " + value);
             Settings[key] = value;

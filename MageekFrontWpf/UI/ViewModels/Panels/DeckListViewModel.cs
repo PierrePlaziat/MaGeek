@@ -15,7 +15,7 @@ using PlaziatTools;
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
-    public partial class DeckListViewModel : BaseViewModel, 
+    public partial class DeckListViewModel : ObservableViewModel, 
         IRecipient<UpdateDeckListMessage>
     {
 
@@ -59,7 +59,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task SelectDeck(string deckId)
         {
-            AppDocumentInitArgs doc = new AppDocumentInitArgs(deck : await mageek.GetDeck(deckId));
+            Framework.AppValues.DocumentArguments doc = new Framework.AppValues.DocumentArguments(deck : await mageek.GetDeck(deckId));
             wins.OpenDoc(doc);
         }
 
@@ -97,7 +97,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task EstimateDeckPrice(string deckId)
         {
-            var totalPrice = await mageek.EstimateDeckPrice(deckId, config.Settings[AppSetting.Currency]);
+            var totalPrice = await mageek.EstimateDeckPrice(deckId, config.Settings[Setting.Currency]);
             MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + "\n" +
                             "Missing : " + totalPrice.Item2);
         }

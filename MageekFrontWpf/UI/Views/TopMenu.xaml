@@ -76,14 +76,16 @@
         <MenuItem Header="Layout">
             <MenuItem Header="Save"
                       Foreground="Black"
-                      Command="{Binding LayoutBackupCommand}">
+                      Command="{Binding LayoutBackupCommand}"
+                      CommandParameter="Default">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/Icon_Backup.jpg" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Header="Load"
                       Foreground="Black"
-                      Command="{Binding LayoutRestoreCommand}">
+                      Command="{Binding LayoutRestoreCommand}"
+                      CommandParameter="Default">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/Icon_Restore.jpg" />
                 </MenuItem.Icon>

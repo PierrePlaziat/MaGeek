@@ -11,7 +11,7 @@ using MageekFrontWpf.Framework.AppValues;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
-    public partial class SetListViewModel : BaseViewModel
+    public partial class SetListViewModel : ObservableViewModel
     {
 
         private MageekCore.MageekService mageek;

@@ -1,15 +1,14 @@
-﻿using System.IO;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.IO;
 using System.Linq;
-using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.Generic;
 using AvalonDock;
-using AvalonDock.Layout.Serialization;
 using AvalonDock.Layout;
+using AvalonDock.Layout.Serialization;
 using PlaziatTools;
 using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.Views;
+using MageekFrontWpf.UI.Views.AppWindows;
 using MageekCore.Data;
 
 namespace MageekFrontWpf.Framework.Services
@@ -20,23 +19,28 @@ namespace MageekFrontWpf.Framework.Services
 
         private List<AppWindow> windows = new();
         private List<AppTool> tools = new();
-
-        private LayoutPanel rootPanel;
         private DockingManager dockingManager;
 
-        public WindowsService()
-        {
-            WeakReferenceMessenger.Default.RegisterAll(this);
-        }
-
-        public void Initialize(DockingManager avalon)
+        internal void LaunchApp()
         {
             Logger.Log("Start");
-            Folders.InitClientFolders();
-            dockingManager = avalon; 
-            rootPanel = avalon.Layout.RootPanel;
-            windows = WindowsAndTools.LoadWindows();
-            tools = WindowsAndTools.LoadTools();
+            // Init folders
+            Folders.InitializeClientFolders();
+            // Load app elements
+            windows = AppElements.LoadWindows();
+            tools = AppElements.LoadTools();
+            // Retrieve docking manager
+            dockingManager = 
+                ((MainWindow) windows
+                    .Where(x => x.id == AppWindowEnum.Main)
+                    .FirstOrDefault()
+                    .window)
+                .DockingManager;
+            // Show welcome win
+            windows.Where(x => x.id == AppWindowEnum.Welcome)
+                .FirstOrDefault()
+                .window
+                .Show();
             Logger.Log("Done");
         }
 
@@ -86,8 +90,9 @@ namespace MageekFrontWpf.Framework.Services
                 BaseUserControl control = tools.Find(t => t.id == tool).tool;
                 anch = new LayoutAnchorable()
                 {
-                    Content = control,
+                    ContentId = tool.ToString(),
                     Title = tool.ToString(),
+                    Content = control,
                     CanFloat = true,
                 };
                 var anchPane = new LayoutAnchorablePane(anch)
@@ -98,13 +103,12 @@ namespace MageekFrontWpf.Framework.Services
                 };
                 var GrpPane = new LayoutAnchorablePaneGroup(anchPane);
                 // add to layout
-                rootPanel.Children.Add(GrpPane);
+                dockingManager.Layout.RootPanel.Children.Add(GrpPane);
             }
             catch (Exception e) { Logger.Log(e); }
         }
 
-        // not generic //
-        public void OpenDoc(DocumentInitArgs args)
+        public void OpenDoc(AbstractDocumentArguments args)
         {
             if (!args.validated) return;
             try
@@ -116,7 +120,7 @@ namespace MageekFrontWpf.Framework.Services
                 if (anch == null)
                 {
                     //  first time
-                    IDocument view = ServiceHelper.GetService<DeckDocument>();
+                    IDocument view = ServiceHelper.GetService<IDocument>(); 
                     anch = new LayoutDocument()
                     {
                         Content = view,
@@ -131,13 +135,13 @@ namespace MageekFrontWpf.Framework.Services
                     {
                         anchPane = new LayoutDocumentPane(anch);
                         LayoutDocumentPaneGroup GrpPane = new LayoutDocumentPaneGroup(anchPane);
-                        rootPanel.Children.Add(GrpPane);
+                        dockingManager.Layout.RootPanel.Children.Add(GrpPane);
                     }
                     else
                     {
                         anchPane.Children.Add(anch);
                     }
-                    view.Initialize(args); 
+                    view.OpenDocument(args); 
                 }
             }
             catch (Exception e) { Logger.Log(e); }
@@ -170,13 +174,12 @@ namespace MageekFrontWpf.Framework.Services
                 serializer.Deserialize(GetLayoutPath(arg));
                 foreach (var element in dockingManager.Layout.Descendents().OfType<LayoutAnchorable>())
                 {
-                    var panel = tools.Find(control => control.tool.ControlName == element.Title);
+                    var panel = tools.Find(control => control.id.ToString() == element.ContentId);
                     if (panel != null)
                     {
                         element.Content = panel.tool;
                     }
                 }
-                rootPanel = dockingManager.Layout.RootPanel;
             }
             catch (Exception e) { Logger.Log(e); }
         }
@@ -192,14 +195,14 @@ namespace MageekFrontWpf.Framework.Services
     {
         public AppWindowEnum id;
         public BaseWindow window;
-        public BaseViewModel vm;
+        public ObservableViewModel vm;
     }
 
     public class AppTool
     {
         public AppToolsEnum id;
         public BaseUserControl tool;
-        public BaseViewModel vm;
+        public ObservableViewModel vm;
     }
 
 }

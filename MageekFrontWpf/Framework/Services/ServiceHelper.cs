@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace MageekFrontWpf.Framework.BaseMvvm
+namespace MageekFrontWpf.Framework.Services
 {
 
     public static class ServiceHelper

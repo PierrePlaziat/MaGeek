@@ -49,13 +49,13 @@ namespace MageekFrontWpf.UI.ViewModels
         [RelayCommand]
         private void ChangeLanguage(string lang)
         {
-            conf.SetSetting(AppSetting.ForeignLanguage, lang);
+            conf.SetSetting(Setting.ForeignLanguage, lang);
         }
 
         [RelayCommand]
         private void ChangeCurrency(string currency)
         {
-            conf.SetSetting(AppSetting.Currency, currency);
+            conf.SetSetting(Setting.Currency, currency);
         }
 
         [RelayCommand]

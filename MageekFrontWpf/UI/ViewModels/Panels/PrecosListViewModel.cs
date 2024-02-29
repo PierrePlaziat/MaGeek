@@ -11,7 +11,7 @@ using MageekFrontWpf.Framework.AppValues;
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
-    public partial class PrecoListViewModel : BaseViewModel
+    public partial class PrecoListViewModel : ObservableViewModel
     {
 
         private MageekService mageek;
@@ -43,7 +43,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [RelayCommand]
         public async Task SelectDeck(Preco preco)
         {
-            AppDocumentInitArgs doc = new AppDocumentInitArgs(preco: preco);
+            Framework.AppValues.DocumentArguments doc = new Framework.AppValues.DocumentArguments(preco: preco);
             win.OpenDoc(doc);
         }
 

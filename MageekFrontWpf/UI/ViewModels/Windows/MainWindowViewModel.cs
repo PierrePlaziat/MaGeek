@@ -3,7 +3,7 @@
 namespace MageekFrontWpf.UI.ViewModels.Windows
 {
 
-    public class MainWindowViewModel : BaseViewModel
+    public class MainWindowViewModel : ObservableViewModel
     {
 
         public MainWindowViewModel()

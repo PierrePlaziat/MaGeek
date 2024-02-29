@@ -12,7 +12,7 @@ using MageekFrontWpf.Framework.AppValues;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
-    public partial class CardSearcherViewModel : BaseViewModel
+    public partial class CardSearcherViewModel : ObservableViewModel
     {
 
         private SettingService config;
@@ -72,14 +72,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                 if (!AdvancedMode)
                 {
                     CardList = await mageek.NormalSearch(
-                        FilterName, config.Settings[AppSetting.ForeignLanguage],
+                        FilterName, config.Settings[Setting.ForeignLanguage],
                         CurrentPage, NbResulsts
                     );
                 }
                 if (AdvancedMode)
                 {
                     CardList = await mageek.AdvancedSearch(
-                        FilterName, config.Settings[AppSetting.ForeignLanguage],
+                        FilterName, config.Settings[Setting.ForeignLanguage],
                         FilterType, FilterKeyword, FilterText,
                         FilterColor.ToString(),
                         "", // FilterTag.TagContent;

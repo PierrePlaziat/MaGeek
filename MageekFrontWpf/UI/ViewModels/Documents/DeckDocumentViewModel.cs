@@ -12,7 +12,7 @@ using MageekFrontWpf.Framework.AppValues;
 namespace MageekFrontWpf.UI.ViewModels
 {
 
-    public partial class DeckDocumentViewModel : BaseViewModel, 
+    public partial class DeckDocumentViewModel : ObservableViewModel, 
         IRecipient<AddCardToDeckMessage>
     {
 
@@ -28,7 +28,7 @@ namespace MageekFrontWpf.UI.ViewModels
         [ObservableProperty] string filter = string.Empty;
         [ObservableProperty] bool isLoading;
 
-        public async Task Initialize(AppDocumentInitArgs args)
+        public async Task Initialize(Framework.AppValues.DocumentArguments args)
         {
             IsLoading = true;
             OpenedDeck d = new OpenedDeck(mageek);

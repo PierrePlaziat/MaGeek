@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekFrontWpf.UI.ViewModels.AppWindows;
@@ -29,7 +28,7 @@ namespace MageekFrontWpf.Framework.AppValues
         TxtInput,
     }
 
-    public static class WindowsAndTools
+    public static class AppElements
     {
 
         internal static List<AppWindow> LoadWindows()

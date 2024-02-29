@@ -11,7 +11,7 @@ using MageekFrontWpf.Framework.AppValues;
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
-    public partial class WelcomeWindowViewModel : BaseViewModel
+    public partial class WelcomeWindowViewModel : ObservableViewModel
     {
 
         private readonly WindowsService winManager;

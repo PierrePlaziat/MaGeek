@@ -10,7 +10,7 @@ using MageekFrontWpf.Framework.AppValues;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
-    public partial class TxtInputViewModel : BaseViewModel
+    public partial class TxtInputViewModel : ObservableViewModel
     {
 
         MageekService mageek;
@@ -32,7 +32,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             List<DeckCard> importLines = await mageek.ParseCardList(content);
             OpenedDeck deck = new OpenedDeck(mageek);
             await deck.Initialize(importLines);
-            AppDocumentInitArgs doc = new AppDocumentInitArgs(import: importLines);
+            Framework.AppValues.DocumentArguments doc = new Framework.AppValues.DocumentArguments(import: importLines);
             win.OpenDoc(doc);
         }
 

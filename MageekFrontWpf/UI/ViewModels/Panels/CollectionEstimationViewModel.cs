@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using PlaziatTools;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,20 +11,17 @@ using MageekFrontWpf.Framework.AppValues;
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
-    public partial class CollecEstimationViewModel : BaseViewModel
+    public partial class CollecEstimationViewModel : ObservableViewModel
     {
 
         private MageekCore.MageekService mageek;
         private SettingService config;
-        private ILogger<CollecEstimationViewModel> logger;
 
         public CollecEstimationViewModel(
             SettingService config,
-            MageekCore.MageekService mageek,
-            ILogger<CollecEstimationViewModel> logger
+            MageekCore.MageekService mageek
         )
         {
-            this.logger = logger;
             this.mageek = mageek;
             this.config = config;
         }
@@ -55,7 +51,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
                     TotalDiffExist = await mageek.GetTotal_ExistingArchetypes();
                     TotalDiffGot = await mageek.GetTotal_CollectedArchetype();
                     TotalGot = await mageek.GetTotal_CollectedDiff();
-                    var est = await mageek.AutoEstimatePrices(config.Settings[AppSetting.ForeignLanguage]);
+                    var est = await mageek.AutoEstimatePrices(config.Settings[Setting.ForeignLanguage]);
                     AutoEstimation = est.Item1;
                     MissingList = est.Item2;
                     OnPropertyChanged(nameof(TotalDiffExist));
@@ -69,7 +65,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             }
             catch (Exception e)
             {
-                logger.LogError(e.Message);
+                Logger.Log(e);
             }
         }
 
