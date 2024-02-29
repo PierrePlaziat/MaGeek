@@ -11,6 +11,7 @@ using MageekCore.Data;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Windows;
+using System.Windows.Shapes;
 
 namespace MageekFrontWpf.UI.ViewModels
 {
@@ -153,6 +154,41 @@ namespace MageekFrontWpf.UI.ViewModels
         {
             //TODO
             throw new NotImplementedException();
+        }
+
+        public async Task AddCard(string uuid)
+        {
+            var v = new OpenedDeckEntry()
+            {
+                Card = await mageek.FindCard_Data(uuid),
+                Line = new DeckCard()
+                {
+                    CardUuid = uuid,
+                    Quantity = 1,
+                    RelationType = 0,
+                }
+            };
+            Entries.Add(v);
+            Header.CardCount++;
+        }
+
+        internal void LessCards(OpenedDeckEntry entry)
+        {
+            entry.Line.Quantity--;
+            if (entry.Line.Quantity < 0)
+            {
+                entry.Line.Quantity = 0;
+            }
+            else
+            {
+                Header.CardCount--;
+            }
+        }
+
+        internal void MoreCard(OpenedDeckEntry entry)
+        {
+            entry.Line.Quantity++;
+            Header.CardCount++;
         }
 
         #endregion

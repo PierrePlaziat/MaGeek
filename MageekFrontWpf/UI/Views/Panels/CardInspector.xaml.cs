@@ -5,6 +5,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekFrontWpf.Framework.AppValues;
+using System;
+using MageekCore.Data;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {
@@ -101,6 +105,44 @@ namespace MageekFrontWpf.UI.Views.AppPanels
             //TODO
             //vm.GoToRelatedCommand(vm.SelectedUuid);
         }
+
+        private void Grid_Drop(object sender, DragEventArgs e)
+        {
+            Grid item = (Grid)sender;
+            var data = e.Data.GetData(typeof(string)) as string;
+            vm.Reload(data).ConfigureAwait(false);
+        }
+
+        private void VariantListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var DragSource = (ListView)sender;
+            if (DragSource == null) return;
+
+            object data = GetDataFromListBox(DragSource, e.GetPosition(DragSource));
+            if (data != null)
+                DragDrop.DoDragDrop(DragSource, data, DragDropEffects.Move);
+        }
+
+        private static object GetDataFromListBox(ListView source, Point point)
+        {
+            if (source.InputHitTest(point) is UIElement element)
+            {
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
+                    element = VisualTreeHelper.GetParent(element) as UIElement;
+
+                    if (element == source)
+                        return null;
+
+                    if (data != DependencyProperty.UnsetValue)
+                        return ((CardVariant)data).Card.Uuid;
+                }
+            }
+            return null;
+        }
+
     }
 
 }

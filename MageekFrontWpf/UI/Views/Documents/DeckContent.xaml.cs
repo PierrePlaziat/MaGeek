@@ -1,6 +1,8 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {
@@ -60,6 +62,36 @@ namespace MageekFrontWpf.UI.Views.AppPanels
         private void ScrollViewer_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
             //TODO
+        }
+
+        private void Grid_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var DragSource = (ListView)sender;
+            if (DragSource == null) return;
+
+            object data = GetDataFromListBox(DragSource, e.GetPosition(DragSource));
+            if (data != null)
+                DragDrop.DoDragDrop(DragSource, data, DragDropEffects.Move);
+        }
+
+        private static object GetDataFromListBox(ListView source, Point point)
+        {
+            if (source.InputHitTest(point) is UIElement element)
+            {
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
+                    element = VisualTreeHelper.GetParent(element) as UIElement;
+
+                    if (element == source)
+                        return null;
+
+                    if (data != DependencyProperty.UnsetValue)
+                        return ((OpenedDeckEntry)data).Card.Uuid;
+                }
+            }
+            return null;
         }
 
     }

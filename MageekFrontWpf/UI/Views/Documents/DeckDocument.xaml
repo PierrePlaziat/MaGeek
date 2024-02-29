@@ -8,8 +8,8 @@
                       xmlns:local="clr-namespace:MageekFrontWpf.UI.Views"
                       mc:Ignorable="d" 
                       d:DesignHeight="450" d:DesignWidth="800">
-    
-    <Grid>
+
+    <Grid Drop="Grid_Drop" AllowDrop="True">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>

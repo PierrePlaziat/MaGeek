@@ -9,7 +9,7 @@
                       mc:Ignorable="d"
                       x:Name="CardInspectorName">
 
-    <Grid Background="Black">
+    <Grid Background="Black" AllowDrop="True" Drop="Grid_Drop">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -81,7 +81,8 @@
                       HorizontalAlignment="Stretch"
                       Margin="0"
                       Padding="0"
-                      SelectedItem="{Binding SelectedVariant}">
+                      SelectedItem="{Binding SelectedVariant}"
+                      PreviewMouseLeftButtonDown="VariantListBox_PreviewMouseLeftButtonDown">
 
                 <ListView.ContextMenu>
                     <ContextMenu>

@@ -16,8 +16,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
     public partial class DeckListViewModel : BaseViewModel, 
-        IRecipient<UpdateDeckListMessage>, 
-        IRecipient<UpdateDeckMessage>
+        IRecipient<UpdateDeckListMessage>
     {
 
         private WindowsService wins;
@@ -44,11 +43,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] private bool isLoading = false;
 
         public void Receive(UpdateDeckListMessage message)
-        {
-            Reload().ConfigureAwait(false);
-        }
-
-        public void Receive(UpdateDeckMessage message)
         {
             Reload().ConfigureAwait(false);
         }

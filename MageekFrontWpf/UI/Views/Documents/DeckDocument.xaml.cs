@@ -1,6 +1,10 @@
-﻿using MageekFrontWpf.Framework.AppValues;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using MageekCore.Data.Collection.Entities;
+using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels;
+using System.Windows.Controls;
+using System;
 
 namespace MageekFrontWpf.UI.Views
 {
@@ -25,6 +29,15 @@ namespace MageekFrontWpf.UI.Views
             vm.Initialize((AppDocumentInitArgs)args).ConfigureAwait(false);
         }
 
+        private void Grid_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            Grid item = (Grid)sender;
+            var data = e.Data.GetData(typeof(string)) as string;
+            string deckId = vm.Deck.Header.DeckId;
+            WeakReferenceMessenger.Default.Send(
+                new AddCardToDeckMessage(new Tuple<string, string>(deckId, data))
+            );
+        }
     }
 
 }

@@ -94,7 +94,8 @@
                       MouseDoubleClick="SelectionChanged"
                       Grid.Row="2" 
                       Visibility="{Binding Deck.HasCommandant, Converter={StaticResource BoolToVis}}"
-                      SelectionMode="Single">
+                      SelectionMode="Single"
+                    PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown">
 
                 <ListView.ContextMenu>
                     <ContextMenu>
@@ -112,7 +113,8 @@
                         ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
                         ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
                         Style="{StaticResource OpenedDeckEntryListStyle}"
-                        MouseDoubleClick="SelectionChanged"/>
+                        MouseDoubleClick="SelectionChanged"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
             <Label Visibility="{Binding Deck.HasInstants, Converter={StaticResource BoolToVis}}">Instants :</Label>
             <ListView ItemsSource="{Binding Deck.deck_Instants}"
                         ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
@@ -120,7 +122,8 @@
                         ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
                         Style="{StaticResource OpenedDeckEntryListStyle}"
                         MouseDoubleClick="SelectionChanged"
-                        Grid.Row="3"/>
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
             <Label Visibility="{Binding Deck.HasSorceries, Converter={StaticResource BoolToVis}}">Sorceries :</Label>
             <ListView ItemsSource="{Binding Deck.deck_Sorceries}"
                         ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
@@ -128,7 +131,8 @@
                         ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
                         Style="{StaticResource OpenedDeckEntryListStyle}"
                         MouseDoubleClick="SelectionChanged"
-                        Grid.Row="3"/>
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
             <Label Visibility="{Binding Deck.HasEnchantments, Converter={StaticResource BoolToVis}}">Enchantments :</Label>
             <ListView ItemsSource="{Binding Deck.deck_Enchantments}"
                         ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
@@ -136,7 +140,8 @@
                         ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
                         Style="{StaticResource OpenedDeckEntryListStyle}"
                         MouseDoubleClick="SelectionChanged"
-                        Grid.Row="3"/>
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
             <Label Visibility="{Binding Deck.HasArtifacts, Converter={StaticResource BoolToVis}}">Artifacts :</Label>
             <ListView ItemsSource="{Binding Deck.deck_Artifacts}"
                         ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
@@ -144,7 +149,8 @@
                         ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
                         Style="{StaticResource OpenedDeckEntryListStyle}"
                         MouseDoubleClick="SelectionChanged"
-                        Grid.Row="3"/>
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
             <Label Visibility="{Binding Deck.HasOther, Converter={StaticResource BoolToVis}}">Others :</Label>
             <ListView ItemsSource="{Binding Deck.deck_Other}"
                         ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
@@ -152,7 +158,8 @@
                         ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
                         Style="{StaticResource OpenedDeckEntryListStyle}"
                         MouseDoubleClick="SelectionChanged"
-                        Grid.Row="3"/>
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
 
             <Label Visibility="{Binding Deck.HasLands, Converter={StaticResource BoolToVis}}">Lands :</Label>
             <ListView ItemsSource="{Binding Deck.deck_BasicLands}"
@@ -161,21 +168,24 @@
                         ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
                         Style="{StaticResource OpenedDeckEntryListStyle}"
                         MouseDoubleClick="SelectionChanged"
-                        Grid.Row="3"/>
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
             <ListView ItemsSource="{Binding Deck.deck_SpecialLands}"
                         ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
                         ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
                         ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
                         Style="{StaticResource OpenedDeckEntryListStyle}"
                         MouseDoubleClick="SelectionChanged"
-                        Grid.Row="3"/>
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
 
             <Label Visibility="{Binding Deck.HasSide, Converter={StaticResource BoolToVis}}">Side :</Label>
             <ListView ItemsSource="{Binding Deck.entries_Side}"
                         ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
                         ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
                         Style="{StaticResource OpenedDeckEntryListStyle}"
-                        MouseDoubleClick="SelectionChanged">
+                        MouseDoubleClick="SelectionChanged"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown">
 
                 <ListView.ContextMenu>
                     <ContextMenu>

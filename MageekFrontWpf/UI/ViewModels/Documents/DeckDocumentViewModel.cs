@@ -12,7 +12,8 @@ using MageekFrontWpf.Framework.AppValues;
 namespace MageekFrontWpf.UI.ViewModels
 {
 
-    public partial class DeckDocumentViewModel : BaseViewModel
+    public partial class DeckDocumentViewModel : BaseViewModel, 
+        IRecipient<AddCardToDeckMessage>
     {
 
         private MageekService mageek;
@@ -20,6 +21,7 @@ namespace MageekFrontWpf.UI.ViewModels
         public DeckDocumentViewModel(MageekService mageek)
         {
             this.mageek = mageek;
+            WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
         [ObservableProperty] OpenedDeck deck;
@@ -39,6 +41,15 @@ namespace MageekFrontWpf.UI.ViewModels
 
         #region Manipulate Deck
 
+        public void Receive(AddCardToDeckMessage message)
+        {
+            if ( Deck.Header.DeckId == message.Value.Item1)
+            {
+                Deck.AddCard(message.Value.Item2).ConfigureAwait(false);
+                OnPropertyChanged(nameof(Deck));
+            }
+        }
+
         [RelayCommand]
         public async Task SaveDeck()
         {
@@ -50,23 +61,14 @@ namespace MageekFrontWpf.UI.ViewModels
         [RelayCommand]
         public async Task LessCard(OpenedDeckEntry entry)
         {
-            entry.Line.Quantity--;
-            if (entry.Line.Quantity < 0)
-            {
-                entry.Line.Quantity = 0; 
-            }
-            else
-            {
-                Deck.Header.CardCount--;
-            }
+            Deck.LessCards(entry);
             OnPropertyChanged(nameof(Deck));
         }
 
         [RelayCommand]
         public async Task MoreCard(OpenedDeckEntry entry)
         {
-            entry.Line.Quantity++;
-            Deck.Header.CardCount++;
+            Deck.MoreCard(entry);
             OnPropertyChanged(nameof(Deck));
         }
 

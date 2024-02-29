@@ -46,7 +46,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         {
             await DoSearch();
         }
-
+        
         [RelayCommand] private void AdvancedSearch()
         {
             AdvancedMode = !AdvancedMode;

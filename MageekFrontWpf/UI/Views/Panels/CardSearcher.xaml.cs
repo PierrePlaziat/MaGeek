@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Data;
 using MageekFrontWpf.Framework.AppValues;
+using System.Windows.Media;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {
@@ -57,6 +58,36 @@ namespace MageekFrontWpf.UI.Views.AppPanels
         //    }
         //    App.Events.RaiseUpdateDeck();
         //}
+
+        private void CardGrid_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var DragSource = (DataGrid)sender;
+            if (DragSource == null) return;
+
+            object data = GetDataFromListBox(DragSource, e.GetPosition(DragSource));
+            if (data != null)
+                DragDrop.DoDragDrop(DragSource, data, DragDropEffects.Move);
+        }
+
+        private static object GetDataFromListBox(DataGrid source, Point point)
+        {
+            if (source.InputHitTest(point) is UIElement element)
+            {
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
+                    element = VisualTreeHelper.GetParent(element) as UIElement;
+
+                    if (element == source)
+                        return null;
+
+                    if (data != DependencyProperty.UnsetValue)
+                        return ((SearchedCards)data).Card.Uuid;
+                }
+            }
+            return null;
+        }
 
     }
 

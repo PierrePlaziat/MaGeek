@@ -46,11 +46,11 @@
                 </Style>
             </ListView.ItemContainerStyle>
 
-            <ListView.ItemTemplate >
+            <ListView.ItemTemplate>
 
                 <DataTemplate>
 
-                    <Grid Background="#000">
+                    <Grid Background="#000" Drop="Grid_Drop" AllowDrop="True">
                         
                         <Grid.ColumnDefinitions>
                             <!--<ColumnDefinition Width="100"></ColumnDefinition>-->

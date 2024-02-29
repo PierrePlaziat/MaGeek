@@ -179,7 +179,8 @@
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding Variants}"
                   MouseDoubleClick="DataGrid_MouseDoubleClick"
-                  SelectionMode="Single">
+                  SelectionMode="Single"
+                  PreviewMouseLeftButtonDown="CardGrid_PreviewMouseLeftButtonDown">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="| Got   "

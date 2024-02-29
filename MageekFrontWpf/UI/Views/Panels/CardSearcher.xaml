@@ -155,7 +155,33 @@
                       RowHeaderWidth="0"
                       RowHeight="20"
                       MouseDoubleClick="CardGrid_MouseDoubleClick"
-                      AutoGenerateColumns="False">
+                      AutoGenerateColumns="False"
+                      
+                      PreviewMouseLeftButtonDown="CardGrid_PreviewMouseLeftButtonDown">
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}" >
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RowEffect}" Value="1">
+                                <Setter Property="BorderBrush" Value="Blue" />
+                                <Setter Property="BorderThickness" Value="0,2,0,0" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding RowEffect}" Value="2">
+                                <Setter Property="BorderBrush" Value="Blue" />
+                                <Setter Property="BorderThickness" Value="0,0,0,2" />
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="LightGray" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="LightGray" />
+                            </Trigger>
+                            <Trigger Property="IsNewItem" Value="True">
+                                <Setter Property="Margin" Value="{Binding NewItemMargin, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="| Got   "
@@ -193,13 +219,13 @@
                     </Style>
                 </DataGrid.Resources>
 
-                <DataGrid.ContextMenu>
+                <!--<DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="To deck"
                                   Command="{Binding AddToDeckCommand}" 
                                   CommandParameter="{Binding}"/>
                     </ContextMenu>
-                </DataGrid.ContextMenu>
+                </DataGrid.ContextMenu>-->
 
             </DataGrid>
 
