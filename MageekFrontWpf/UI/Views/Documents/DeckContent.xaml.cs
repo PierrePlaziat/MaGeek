@@ -10,11 +10,11 @@ namespace MageekFrontWpf.UI.Views.AppPanels
     public partial class DeckContent : BaseUserControl
     {
 
-        private DeckDocumentViewModel vm;
+        private DocumentViewModel vm;
 
         public DeckContent() {}
         
-        public void SetDataContext(DeckDocumentViewModel vm)
+        public void SetDataContext(DocumentViewModel vm)
         {
             this.vm = vm;
             DataContext = vm;

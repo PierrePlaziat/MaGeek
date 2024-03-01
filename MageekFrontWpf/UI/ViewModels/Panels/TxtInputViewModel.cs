@@ -30,8 +30,8 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         private async Task LaunchImportation(string content)
         {
             List<DeckCard> importLines = await mageek.ParseCardList(content);
-            OpenedDeck deck = new OpenedDeck(mageek);
-            await deck.Initialize(importLines);
+            ManipulableDeck deck = new OpenedDeck(mageek);
+            await deck.OpenDeck(importLines);
             Framework.AppValues.DocumentArguments doc = new Framework.AppValues.DocumentArguments(import: importLines);
             win.OpenDoc(doc);
         }

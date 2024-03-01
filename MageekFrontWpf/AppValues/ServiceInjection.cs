@@ -32,16 +32,9 @@ namespace MageekFrontWpf.Framework.AppValues
             services.AddSingleton<CollectionDbManager>();
             services.AddSingleton<MtgDbManager>();
             services.AddSingleton<MageekService>();
+            services.AddSingleton<DeckManipulator>();
             return services;
         }
-        
-        //public static ServiceCollection AddMageekClient(this ServiceCollection services)
-        //{
-        //}
-        
-        //public static ServiceCollection AddMageekServer(this ServiceCollection services)
-        //{
-        //}
         
         public static ServiceCollection AddAppElements(this ServiceCollection services)
         {
@@ -60,14 +53,15 @@ namespace MageekFrontWpf.Framework.AppValues
             services.AddSingleton<CollecEstimation>();
             services.AddSingleton<TxtInput>();
             // Documents
-            services.AddTransient<IDocument,DeckDocument>();
+            services.AddTransient<IDocument,Document>();
+            services.AddTransient<ManipulableDeck>();
 
             // ViewModels //
 
             // Windows
             services.AddSingleton<WelcomeWindowViewModel>();
             services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<PrintViewModel>();
+            services.AddSingleton<PrintWindowViewModel>();
             // Tools
             services.AddSingleton<CardInspectorViewModel>();
             services.AddSingleton<CardSearcherViewModel>();
@@ -77,7 +71,7 @@ namespace MageekFrontWpf.Framework.AppValues
             services.AddSingleton<CollecEstimationViewModel>();
             services.AddSingleton<TxtInputViewModel>();
             // Documents
-            services.AddTransient<DeckDocumentViewModel>();
+            services.AddTransient<DocumentViewModel>();
             // Top menu
             services.AddSingleton<TopMenuViewModel>();
 

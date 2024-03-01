@@ -37,7 +37,7 @@ namespace MageekFrontWpf.Framework.AppValues
             {
                 new AppWindow() { id = AppWindowEnum.Main, vm = ServiceHelper.GetService<MainWindowViewModel>(), window = ServiceHelper.GetService<MainWindow>() },
                 new AppWindow() { id = AppWindowEnum.Welcome, vm = ServiceHelper.GetService<WelcomeWindowViewModel>(), window = ServiceHelper.GetService<WelcomeWindow>() },
-                new AppWindow() { id = AppWindowEnum.Print, vm = ServiceHelper.GetService<PrintViewModel>(), window = ServiceHelper.GetService<PrintWindow>() },
+                new AppWindow() { id = AppWindowEnum.Print, vm = ServiceHelper.GetService<PrintWindowViewModel>(), window = ServiceHelper.GetService<PrintWindow>() },
             };
             Logger.Log("Done");
             return wins;

@@ -10,12 +10,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
-    public partial class PrintViewModel : ObservableViewModel
+    public partial class PrintWindowViewModel : ObservableViewModel
     {
 
         private MageekCore.MageekService mageek;
 
-        public PrintViewModel(MageekCore.MageekService mageek)
+        public PrintWindowViewModel(MageekCore.MageekService mageek)
         {
             this.mageek = mageek;
         }

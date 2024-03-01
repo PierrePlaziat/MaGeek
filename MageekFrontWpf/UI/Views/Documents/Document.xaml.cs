@@ -2,41 +2,42 @@
 using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels;
-using System.Windows.Controls;
 using System;
 
 namespace MageekFrontWpf.UI.Views
 {
 
-    public partial class DeckDocument : BaseUserControl, IDocument
+    public partial class Document : BaseUserControl, IDocument
     {
 
-        private DeckDocumentViewModel vm;
+        private DocumentViewModel vm;
 
-        public DeckDocument(DeckDocumentViewModel vm)
+        public Document(DocumentViewModel vm)
         {
             this.vm = vm;
             DataContext = vm;
             InitializeComponent();
         }
 
-        public void OpenDocument(Framework.BaseMvvm.AbstractDocumentArguments args)
+        public void OpenDocument(AbstractDocumentArguments args)
         {
             DeckContentPanel.SetDataContext(vm);
             DeckStatsPanel.SetDataContext(vm);
             DeckTablePanel.SetDataContext(vm);
-            vm.Initialize((Framework.AppValues.DocumentArguments)args).ConfigureAwait(false);
+            vm.OpenDocument((DocumentArguments)args).ConfigureAwait(false);
         }
 
-        private void Grid_Drop(object sender, System.Windows.DragEventArgs e)
+        private void DropCard(object sender, System.Windows.DragEventArgs e)
         {
-            Grid item = (Grid)sender;
-            var data = e.Data.GetData(typeof(string)) as string;
+            string cardUuid = e.Data.GetData(typeof(string)) as string;
             string deckId = vm.Deck.Header.DeckId;
             WeakReferenceMessenger.Default.Send(
-                new AddCardToDeckMessage(new Tuple<string, string>(deckId, data))
+                new AddCardToDeckMessage(
+                    new Tuple<string, string>(deckId, cardUuid)
+                )
             );
         }
+
     }
 
 }

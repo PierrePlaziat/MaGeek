@@ -8,7 +8,7 @@ namespace MageekFrontWpf.UI.Views.AppWindows
     public partial class PrintWindow : BaseWindow, INotifyPropertyChanged
     {
 
-        public PrintWindow(PrintViewModel vm)
+        public PrintWindow(PrintWindowViewModel vm)
         {
             DataContext = vm;
             InitializeComponent();
