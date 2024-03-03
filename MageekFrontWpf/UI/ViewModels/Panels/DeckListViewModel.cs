@@ -16,7 +16,8 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
 
     public partial class DeckListViewModel : ObservableViewModel, 
-        IRecipient<UpdateDeckListMessage>
+        IRecipient<UpdateDeckListMessage>,
+        IRecipient<LaunchAppMessage>
     {
 
         private WindowsService wins;
@@ -35,12 +36,16 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             this.config = config;
             this.dialog = dialog;
             WeakReferenceMessenger.Default.RegisterAll(this);
-            Reload().ConfigureAwait(false);
         }
 
         [ObservableProperty] private IEnumerable<Deck> decks;
         [ObservableProperty] private string filterString = "";
         [ObservableProperty] private bool isLoading = false;
+
+        public void Receive(LaunchAppMessage message)
+        {
+            Reload().ConfigureAwait(false);
+        }
 
         public void Receive(UpdateDeckListMessage message)
         {

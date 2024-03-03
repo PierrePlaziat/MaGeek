@@ -7,12 +7,13 @@ using MageekCore.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MageekCore;
-using System;
 using MageekFrontWpf.Framework.AppValues;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
-    public partial class CardSearcherViewModel : ObservableViewModel
+    public partial class CardSearcherViewModel : ObservableViewModel,
+        IRecipient<LaunchAppMessage>
     {
 
         private SettingService config;
@@ -24,6 +25,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         ){
             this.mageek = mageek;
             this.config = config;
+            WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
         [ObservableProperty] private bool colorIsOr;
@@ -41,6 +43,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] private bool onlyGot = false;
         [ObservableProperty] private int currentPage = 0;
         [ObservableProperty] private int nbResulsts = 200;
+
+        public void Receive(LaunchAppMessage message)
+        {
+            FilterName = "Edgar";
+            DoSearch().ConfigureAwait(false);
+        }
 
         [RelayCommand] private async Task Search()
         {
@@ -100,6 +108,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                 OnPropertyChanged(nameof(Historic));
             }
         }
+
     }
 
 }

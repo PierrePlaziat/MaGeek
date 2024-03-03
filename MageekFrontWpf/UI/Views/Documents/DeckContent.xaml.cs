@@ -1,4 +1,5 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.MageekTools.DeckTools;
 using MageekFrontWpf.UI.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,34 +29,34 @@ namespace MageekFrontWpf.UI.Views.AppPanels
 
         private void ButtonLess_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            OpenedDeckEntry entry = ((OpenedDeckEntry)((Button)sender).CommandParameter);
+            ManipulableDeckEntry entry = ((ManipulableDeckEntry)((Button)sender).CommandParameter);
             vm.LessCard(entry).ConfigureAwait(false);
         }
 
         private void ButtonMore_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            OpenedDeckEntry entry = ((OpenedDeckEntry)((Button)sender).CommandParameter);
+            ManipulableDeckEntry entry = ((ManipulableDeckEntry)((Button)sender).CommandParameter);
             vm.MoreCard(entry).ConfigureAwait(false);
         }
 
         private void SetCommandant(object sender, System.Windows.RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
-            OpenedDeckEntry entry = (OpenedDeckEntry)item.CommandParameter;
+            ManipulableDeckEntry entry = (ManipulableDeckEntry)item.CommandParameter;
             vm.ToCommandant(entry);
         }
 
         private void ToSide(object sender, System.Windows.RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
-            OpenedDeckEntry entry = (OpenedDeckEntry)item.CommandParameter;
+            ManipulableDeckEntry entry = (ManipulableDeckEntry)item.CommandParameter;
             vm.ToSide(entry);
         }
 
         private void ToDeck(object sender, System.Windows.RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
-            OpenedDeckEntry entry = (OpenedDeckEntry)item.CommandParameter;
+            ManipulableDeckEntry entry = (ManipulableDeckEntry)item.CommandParameter;
             vm.ToDeck(entry);
         }
 
@@ -88,7 +89,7 @@ namespace MageekFrontWpf.UI.Views.AppPanels
                         return null;
 
                     if (data != DependencyProperty.UnsetValue)
-                        return ((OpenedDeckEntry)data).Card.Uuid;
+                        return ((ManipulableDeckEntry)data).Card.Uuid;
                 }
             }
             return null;

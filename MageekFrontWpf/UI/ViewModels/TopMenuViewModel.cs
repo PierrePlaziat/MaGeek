@@ -18,13 +18,13 @@ namespace MageekFrontWpf.UI.ViewModels
             this.conf = config;
         }
 
-        [RelayCommand]
-        private void OpenWindow(string window)
-        {
-            bool success = Enum.TryParse(window, out AppWindowEnum value);
-            if (!success) return;
-            win.OpenWindow(value);
-        }
+        //[RelayCommand]
+        //private void OpenWindow(string window)
+        //{
+        //    bool success = Enum.TryParse(window, out AppWindowEnum value);
+        //    if (!success) return;
+        //    win.OpenWindow(value);
+        //}
 
         [RelayCommand]
         private void OpenTool(string panel)

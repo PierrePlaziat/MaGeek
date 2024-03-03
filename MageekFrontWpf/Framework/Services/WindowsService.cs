@@ -10,6 +10,7 @@ using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.Views.AppWindows;
 using MageekCore.Data;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace MageekFrontWpf.Framework.Services
 {
@@ -21,30 +22,24 @@ namespace MageekFrontWpf.Framework.Services
         private List<AppTool> tools = new();
         private DockingManager dockingManager;
 
-        internal void LaunchApp()
+        internal void Startup()
         {
-            Logger.Log("Start");
-            // Init folders
             Folders.InitializeClientFolders();
-            // Load app elements
             windows = AppElements.LoadWindows();
             tools = AppElements.LoadTools();
-            // Retrieve docking manager
-            dockingManager = 
-                ((MainWindow) windows
-                    .Where(x => x.id == AppWindowEnum.Main)
-                    .FirstOrDefault()
-                    .window)
-                .DockingManager;
-            // Show welcome win
-            windows.Where(x => x.id == AppWindowEnum.Welcome)
-                .FirstOrDefault()
-                .window
-                .Show();
-            Logger.Log("Done");
+            dockingManager = RetrieveDockingManager();
+            OpenWindow(AppWindowEnum.Welcome);
         }
 
-        public void OpenWindow(AppWindowEnum win)
+        internal void LaunchApp()
+        {
+            CloseWindow(AppWindowEnum.Welcome);
+            OpenWindow(AppWindowEnum.Main);
+            LoadLayout("Default");
+            WeakReferenceMessenger.Default.Send(new LaunchAppMessage(""));
+        }
+
+        private void OpenWindow(AppWindowEnum win)
         {
             Logger.Log(win.ToString());
             try
@@ -55,7 +50,7 @@ namespace MageekFrontWpf.Framework.Services
             catch (Exception e) { Logger.Log(e); }
         }
 
-        public void CloseWindow(AppWindowEnum win)
+        private void CloseWindow(AppWindowEnum win)
         {
             Logger.Log(win.ToString());
             try
@@ -65,6 +60,8 @@ namespace MageekFrontWpf.Framework.Services
             }
             catch (Exception e) { Logger.Log(e); }
         }
+
+        #region Docking system
 
         public void OpenTool(AppToolsEnum tool)
         {
@@ -184,10 +181,21 @@ namespace MageekFrontWpf.Framework.Services
             catch (Exception e) { Logger.Log(e); }
         }
 
+        private DockingManager RetrieveDockingManager()
+        {
+            return ((MainWindow)windows
+                    .Where(x => x.id == AppWindowEnum.Main)
+                    .FirstOrDefault()
+                    .window)
+                .DockingManager;
+        }
+
         private string GetLayoutPath(string layoutName)
         {
             return Folders.LayoutFolder + "\\" + layoutName + ".avalonXml";
         }
+
+        #endregion
 
     }
 

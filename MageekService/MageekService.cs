@@ -13,6 +13,7 @@ using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 using PlaziatTools;
 using MageekCore.Data;
+using Newtonsoft.Json.Linq;
 
 namespace MageekCore
 {
@@ -21,6 +22,9 @@ namespace MageekCore
     {
 
         #region CTOR
+
+        const string Url_MtgjsonPrecos = "https://mtgjson.com/api/v5/AllDeckFiles.zip";
+        const string Url_MtgjsonPrices = "https://mtgjson.com/api/v5/AllPricesToday.json";
 
         private readonly MtgDbManager mtg;
         private readonly CollectionDbManager collec;
@@ -31,6 +35,7 @@ namespace MageekCore
         ){
             this.mtg = mtg;
             this.collec = collec;
+            Initialize().ConfigureAwait(true);
         }
 
         public async Task<MageekInitReturn> Initialize()
@@ -57,7 +62,6 @@ namespace MageekCore
             try
             {
                 await mtg.DatabaseDownload();
-                await mtg.RetrievePrecos();
                 mtg.HashSave();
             }
             catch (Exception e)
@@ -76,6 +80,101 @@ namespace MageekCore
             }
             Logger.Log("Done");
             return MageekUpdateReturn.Success;
+        }
+
+        public async Task RetrievePrecos()
+        {
+            string tmpPath = Path.Combine(Folders.PrecosFolder, "temp");
+            if (!Directory.Exists(tmpPath)) Directory.CreateDirectory(tmpPath);
+            string zipPath = Path.Combine(tmpPath, "precos.zip");
+            Logger.Log("Downloading...");
+            using (var client = new HttpClient())
+            using (var precosZip = await client.GetStreamAsync(Url_MtgjsonPrecos))
+            {
+                using var fs_PrecosZip = new FileStream(zipPath, FileMode.Create);
+                await precosZip.CopyToAsync(fs_PrecosZip);
+            }
+            Logger.Log("Uncompressing...");
+            System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, tmpPath, overwriteFiles: true);
+            Logger.Log("Parsing...");
+            await ParsePrecos(tmpPath, Folders.PrecosFolder);
+            Logger.Log("Cleaning");
+            Directory.Delete(tmpPath, true);
+            Logger.Log("Done");
+        }
+
+        private async Task ParsePrecos(string tmpPath, string precosFolder)
+        {
+            // READ
+            List<Preco> list = new List<Preco>();
+            foreach (string precoPath in Directory.GetFiles(tmpPath))
+            {
+                try
+                {
+                    list.Add(await ParsePreco(precoPath));
+                }
+                catch (Exception e) { Logger.Log(e); }
+            }
+            // WRITE
+            Console.WriteLine(DateTime.Now);
+            var options = new JsonSerializerOptions { IncludeFields = true };
+            string jsonString = JsonSerializer.Serialize(list, options);
+            File.WriteAllText(Path.Combine(Folders.PrecosFolder, "precos.json"), jsonString);
+
+        }
+
+        private async Task<Preco> ParsePreco(string precoPath)
+        {
+            using StreamReader reader = new(precoPath);
+            string jsonString = await reader.ReadToEndAsync();
+            dynamic dynData = JObject.Parse(jsonString);
+
+            string code = dynData.data.code;
+            string name = dynData.data.name;
+            string releaseDate = dynData.data.releaseDate;
+            string type = dynData.data.type;
+
+            List<Tuple<string, int>> CommanderCardUuids = new List<Tuple<string, int>>();
+            foreach (dynamic card in dynData.data.commander)
+            {
+                string uuid = card.uuid;
+                int quantity = card.count;
+                CommanderCardUuids.Add(new Tuple<string, int>(uuid, quantity));
+            }
+
+            List<Tuple<string, int>> mainCardUuids = new List<Tuple<string, int>>();
+            foreach (dynamic card in dynData.data.mainBoard)
+            {
+                string uuid = card.uuid;
+                int quantity = card.count;
+                mainCardUuids.Add(new Tuple<string, int>(uuid, quantity));
+            }
+
+            List<Tuple<string, int>> sideCardUuids = new List<Tuple<string, int>>();
+            foreach (dynamic card in dynData.data.sideBoard)
+            {
+                string uuid = card.uuid;
+                int quantity = card.count;
+                sideCardUuids.Add(new Tuple<string, int>(uuid, quantity));
+            }
+
+            return new Preco()
+            {
+                Title = name,
+                Code = code,
+                ReleaseDate = releaseDate,
+                Kind = type,
+                CommanderCardUuids = CommanderCardUuids,
+                MainCardUuids = mainCardUuids,
+                SideCardUuids = sideCardUuids
+            };
+
+        }
+
+        public async Task<List<Preco>> GetPrecos()
+        {
+            string data = File.ReadAllText(Path.Combine(Folders.PrecosFolder, "precos.json"));
+            return JsonSerializer.Deserialize<List<Preco>>(data, new JsonSerializerOptions { IncludeFields = true });
         }
 
         #endregion
@@ -881,11 +980,6 @@ namespace MageekCore
 
         #region Decks
 
-        public List<Preco> GetPrecos()
-        {
-            string data = File.ReadAllText(Path.Combine(Folders.PrecosFolder, "precos.json"));
-            return JsonSerializer.Deserialize<List<Preco>>(data, new JsonSerializerOptions { IncludeFields = true });
-        }
         /// <summary>
         /// Get decks registered
         /// </summary>

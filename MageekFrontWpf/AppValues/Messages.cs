@@ -4,6 +4,11 @@ using System;
 namespace MageekFrontWpf.Framework.AppValues
 {
 
+    public class LaunchAppMessage : ValueChangedMessage<string>
+    {
+        public LaunchAppMessage(string _) : base(_) { }
+    }
+    
     public class CardSelectedMessage : ValueChangedMessage<string>
     {
         public CardSelectedMessage(string uuid) : base(uuid) { }

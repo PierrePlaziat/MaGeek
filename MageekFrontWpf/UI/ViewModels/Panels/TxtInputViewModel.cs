@@ -7,6 +7,7 @@ using MageekCore;
 using MageekCore.Data.Collection.Entities;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.Framework.AppValues;
+using MageekFrontWpf.MageekTools.DeckTools;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -30,9 +31,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         private async Task LaunchImportation(string content)
         {
             List<DeckCard> importLines = await mageek.ParseCardList(content);
-            ManipulableDeck deck = new OpenedDeck(mageek);
+            ManipulableDeck deck = ServiceHelper.GetService<ManipulableDeck>();
             await deck.OpenDeck(importLines);
-            Framework.AppValues.DocumentArguments doc = new Framework.AppValues.DocumentArguments(import: importLines);
+            DocumentArguments doc = new DocumentArguments(import: importLines);
             win.OpenDoc(doc);
         }
 

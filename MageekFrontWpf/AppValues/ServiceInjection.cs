@@ -1,17 +1,18 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MageekCore;
+using MageekCore.Data;
+using MageekCore.Data.Mtg;
+using MageekCore.Data.Collection;
 using MageekFrontWpf.UI.ViewModels.AppWindows;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekFrontWpf.UI.Views.AppWindows;
 using MageekFrontWpf.UI.Views.AppPanels;
 using MageekFrontWpf.UI.ViewModels;
-using MageekCore.Data.Collection;
-using MageekCore.Data.Mtg;
 using MageekFrontWpf.UI.Views;
 using MageekFrontWpf.UI.ViewModels.Windows;
 using MageekFrontWpf.Framework.Services;
-using MageekCore.Data;
 using MageekFrontWpf.Framework.BaseMvvm;
+using MageekFrontWpf.MageekTools.DeckTools;
 
 namespace MageekFrontWpf.Framework.AppValues
 {

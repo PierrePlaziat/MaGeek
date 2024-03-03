@@ -8,11 +8,21 @@
              mc:Ignorable="d" 
              d:DesignHeight="25" d:DesignWidth="100" >
 
-    <svg:SvgViewbox Name="svgViewBox"
-                    Grid.Column="2"
-                    Margin="5"
-                    Grid.RowSpan="2"
-                    Width="15"
-                    Height="15" />
+    <Grid Margin="5">
+        <Border Name="BG"
+                Background="{Binding Rarity}"
+                Margin="0" Padding="0">
+
+            <Border.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius"
+                            Value="20" />
+                </Style>
+            </Border.Resources>
+
+        </Border>
+        <svg:SvgViewbox Name="svgViewBox"
+                        Margin="5" />
+    </Grid>
 
 </UserControl>

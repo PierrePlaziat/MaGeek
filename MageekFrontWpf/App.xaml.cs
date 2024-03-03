@@ -20,7 +20,7 @@ namespace MageekFrontWpf
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            ServiceHelper.GetService<WindowsService>().LaunchApp();
+            ServiceHelper.GetService<WindowsService>().Startup();
         }
 
     }

@@ -11,7 +11,8 @@ using MageekFrontWpf.Framework.AppValues;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
-    public partial class SetListViewModel : ObservableViewModel
+    public partial class SetListViewModel : ObservableViewModel,
+        IRecipient<LaunchAppMessage>
     {
 
         private MageekCore.MageekService mageek;
@@ -19,7 +20,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public SetListViewModel(MageekCore.MageekService mageek)
         {
             this.mageek = mageek;
-            Reload().ConfigureAwait(false);
+            WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
         [ObservableProperty] List<Sets> setList = new();
@@ -28,6 +29,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] List<string> blocks = new();
         [ObservableProperty] string filterBlock = "All blocks";
         [ObservableProperty] List<Cards> variants = new();
+
+        public void Receive(LaunchAppMessage message)
+        {
+            Reload().ConfigureAwait(false);
+        }
 
         [RelayCommand]
         public async Task Reload()
@@ -46,16 +52,6 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         {
             WeakReferenceMessenger.Default.Send(new CardSelectedMessage(c.Uuid));
         }
-
-
-        //private async void AddToDeck(object sender, RoutedEventArgs e)
-        //{
-        //    foreach (Cards c in CardGrid.SelectedItems)
-        //    {
-        //        await MageekService.MageekService.AddCardToDeck(c.Uuid, state.SelectedDeck, 1);
-        //    }
-        //    events.RaiseUpdateDeck();
-        //}
 
     }
 }

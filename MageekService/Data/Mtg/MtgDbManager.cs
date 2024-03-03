@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using PlaziatTools;
-using System.Text.Json;
+﻿using PlaziatTools;
 
 namespace MageekCore.Data.Mtg
 {
@@ -15,8 +13,6 @@ namespace MageekCore.Data.Mtg
 
         const string Url_MtgjsonHash = "https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256";
         const string Url_MtgjsonData ="https://mtgjson.com/api/v5/AllPrintings.sqlite";
-        const string Url_MtgjsonPrecos ="https://mtgjson.com/api/v5/AllDeckFiles.zip";
-        const string Url_MtgjsonPrices = "https://mtgjson.com/api/v5/AllPricesToday.json";
 
         public MtgDbManager()
         {
@@ -120,95 +116,6 @@ namespace MageekCore.Data.Mtg
             }
         }
 
-        public async Task RetrievePrecos()
-        {
-            string tmpPath = Path.Combine(Folders.PrecosFolder,"temp");
-            if (!Directory.Exists(tmpPath)) Directory.CreateDirectory(tmpPath);
-            string zipPath = Path.Combine(tmpPath, "precos.zip");
-            Logger.Log("Downloading...");
-            using (var client = new HttpClient())
-            using (var precosZip = await client.GetStreamAsync(Url_MtgjsonPrecos))
-            {
-                using var fs_PrecosZip = new FileStream(zipPath, FileMode.Create);
-                await precosZip.CopyToAsync(fs_PrecosZip);
-            }
-            Logger.Log("Uncompressing...");
-            System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, tmpPath, overwriteFiles: true);
-            Logger.Log("Parsing...");
-            await ParsePrecos(tmpPath, Folders.PrecosFolder);
-            Logger.Log("Cleaning");
-            Directory.Delete(tmpPath, true);
-            Logger.Log("Done");
-        }
-
-        public async Task ParsePrecos(string tmpPath, string precosFolder)
-        {
-            // READ
-            List<Preco> list = new List<Preco>();
-            foreach (string precoPath in Directory.GetFiles(tmpPath))
-            {
-                try
-                {
-                    list.Add(await ParsePreco(precoPath));
-                }
-                catch (Exception e) { Logger.Log(e); }
-            }
-            // WRITE
-            Console.WriteLine(DateTime.Now);
-            var options = new JsonSerializerOptions { IncludeFields=true};
-            string jsonString = JsonSerializer.Serialize(list, options);
-            File.WriteAllText(Path.Combine(Folders.PrecosFolder, "precos.json"), jsonString);
-
-        }
-
-        private async Task<Preco> ParsePreco(string precoPath)
-        {
-            using StreamReader reader = new(precoPath);
-            string jsonString = await reader.ReadToEndAsync();
-            dynamic dynData = JObject.Parse(jsonString);
-
-            string code = dynData.data.code;
-            string name = dynData.data.name;
-            string releaseDate = dynData.data.releaseDate;
-            string type = dynData.data.type;
-
-            List<Tuple<string, int>> CommanderCardUuids = new List<Tuple<string, int>>();
-            foreach(dynamic card in dynData.data.commander)
-            {
-                string uuid = card.uuid;
-                int quantity = card.count;
-                CommanderCardUuids.Add(new Tuple<string,int>(uuid, quantity));
-            }
-            
-            List<Tuple<string, int>> mainCardUuids = new List<Tuple<string, int>>();
-            foreach(dynamic card in dynData.data.mainBoard)
-            {
-                string uuid = card.uuid;
-                int quantity = card.count;
-                mainCardUuids.Add(new Tuple<string, int>(uuid, quantity));
-            }
-
-            List<Tuple<string, int>> sideCardUuids = new List<Tuple<string, int>>();
-            foreach (dynamic card in dynData.data.sideBoard)
-            {
-                string uuid = card.uuid;
-                int quantity = card.count;
-                sideCardUuids.Add(new Tuple<string, int>(uuid, quantity));
-            }
-
-            return new Preco()
-            {
-                Title = name,
-                Code = code,
-                ReleaseDate = releaseDate,
-                Kind = type,
-                CommanderCardUuids = CommanderCardUuids,
-                MainCardUuids = mainCardUuids,
-                SideCardUuids = sideCardUuids
-            };
-
-        }
-    
     }
 
 }

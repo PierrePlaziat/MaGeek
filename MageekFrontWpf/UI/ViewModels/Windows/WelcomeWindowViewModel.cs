@@ -4,9 +4,6 @@ using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekCore.Data;
 using System.Threading.Tasks;
-using System;
-using PlaziatTools;
-using MageekFrontWpf.Framework.AppValues;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -70,6 +67,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             switch (retour)
             {
                 case MageekUpdateReturn.Success:
+                    await mageek.RetrievePrecos();
                     CanLaunch = true;
                     UpdateAvailable = false;
                     Message = "Updated";
@@ -92,13 +90,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         public void Launch()
         {
             IsLoading = true;
-            winManager.CloseWindow(AppWindowEnum.Welcome);
-            winManager.OpenWindow(AppWindowEnum.Main);
-            try
-            {
-                winManager.LoadLayout("Default");
-            }
-            catch (Exception e) { Logger.Log(e); }
+            winManager.LaunchApp();
         }
 
     }

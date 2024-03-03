@@ -16,8 +16,8 @@ if (v != MageekInitReturn.Error)
 
     Console.WriteLine("Test precos");
 
-    //await mtg.RetrievePrecos();
-    await mtg.ParsePrecos(Path.Combine(Folders.PrecosFolder, "temp"), Folders.PrecosFolder);
+    //await mageek.RetrievePrecos();
+    //await mageek.ParsePrecos(Path.Combine(Folders.PrecosFolder, "temp"), Folders.PrecosFolder);
 
     Console.WriteLine("Done");
 

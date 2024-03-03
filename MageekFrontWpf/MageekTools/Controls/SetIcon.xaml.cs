@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using MageekCore.Data;
@@ -34,11 +36,11 @@ namespace MaGeek.UI.Controls
         {
             var control = (SetIcon)_control;
             if (eventArgs.NewValue != null)
-                control.UpdateIcon();
+                control.UpdateIcon((string)eventArgs.NewValue);
         }
 
         #endregion
-        
+
         #region RarityColor
 
         private string rarity;
@@ -57,9 +59,10 @@ namespace MaGeek.UI.Controls
 
         private static void OnRarityColorChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs)
         {
+
             var control = (SetIcon)_control;
             if (eventArgs.NewValue != null)
-                control.UpdateIcon();
+                control.UpdateRarity((string)eventArgs.NewValue);
         }
 
         #endregion
@@ -71,40 +74,34 @@ namespace MaGeek.UI.Controls
             InitializeComponent();
         }
 
-        private void UpdateIcon()
+        private void UpdateIcon(string code)
         {
-            svgViewBox.SvgSource = GetSvgContent(GetSvgPath(), GetColor());
+            svgViewBox.Source = GetSvgPath(code);
         }
 
-        private string GetSvgContent(string path, string color)
+        private void UpdateRarity(string newValue)
         {
-            XElement root = XElement.Load(path);
-            var colors = root.XPathSelectElements("//*[@fill]");
-            foreach (XElement node in colors)
-                node.Attribute("fill").Value = color;
-            return root.Value;
+            Rarity = newValue;
+            BG.Background = GetColor(newValue);
         }
 
-        private string GetSvgPath()
+        private Uri GetSvgPath(string code)
         {
-            string s = Path.Combine(Folders.SetIcon, SetCode + "_.svg");
-            if (File.Exists(s)) return s;
-            else return "wut.svg";
+            string s = Path.Combine(Folders.SetIcon, code + "_.svg");
+            if (File.Exists(s)) return new Uri(s);
+            else return null;
         }
 
-        private string GetColor()
+        private Brush GetColor(string Rarity)
         {
-            return
-                "#777777";
-            //TODO fine tune
             return Rarity switch
             {
-                "common" => "#ffffff",
-                "uncommon" => "#777777",
-                "rare" => "#123456",
-                "mythic" => "#654321",
-                "bonus" => "#765183",
-                _ => "#461857",
+                "common" => Brushes.AliceBlue,
+                "uncommon" => Brushes.DimGray,
+                "rare" => Brushes.Gold,
+                "mythic" => Brushes.DarkOrange,
+                "bonus" => Brushes.MediumPurple,
+                _ => Brushes.MediumOrchid,
             };
         }
 
