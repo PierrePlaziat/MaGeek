@@ -172,11 +172,10 @@
 
                             <controls:SetIcon SetCode="{Binding Set.Code}"
                                               Rarity="{Binding Card.Rarity}"
-                                              Grid.Column="2"
-                                              Margin="5"
+                                              Grid.Column="2" 
                                               Grid.RowSpan="2"
-                                              Width="15"
-                                              Height="15" />
+                                              Width="24"
+                                              Height="24" />
 
                             <Label Grid.Column="3" Content="{Binding Set.Name}" />
 

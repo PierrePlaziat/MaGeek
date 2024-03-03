@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="25" d:DesignWidth="100" >
 
-    <Grid Margin="5">
+    <Grid Margin="0">
         <Border Name="BG"
                 Background="{Binding Rarity}"
                 Margin="0" Padding="0">
@@ -22,7 +22,7 @@
 
         </Border>
         <svg:SvgViewbox Name="svgViewBox"
-                        Margin="5" />
+                        Margin="4" />
     </Grid>
 
 </UserControl>
