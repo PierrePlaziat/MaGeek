@@ -3,6 +3,12 @@ using MageekCore.Data.Mtg.Entities;
 
 namespace MageekCore.Data
 {
+    public class TxtImportResult
+    {
+        public string Status { get; set; }
+        public string Detail { get; set; }
+        public List<DeckCard> Cards { get; set; }
+    }
 
     public class Preco
     {
@@ -73,7 +79,7 @@ namespace MageekCore.Data
     public class SearchedCards
     {
 
-        public SearchedCards(Cards card, string translation, int collected)
+        public SearchedCards(Cards card, int collected, CardForeignData translation)
         {
             Card = card;
             Translation = translation;
@@ -81,7 +87,7 @@ namespace MageekCore.Data
         }
 
         public Cards Card { get; }
-        public string Translation { get; }
+        public CardForeignData Translation { get; }
         public int Collected { get; }
 
     }

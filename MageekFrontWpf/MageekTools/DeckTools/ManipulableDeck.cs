@@ -66,8 +66,9 @@ namespace MageekFrontWpf.MageekTools.DeckTools
         public async Task AddCard(string uuid)
         {
             var newCard = await mageek.FindCard_Data(uuid);
-            var newArchetype = await mageek.FindCard_Ref(uuid);
-            var newVariants = await mageek.FindCard_Variants(newArchetype.ArchetypeId);
+
+            List<string> newVariants = await mageek.GetCardUuidsForGivenCardUuid(uuid);
+
             ManipulableDeckEntry previousEntry = Entries
                 .Where(x => newVariants.Contains(x.Line.CardUuid))
                 .FirstOrDefault();

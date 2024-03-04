@@ -53,18 +53,20 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
 
         [RelayCommand]
-        private async Task Reload()
+        public async Task Reload()
         {
             Logger.Log("Reload");
             IsLoading = true;
+            
             Decks = FilterDeck(await mageek.GetDecks());
+            OnPropertyChanged(nameof(Decks));
             IsLoading = false;
         }
 
         [RelayCommand]
         public async Task SelectDeck(string deckId)
         {
-            Framework.AppValues.DocumentArguments doc = new Framework.AppValues.DocumentArguments(deck : await mageek.GetDeck(deckId));
+            DocumentArguments doc = new DocumentArguments(deck : await mageek.GetDeck(deckId));
             wins.OpenDoc(doc);
         }
 

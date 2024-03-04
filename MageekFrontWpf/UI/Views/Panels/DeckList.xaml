@@ -17,8 +17,17 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0">
+        <Grid Grid.Row="0">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            
             <Button Command="{Binding AddDeckCommand}" 
+                    Grid.Column="0"
                     Margin="0"
                     Padding="0,-7,0,0" 
                     Width="20"
@@ -27,9 +36,27 @@
                     Background="#007ACC" 
                     ToolTip="Create a new empty deck"
                     Content="+"/>
-            <Label>Filter:</Label>
-            <TextBox Text="{Binding FilterString}" Margin="0,0,3,0"></TextBox>
-        </DockPanel>
+            <Label HorizontalAlignment="Right"
+                    Grid.Column="1"
+                   Content="Filter:"/>
+                
+            <TextBox Text="{Binding FilterString}"
+                     Name="TB"
+                     Grid.Column="2"
+                     Margin="0,0,3,0"  
+                     KeyDown="TextBox_KeyDown"
+                     ToolTip="Filter by deck title, press enter to validate input."/>
+                
+            <Button Click="ButtonDeleteFilter_Click"
+                    Grid.Column="3"
+                    Margin="0"
+                    Padding="0,-7,0,0" 
+                    Width="20"
+                    FontSize="20"
+                    Background="#007ACC" 
+                    ToolTip="Remove filter"
+                    Content="x"/>
+        </Grid>
 
         <ListView x:Name="decklistbox"
                   MouseDoubleClick="Decklistbox_SelectionChanged"
@@ -51,7 +78,7 @@
                 <DataTemplate>
 
                     <Grid Background="#000" Drop="Grid_Drop" AllowDrop="True">
-                        
+
                         <Grid.ColumnDefinitions>
                             <!--<ColumnDefinition Width="100"></ColumnDefinition>-->
                             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -59,8 +86,8 @@
                             <ColumnDefinition Width="65"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        
-                        
+
+
                         <Grid.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Open" 
@@ -85,7 +112,7 @@
                                           CommandParameter="{Binding DeckId}"/>
                             </ContextMenu>
                         </Grid.ContextMenu>
-                        
+
                         <!--<Label Margin="0" Padding="2" 
                                FontSize="20" 
                                FontFamily="{StaticResource MtgSymbols}"
@@ -97,19 +124,19 @@
                                Content="{Binding Title}"/>
 
                         <DockPanel Grid.Column="1">
-                            
+
                             <Label Content="{Binding CardCount}" 
                                    Foreground="#666"/>
-                            
+
                             <Label Content="Cards" 
                                    Foreground="#666"/>
-                            
+
                         </DockPanel>
 
                     </Grid>
-                    
+
                 </DataTemplate>
-                
+
             </ListView.ItemTemplate>
 
         </ListView>
@@ -119,5 +146,5 @@
         </Grid>
 
     </Grid>
-    
+
 </mvvm:BaseUserControl>

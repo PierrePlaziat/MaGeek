@@ -162,14 +162,6 @@
                 <DataGrid.RowStyle>
                     <Style TargetType="{x:Type DataGridRow}" >
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding RowEffect}" Value="1">
-                                <Setter Property="BorderBrush" Value="Blue" />
-                                <Setter Property="BorderThickness" Value="0,2,0,0" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding RowEffect}" Value="2">
-                                <Setter Property="BorderBrush" Value="Blue" />
-                                <Setter Property="BorderThickness" Value="0,0,0,2" />
-                            </DataTrigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="LightGray" />
                             </Trigger>

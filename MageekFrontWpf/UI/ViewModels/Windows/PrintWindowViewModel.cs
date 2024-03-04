@@ -40,21 +40,21 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         }
         private async Task DetermineListOfCardsToPrint(Deck deck)
         {
+            //TODO
             ListOfCardsToPrint = new List<string>();
-            foreach (var v in await mageek.GetDeckContent(deck.DeckId))
-            {
-                ;
-                if (IncludeBasicLands || !await mageek.CardHasType(v.CardUuid, "Basic Land"))
-                {
-                    if (!OnlyMissing || await mageek.Collected(v.CardUuid) == 0)
-                    {
-                        for (int i = 0; i < v.Quantity; i++)
-                        {
-                            ListOfCardsToPrint.Add(v.CardUuid);
-                        }
-                    }
-                }
-            }
+            //foreach (var v in await mageek.GetDeckContent(deck.DeckId))
+            //{
+            //    if (IncludeBasicLands || !await mageek.CardHasType(v.CardUuid, "Basic Land"))
+            //    {
+            //        if (!OnlyMissing || await mageek.Collected(v.CardUuid) == 0)
+            //        {
+            //            for (int i = 0; i < v.Quantity; i++)
+            //            {
+            //                ListOfCardsToPrint.Add(v.CardUuid);
+            //            }
+            //        }
+            //    }
+            //}
         }
         private async Task MakePrintingPages(Deck deck)
         {

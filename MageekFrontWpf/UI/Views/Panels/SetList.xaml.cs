@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using MageekCore.Data;
 using System.Windows.Media;
 using MageekCore.Data.Mtg.Entities;
 using MageekFrontWpf.Framework.BaseMvvm;

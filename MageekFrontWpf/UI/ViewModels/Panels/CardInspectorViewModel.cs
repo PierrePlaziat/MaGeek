@@ -56,7 +56,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             Logger.Log("Reload");
             IsLoading = true;
             await Task.Delay(100);
-            string archetype = await mageek.FindCard_Archetype(uuid);
+            string archetype = await mageek.GetCardNameForGivenCardUuid(uuid);
             if (archetype == null)
             {
                 IsLoading = false;
@@ -91,7 +91,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             Variants = null;
             Variants = new List<CardVariant>();
 
-            foreach (string variant in await mageek.FindCard_Variants(SelectedArchetype))
+            foreach (string variant in await mageek.GetCardUuidsForGivenCardName(SelectedArchetype))
             {
                 var card = await mageek.FindCard_Data(variant);
                 if (card != null)

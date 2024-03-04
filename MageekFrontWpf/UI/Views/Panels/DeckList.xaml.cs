@@ -5,6 +5,9 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.Framework.AppValues;
 using System;
+using System.Windows.Input;
+using System.Windows.Data;
+using System.Windows;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {
@@ -20,54 +23,54 @@ namespace MageekFrontWpf.UI.Views.AppPanels
             InitializeComponent();
         }
 
-        private void Decklistbox_SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Decklistbox_SelectionChanged(object sender, MouseButtonEventArgs e)
         {
             Deck deck = (Deck)decklistbox.SelectedItem;
             vm.SelectDeck(deck.DeckId).ConfigureAwait(false);
         }
 
-        private void MenuItem_OpenDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        private void MenuItem_OpenDeckClick(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
             vm.SelectDeck((string)item.CommandParameter).ConfigureAwait(false); 
         }
 
-        private void MenuItem_CreateDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        private void MenuItem_CreateDeckClick(object sender, RoutedEventArgs e)
         {
             vm.AddDeck().ConfigureAwait(false);
         }
 
-        private void MenuItem_RenameDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        private void MenuItem_RenameDeckClick(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
             vm.RenameDeck((string)item.CommandParameter).ConfigureAwait(false);
         }
 
-        private void MenuItem_DuplicateDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        private void MenuItem_DuplicateDeckClick(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
             vm.DuplicateDeck((string)item.CommandParameter).ConfigureAwait(false);
         }
 
-        private void MenuItem_ListDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        private void MenuItem_ListDeckClick(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
             vm.GetAsTxtList((string)item.CommandParameter).ConfigureAwait(false);
         }
 
-        private void MenuItem_EstimateDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        private void MenuItem_EstimateDeckClick(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
             vm.EstimateDeckPrice((string)item.CommandParameter).ConfigureAwait(false);
         }
 
-        private void MenuItem_DeleteDeckClick(object sender, System.Windows.RoutedEventArgs e)
+        private void MenuItem_DeleteDeckClick(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
             vm.DeleteDeck((string)item.CommandParameter).ConfigureAwait(false);
         }
 
-        private void Grid_Drop(object sender, System.Windows.DragEventArgs e)
+        private void Grid_Drop(object sender, DragEventArgs e)
         {
             Grid item = (Grid)sender;
             var data = e.Data.GetData(typeof(string)) as string;
@@ -76,6 +79,27 @@ namespace MageekFrontWpf.UI.Views.AppPanels
             WeakReferenceMessenger.Default.Send(
                 new AddCardToDeckMessage(new Tuple<string,string>(deckId, data))
             );
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter || e.Key == Key.Tab || e.Key == Key.Escape)
+            {
+                TextBox tBox = (TextBox)sender;
+                DependencyProperty prop = TextBox.TextProperty;
+                BindingExpression binding = BindingOperations.GetBindingExpression(tBox, prop);
+                if (binding != null) { binding.UpdateSource(); }
+                vm.Reload().ConfigureAwait(false);
+            }
+        }
+
+        private void ButtonDeleteFilter_Click(object sender, RoutedEventArgs e)
+        {
+            TB.Text = string.Empty;
+            DependencyProperty prop = TextBox.TextProperty;
+            BindingExpression binding = BindingOperations.GetBindingExpression(TB, prop);
+            if (binding != null) { binding.UpdateSource(); }
+            vm.Reload().ConfigureAwait(false);
         }
     }
 

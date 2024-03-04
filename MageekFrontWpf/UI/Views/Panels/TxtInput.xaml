@@ -1,42 +1,26 @@
 ﻿<mvvm:BaseUserControl x:Class="MageekFrontWpf.UI.Views.AppWindows.TxtInput"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:local="clr-namespace:MageekFrontWpf.Framework.Misc"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
                  mc:Ignorable="d"
-                 Height="450"
-                 Width="300"
                  Background="#555">
 
-    <Grid Width="300">
+    <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
 
-            <CheckBox Name="AsOwnedCheckBox"
-                      Margin="3"
-                      IsChecked="false"
-                      Foreground="#999">As owned</CheckBox>
-
-            <DockPanel>
-                <CheckBox Name="MakeNewDeckCheckBox"
-                          Margin="3"
-                          IsChecked="true"
-                          Foreground="#999">To deck</CheckBox>
-                <TextBox  Name="DeckTitle" />
-            </DockPanel>
-
-        </StackPanel>
-        <RichTextBox Grid.Row="1"
+        <RichTextBox local:RichTextBoxHelper.DocumentXaml="{Binding document}" 
+                     Grid.Row="0"
                      x:Name="ImportTxt"
                      Margin="0,0,0,0"
-                     Width="300"
                      BorderThickness="0"
                      AcceptsReturn="True"
                      Background="Black"
@@ -57,13 +41,48 @@
                             Value="0" />
                 </Style>
             </RichTextBox.Resources>
+            
         </RichTextBox>
 
-        <Button Command="{Binding LaunchImportationCommand}"
-                Grid.Row="2"
-                Grid.Column="0"
-                Content="Import"
-                Grid.ColumnSpan="3"></Button>
+        <Grid Grid.Row="1"
+              Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Command="{Binding CheckCommand}"
+                    Grid.Column="0"
+                    Content="Check"/>
+            <Label Grid.Column="1" 
+                   HorizontalAlignment="Center" 
+                   Height="20" 
+                   Margin="0"
+                   Padding="0"
+                   Content="{Binding CheckResult}"/>
+            <Button Command="{Binding ClearCommand}"
+                    Grid.Column="2"
+                Content="Clear"/>
+            
+        </Grid>
+
+        <Grid Grid.Row="2"
+              Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Command="{Binding CollectCommand}"
+                    Grid.Column="0"
+                Content="Add as collected"/>
+            <Button Command="{Binding OpenCommand}"
+                    Grid.Column="1"
+                Content="Open as deck"/>
+            <Button Command="{Binding CollectAndOpenCommand}"
+                    Grid.Column="2"
+                Content="Do both"/>
+        </Grid>
 
     </Grid>
 

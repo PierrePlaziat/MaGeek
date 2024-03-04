@@ -7,7 +7,6 @@
                       xmlns:local="clr-namespace:MaGeek.UI"
                       xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
                       xmlns:converter="clr-namespace:MaGeek.Framework.Converters"
-                      xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
                       mc:Ignorable="d"
                       d:DesignHeight="450"
                       d:DesignWidth="800"
@@ -70,19 +69,6 @@
                             <ColumnDefinition Width="50" />
                         </Grid.ColumnDefinitions>
 
-                        <!--<Border Background="White"
-                                Margin="5"
-                                Grid.RowSpan="2">
-
-                            <Border.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius"
-                                            Value="20" />
-                                </Style>
-                            </Border.Resources>
-
-                        </Border>-->
-
                         <ui:SetIcon SetCode="{Binding Code}"
                                     Rarity="common"
                                     Grid.RowSpan="2"/>
@@ -90,13 +76,13 @@
                         <Label Content="{Binding Name}"
                                Grid.Column="1"
                                Foreground="#fff"
-                               Margin="0,4,0,0"
+                               Margin="5,4,5,0"
                                FontWeight="Bold"
                                Padding="0" />
 
                         <DockPanel Grid.Row="1"
-                                   Grid.Column="1"
-                                   Margin="0">
+                               Margin="5,0,5,0"
+                                   Grid.Column="1">
                             <Label Grid.Column="0"
                                    Content="{Binding ReleaseDate}"
                                    Margin="0"

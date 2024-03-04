@@ -25,22 +25,53 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         [ObservableProperty] List<Sets> setList = new();
         [ObservableProperty] List<string> types = new();
-        [ObservableProperty] string filterType = "All types";
+        [ObservableProperty] string filterType;
         [ObservableProperty] List<string> blocks = new();
-        [ObservableProperty] string filterBlock = "All blocks";
+        [ObservableProperty] string filterBlock;
         [ObservableProperty] List<Cards> variants = new();
 
         public void Receive(LaunchAppMessage message)
         {
-            Reload().ConfigureAwait(false);
+            SetList = mageek.LoadSets().Result;
+            FillTypes();
+            FillBlocks();
+        }
+
+        private void FillTypes()
+        {
+            Types.Add("");
+            foreach (var set in SetList) 
+            {
+                if (!Types.Contains(set.Type)) 
+                {
+                    Types.Add(set.Type);
+                }
+            }
+            FilterType = "";
+        }
+
+        private void FillBlocks()
+        {
+            Blocks.Add("");
+            foreach (var set in SetList)
+            {
+                if(set.Block!=null) //TODO why always null???
+                {
+                    if (!Blocks.Contains(set.Block))
+                    {
+                        Blocks.Add(set.Block);
+                    }
+                }
+            }
+            FilterBlock = "";
         }
 
         [RelayCommand]
         public async Task Reload()
         {
             Logger.Log("Reload");
-            SetList = mageek.LoadSets().Result.Where(x => FilterBlock == "All blocks" || x.Block == FilterBlock)
-                                .Where(x => FilterType == "All types" || x.Type == FilterType).ToList();
+            SetList = mageek.LoadSets().Result.Where(x => FilterBlock == "" || x.Block == FilterBlock)
+                                .Where(x => FilterType == "" || x.Type == FilterType).ToList();
         }
 
         public async void SelectSet(Sets s)
