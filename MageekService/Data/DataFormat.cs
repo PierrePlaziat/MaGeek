@@ -103,7 +103,10 @@ namespace MageekCore.Data
     {
         ErrorDownloading,
         ErrorFetching,
+        ErrorFetchingPrecos,
         Success,
+        ErrorFetchingRelations,
+        ErrorFetchingPrices,
     }
 
 

@@ -5,9 +5,7 @@ using MageekCore.Data.Mtg;
 
 Console.WriteLine("MAGEEK TESTS");
 Console.WriteLine("Init...");
-MtgDbManager mtg = new MtgDbManager();
-CollectionDbManager collec = new CollectionDbManager(mtg);
-MageekService mageek = new MageekService(collec,mtg);
+MageekService mageek = new MageekService();
 var v = await mageek.Initialize();
 if (v != MageekInitReturn.Error)
 { 

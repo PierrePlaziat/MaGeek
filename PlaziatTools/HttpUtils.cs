@@ -45,6 +45,25 @@ namespace PlaziatTools
             return retour;
         }
 
+        public static async Task Download(string url, string path)
+        {
+            try
+            {
+                Logger.Log("Downloading - " + url + " " + path);
+                using (var client = new HttpClient())
+                using (var stream = await client.GetStreamAsync(url))
+                {
+                    using var fs_stream = new FileStream(url, FileMode.Create);
+                    await stream.CopyToAsync(fs_stream);
+                }
+                Logger.Log("Done");
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+        }
+
     }
 
 }

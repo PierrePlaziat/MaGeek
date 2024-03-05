@@ -6,17 +6,14 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Text.Json;
-using ScryfallApi.Client.Models;
-using MageekCore.Data.Collection;
-using MageekCore.Data.Mtg;
-using MageekCore.Data.Collection.Entities;
-using MageekCore.Data.Mtg.Entities;
-using PlaziatTools;
 using MageekCore.Data;
+using MageekCore.Data.Mtg;
+using MageekCore.Data.Mtg.Entities;
+using MageekCore.Data.Collection;
+using MageekCore.Data.Collection.Entities;
+using PlaziatTools;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Reflection.Metadata;
-using System.Text.RegularExpressions;
+using ScryfallApi.Client.Models;
 
 namespace MageekCore
 {
@@ -24,32 +21,24 @@ namespace MageekCore
     public class MageekService
     {
 
-        #region CTOR
-
-        const string Url_MtgjsonPrecos = "https://mtgjson.com/api/v5/AllDeckFiles.zip";
-        const string Url_MtgjsonPrices = "https://mtgjson.com/api/v5/AllPricesToday.json";
-
         private readonly MtgDbManager mtg;
         private readonly CollectionDbManager collec;
+        private readonly ScryManager scryfall; 
 
-        public MageekService(
-            CollectionDbManager collec,
-            MtgDbManager mtg
-        ){
-            this.mtg = mtg;
-            this.collec = collec;
-            Initialize().ConfigureAwait(true);
+        public MageekService()
+        {
+            mtg = new MtgDbManager();
+            collec = new CollectionDbManager(mtg);
+            scryfall = new ScryManager(mtg,collec);
         }
 
         public async Task<MageekInitReturn> Initialize()
         {
-            Logger.Log("Start");
             try
             {
                 Folders.InitServerFolders();
-                if (!File.Exists(Folders.DB)) collec.CreateDb();
-                bool needsUpdate = await mtg.CheckUpdate();
-                Logger.Log("Done");
+                if (!File.Exists(Folders.File_CollectionDB)) collec.CreateDb();
+                bool needsUpdate = await CheckUpdate();
                 return needsUpdate ? MageekInitReturn.MtgOutdated : MageekInitReturn.MtgUpToDate;
             }
             catch (Exception e)
@@ -59,33 +48,354 @@ namespace MageekCore
             }
         }
 
-        public async Task<MageekUpdateReturn> UpdateMtg()
+        #region Update
+
+        const string Url_MtgjsonHash = "https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256";
+        const string Url_UpdatePrints = "https://mtgjson.com/api/v5/AllPrintings.sqlite";
+        const string Url_UpdatePrices = "https://mtgjson.com/api/v5/AllPrices.json";
+        const string Url_UpdatePrecos = "https://mtgjson.com/api/v5/AllDeckFiles.zip";
+
+        private async Task<bool> CheckUpdate()
+        {
+            Logger.Log("Checking...");
+            try
+            {
+                bool? tooOld = FileUtils.IsFileOlder(Folders.File_UpdateOldHash, new TimeSpan(2, 0, 0, 0));
+                if (tooOld.HasValue && !tooOld.Value)
+                {
+                    Logger.Log("Already updated recently");
+                    return false;
+                }
+                bool check = await CheckDbHash();
+                Logger.Log(check ? "Update available" : "Already up to date");
+                return check;
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return false;
+            }
+        }
+        private async Task<bool> CheckDbHash()
+        {
+            try
+            {
+                await HttpUtils.Download(Url_MtgjsonHash, Folders.File_UpdateNewHash);
+                bool check = true;
+                if (File.Exists(Folders.File_UpdateOldHash))
+                {
+                    check = FileUtils.ContentDiffers(
+                        Folders.File_UpdateNewHash,
+                        Folders.File_UpdateOldHash
+                    );
+                }
+                return check;
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return true;
+            }
+        }
+
+        public async Task<MageekUpdateReturn> Update()
+        {
+            try
+            {
+                List<Task> tasks = new()
+                {
+                    HttpUtils.Download(Url_UpdatePrints, Folders.File_UpdatePrints),
+                    HttpUtils.Download(Url_UpdatePrices, Folders.File_UpdatePrices),
+                    HttpUtils.Download(Url_UpdatePrecos, Folders.File_UpdatePrecos)
+                };
+                await Task.WhenAll(tasks);
+            }
+            catch (Exception e) 
+            { 
+                Logger.Log(e);
+                return MageekUpdateReturn.ErrorDownloading; 
+            }
+            try
+            {
+                List<Task> tasks = new()
+                {
+                    FetchArchetypes(),
+                    FetchTranslations(),
+                    FetchSets(),
+                    FetchPrecos(),
+                    FetchPrices(),    //TODO TODO TODO TODO TODO
+                    //FetchImages(),        //find a way without ddosing scryfall
+                    //FetchCardRelations    //find a way without ddosing scryfall
+                };
+            }
+            catch (Exception e)
+            { 
+                Logger.Log(e); 
+                return MageekUpdateReturn.ErrorFetching;
+            }
+            HashSave();
+            return MageekUpdateReturn.Success;
+        }
+        private void HashSave()
+        {
+            try
+            {
+                File.Copy(Folders.File_UpdateNewHash, Folders.File_UpdateOldHash, true);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+        }
+
+        #region Prints
+
+        private async Task FetchArchetypes()
+        {
+            try
+            {
+                List<ArchetypeCard> archetypes = new();
+                Logger.Log("Parsing...");
+                using (MtgDbContext mtgContext = await mtg.GetContext())
+                {
+                    await Task.Run(() => {
+                        foreach (Cards card in mtgContext.cards)
+                        {
+                            //if (!(archetypes.Any(x => x.CardUuid == card.Uuid))) //prevent bug in case of duplicated uuid, that already happened
+                            {
+                                archetypes.Add(
+                                    new ArchetypeCard()
+                                    {
+                                        ArchetypeId = card.Name != null ? card.Name : string.Empty,
+                                        CardUuid = card.Uuid
+                                    }
+                                );
+                            }
+                        }
+                    });
+                }
+                Logger.Log("Saving...");
+                using (CollectionDbContext collecContext = await collec.GetContext())
+                {
+                    await collecContext.CardArchetypes.ExecuteDeleteAsync();
+                    using var transaction = await collecContext.Database.BeginTransactionAsync();
+                    await collecContext.CardArchetypes.AddRangeAsync(archetypes);
+                    await collecContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                Logger.Log("Done");
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+        }
+
+        private async Task FetchTranslations()
+        {
+            try
+            {
+                List<CardTraduction> traductions = new();
+                Logger.Log("Parsing...");
+                using (MtgDbContext mtgContext = await mtg.GetContext())
+                {
+                    foreach (CardForeignData traduction in mtgContext.cardForeignData)
+                    {
+                        await Task.Run(() => {
+                            if (traduction.FaceName == null)
+                            {
+                                traductions.Add(
+                                    new CardTraduction()
+                                    {
+                                        CardUuid = traduction.Uuid,
+                                        Language = traduction.Language,
+                                        Traduction = traduction.Name,
+                                        NormalizedTraduction = traduction.Language != "Korean" && traduction.Language != "Arabic"
+                                            ? traduction.Name.RemoveDiacritics().Replace('-', ' ').ToLower()
+                                            : traduction.Name
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                traductions.Add(
+                                    new CardTraduction()
+                                    {
+                                        CardUuid = traduction.Uuid,
+                                        Language = traduction.Language,
+                                        Traduction = traduction.FaceName,
+                                        NormalizedTraduction = traduction.Language != "Korean" && traduction.Language != "Arabic"
+                                            ? StringExtension.RemoveDiacritics(traduction.FaceName).Replace('-', ' ').ToLower()
+                                            : traduction.FaceName
+                                    }
+                                );
+                            }
+                        });
+                    }
+                }
+                Logger.Log("Saving...");
+                using (CollectionDbContext collecContext = await collec.GetContext())
+                {
+                    await collecContext.CardTraductions.ExecuteDeleteAsync();
+                    using var transaction = await collecContext.Database.BeginTransactionAsync();
+                    await collecContext.CardTraductions.AddRangeAsync(traductions);
+                    await collecContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                Logger.Log("Done");
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+        }
+
+        private async Task FetchSets()
         {
             Logger.Log("Start");
             try
             {
-                await mtg.DatabaseDownload();
-                mtg.HashSave();
+                var sets = await scryfall.GetSetsJson();
+                using (HttpClient client = new HttpClient())
+                {
+                    foreach (Set set in sets.Data)
+                    {
+                        var uri = set.IconSvgUri;
+                        string localFileName = Path.Combine(Folders.SetIcon, set.Code.ToUpper() + "_.svg");
+                        if (!File.Exists(localFileName))
+                        {
+                            using (var s = await client.GetStreamAsync(uri))
+                            {
+                                try
+                                {
+                                    using (var fs = new FileStream(localFileName, FileMode.OpenOrCreate))
+                                    {
+                                        await s.CopyToAsync(fs);
+                                    }
+                                }
+                                catch (Exception e) { Logger.Log(e); }
+                            }
+                        }
+                    }
+                }
             }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return MageekUpdateReturn.ErrorDownloading;
-            }
-            try
-            {
-                await collec.FetchMtgData();
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return MageekUpdateReturn.ErrorFetching;
-            }
+            catch (Exception e) { Logger.Log(e); }
             Logger.Log("Done");
-            return MageekUpdateReturn.Success;
         }
 
         #endregion
+
+        #region Precos
+
+        private async Task FetchPrecos()
+        {
+            Logger.Log("Uncompressing...");
+            System.IO.Compression.ZipFile.ExtractToDirectory(Folders.File_UpdatePrecos, Folders.TempPrecoFolder, overwriteFiles: true);
+            Logger.Log("Parsing...");
+            await ParsePrecos(Folders.TempPrecoFolder, Folders.File_Precos);
+            Logger.Log("Cleaning");
+            Directory.Delete(Folders.TempPrecoFolder, true);
+            Logger.Log("Done");
+        }
+
+        private async Task ParsePrecos(string tmpPath, string finalPath)
+        {
+            // READ
+            List<Preco> list = new List<Preco>();
+            foreach (string precoPath in Directory.GetFiles(tmpPath))
+            {
+                try
+                {
+                    list.Add(await ParsePreco(precoPath));
+                }
+                catch (Exception e) { Logger.Log(e); }
+            }
+            // WRITE
+            Console.WriteLine(DateTime.Now);
+            var options = new JsonSerializerOptions { IncludeFields = true };
+            string jsonString = JsonSerializer.Serialize(list, options);
+            File.WriteAllText(finalPath, jsonString);
+        }
+
+        private async Task<Preco> ParsePreco(string precoPath)
+        {
+            using StreamReader reader = new(precoPath);
+            string jsonString = await reader.ReadToEndAsync();
+            dynamic dynData = JObject.Parse(jsonString);
+
+            string code = dynData.data.code;
+            string name = dynData.data.name;
+            string releaseDate = dynData.data.releaseDate;
+            string type = dynData.data.type;
+
+            List<Tuple<string, int>> CommanderCardUuids = new List<Tuple<string, int>>();
+            foreach (dynamic card in dynData.data.commander)
+            {
+                string uuid = card.uuid;
+                int quantity = card.count;
+                CommanderCardUuids.Add(new Tuple<string, int>(uuid, quantity));
+            }
+
+            List<Tuple<string, int>> mainCardUuids = new List<Tuple<string, int>>();
+            foreach (dynamic card in dynData.data.mainBoard)
+            {
+                string uuid = card.uuid;
+                int quantity = card.count;
+                mainCardUuids.Add(new Tuple<string, int>(uuid, quantity));
+            }
+
+            List<Tuple<string, int>> sideCardUuids = new List<Tuple<string, int>>();
+            foreach (dynamic card in dynData.data.sideBoard)
+            {
+                string uuid = card.uuid;
+                int quantity = card.count;
+                sideCardUuids.Add(new Tuple<string, int>(uuid, quantity));
+            }
+
+            return new Preco()
+            {
+                Title = name,
+                Code = code,
+                ReleaseDate = releaseDate,
+                Kind = type,
+                CommanderCardUuids = CommanderCardUuids,
+                MainCardUuids = mainCardUuids,
+                SideCardUuids = sideCardUuids
+            };
+
+        }
+
+        #endregion
+
+        #region Prices
+
+        private async Task FetchPrices()
+        {
+            List<PriceLine> CommanderCardUuids = new List<PriceLine>();
+
+            using StreamReader reader = new(Folders.File_UpdatePrices);
+            string jsonString = await reader.ReadToEndAsync();
+            dynamic dynData = JObject.Parse(jsonString);
+
+            foreach (dynamic card in dynData.data)
+            {
+                //CommanderCardUuids.Add(new PriceLine()
+                //{
+                //    CardUuid = uuid,
+                //    EdhrecScore = edh,
+                //    PriceEur = Eur,
+                //    PriceUsd = Usd,
+                //});
+            }
+
+            Logger.Log("Done");
+        }
+
+        #endregion
+        
+        #endregion
+
+        #region Usage
 
         #region Cards
 
@@ -396,10 +706,11 @@ namespace MageekCore
 
         // TODO cache data at db mtg import
 
-        public async Task<List<CardCardRelation>> FindCard_Related(string uuid, string originalarchetype)
+        public List<CardCardRelation> FindRelateds(string uuid, string originalarchetype)
         {
             Logger.Log("");
-            List<CardCardRelation> outputCards = new();
+            return FindRelateds(uuid, originalarchetype);
+            /*List<CardCardRelation> outputCards = new();
             try
             {
                 if (string.IsNullOrEmpty(uuid)) return outputCards;
@@ -449,7 +760,7 @@ namespace MageekCore
                 }
             }
             catch (Exception e) { Logger.Log(e); }
-            return outputCards;
+            return outputCards;*/
         }
 
         /// <summary>
@@ -459,18 +770,15 @@ namespace MageekCore
         /// <returns>a local url to a jpg</returns>
         public async Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type)
         {
-            Logger.Log("");
             try
             {
-                string localFileName = Path.Combine(Folders.Illustrations, cardUuid + "_" + type.ToString());
+                string localFileName = Path.Combine(
+                    Folders.Illustrations, 
+                    string.Concat(cardUuid, "_", type.ToString(), "_", type.ToString())
+                );
                 if (!File.Exists(localFileName))
                 {
-                    var scryData = await GetScryfallCard(cardUuid);
-                    var httpClient = new HttpClient();
-                    var uri = scryData.ImageUris[type.ToString()];
-                    using var stream = await httpClient.GetStreamAsync(uri);
-                    using var fileStream = new FileStream(localFileName, FileMode.Create);
-                    await stream.CopyToAsync(fileStream);
+                    await scryfall.DownloadImage(cardUuid, type, localFileName);
                 }
                 return new("file://" + Path.GetFullPath(localFileName), UriKind.Absolute);
             }
@@ -481,20 +789,16 @@ namespace MageekCore
             }
         }
 
-        // Tokens
-
         /// <summary>
-        /// get the gameplay data of the card
+        /// Estimate the price of a card
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns>Archetype</returns>
-        public async Task<Tokens> FindToken(string name)
+        /// <param name="v"></param>
+        /// <param name="currency"></param>
+        /// <returns>The estimation</returns>
+        public async Task<PriceLine> EstimateCardPrice(string cardUuid)
         {
             Logger.Log("");
-            using MtgDbContext DB = await mtg.GetContext();
-            return await DB.tokens
-                .Where(x => x.Name == name)
-                .FirstOrDefaultAsync();
+            return await scryfall.EstimateCardPrice(cardUuid);
         }
 
         #endregion
@@ -755,6 +1059,34 @@ namespace MageekCore
             return total;
         }
 
+        /// <summary>
+        /// Auto estimate collection
+        /// </summary>
+        /// <returns>Estimated price and a list of missing estimations</returns>
+        public async Task<Tuple<decimal, List<string>>> AutoEstimatePrices(string currency)
+        {
+            decimal total = 0;
+            List<string> missingList = new();
+            try
+            {
+                using CollectionDbContext DB = await collec.GetContext();
+                var allGot = await DB.CollectedCard.Where(x => x.Collected > 0).ToListAsync();
+                foreach (CollectedCard collectedCard in allGot)
+                {
+                    var price = await EstimateCardPrice(collectedCard.CardUuid);
+                    if (price != null)
+                    {
+                        if (currency == "Eur") total += price.PriceEur ?? 0;
+                        if (currency == "Usd") total += price.PriceUsd ?? 0;
+                        if (currency == "Edh") total += price.EdhrecScore;
+                    }
+                    else missingList.Add(collectedCard.CardUuid);
+                }
+            }
+            catch (Exception e) { Logger.Log(e); }
+            return new Tuple<decimal, List<string>>(total, missingList);
+        }
+
         #endregion
 
         #region Decks
@@ -991,104 +1323,37 @@ namespace MageekCore
             await DB.SaveChangesAsync();
         }
 
-        #endregion
-
-        // TODO cache data at db mtg import
-        #region Precos
-
-        public async Task RetrievePrecos()
-        {
-            string tmpPath = Path.Combine(Folders.PrecosFolder, "temp");
-            if (!Directory.Exists(tmpPath)) Directory.CreateDirectory(tmpPath);
-            string zipPath = Path.Combine(tmpPath, "precos.zip");
-            Logger.Log("Downloading...");
-            using (var client = new HttpClient())
-            using (var precosZip = await client.GetStreamAsync(Url_MtgjsonPrecos))
-            {
-                using var fs_PrecosZip = new FileStream(zipPath, FileMode.Create);
-                await precosZip.CopyToAsync(fs_PrecosZip);
-            }
-            Logger.Log("Uncompressing...");
-            System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, tmpPath, overwriteFiles: true);
-            Logger.Log("Parsing...");
-            await ParsePrecos(tmpPath, Folders.PrecosFolder);
-            Logger.Log("Cleaning");
-            Directory.Delete(tmpPath, true);
-            Logger.Log("Done");
-        }
-
-        private async Task ParsePrecos(string tmpPath, string precosFolder)
-        {
-            // READ
-            List<Preco> list = new List<Preco>();
-            foreach (string precoPath in Directory.GetFiles(tmpPath))
-            {
-                try
-                {
-                    list.Add(await ParsePreco(precoPath));
-                }
-                catch (Exception e) { Logger.Log(e); }
-            }
-            // WRITE
-            Console.WriteLine(DateTime.Now);
-            var options = new JsonSerializerOptions { IncludeFields = true };
-            string jsonString = JsonSerializer.Serialize(list, options);
-            File.WriteAllText(Path.Combine(Folders.PrecosFolder, "precos.json"), jsonString);
-
-        }
-
-        private async Task<Preco> ParsePreco(string precoPath)
-        {
-            using StreamReader reader = new(precoPath);
-            string jsonString = await reader.ReadToEndAsync();
-            dynamic dynData = JObject.Parse(jsonString);
-
-            string code = dynData.data.code;
-            string name = dynData.data.name;
-            string releaseDate = dynData.data.releaseDate;
-            string type = dynData.data.type;
-
-            List<Tuple<string, int>> CommanderCardUuids = new List<Tuple<string, int>>();
-            foreach (dynamic card in dynData.data.commander)
-            {
-                string uuid = card.uuid;
-                int quantity = card.count;
-                CommanderCardUuids.Add(new Tuple<string, int>(uuid, quantity));
-            }
-
-            List<Tuple<string, int>> mainCardUuids = new List<Tuple<string, int>>();
-            foreach (dynamic card in dynData.data.mainBoard)
-            {
-                string uuid = card.uuid;
-                int quantity = card.count;
-                mainCardUuids.Add(new Tuple<string, int>(uuid, quantity));
-            }
-
-            List<Tuple<string, int>> sideCardUuids = new List<Tuple<string, int>>();
-            foreach (dynamic card in dynData.data.sideBoard)
-            {
-                string uuid = card.uuid;
-                int quantity = card.count;
-                sideCardUuids.Add(new Tuple<string, int>(uuid, quantity));
-            }
-
-            return new Preco()
-            {
-                Title = name,
-                Code = code,
-                ReleaseDate = releaseDate,
-                Kind = type,
-                CommanderCardUuids = CommanderCardUuids,
-                MainCardUuids = mainCardUuids,
-                SideCardUuids = sideCardUuids
-            };
-
-        }
-
         public async Task<List<Preco>> GetPrecos()
         {
             string data = File.ReadAllText(Path.Combine(Folders.PrecosFolder, "precos.json"));
             return JsonSerializer.Deserialize<List<Preco>>(data, new JsonSerializerOptions { IncludeFields = true });
+        }
+
+        /// <summary>
+        /// Estimate the price of a deck
+        /// </summary>
+        /// <param name="deckId"></param>
+        /// <returns>The estimation</returns>
+        /// 
+        public async Task<Tuple<decimal, List<string>>> EstimateDeckPrice(string deckId, string currency)
+        {
+            Logger.Log("");
+            decimal total = 0;
+            List<string> missingList = new();
+            using CollectionDbContext DB = await collec.GetContext();
+            List<DeckCard> deckCards = await GetDeckContent(deckId);
+            foreach (var deckCard in deckCards)
+            {
+                var price = await EstimateCardPrice(deckCard.CardUuid);
+                if (price != null)
+                {
+                    if (currency == "Eur") total += price.PriceEur ?? 0;
+                    if (currency == "Usd") total += price.PriceUsd ?? 0;
+                    if (currency == "Edh") total += price.EdhrecScore;
+                }
+                else missingList.Add(deckCard.CardUuid);
+            }
+            return new Tuple<decimal, List<string>>(total, missingList);
         }
 
         #endregion
@@ -1256,111 +1521,6 @@ namespace MageekCore
 
         #endregion
 
-        // TODO cache data regularly
-        #region Value estimation
-
-        /// <summary>
-        /// Estimate the price of a card
-        /// </summary>
-        /// <param name="v"></param>
-        /// <param name="currency"></param>
-        /// <returns>The estimation</returns>
-        public async Task<PriceLine> EstimateCardPrice(string cardUuid)
-        {
-            Logger.Log("");
-            using CollectionDbContext DB = await collec.GetContext();
-            PriceLine? price = DB.PriceLine.Where(x => x.CardUuid == cardUuid).FirstOrDefault();
-            if (price != null)
-            {
-                DateTime lastUpdate = DateTime.Parse(price.LastUpdate);
-                if (lastUpdate < DateTime.Now.AddDays(-3)) return price;
-                else price.LastUpdate = DateTime.Now.ToString();
-            }
-            Card? scryfallCard = await GetScryfallCard(cardUuid);
-            if (scryfallCard == null) return null;
-            if (price == null)
-            {
-                price = new PriceLine()
-                {
-                    CardUuid = cardUuid,
-                    LastUpdate = DateTime.Now.ToString(),
-                    PriceEur = scryfallCard.Prices.Eur,
-                    PriceUsd = scryfallCard.Prices.Usd,
-                    EdhrecScore = scryfallCard.EdhrecRank
-                };
-                DB.PriceLine.Add(price);
-                await DB.SaveChangesAsync();
-            }
-            else
-            {
-                price.CardUuid = cardUuid;
-                price.LastUpdate = DateTime.Now.ToString();
-                price.PriceEur = scryfallCard.Prices.Eur;
-                price.PriceUsd = scryfallCard.Prices.Usd;
-                price.EdhrecScore = scryfallCard.EdhrecRank;
-                DB.Entry(price).State = EntityState.Modified;
-                await DB.SaveChangesAsync();
-            }
-            return price;
-        }
-
-        /// <summary>
-        /// Auto estimate collection
-        /// </summary>
-        /// <returns>Estimated price and a list of missing estimations</returns>
-        public async Task<Tuple<decimal, List<string>>> AutoEstimatePrices(string currency)
-        {
-            decimal total = 0;
-            List<string> missingList = new();
-            try
-            {
-                using CollectionDbContext DB = await collec.GetContext();
-                var allGot = await DB.CollectedCard.Where(x => x.Collected > 0).ToListAsync();
-                foreach (CollectedCard collectedCard in allGot)
-                {
-                    var price = await EstimateCardPrice(collectedCard.CardUuid);
-                    if (price != null)
-                    {
-                        if (currency == "Eur") total += price.PriceEur ?? 0;
-                        if (currency == "Usd") total += price.PriceUsd ?? 0;
-                        if (currency == "Edh") total += price.EdhrecScore;
-                    }
-                    else missingList.Add(collectedCard.CardUuid);
-                }
-            }
-            catch (Exception e) { Logger.Log(e); }
-            return new Tuple<decimal, List<string>>(total, missingList);
-        }
-
-        /// <summary>
-        /// Estimate the price of a deck
-        /// </summary>
-        /// <param name="deckId"></param>
-        /// <returns>The estimation</returns>
-        /// 
-        public async Task<Tuple<decimal, List<string>>> EstimateDeckPrice(string deckId, string currency)
-        {
-            Logger.Log("");
-            decimal total = 0;
-            List<string> missingList = new();
-            using CollectionDbContext DB = await collec.GetContext();
-            List<DeckCard> deckCards = await GetDeckContent(deckId);
-            foreach (var deckCard in deckCards)
-            {
-                var price = await EstimateCardPrice(deckCard.CardUuid);
-                if (price != null)
-                {
-                    if (currency == "Eur") total += price.PriceEur ?? 0;
-                    if (currency == "Usd") total += price.PriceUsd ?? 0;
-                    if (currency == "Edh") total += price.EdhrecScore;
-                }
-                else missingList.Add(deckCard.CardUuid);
-            }
-            return new Tuple<decimal, List<string>>(total, missingList);
-        }
-
-        #endregion
-
         #region Tags
 
         /// <summary>
@@ -1435,33 +1595,7 @@ namespace MageekCore
 
         #endregion
 
-        /// <summary>
-        /// This will disappear when using mtgsqlive data,
-        /// get card data from scryfall from a card uuid
-        /// </summary>
-        /// <param name="cardUuid"></param>
-        /// <returns>A scryfall card</returns>
-        private async Task<Card?> GetScryfallCard(string cardUuid)
-        {
-            Logger.Log("");
-            try
-            {
-                using MtgDbContext DB2 = await mtg.GetContext();
-                var v = DB2.cardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefault();
-                if (v == null) return null;
-                string? scryfallId = v.ScryfallId;
-                if (scryfallId == null) return null;
-                Thread.Sleep(150);
-                string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + scryfallId);
-                Card scryfallCard = JsonSerializer.Deserialize<Card>(json_data);
-                return scryfallCard;
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return null;
-            }
-        }
+        #endregion
 
     }
 

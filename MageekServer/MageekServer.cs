@@ -12,8 +12,8 @@ namespace MageekServer
         abstract Task<IEnumerable<Deck>> GetDecks();
         abstract Task<Deck> GetDeckInfo(string deckId);
         abstract Task<IEnumerable<DeckCard>> GetDeckContent(string deckId);
-        abstract Task CreateDeck(string title, string description, IEnumerable<DeckCard> content);
-        abstract Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content);
+        abstract Task CreateDeck(string title, string description, string colors, int count, IEnumerable<DeckCard> content);
+        abstract Task UpdateDeck(string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content);
         abstract Task DeleteDeck(string deckId);
 
         abstract Task<IEnumerable<Tag>> GetExistingTags();
@@ -43,13 +43,13 @@ namespace MageekServer
             return await mageek.Collected(cardUuid, onlyThisVariant);
         }
 
-        public async Task CreateDeck(string title, string description, IEnumerable<DeckCard> content)
+        public async Task CreateDeck(string title, string description, string colors, int count, IEnumerable<DeckCard> content)
         {
-            await mageek.CreateDeck_Contructed(title, description, content);
+            await mageek.CreateDeck(title, description,colors, count, content);
         }
-        public async Task UpdateDeck(string deckId, string title, string description, IEnumerable<DeckCard> content)
+        public async Task UpdateDeck(string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content)
         {
-            await mageek.UpdateDeck(deckId, title, description, content);
+            await mageek.UpdateDeck(deckId, title, description, colors, count, content);
         }
         public async Task DeleteDeck(string deckId)
         {

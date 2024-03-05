@@ -63,11 +63,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             UpdateAvailable = false;
             Message = "Updating...";
             await Task.Delay(100);
-            var retour = await mageek.UpdateMtg();
+            var retour = await mageek.Update();
             switch (retour)
             {
                 case MageekUpdateReturn.Success:
-                    await mageek.RetrievePrecos();
+                    await mageek.FetchPrecos();
                     CanLaunch = true;
                     UpdateAvailable = false;
                     Message = "Updated";

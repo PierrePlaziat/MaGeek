@@ -33,7 +33,7 @@
                 return diff > duration;
             }
             else
-                return null;
+                return true;
         }
 
     }

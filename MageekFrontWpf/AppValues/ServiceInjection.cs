@@ -29,9 +29,8 @@ namespace MageekFrontWpf.Framework.AppValues
         
         public static ServiceCollection AddAppServices(this ServiceCollection services)
         {
-            Folders.InitializeClientFolders();
-            services.AddSingleton<CollectionDbManager>();
-            services.AddSingleton<MtgDbManager>();
+            //services.AddSingleton<CollectionDbManager>();
+            //services.AddSingleton<MtgDbManager>();
             services.AddSingleton<MageekService>();
             services.AddSingleton<DeckManipulator>();
             return services;

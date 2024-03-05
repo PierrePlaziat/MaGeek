@@ -10,14 +10,18 @@ namespace MageekCore.Data
 
 
         private static string DbFolder { get; } = Path.Combine(Roaming, "DB");
-        public static string DB { get; } = Path.Combine(DbFolder, "MaGeek.db");
-        public static string MtgJson_DB { get; } = Path.Combine(DbFolder, "mtgjson.sqlite");
-        public static string MtgJson_NewHash { get; } = Path.Combine(DbFolder, "mtgjson.sqlite.sha256");
-        public static string MtgJson_OldHash { get; } = Path.Combine(DbFolder, "mtgjson.sqlite.sha256_old");
-        public static string Illustrations { get; } = Path.Combine(Roaming, "CardsIllus");
+        public static string File_UpdatePrints { get; } = Path.Combine(DbFolder, "mtgjson.sqlite");
+        public static string File_UpdateNewHash { get; } = Path.Combine(DbFolder, "mtgjson.sqlite.sha256");
+        public static string File_UpdateOldHash { get; } = Path.Combine(DbFolder, "mtgjson.sqlite.sha256_old");
+        public static string File_UpdatePrices { get; } = Path.Combine(DbFolder, "Prices.json");
+        public static string File_UpdatePrecos { get; } = Path.Combine(DbFolder, "Precos.zip");
+        public static string File_Precos { get; } = Path.Combine(DbFolder, "Precos.json");
+        public static string TempPrecoFolder { get; } = Path.Combine(DbFolder, "temp");
+        public static string File_CollectionDB { get; } = Path.Combine(DbFolder, "MaGeek.db");
         public static string SetIcon { get; } = Path.Combine(Roaming, "SetIcons");
+
+        public static string Illustrations { get; } = Path.Combine(Roaming, "CardsIllus");
         public static string LayoutFolder { get; } = Path.Combine(Roaming, "Layout");
-        public static string PrecosFolder { get; } = Path.Combine(Roaming, "Precos");
 
         public static void InitServerFolders()
         {

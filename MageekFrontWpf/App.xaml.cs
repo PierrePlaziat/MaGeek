@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.Framework.AppValues;
+using MageekCore.Data;
 
 namespace MageekFrontWpf
 {
@@ -11,6 +12,7 @@ namespace MageekFrontWpf
 
         public App()
         {
+            Folders.InitializeClientFolders();
             ServiceCollection services = new ServiceCollection();
             services.AddFrameworkServices();
             services.AddAppServices();
