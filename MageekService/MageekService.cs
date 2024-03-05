@@ -15,6 +15,8 @@ using PlaziatTools;
 using MageekCore.Data;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Reflection.Metadata;
+using System.Text.RegularExpressions;
 
 namespace MageekCore
 {
@@ -497,6 +499,77 @@ namespace MageekCore
 
         #endregion
 
+        #region Sets
+
+        /// <summary>
+        /// Get all sets
+        /// </summary>
+        /// <returns>List of sets</returns>
+        public async Task<List<Sets>> LoadSets()
+        {
+            using MtgDbContext DB = await mtg.GetContext();
+            return DB.sets.OrderByDescending(x => x.ReleaseDate).ToList();
+        }
+
+        public async Task<Sets> GetSet(string setCode)
+        {
+            using MtgDbContext DB = await mtg.GetContext();
+            return await DB.sets.Where(x => x.Code==setCode).FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Get cards in a set
+        /// </summary>
+        /// <param name="setCode"></param>
+        /// <returns>Uuid list of cards in set</returns>
+        public async Task<List<Cards>> GetCardsFromSet(string setCode)
+        {
+            List<Cards> cards = new();
+            if (!string.IsNullOrEmpty(setCode))
+            {
+                try
+                {
+                    using MtgDbContext DB = await mtg.GetContext();
+                    {
+                        cards = await DB.cards.Where(x => x.SetCode == setCode)
+                            .ToListAsync();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e);
+                }
+            }
+            return cards;
+        }
+
+        /// <summary>
+        /// How many cards collected in this set
+        /// </summary>
+        /// <param name="setCode"></param>
+        /// <param name="strict">if set to false, the archetype from any set counts</param>
+        /// <returns>the distinct count</returns>
+        public async Task<int> GetMtgSetCompletion(string setCode, bool strict)
+        {
+            int nb = 0;
+            try
+            {
+                var cardUuids = await GetCardsFromSet(setCode);
+                using CollectionDbContext DB = await collec.GetContext();
+                foreach (var card in cardUuids)
+                {
+                    if (await Collected(card.Uuid, strict) > 0) nb++;
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+            }
+            return nb;
+        }
+
+        #endregion
+
         #region Collection
 
         /// <summary>
@@ -684,83 +757,6 @@ namespace MageekCore
 
         #endregion
 
-        #region Sets
-
-        public async Task<Data.Mtg.Entities.Sets> RetrieveSet(string setCode)
-        {
-            using MtgDbContext DB = await mtg.GetContext();
-            return await DB.sets.FirstOrDefaultAsync(x => x.Code == setCode);
-        }
-
-        /// <summary>
-        /// Get all sets
-        /// </summary>
-        /// <returns>List of sets</returns>
-        public async Task<List<Sets>> LoadSets()
-        {
-            using MtgDbContext DB = await mtg.GetContext();
-            return DB.sets.OrderByDescending(x => x.ReleaseDate).ToList();
-        }
-
-        public async Task<Sets> GetSet(string setCode)
-        {
-            using MtgDbContext DB = await mtg.GetContext();
-            return await DB.sets.Where(x => x.Code==setCode).FirstOrDefaultAsync();
-        }
-
-        /// <summary>
-        /// Get cards in a set
-        /// </summary>
-        /// <param name="setCode"></param>
-        /// <returns>Uuid list of cards in set</returns>
-        public async Task<List<Cards>> GetCardsFromSet(string setCode)
-        {
-            List<Cards> cards = new();
-            if (!string.IsNullOrEmpty(setCode))
-            {
-                try
-                {
-                    using MtgDbContext DB = await mtg.GetContext();
-                    {
-                        cards = await DB.cards.Where(x => x.SetCode == setCode)
-                            .ToListAsync();
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(e);
-                }
-            }
-            return cards;
-        }
-
-        /// <summary>
-        /// How many cards collected in this set
-        /// </summary>
-        /// <param name="setCode"></param>
-        /// <param name="strict">if set to false, the archetype from any set counts</param>
-        /// <returns>the distinct count</returns>
-        public async Task<int> GetMtgSetCompletion(string setCode, bool strict)
-        {
-            int nb = 0;
-            try
-            {
-                var cardUuids = await GetCardsFromSet(setCode);
-                using CollectionDbContext DB = await collec.GetContext();
-                foreach (var card in cardUuids)
-                {
-                    if (await Collected(card.Uuid, strict) > 0) nb++;
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
-            return nb;
-        }
-
-        #endregion
-
         #region Decks
 
         /// <summary>
@@ -779,6 +775,7 @@ namespace MageekCore
             catch (Exception e) { Logger.Log(e); }
             return decks;
         }
+
         /// <summary>
         /// Get a deck by its id
         /// </summary>
@@ -799,6 +796,7 @@ namespace MageekCore
                 return null;
             }
         }
+
         /// <summary>
         /// Gets deck cards
         /// </summary>
@@ -848,6 +846,7 @@ namespace MageekCore
                 return null;
             }
         }
+      
         /// <summary>
         /// Creates a filled deck
         /// </summary>
@@ -919,13 +918,15 @@ namespace MageekCore
         /// Duplicate a deck
         /// </summary>
         /// <param name="deckToCopy"></param>
-        private async Task DuplicateDeck(Deck deckToCopy)
+        public async Task DuplicateDeck(string deckId)
         {
+            Logger.Log("");
+            var deckToCopy = await GetDeck(deckId);
             Logger.Log("");
             if (deckToCopy == null) return;
             var newDeck = await CreateDeck(
                 deckToCopy.Title + " - Copy",
-                deckToCopy.Description,deckToCopy.DeckColors,deckToCopy.CardCount);
+                deckToCopy.Description, deckToCopy.DeckColors, deckToCopy.CardCount);
             if (newDeck == null) return;
 
             using CollectionDbContext DB = await collec.GetContext();
@@ -946,12 +947,6 @@ namespace MageekCore
             DB.Entry(newDeck).State = EntityState.Modified;
             await DB.SaveChangesAsync();
         }
-        public async Task DuplicateDeck(string deckId)
-        {
-            Logger.Log("");
-            var deck = await GetDeck(deckId);
-            await DuplicateDeck(deck);
-        }
 
         public async Task SaveDeck(Deck header, List<DeckCard> lines)
         {
@@ -964,6 +959,7 @@ namespace MageekCore
             }
             catch (Exception e) { Logger.Log(e); }
         }
+
         /// <summary>
         /// Change deck entirely
         /// </summary>
@@ -987,14 +983,6 @@ namespace MageekCore
         public async Task DeleteDeck(string deckId)
         {
             var deck = await GetDeck(deckId);
-            await DeleteDeck(deck);
-        }
-        /// <summary>
-        /// Delete a deck
-        /// </summary>
-        /// <param name="deck"></param>
-        public async Task DeleteDeck(Deck deck)
-        {
             Logger.Log("");
             using CollectionDbContext DB = await collec.GetContext();
             DB.Decks.Remove(deck);
@@ -1163,7 +1151,7 @@ namespace MageekCore
             return result.ToString();
         }
 
-        public async Task<TxtImportResult> ParseCardList(string cardlist)
+        public async Task<TxtImportResult> ParseCardList(string cardList)
         {
             TxtImportResult result = new();
             result.Cards = new();
@@ -1171,7 +1159,7 @@ namespace MageekCore
             result.Detail = string.Empty;
             try
             {
-                var lines = cardlist.Split(Environment.NewLine).ToList();
+                var lines = cardList.Split(Environment.NewLine).ToList();
                 int lineType = 0;
                 foreach (string line in lines)
                 {
@@ -1239,7 +1227,10 @@ namespace MageekCore
             string trimmed = line.Trim();
             try
             {
-                int quantity = int.Parse(line.Split(" ")[0]);
+                var splitted = line.Split(" ");
+                if (splitted.Count()<2) return new Tuple<int, string>(-1, "Ignored line");
+
+                int quantity = int.Parse(splitted[0]);
                 string name = line[(line.IndexOf(' ') + 1)..];
                 name = name.Split(" // ")[0];
                 var uuid = (await GetCardUuidsForGivenCardName(name)).FirstOrDefault();

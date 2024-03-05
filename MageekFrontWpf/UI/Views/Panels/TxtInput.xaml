@@ -16,8 +16,8 @@
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-
-        <RichTextBox local:RichTextBoxHelper.DocumentXaml="{Binding document}" 
+        <RichTextBox local:RichTextBoxHelper.DocumentXaml="{Binding Document}" 
+                     InputLanguageManager.InputLanguage=""
                      Grid.Row="0"
                      x:Name="ImportTxt"
                      Margin="0,0,0,0"

@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using MageekCore.Data;
 using System;
 using System.Diagnostics.Eventing.Reader;
+using System.Text.RegularExpressions;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -37,12 +38,21 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [RelayCommand]
         private async Task<TxtImportResult> Check()
         {
+            string cardList = FlowDocumentStringToSimpleString(Document);
             TxtImportResult result = await mageek.ParseCardList(Document);
             CheckResult = result.Status;
-            CheckDetail= result.Detail;
+            CheckDetail = result.Detail;
             return result;
         }
-        
+
+        private string FlowDocumentStringToSimpleString(string document)
+        {
+            string s = document
+                .Replace("<LineBreak />", Environment.NewLine)
+                .Replace("</Paragraph>", Environment.NewLine);
+            return Regex.Replace(s, "<[a-zA-Z/].*?>", String.Empty);
+        }
+
         [RelayCommand]
         private async Task Clear()
         {
@@ -54,7 +64,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         private async Task Collect()
         {
             TxtImportResult result = await Check();
-            bool ok = AskUser(result);
+            bool ok = UserComfirmation(result);
             if (ok)
             {
                 DoAddToCollec(result.Cards);
@@ -65,7 +75,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         private async Task Open()
         {
             TxtImportResult result = await Check();
-            bool ok = AskUser(result);
+            bool ok = UserComfirmation(result);
             if (ok)
             {
                 DoOpenTheDeck(result.Cards);
@@ -76,7 +86,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         private async Task CollectAndOpen()
         {
             TxtImportResult result = await Check();
-            bool ok = AskUser(result);
+            bool ok = UserComfirmation(result);
             if (ok)
             {
                 DoAddToCollec(result.Cards);
@@ -84,7 +94,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             }
         }
 
-        private bool AskUser(TxtImportResult result)
+        private bool UserComfirmation(TxtImportResult result)
         {
             if (result.Status == "KO")
             {
