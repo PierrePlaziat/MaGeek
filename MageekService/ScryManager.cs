@@ -125,44 +125,6 @@ namespace MageekCore
             await stream.CopyToAsync(fileStream);
         }
 
-        public async Task<PriceLine> EstimateCardPrice(string cardUuid)
-        {
-            using CollectionDbContext DB = await collec.GetContext();
-            PriceLine? price = DB.PriceLine.Where(x => x.CardUuid == cardUuid).FirstOrDefault();
-            if (price != null)
-            {
-                DateTime lastUpdate = DateTime.Parse(price.LastUpdate);
-                if (lastUpdate < DateTime.Now.AddDays(-3)) return price;
-                else price.LastUpdate = DateTime.Now.ToString();
-            }
-            Card? scryfallCard = await GetScryfallCard(cardUuid);
-            if (scryfallCard == null) return null;
-            if (price == null)
-            {
-                price = new PriceLine()
-                {
-                    CardUuid = cardUuid,
-                    LastUpdate = DateTime.Now.ToString(),
-                    PriceEur = scryfallCard.Prices.Eur,
-                    PriceUsd = scryfallCard.Prices.Usd,
-                    EdhrecScore = scryfallCard.EdhrecRank
-                };
-                DB.PriceLine.Add(price);
-                await DB.SaveChangesAsync();
-            }
-            else
-            {
-                price.CardUuid = cardUuid;
-                price.LastUpdate = DateTime.Now.ToString();
-                price.PriceEur = scryfallCard.Prices.Eur;
-                price.PriceUsd = scryfallCard.Prices.Usd;
-                price.EdhrecScore = scryfallCard.EdhrecRank;
-                DB.Entry(price).State = EntityState.Modified;
-                await DB.SaveChangesAsync();
-            }
-            return price;
-        }
-
         public async Task<ResultList<Set>> GetSetsJson()
         {
             string json_data = await HttpUtils.Get("https://api.scryfall.com/sets/");

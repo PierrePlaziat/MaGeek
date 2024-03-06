@@ -39,7 +39,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] private List<Tag> tags;
         [ObservableProperty] private int variantCount;
         [ObservableProperty] private int totalGot;
-        [ObservableProperty] private decimal meanPrice;
+        [ObservableProperty] private float meanPrice;
         [ObservableProperty] private bool isFav = false;
         [ObservableProperty] private bool pinned = false;
         [ObservableProperty] private bool isLoading = false;

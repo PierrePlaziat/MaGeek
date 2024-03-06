@@ -16,9 +16,9 @@ namespace MageekCore.Data
         public static string File_UpdatePrices { get; } = Path.Combine(DbFolder, "Prices.json");
         public static string File_UpdatePrecos { get; } = Path.Combine(DbFolder, "Precos.zip");
         public static string File_Precos { get; } = Path.Combine(DbFolder, "Precos.json");
-        public static string TempPrecoFolder { get; } = Path.Combine(DbFolder, "temp");
         public static string File_CollectionDB { get; } = Path.Combine(DbFolder, "MaGeek.db");
         public static string SetIcon { get; } = Path.Combine(Roaming, "SetIcons");
+        public static string TempPrecoFolder { get; } = Path.Combine(DbFolder, "temp");
 
         public static string Illustrations { get; } = Path.Combine(Roaming, "CardsIllus");
         public static string LayoutFolder { get; } = Path.Combine(Roaming, "Layout");
@@ -36,7 +36,7 @@ namespace MageekCore.Data
             if (!File.Exists(LayoutFolder)) Directory.CreateDirectory(LayoutFolder);
             if (!File.Exists(Illustrations)) Directory.CreateDirectory(Illustrations);
             if (!File.Exists(SetIcon)) Directory.CreateDirectory(SetIcon);
-            if (!File.Exists(PrecosFolder)) Directory.CreateDirectory(PrecosFolder);
+            if (!File.Exists(TempPrecoFolder)) Directory.CreateDirectory(TempPrecoFolder);
             Logger.Log("Done");
         }
 

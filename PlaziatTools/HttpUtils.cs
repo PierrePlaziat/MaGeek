@@ -53,7 +53,7 @@ namespace PlaziatTools
                 using (var client = new HttpClient())
                 using (var stream = await client.GetStreamAsync(url))
                 {
-                    using var fs_stream = new FileStream(url, FileMode.Create);
+                    using var fs_stream = new FileStream(path, FileMode.Create);
                     await stream.CopyToAsync(fs_stream);
                 }
                 Logger.Log("Done");

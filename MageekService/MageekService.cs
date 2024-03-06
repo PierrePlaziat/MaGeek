@@ -23,6 +23,7 @@ namespace MageekCore
 
         private readonly MtgDbManager mtg;
         private readonly CollectionDbManager collec;
+
         private readonly ScryManager scryfall; 
 
         public MageekService()
@@ -106,7 +107,7 @@ namespace MageekCore
                 {
                     HttpUtils.Download(Url_UpdatePrints, Folders.File_UpdatePrints),
                     HttpUtils.Download(Url_UpdatePrices, Folders.File_UpdatePrices),
-                    HttpUtils.Download(Url_UpdatePrecos, Folders.File_UpdatePrecos)
+                    HttpUtils.Download(Url_UpdatePrecos, Folders.File_UpdatePrecos),
                 };
                 await Task.WhenAll(tasks);
             }
@@ -121,9 +122,9 @@ namespace MageekCore
                 {
                     FetchArchetypes(),
                     FetchTranslations(),
-                    FetchSets(),
+                    //FetchSets(),
                     FetchPrecos(),
-                    FetchPrices(),    //TODO TODO TODO TODO TODO
+                    FetchPrices(), //TODO TODO TODO TODO TODO
                     //FetchImages(),        //find a way without ddosing scryfall
                     //FetchCardRelations    //find a way without ddosing scryfall
                 };
@@ -369,26 +370,175 @@ namespace MageekCore
 
         #region Prices
 
-        private async Task FetchPrices()
+        public async Task FetchPrices()
         {
-            List<PriceLine> CommanderCardUuids = new List<PriceLine>();
-
-            using StreamReader reader = new(Folders.File_UpdatePrices);
-            string jsonString = await reader.ReadToEndAsync();
-            dynamic dynData = JObject.Parse(jsonString);
-
-            foreach (dynamic card in dynData.data)
+            Logger.Log("Start");
+            using (CollectionDbContext collecContext = await collec.GetContext())
             {
-                //CommanderCardUuids.Add(new PriceLine()
-                //{
-                //    CardUuid = uuid,
-                //    EdhrecScore = edh,
-                //    PriceEur = Eur,
-                //    PriceUsd = Usd,
-                //});
+                await collecContext.PriceLine.ExecuteDeleteAsync();
+                await collecContext.SaveChangesAsync();
             }
+            using (FileStream s = File.Open(Folders.File_UpdatePrices, FileMode.Open))
+            using (StreamReader sr = new StreamReader(s))
+            using (Newtonsoft.Json.JsonReader reader = new Newtonsoft.Json.JsonTextReader(sr))
+            {
+                while (reader.Read())
+                {
+                    if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
+                    {
+                        bool metaSkip = false;
+                        while (reader.Read())
+                        {
+                            if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
+                            {
+                                if (!metaSkip) metaSkip = true;
+                                else await ProcessPriceData(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            Logger.Log("Done - "+nbRecPrice+" records processed. - missing "+missingPrice);
+        }
 
-            Logger.Log("Done");
+        private async Task ProcessPriceData(Newtonsoft.Json.JsonReader reader)
+        {
+            while (await reader.ReadAsync())
+            {
+                if (reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
+                {
+                    string UUID = reader.Value.ToString();
+                    await RecordPrice(GetPriceLine(UUID, reader));
+                }
+            }
+        }
+
+        int nbRecPrice = 0;
+        private async Task RecordPrice(PriceLine priceLine)
+        {
+            if (priceLine == null) return;
+            using (CollectionDbContext collecContext = await collec.GetContext())
+            {
+                await collecContext.PriceLine.AddAsync(priceLine);
+                await collecContext.SaveChangesAsync();
+                nbRecPrice++;
+            }
+        }
+
+        private PriceLine? GetPriceLine(string UUID, Newtonsoft.Json.JsonReader reader)
+        {
+            Console.WriteLine(">>> " + UUID);
+            string CardBlock = RegisterBlock(reader);
+            return ParsePriceBlock(UUID, CardBlock);
+        }
+
+        private string RegisterBlock(Newtonsoft.Json.JsonReader reader)
+        {
+            string data = string.Empty;
+            int deepness = 0;
+            int lastdeepness = -1;
+            bool starting = true;
+            data += "{";
+            while ((deepness >= 1 || starting == true) && reader.Read())
+            {
+                if (reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
+                {
+                    if (lastdeepness > deepness) data += ",";
+                    data += "\"" + reader.Value.ToString() + "\":";
+                }
+                else if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
+                {
+                    if (deepness > 0) data += "{";
+                    deepness++;
+                    if (deepness > 1) starting = false;
+                }
+                else if (reader.TokenType == Newtonsoft.Json.JsonToken.EndObject)
+                {
+                    lastdeepness = deepness;
+                    if (deepness > 1)
+                    {
+                        if (data.EndsWith(",")) data = data.Remove(data.Length - 1);
+                        data += "}";
+                    }
+                    deepness--;
+                }
+                else
+                {
+                    string value = reader.Value.ToString();
+                    if (value == "USD") data += "\"USD\"";
+                    else if (value == "EUR") data += "\"EUR\"";
+                    else data += value.Replace(",", ".") + ",";
+                }
+            }
+            data += "}";
+            data = data.Replace("\"\"", "\",\"");
+            return data;
+        }
+
+        int missingPrice = 0;
+        private PriceLine ParsePriceBlock(string UUID, string cardBlock)
+        {
+            PriceLine line = new PriceLine() { CardUuid = UUID };
+            //Console.WriteLine(cardBlock);
+            dynamic dynData = JObject.Parse(cardBlock);
+            try
+            {
+                if (dynData.paper!=null)
+                {
+                    if (dynData.paper.cardmarket != null)
+                    {
+                        dynamic v1 = dynData.paper.cardmarket.retail;
+                        line.PriceEur = (v1 == null) ? null : v1.ToString();
+                    }
+                    else missingPrice++;
+                    //if (dynData.paper.cardkingdom != null)
+                    //{
+                    //    dynamic v2 = dynData.paper.cardkingdom.retail;
+                    //    line.PriceUsd = (v2 == null) ? null : v2.ToString();
+                    //}
+                    //else if (dynData.paper.cardsphere != null)
+                    //{
+                    //    dynamic v2 = dynData.paper.cardsphere.retail;
+                    //    line.PriceUsd = (v2 == null) ? null : v2.ToString();
+                    //}
+                    //else
+                    //{
+
+                    //}
+                    return line;
+                }
+            }
+            catch
+            {
+                Console.WriteLine(dynData.ToString());
+            }
+            return null;
+        }
+
+        private PriceLine MakePriceLine(string UUID, string eur, string usd)
+        {
+            return new PriceLine()
+            {
+                CardUuid = UUID,
+                PriceEur = eur,
+                PriceUsd = usd,
+            };
+        }
+
+        private string FetchRetailPrice(Newtonsoft.Json.JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
+                {
+                    string property = reader.Value.ToString();
+                    if (property == "retail")
+                    {
+                        return RegisterBlock(reader);
+                    }
+                }
+            }
+            return null;
         }
 
         #endregion
@@ -704,6 +854,11 @@ namespace MageekCore
             return await DB.cardRulings.Where(x => x.Uuid == CardUuid).ToListAsync();
         }
 
+        public async Task<List<CardCardRelation>> FindCard_Related(string SelectedUuid, string SelectedArchetype)
+        {
+            return await scryfall.FindCard_Related(SelectedUuid,SelectedArchetype);
+        }
+
         // TODO cache data at db mtg import
 
         public List<CardCardRelation> FindRelateds(string uuid, string originalarchetype)
@@ -797,8 +952,8 @@ namespace MageekCore
         /// <returns>The estimation</returns>
         public async Task<PriceLine> EstimateCardPrice(string cardUuid)
         {
-            Logger.Log("");
-            return await scryfall.EstimateCardPrice(cardUuid);
+            using CollectionDbContext collecContext = await collec.GetContext();
+            return await collecContext.PriceLine.Where(x=>x.CardUuid == cardUuid).FirstOrDefaultAsync();
         }
 
         #endregion
@@ -1063,9 +1218,9 @@ namespace MageekCore
         /// Auto estimate collection
         /// </summary>
         /// <returns>Estimated price and a list of missing estimations</returns>
-        public async Task<Tuple<decimal, List<string>>> AutoEstimatePrices(string currency)
+        public async Task<Tuple<float, List<string>>> AutoEstimatePrices(string currency)
         {
-            decimal total = 0;
+            float total = 0;
             List<string> missingList = new();
             try
             {
@@ -1076,15 +1231,14 @@ namespace MageekCore
                     var price = await EstimateCardPrice(collectedCard.CardUuid);
                     if (price != null)
                     {
-                        if (currency == "Eur") total += price.PriceEur ?? 0;
-                        if (currency == "Usd") total += price.PriceUsd ?? 0;
-                        if (currency == "Edh") total += price.EdhrecScore;
+                        if (currency == "Eur") total += price.GetLastPriceEur;
+                        if (currency == "Usd") total += price.GetLastPriceUsd;
                     }
                     else missingList.Add(collectedCard.CardUuid);
                 }
             }
             catch (Exception e) { Logger.Log(e); }
-            return new Tuple<decimal, List<string>>(total, missingList);
+            return new Tuple<float, List<string>>(total, missingList);
         }
 
         #endregion
@@ -1325,7 +1479,7 @@ namespace MageekCore
 
         public async Task<List<Preco>> GetPrecos()
         {
-            string data = File.ReadAllText(Path.Combine(Folders.PrecosFolder, "precos.json"));
+            string data = await File.ReadAllTextAsync(Folders.File_Precos);
             return JsonSerializer.Deserialize<List<Preco>>(data, new JsonSerializerOptions { IncludeFields = true });
         }
 
@@ -1344,14 +1498,15 @@ namespace MageekCore
             List<DeckCard> deckCards = await GetDeckContent(deckId);
             foreach (var deckCard in deckCards)
             {
-                var price = await EstimateCardPrice(deckCard.CardUuid);
-                if (price != null)
-                {
-                    if (currency == "Eur") total += price.PriceEur ?? 0;
-                    if (currency == "Usd") total += price.PriceUsd ?? 0;
-                    if (currency == "Edh") total += price.EdhrecScore;
-                }
-                else missingList.Add(deckCard.CardUuid);
+                //TODO
+                //var price = await EstimateCardPrice(deckCard.CardUuid);
+                //if (price != null)
+                //{
+                //    if (currency == "Eur") total += price.PriceEur ?? 0;
+                //    if (currency == "Usd") total += price.PriceUsd ?? 0;
+                //    if (currency == "Edh") total += price.EdhrecScore;
+                //}
+                //else missingList.Add(deckCard.CardUuid);
             }
             return new Tuple<decimal, List<string>>(total, missingList);
         }

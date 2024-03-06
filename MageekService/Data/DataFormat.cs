@@ -65,13 +65,13 @@ namespace MageekCore.Data
             Price = price;
         }
 
-        public decimal? GetPrice //TODO multi monaie & colors
+        public float? GetPrice //TODO multi monaie & colors
         {
             get
             {
                 if (Price == null) return null;
-                if (Price.PriceEur == null) return null;
-                return Price.PriceEur;
+                if (Price.GetLastPriceEur == null) return null;
+                return Price.GetLastPriceEur;
             }
         }
     }

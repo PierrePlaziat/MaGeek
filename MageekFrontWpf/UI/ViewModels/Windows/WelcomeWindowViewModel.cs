@@ -67,7 +67,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             switch (retour)
             {
                 case MageekUpdateReturn.Success:
-                    await mageek.FetchPrecos();
+                    //await mageek.FetchPrecos();
                     CanLaunch = true;
                     UpdateAvailable = false;
                     Message = "Updated";
