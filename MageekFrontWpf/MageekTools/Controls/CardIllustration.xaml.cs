@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using MageekCore;
 using MageekFrontWpf.Framework.Services;
+using MageekCore.Service;
 
 namespace MaGeek.UI
 {
@@ -15,11 +15,11 @@ namespace MaGeek.UI
     public partial class CardIllustration : BaseUserControl
     {
 
-        private MageekService mageek;
+        private IMageekService mageek;
 
         public CardIllustration()
         {
-            mageek = ServiceHelper.GetService<MageekService>();
+            mageek = ServiceHelper.GetService<IMageekService>();
             DataContext = this;
             InitializeComponent();
         }

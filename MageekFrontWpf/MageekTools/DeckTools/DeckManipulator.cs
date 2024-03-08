@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using PlaziatTools;
-using MageekCore;
 using System.Windows.Media;
 using System.Windows;
 using System.Linq;
 using System.Collections.ObjectModel;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.MageekTools.DeckTools
 {
@@ -17,9 +17,9 @@ namespace MageekFrontWpf.MageekTools.DeckTools
     public class DeckManipulator
     {
 
-        private MageekService mageek;
+        private IMageekService mageek;
 
-        public DeckManipulator(MageekService mageek)
+        public DeckManipulator(IMageekService mageek)
         {
             this.mageek = mageek;
         }

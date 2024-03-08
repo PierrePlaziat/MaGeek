@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using MageekCore;
 using MageekCore.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,6 +10,7 @@ using System.Windows;
 using System.Linq;
 using MageekFrontWpf.Framework.AppValues;
 using PlaziatTools;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -20,16 +20,16 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<LaunchAppMessage>
     {
 
+        private IMageekService mageek;
         private WindowsService wins;
-        private MageekService mageek;
         private SettingService config;
         private DialogService dialog;
 
         public DeckListViewModel(
+            IMageekService mageek,
             WindowsService wins,
             SettingService config,
-            DialogService dialog, 
-            MageekService mageek
+            DialogService dialog
         ){
             this.wins = wins;
             this.mageek = mageek;
@@ -74,7 +74,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.CreateDeck(title, "", "", 0);
+            await mageek.CreateDeck_Empty(title, "", "", 0);
             await Reload();
         }
 

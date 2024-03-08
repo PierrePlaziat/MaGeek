@@ -10,8 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MageekCore;
 using MageekFrontWpf.Framework.AppValues;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -21,9 +21,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<CardSelectedMessage>
     {
 
-        MageekService mageek;
+        IMageekService mageek;
 
-        public CardInspectorViewModel(MageekService mageek)
+        public CardInspectorViewModel(IMageekService mageek)
         {
             this.mageek = mageek;
             WeakReferenceMessenger.Default.RegisterAll(this);
@@ -117,11 +117,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
         private async Task GetRelatedCards()
         {
-            RelatedCards = await mageek.FindCard_Related(SelectedUuid, SelectedArchetype); 
+            RelatedCards = await mageek.FindRelated(SelectedUuid, SelectedArchetype); 
         }
         private async Task GetTags()
         {
-            Tags = await mageek.GetTags(SelectedArchetype);
+            Tags = await mageek.GetCardTags(SelectedArchetype);
         }
         private async Task GetTotalGot() 
         {

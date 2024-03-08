@@ -92,11 +92,19 @@ namespace MageekCore.Data
 
     }
 
+    public enum MageekConnectReturn
+    {
+        Success,
+        Failure,
+        NotImplementedForServer
+    }
+    
     public enum MageekInitReturn
     {
         Error,
         MtgUpToDate,
         MtgOutdated,
+        NotImplementedForClient
     }
 
     public enum MageekUpdateReturn
@@ -107,6 +115,7 @@ namespace MageekCore.Data
         Success,
         ErrorFetchingRelations,
         ErrorFetchingPrices,
+        NotImplementedForClient
     }
 
 
@@ -133,7 +142,12 @@ namespace MageekCore.Data
     /// </summary>
     public enum CardImageFormat
     {
-        small, large, medium, png, art_crop, border_crop
+        small = 0, 
+        large = 1,
+        medium = 2,
+        png = 3, 
+        art_crop = 4,
+        border_crop = 5
     }
 
     public enum MtgColorFilter

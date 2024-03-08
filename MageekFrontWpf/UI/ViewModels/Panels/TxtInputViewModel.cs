@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekCore;
 using MageekCore.Data.Collection.Entities;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.Framework.AppValues;
@@ -13,6 +12,7 @@ using MageekCore.Data;
 using System;
 using System.Diagnostics.Eventing.Reader;
 using System.Text.RegularExpressions;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -20,11 +20,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     public partial class TxtInputViewModel : ObservableViewModel
     {
 
-        MageekService mageek;
+        IMageekService mageek;
         WindowsService win;
         DialogService dialog;
 
-        public TxtInputViewModel(MageekService mageek, WindowsService win, DialogService dialog)
+        public TxtInputViewModel(IMageekService mageek, WindowsService win, DialogService dialog)
         {
             this.mageek = mageek;
             this.win = win;

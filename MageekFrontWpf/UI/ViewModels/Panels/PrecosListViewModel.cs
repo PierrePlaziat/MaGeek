@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
-using MageekCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MageekCore.Data;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.Framework.AppValues;
 using CommunityToolkit.Mvvm.Messaging;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -16,10 +16,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         IRecipient<LaunchAppMessage>
     {
 
-        private MageekService mageek;
+        private IMageekService mageek;
         private WindowsService win;
 
-        public PrecoListViewModel(MageekService mageek, WindowsService win)
+        public PrecoListViewModel(IMageekService mageek, WindowsService win)
         {
             this.mageek = mageek;
             this.win = win;

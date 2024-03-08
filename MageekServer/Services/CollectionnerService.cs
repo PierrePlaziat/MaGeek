@@ -1,5 +1,5 @@
 using Grpc.Core;
-using MageekCore;
+using MageekCore.Service;
 
 namespace MageekServer.Services
 {
@@ -8,11 +8,11 @@ namespace MageekServer.Services
     {
 
         private readonly ILogger<CollectionnerService> _logger;
-        private readonly IMageekServer _server;
+        private readonly IMageekService _server;
         
         public CollectionnerService(
             ILogger<CollectionnerService> logger,
-            IMageekServer server
+            IMageekService server
         )
         {
             _logger = logger;

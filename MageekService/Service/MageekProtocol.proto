@@ -1,0 +1,233 @@
+syntax = "proto3";
+
+option csharp_namespace = "MageekProtocol";
+
+package MageekProtocolPackage;
+
+service MageekProtocolService 
+{
+
+	rpc NormalSearch					(Request_NormalSearch)		returns (Reply_SearchedCard);
+	rpc AdvancedSearch					(Request_AdvancedSearch)	returns (Reply_SearchedCard);
+
+	rpc GetCardUuidsForGivenCardName	(Request_CardName)			returns (Reply_ListCardUuid);
+	rpc GetCardNameForGivenCardUuid		(Request_CardUuid)			returns (Reply_CardName);
+	rpc GetCardUuidsForGivenCardUuid	(Request_CardUuid)			returns (Reply_ListCardUuid);
+	
+	rpc FindCard_Data					(Request_CardUuid)			returns (Reply_CardData);
+	rpc GetTranslatedData				(Request_CardTranslation)	returns (Reply_CardForeignData);
+	rpc GetCardBack						(Request_CardUuid) 			returns (Reply_CardUuid);
+	rpc GetLegalities					(Request_CardUuid) 			returns (Reply_CardLegalities);
+	rpc GetRulings						(Request_CardUuid) 			returns (Reply_CardRulings);
+	rpc FindRelated						(Request_CardUuid) 			returns (Reply_CardRelations);
+	rpc RetrieveImage					(Request_CardUuid) 			returns (Reply_Uri);
+	rpc EstimateCardPrice				(Request_CardUuid) 			returns (Reply_PriceData);
+	
+	rpc LoadSets						(Request_Empty)				returns (Reply_ListSet);
+	rpc GetSet							(Request_SetCode)			returns (Reply_Set);
+	rpc GetCardsFromSet					(Request_SetCode)			returns (Reply_ListCardUuid);
+	rpc GetMtgSetCompletion				(Request_SetCompletion) 	returns (Reply_Percentage);
+
+	rpc SetFav							(Request_Fav)				returns (Reply_Empty);
+	rpc CollecMove						(Request_CollecMove)		returns (Reply_Empty);
+	rpc Collected_SingleVariant			(Request_CardUuid)			returns (Reply_Quantity);
+	rpc Collected_AllVariants			(Request_CardName) 			returns (Reply_Quantity);
+	rpc GetTotal_Collected				(Request_Empty) 			returns (Reply_Quantity);
+	rpc GetTotal_CollectedDiff			(Request_Empty) 			returns (Reply_Quantity);
+	rpc GetTotal_CollectedArchetype		(Request_Empty) 			returns (Reply_Quantity);
+	rpc GetTotal_ExistingArchetypes		(Request_Empty) 			returns (Reply_Quantity);
+	//rpc AutoEstimatePrices				(Request_) 					returns (Reply_);
+
+	rpc GetDecks						(Request_Empty)				returns (Reply_DeckList);
+	rpc GetDeck							(Request_DeckId)			returns (Reply_Deck);
+	rpc GetDeckContent					(Request_DeckId)			returns (Reply_DeckContent);
+	rpc CreateDeck						(Request_CreateDeck) 		returns (Reply_Deck);
+	rpc RenameDeck						(Request_RenameDeck) 		returns (Reply_Empty);
+	rpc DuplicateDeck					(Request_DeckId) 			returns (Reply_Empty);
+	rpc SaveDeckContent					(Request_SaveDeck) 			returns (Reply_Empty);
+	rpc UpdateDeckHeader				(Request_UpdateDeck)		returns (Reply_Empty);
+	rpc DeleteDeck						(Request_DeckId)			returns (Reply_Empty);
+	rpc GetPrecos						(Request_Empty) 			returns (Reply_ListPreco);
+	//rpc EstimateDeckPrice				(Request_DeckEstimation) 	returns (Reply_);
+	
+	rpc DeckToTxt						(Request_DeckToTxt) 		returns (Reply_Txt);
+	rpc ParseCardList					(Request_Txt) 				returns (Reply_TxtImportResult);
+
+	rpc GetTags							(Request_Empty)				returns (Reply_TagList);
+	rpc HasTag							(Request_CardTag)			returns (Reply_HasTag);
+	rpc TagCard							(Request_CardTag)			returns (Reply_Empty);
+	rpc UnTagCard						(Request_CardTag)			returns (Reply_Empty);
+	rpc GetCardTags						(Request_CardName)			returns (Reply_TagList);
+
+}
+
+message Reply_Empty  {}
+message Request_Empty {}
+
+message Request_CardTag {
+}
+message Request_DeckToTxt {
+}
+message Request_Txt{
+}
+message Request_UpdateDeck {
+}
+message Request_SaveDeck {
+}
+message Request_DeckId{
+}
+message Request_CreateDeck {
+}
+message Request_RenameDeck {
+}
+message Request_CollecMove{
+}
+message Request_Fav {
+}
+message Request_SetCode {
+}
+message Request_SetCompletion {
+}
+message Request_CardName {
+}
+message Request_CardUuid {
+}
+message Request_CardTranslation {
+}
+message Request_NormalSearch{
+}
+message Request_AdvancedSearch{
+}
+
+message Reply_HasTag {
+	bool hasTag = 1;
+}
+message Reply_TagList {
+	repeated string tags = 1;
+}
+message Reply_Percentage {
+	int32  Percentage = 1;
+}
+message Reply_Quantity{
+	int32  Quantity = 1;
+}
+message Reply_Uri{
+	string Uri = 1;
+}
+message Reply_ListCardUuid{
+	repeated string ListCardUuid = 1;
+}
+message Reply_CardName {
+	string CardName = 1;
+}
+message Reply_CardUuid{
+	string CardUuid = 1;
+}
+
+message Reply_SearchedCard {
+}
+message Reply_CardData {
+}
+message Reply_CardForeignData{
+}
+message Reply_PriceData{
+}
+message Reply_CardLegalities {
+}
+message Reply_CardRulings{
+}
+message Reply_CardRelations{
+}
+message Reply_Set{
+}
+message Reply_ListSet {
+}
+message Reply_Deck {
+}
+message Reply_DeckContent{
+}
+message Reply_DeckList{
+}
+message Reply_ListPreco{
+}
+
+
+/////////// OLD
+
+message Request_CollecMove {
+	string cardUuid = 1;
+	int32  quantityModification = 2;
+}
+
+message Reply_CollecMove {
+	bool success = 1;
+	int32  quantityBeforeMove = 2;
+	int32  quantityAfterMove = 3;
+}
+
+message Request_Collected {
+	string cardUuid = 1;
+	bool onlyThisVariant = 2;
+}
+
+message Reply_Quantity {
+	bool success = 1;
+	int32  quantity = 2;
+}
+
+message Request_DeckId {
+	string deckId = 1; 
+}
+
+message Reply_DeckList {
+	repeated Reply_Deck decks = 1;
+}
+
+message Reply_Deck {
+	string DeckId = 1;
+	string Title = 2;
+	string Description = 3;
+	string DeckColors = 4;
+	int32 CardCount = 5;
+}
+
+message Reply_DeckContent {
+	repeated Reply_DeckCard content = 1;
+}
+
+message Request_CreateDeck {
+	string title = 1;
+	string description = 2;
+	repeated Reply_DeckCard content = 3;
+}
+
+message Request_UpdateDeck {
+	string deckId = 1; 
+	string title = 2;
+	string description = 3;
+	repeated Reply_DeckCard content = 4;
+}
+
+message Reply_DeckCard {
+	string deckId = 1; 
+	string CardUuid = 2; 
+	int32  Quantity = 3; 
+	int32  RelationType = 4; 
+}
+
+message Reply_TagList {
+	repeated string tags = 1;
+}
+
+message Request_archetypeId {
+	string archetypeId = 1;
+}
+
+message Request_CardTag {
+	string archetypeId = 1;
+	string tag = 2;
+}
+	
+message Reply_HasTag {
+	bool hasTag = 1;
+}

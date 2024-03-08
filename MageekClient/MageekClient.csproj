@@ -6,21 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Update="Protos\collection.proto">
-      <GrpcServices>Client</GrpcServices>
-    </None>
-    <None Update="Protos\greet.proto">
-      <GrpcServices>Client</GrpcServices>
-    </None>
-  </ItemGroup>
-
   <!-- Mageek Client -->
-  
-  <ItemGroup>
-    <Protobuf Include="Protos\greet.proto" GrpcServices="Client" />
-    <Protobuf Include="Protos\collection.proto" GrpcServices="Client" />
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.25.1" />
@@ -29,6 +15,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MageekService\MageekCore.csproj" />
   </ItemGroup>
 
 </Project>

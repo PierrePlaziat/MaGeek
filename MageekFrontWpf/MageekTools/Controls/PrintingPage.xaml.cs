@@ -3,6 +3,7 @@ using MageekCore.Data;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using MageekFrontWpf.Framework.Services;
+using MageekCore.Service;
 
 namespace MaGeek.UI.Controls
 {
@@ -12,7 +13,7 @@ namespace MaGeek.UI.Controls
     public partial class PrintingPage : BaseUserControl
     {
 
-        private MageekCore.MageekService mageek;
+        private IMageekService mageek;
 
         private BitmapImage card0;
         public BitmapImage Card0
@@ -80,7 +81,7 @@ namespace MaGeek.UI.Controls
 
         public PrintingPage()
         {
-            mageek = ServiceHelper.GetService<MageekCore.MageekService>();
+            mageek = ServiceHelper.GetService<IMageekService>();
             InitializeComponent();
             DataContext = this;
         }

@@ -9,11 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
-    <Protobuf Include="Protos\collection.proto" GrpcServices="Server" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
   </ItemGroup>

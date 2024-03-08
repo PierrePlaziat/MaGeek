@@ -6,16 +6,17 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using MageekCore.Data;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {
 
     public partial class CardInspector : BaseUserControl
     {
-        private MageekCore.MageekService mageek;
+        private IMageekService mageek;
         private CardInspectorViewModel vm;
 
-        public CardInspector(CardInspectorViewModel vm,MageekCore.MageekService mageek)
+        public CardInspector(CardInspectorViewModel vm, IMageekService mageek)
         {
             this.mageek = mageek;
             this.vm = vm;

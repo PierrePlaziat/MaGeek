@@ -1,37 +1,19 @@
 ﻿using Google.Protobuf.Reflection;
 using Grpc.Core;
 using Grpc.Net.Client;
+using MageekCore.Data;
+using MageekCore.Data.Collection.Entities;
+using MageekCore.Data.Mtg.Entities;
+using MageekCore.Service;
 using System;
+using System.Net;
 
 //TODO sortie dans son propre projet
 
 namespace MageekMaui
 {
 
-    public interface IMageekClient
-    {
-
-        abstract Task<bool> Connect(string address);
-
-        abstract Task<Reply_CollecMove> CollecMove(Request_CollecMove request);
-        abstract Task<Reply_Quantity> Collected(Request_Collected request);
-
-        abstract Task<Reply_DeckList> GetDecks(Request_Default request);
-        abstract Task<Reply_Deck> GetDeckInfo(Request_DeckId request);
-        abstract Task<Reply_DeckContent> GetDeckContent(Request_DeckId request);
-        abstract Task<Reply_Default> CreateDeck(Request_CreateDeck request);
-        abstract Task<Reply_Default> UpdateDeck(Request_UpdateDeck request);
-        abstract Task<Reply_Default> DeleteDeck(Request_DeckId request);
-
-        abstract Task<Reply_TagList> GetExistingTags(Request_Default request);
-        abstract Task<Reply_TagList> GetCardTags(Request_archetypeId request);
-        abstract Task<Reply_Default> TagCard(Request_CardTag request);
-        abstract Task<Reply_Default> UnTagCard(Request_CardTag request);
-        abstract Task<Reply_HasTag> HasTag(Request_CardTag request);
-
-    }
-
-    public class MageekClient : IMageekClient
+    public class MageekClient : IMageekService
     {
 
         #region Connexion
@@ -39,40 +21,13 @@ namespace MageekMaui
         bool connected = false;
         private GrpcChannel channel;
         Greeter.GreeterClient greeter;
+        Collectionner.CollectionnerClient collection;
 
         Collectionner.CollectionnerClient collectionner;
         DeckBuilder.DeckBuilderClient deckBuilder;
         Tagger.TaggerClient tagger;
 
         const int timeout = 5;
-
-        public async Task<bool> Connect(string address)
-        {
-            Console.WriteLine("Connecting...");
-            try
-            {
-                channel = GrpcChannel.ForAddress(address);
-                greeter = new Greeter.GreeterClient(channel);
-                var reply = await greeter.SayHelloAsync(
-                    new HelloRequest { Name = "GreeterClient" },
-                    deadline: DateTime.UtcNow.AddSeconds(timeout));
-                Console.WriteLine("Success!");
-            }
-            catch (RpcException ex) when (ex.StatusCode == StatusCode.DeadlineExceeded)
-            {
-                Console.WriteLine("Timeout.");
-                connected = false;
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                connected = false;
-                return false;
-            }
-            Init();
-            return true;
-        }
 
         private void Init()
         {
@@ -84,127 +39,278 @@ namespace MageekMaui
 
         #endregion
 
-        #region Boilerplate
+        #region Implem
 
-        public async Task<Reply_CollecMove> CollecMove (Request_CollecMove request)
+        public async Task<MageekConnectReturn> Connect(string address)
         {
-            if (!connected) return null;
-            var reply = await collectionner.CollecMoveAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
-        }
-        public async Task<Reply_Quantity> Collected(Request_Collected request)
-        {
-            if (!connected) return null;
-            var reply = await collectionner.CollectedAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
-        }
-        
-        public async Task<Reply_DeckList> GetDecks(Request_Default request)
-        {
-            if (!connected) return null;
-            var reply = await deckBuilder.GetDecksAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
-        }
-        public async Task<Reply_Deck> GetDeckInfo(Request_DeckId request)
-        {
-            if (!connected) return null;
-            var reply = await deckBuilder.GetDeckInfoAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
-        }
-        public async Task<Reply_DeckContent> GetDeckContent(Request_DeckId request)
-        {
-            if (!connected) return null;
-            var reply = await deckBuilder.GetDeckContentAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
-        }
-        public async Task<Reply_Default> CreateDeck(Request_CreateDeck request)
-        {
-            if (!connected) return null;
-            var reply = await deckBuilder.CreateDeckAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
-        }
-        public async Task<Reply_Default> UpdateDeck(Request_UpdateDeck request)
-        {
-            if (!connected) return null;
-            var reply = await deckBuilder.UpdateDeckAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
-        }
-        public async Task<Reply_Default> DeleteDeck(Request_DeckId request)
-        {
-            if (!connected) return null;
-            var reply = await deckBuilder.DeleteDeckAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
+            Console.WriteLine("Connecting...");
+            try
+            {
+                channel = GrpcChannel.ForAddress(address);
+                greeter = new Greeter.GreeterClient(channel);
+                var reply = await greeter.SayHelloAsync(
+                    new HelloRequest { Name = "GreeterClient" },
+                    deadline: DateTime.UtcNow.AddSeconds(timeout));
+                collection = new Collectionner.CollectionnerClient(channel);
+                Console.WriteLine("Success!");
+            }
+            catch (RpcException ex) when (ex.StatusCode == StatusCode.DeadlineExceeded)
+            {
+                Console.WriteLine("Timeout.");
+                connected = false;
+                return MageekConnectReturn.Failure;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                connected = false;
+                return MageekConnectReturn.Failure;
+            }
+            Init();
+            return MageekConnectReturn.Success;
         }
 
+        public async Task<MageekInitReturn> Initialize()
+        {
+            return MageekInitReturn.NotImplementedForClient;
+        }
 
-        public async Task<Reply_TagList> GetExistingTags(Request_Default request)
+        public async Task<MageekUpdateReturn> Update()
         {
-            if (!connected) return null;
-            var reply = await tagger.GetExistingTagsAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
+            return MageekUpdateReturn.NotImplementedForClient;
         }
-        public async Task<Reply_TagList> GetCardTags(Request_archetypeId request)
+
+        public Task<List<SearchedCards>> NormalSearch(string filterName, string lang, int page, int pageSize)
         {
-            if (!connected) return null;
-            var reply = await tagger.GetCardTagsAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
+            throw new NotImplementedException();
+            //var reply = await collection.norm(
+            //       new HelloRequest { Name = "GreeterClient" },
+            //       deadline: DateTime.UtcNow.AddSeconds(timeout));
         }
-        public async Task<Reply_Default> TagCard(Request_CardTag request)
+
+        public Task<List<SearchedCards>> AdvancedSearch(string filterName, string lang, string filterType, string filterKeyword, string filterText, string filterColor, string filterTag, bool onlyGot, bool colorisOr, int page, int pageSize)
         {
-            if (!connected) return null;
-            var reply = await tagger.TagCardAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
+            throw new NotImplementedException();
         }
-        public async Task<Reply_Default> UnTagCard(Request_CardTag request)
+
+        public Task<List<string>> GetCardUuidsForGivenCardName(string archetypeId)
         {
-            if (!connected) return null;
-            var reply = await tagger.UnTagCardAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
+            throw new NotImplementedException();
         }
-        public async Task<Reply_HasTag> HasTag(Request_CardTag request)
+
+        public Task<string> GetCardNameForGivenCardUuid(string cardUuid)
         {
-            if (!connected) return null;
-            var reply = await tagger.HasTagAsync(
-                request,
-                deadline: DateTime.UtcNow.AddSeconds(timeout)
-            );
-            return reply;
+            throw new NotImplementedException();
+        }
+
+        public Task<List<string>> GetCardUuidsForGivenCardUuid(string uuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Cards> FindCard_Data(string cardUuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CardForeignData> GetTranslatedData(string cardUuid, string lang)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string?> GetCardBack(string cardUuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CardLegalities> GetLegalities(string CardUuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<CardRulings>> GetRulings(string CardUuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<CardCardRelation>> FindRelated(string SelectedUuid, string SelectedArchetype)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<CardCardRelation> FindRelateds(string uuid, string originalarchetype)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PriceLine> EstimateCardPrice(string cardUuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Sets>> LoadSets()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Sets> GetSet(string setCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Cards>> GetCardsFromSet(string setCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetMtgSetCompletion(string setCode, bool strict)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetFav(string archetypeId, string cardUuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> Collected(string cardUuid, bool onlyThisVariant = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> Collected_AllVariants(string archetypeId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetTotal_Collected()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetTotal_CollectedDiff()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetTotal_CollectedArchetype()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetTotal_ExistingArchetypes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Tuple<float, List<string>>> AutoEstimateCollection(string currency)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Deck>> GetDecks()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Deck> GetDeck(string deckId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<DeckCard>> GetDeckContent(string deckId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Deck> CreateDeck_Empty(string title, string description, string colors, int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Deck> CreateDeck(string title, string description, string colors, int count, IEnumerable<DeckCard> deckLines)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RenameDeck(string deckId, string title)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DuplicateDeck(string deckId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SaveDeckContent(Deck header, List<DeckCard> lines)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateDeckHeader(string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteDeck(string deckId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Preco>> GetPrecos()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Tuple<decimal, List<string>>> EstimateDeckPrice(string deckId, string currency)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> DeckToTxt(string deckId, bool withSetCode = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TxtImportResult> ParseCardList(string cardList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Tag>> GetTags()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> HasTag(string cardId, string tagFilterSelected)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task TagCard(string archetypeId, string text)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UnTagCard(string archetypeId, string text)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Tag>> GetCardTags(string archetypeId)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

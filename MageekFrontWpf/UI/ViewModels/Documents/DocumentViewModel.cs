@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekCore;
 using MageekFrontWpf.Framework.BaseMvvm;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.MageekTools.DeckTools;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels
 {
@@ -15,9 +15,9 @@ namespace MageekFrontWpf.UI.ViewModels
         IRecipient<AddCardToDeckMessage>
     {
 
-        private MageekService mageek;
+        private IMageekService mageek;
 
-        public DocumentViewModel(MageekService mageek)
+        public DocumentViewModel(IMageekService mageek)
         {
             this.mageek = mageek;
             WeakReferenceMessenger.Default.RegisterAll(this);

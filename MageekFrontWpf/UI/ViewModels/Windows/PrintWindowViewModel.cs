@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -13,9 +14,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     public partial class PrintWindowViewModel : ObservableViewModel
     {
 
-        private MageekCore.MageekService mageek;
+        private IMageekService mageek;
 
-        public PrintWindowViewModel(MageekCore.MageekService mageek)
+        public PrintWindowViewModel(IMageekService mageek)
         {
             this.mageek = mageek;
         }

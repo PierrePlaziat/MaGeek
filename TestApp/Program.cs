@@ -1,11 +1,9 @@
-﻿using MageekCore;
-using MageekCore.Data;
+﻿using MageekCore.Data;
+using MageekCore.Service;
 
 Console.WriteLine("MAGEEK TESTS");
 
 MageekService mageek = new MageekService();
-//var v = await mageek.Initialize();
-await mageek.FetchPrices();
 
 Console.WriteLine("Done");
 Console.WriteLine("");

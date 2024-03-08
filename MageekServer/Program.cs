@@ -1,20 +1,19 @@
 using MageekCore.Data.Collection;
 using MageekCore.Data.Mtg;
-using MageekCore;
 using MageekServer.Services;
+using MageekCore.Service;
 
 // GRPC
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
 var app = builder.Build();
-app.MapGrpcService<GreeterService>();
-app.MapGrpcService<CollectionnerService>();
+app.MapGrpcService<IdentificationService>();
+app.MapGrpcService<MageekProtocolService>();
 app.MapGet("/", () => "Mageek Grpc endpoint");
 
 // MAGEEK
-builder.Services.AddSingleton<CollectionDbManager>();
-builder.Services.AddSingleton<MtgDbManager>();
-builder.Services.AddSingleton<MageekService>();
+
+builder.Services.AddSingleton<IMageekService, MageekService>();
 
 app.Run();

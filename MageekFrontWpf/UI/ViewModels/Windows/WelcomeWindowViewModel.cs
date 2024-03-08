@@ -4,6 +4,7 @@ using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekCore.Data;
 using System.Threading.Tasks;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -11,12 +12,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     public partial class WelcomeWindowViewModel : ObservableViewModel
     {
 
+        private readonly IMageekService mageek;
         private readonly WindowsService winManager;
-        private readonly MageekCore.MageekService mageek;
 
         public WelcomeWindowViewModel(
-            WindowsService winManager,
-            MageekCore.MageekService mageek
+            IMageekService mageek,
+            WindowsService winManager
         ){
             this.mageek = mageek;
             this.winManager = winManager;

@@ -18,4 +18,10 @@
     <ProjectReference Include="..\PlaziatTools\PlaziatTools.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Service\MageekProtocol.proto">
+      <GrpcServices>Server</GrpcServices>
+    </None>
+  </ItemGroup>
+
 </Project>

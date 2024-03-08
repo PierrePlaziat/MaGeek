@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MageekFrontWpf.Framework.AppValues;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -15,9 +16,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         IRecipient<LaunchAppMessage>
     {
 
-        private MageekCore.MageekService mageek;
+        private IMageekService mageek;
 
-        public SetListViewModel(MageekCore.MageekService mageek)
+        public SetListViewModel(IMageekService mageek)
         {
             this.mageek = mageek;
             WeakReferenceMessenger.Default.RegisterAll(this);

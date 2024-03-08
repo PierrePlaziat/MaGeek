@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.Generic;
-using MageekCore;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
@@ -10,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Media;
 using MageekFrontWpf.Framework.AppValues;
 using MageekCore.Data.Collection.Entities;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.MageekTools.DeckTools
 {
@@ -17,10 +17,10 @@ namespace MageekFrontWpf.MageekTools.DeckTools
     public partial class ManipulableDeck : ObservableObject
     {
 
-        MageekService mageek;
+        IMageekService mageek;
         DeckManipulator deckManip;
 
-        public ManipulableDeck(MageekService mageek, DeckManipulator deckManip)
+        public ManipulableDeck(IMageekService mageek, DeckManipulator deckManip)
         {
             this.mageek = mageek;
             this.deckManip = deckManip;
@@ -59,7 +59,7 @@ namespace MageekFrontWpf.MageekTools.DeckTools
         {
             Header.DeckColors = DeckColors;
             Header.CardCount = count_All;
-            await mageek.SaveDeck(Header, deckManip.GetSavableCardList(Entries));
+            await mageek.SaveDeckContent(Header, deckManip.GetSavableCardList(Entries));
             WeakReferenceMessenger.Default.Send(new UpdateDeckListMessage(Header.DeckId));
         }
 

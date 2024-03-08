@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MageekFrontWpf.Framework.AppValues;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -14,12 +15,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
     public partial class CollecEstimationViewModel : ObservableViewModel
     {
 
-        private MageekCore.MageekService mageek;
+        private IMageekService mageek;
         private SettingService config;
 
         public CollecEstimationViewModel(
             SettingService config,
-            MageekCore.MageekService mageek
+            IMageekService mageek
         )
         {
             this.mageek = mageek;
@@ -29,7 +30,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [ObservableProperty] private int totalGot = 0;
         [ObservableProperty] private int totalDiffGot = 0;
         [ObservableProperty] private int totalDiffExist = 0;
-        [ObservableProperty] private Decimal autoEstimation = 0;
+        [ObservableProperty] private float autoEstimation = 0;
         [ObservableProperty] private float finalEstimation = 0;
         [ObservableProperty] private int missingCount = 0;
         [ObservableProperty] private bool isLoading = true;
@@ -51,7 +52,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
                     TotalDiffExist = await mageek.GetTotal_ExistingArchetypes();
                     TotalDiffGot = await mageek.GetTotal_CollectedArchetype();
                     TotalGot = await mageek.GetTotal_CollectedDiff();
-                    var est = await mageek.AutoEstimatePrices(config.Settings[Setting.ForeignLanguage]);
+                    var est = await mageek.AutoEstimateCollection(config.Settings[Setting.ForeignLanguage]);
                     AutoEstimation = est.Item1;
                     MissingList = est.Item2;
                     OnPropertyChanged(nameof(TotalDiffExist));

@@ -1,8 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MageekCore;
-using MageekCore.Data;
-using MageekCore.Data.Mtg;
-using MageekCore.Data.Collection;
 using MageekFrontWpf.UI.ViewModels.AppWindows;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekFrontWpf.UI.Views.AppWindows;
@@ -13,6 +9,7 @@ using MageekFrontWpf.UI.ViewModels.Windows;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.MageekTools.DeckTools;
+using MageekCore.Service;
 
 namespace MageekFrontWpf.Framework.AppValues
 {
@@ -31,7 +28,7 @@ namespace MageekFrontWpf.Framework.AppValues
         {
             //services.AddSingleton<CollectionDbManager>();
             //services.AddSingleton<MtgDbManager>();
-            services.AddSingleton<MageekService>();
+            services.AddSingleton<IMageekService, MageekService>();
             services.AddSingleton<DeckManipulator>();
             return services;
         }

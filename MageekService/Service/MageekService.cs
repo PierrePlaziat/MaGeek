@@ -12,25 +12,36 @@ using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.Collection;
 using MageekCore.Data.Collection.Entities;
 using PlaziatTools;
-using Newtonsoft.Json.Linq;
-using ScryfallApi.Client.Models;
 
-namespace MageekCore
+namespace MageekCore.Service
 {
 
-    public class MageekService
+    public class MageekService : IMageekService
     {
+
+        #region Construction
 
         private readonly MtgDbManager mtg;
         private readonly CollectionDbManager collec;
 
-        private readonly ScryManager scryfall; 
+        private readonly MtgJsonManager mtgjson;
+        private readonly ScryManager scryfall;
 
         public MageekService()
         {
             mtg = new MtgDbManager();
             collec = new CollectionDbManager(mtg);
-            scryfall = new ScryManager(mtg,collec);
+            scryfall = new ScryManager(mtg);
+            mtgjson = new MtgJsonManager(mtg, collec);
+        }
+
+        #endregion
+
+        #region Implementation
+
+        public async Task<MageekConnectReturn> Connect(string address)
+        {
+            return MageekConnectReturn.NotImplementedForServer;
         }
 
         public async Task<MageekInitReturn> Initialize()
@@ -39,7 +50,7 @@ namespace MageekCore
             {
                 Folders.InitServerFolders();
                 if (!File.Exists(Folders.File_CollectionDB)) collec.CreateDb();
-                bool needsUpdate = await CheckUpdate();
+                bool needsUpdate = await mtgjson.CheckUpdate();
                 return needsUpdate ? MageekInitReturn.MtgOutdated : MageekInitReturn.MtgUpToDate;
             }
             catch (Exception e)
@@ -49,503 +60,33 @@ namespace MageekCore
             }
         }
 
-        #region Update
-
-        const string Url_MtgjsonHash = "https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256";
-        const string Url_UpdatePrints = "https://mtgjson.com/api/v5/AllPrintings.sqlite";
-        const string Url_UpdatePrices = "https://mtgjson.com/api/v5/AllPrices.json";
-        const string Url_UpdatePrecos = "https://mtgjson.com/api/v5/AllDeckFiles.zip";
-
-        private async Task<bool> CheckUpdate()
-        {
-            Logger.Log("Checking...");
-            try
-            {
-                bool? tooOld = FileUtils.IsFileOlder(Folders.File_UpdateOldHash, new TimeSpan(2, 0, 0, 0));
-                if (tooOld.HasValue && !tooOld.Value)
-                {
-                    Logger.Log("Already updated recently");
-                    return false;
-                }
-                bool check = await CheckDbHash();
-                Logger.Log(check ? "Update available" : "Already up to date");
-                return check;
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return false;
-            }
-        }
-        private async Task<bool> CheckDbHash()
-        {
-            try
-            {
-                await HttpUtils.Download(Url_MtgjsonHash, Folders.File_UpdateNewHash);
-                bool check = true;
-                if (File.Exists(Folders.File_UpdateOldHash))
-                {
-                    check = FileUtils.ContentDiffers(
-                        Folders.File_UpdateNewHash,
-                        Folders.File_UpdateOldHash
-                    );
-                }
-                return check;
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return true;
-            }
-        }
-
         public async Task<MageekUpdateReturn> Update()
         {
             try
             {
-                List<Task> tasks = new()
-                {
-                    HttpUtils.Download(Url_UpdatePrints, Folders.File_UpdatePrints),
-                    HttpUtils.Download(Url_UpdatePrices, Folders.File_UpdatePrices),
-                    HttpUtils.Download(Url_UpdatePrecos, Folders.File_UpdatePrecos),
-                };
-                await Task.WhenAll(tasks);
+                await mtgjson.DownloadData();
             }
-            catch (Exception e) 
-            { 
+            catch (Exception e)
+            {
                 Logger.Log(e);
-                return MageekUpdateReturn.ErrorDownloading; 
+                return MageekUpdateReturn.ErrorDownloading;
             }
             try
             {
                 List<Task> tasks = new()
                 {
-                    FetchArchetypes(),
-                    FetchTranslations(),
-                    //FetchSets(),
-                    FetchPrecos(),
-                    FetchPrices(), //TODO TODO TODO TODO TODO
-                    //FetchImages(),        //find a way without ddosing scryfall
-                    //FetchCardRelations    //find a way without ddosing scryfall
+                    mtgjson.FetchData(),
+                    scryfall.FetchSets()
                 };
             }
             catch (Exception e)
-            { 
-                Logger.Log(e); 
+            {
+                Logger.Log(e);
                 return MageekUpdateReturn.ErrorFetching;
             }
-            HashSave();
+            mtgjson.HashSave();
             return MageekUpdateReturn.Success;
         }
-        private void HashSave()
-        {
-            try
-            {
-                File.Copy(Folders.File_UpdateNewHash, Folders.File_UpdateOldHash, true);
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
-        }
-
-        #region Prints
-
-        private async Task FetchArchetypes()
-        {
-            try
-            {
-                List<ArchetypeCard> archetypes = new();
-                Logger.Log("Parsing...");
-                using (MtgDbContext mtgContext = await mtg.GetContext())
-                {
-                    await Task.Run(() => {
-                        foreach (Cards card in mtgContext.cards)
-                        {
-                            //if (!(archetypes.Any(x => x.CardUuid == card.Uuid))) //prevent bug in case of duplicated uuid, that already happened
-                            {
-                                archetypes.Add(
-                                    new ArchetypeCard()
-                                    {
-                                        ArchetypeId = card.Name != null ? card.Name : string.Empty,
-                                        CardUuid = card.Uuid
-                                    }
-                                );
-                            }
-                        }
-                    });
-                }
-                Logger.Log("Saving...");
-                using (CollectionDbContext collecContext = await collec.GetContext())
-                {
-                    await collecContext.CardArchetypes.ExecuteDeleteAsync();
-                    using var transaction = await collecContext.Database.BeginTransactionAsync();
-                    await collecContext.CardArchetypes.AddRangeAsync(archetypes);
-                    await collecContext.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                }
-                Logger.Log("Done");
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
-        }
-
-        private async Task FetchTranslations()
-        {
-            try
-            {
-                List<CardTraduction> traductions = new();
-                Logger.Log("Parsing...");
-                using (MtgDbContext mtgContext = await mtg.GetContext())
-                {
-                    foreach (CardForeignData traduction in mtgContext.cardForeignData)
-                    {
-                        await Task.Run(() => {
-                            if (traduction.FaceName == null)
-                            {
-                                traductions.Add(
-                                    new CardTraduction()
-                                    {
-                                        CardUuid = traduction.Uuid,
-                                        Language = traduction.Language,
-                                        Traduction = traduction.Name,
-                                        NormalizedTraduction = traduction.Language != "Korean" && traduction.Language != "Arabic"
-                                            ? traduction.Name.RemoveDiacritics().Replace('-', ' ').ToLower()
-                                            : traduction.Name
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                traductions.Add(
-                                    new CardTraduction()
-                                    {
-                                        CardUuid = traduction.Uuid,
-                                        Language = traduction.Language,
-                                        Traduction = traduction.FaceName,
-                                        NormalizedTraduction = traduction.Language != "Korean" && traduction.Language != "Arabic"
-                                            ? StringExtension.RemoveDiacritics(traduction.FaceName).Replace('-', ' ').ToLower()
-                                            : traduction.FaceName
-                                    }
-                                );
-                            }
-                        });
-                    }
-                }
-                Logger.Log("Saving...");
-                using (CollectionDbContext collecContext = await collec.GetContext())
-                {
-                    await collecContext.CardTraductions.ExecuteDeleteAsync();
-                    using var transaction = await collecContext.Database.BeginTransactionAsync();
-                    await collecContext.CardTraductions.AddRangeAsync(traductions);
-                    await collecContext.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                }
-                Logger.Log("Done");
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
-        }
-
-        private async Task FetchSets()
-        {
-            Logger.Log("Start");
-            try
-            {
-                var sets = await scryfall.GetSetsJson();
-                using (HttpClient client = new HttpClient())
-                {
-                    foreach (Set set in sets.Data)
-                    {
-                        var uri = set.IconSvgUri;
-                        string localFileName = Path.Combine(Folders.SetIcon, set.Code.ToUpper() + "_.svg");
-                        if (!File.Exists(localFileName))
-                        {
-                            using (var s = await client.GetStreamAsync(uri))
-                            {
-                                try
-                                {
-                                    using (var fs = new FileStream(localFileName, FileMode.OpenOrCreate))
-                                    {
-                                        await s.CopyToAsync(fs);
-                                    }
-                                }
-                                catch (Exception e) { Logger.Log(e); }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception e) { Logger.Log(e); }
-            Logger.Log("Done");
-        }
-
-        #endregion
-
-        #region Precos
-
-        private async Task FetchPrecos()
-        {
-            Logger.Log("Uncompressing...");
-            System.IO.Compression.ZipFile.ExtractToDirectory(Folders.File_UpdatePrecos, Folders.TempPrecoFolder, overwriteFiles: true);
-            Logger.Log("Parsing...");
-            await ParsePrecos(Folders.TempPrecoFolder, Folders.File_Precos);
-            Logger.Log("Cleaning");
-            Directory.Delete(Folders.TempPrecoFolder, true);
-            Logger.Log("Done");
-        }
-
-        private async Task ParsePrecos(string tmpPath, string finalPath)
-        {
-            // READ
-            List<Preco> list = new List<Preco>();
-            foreach (string precoPath in Directory.GetFiles(tmpPath))
-            {
-                try
-                {
-                    list.Add(await ParsePreco(precoPath));
-                }
-                catch (Exception e) { Logger.Log(e); }
-            }
-            // WRITE
-            Console.WriteLine(DateTime.Now);
-            var options = new JsonSerializerOptions { IncludeFields = true };
-            string jsonString = JsonSerializer.Serialize(list, options);
-            File.WriteAllText(finalPath, jsonString);
-        }
-
-        private async Task<Preco> ParsePreco(string precoPath)
-        {
-            using StreamReader reader = new(precoPath);
-            string jsonString = await reader.ReadToEndAsync();
-            dynamic dynData = JObject.Parse(jsonString);
-
-            string code = dynData.data.code;
-            string name = dynData.data.name;
-            string releaseDate = dynData.data.releaseDate;
-            string type = dynData.data.type;
-
-            List<Tuple<string, int>> CommanderCardUuids = new List<Tuple<string, int>>();
-            foreach (dynamic card in dynData.data.commander)
-            {
-                string uuid = card.uuid;
-                int quantity = card.count;
-                CommanderCardUuids.Add(new Tuple<string, int>(uuid, quantity));
-            }
-
-            List<Tuple<string, int>> mainCardUuids = new List<Tuple<string, int>>();
-            foreach (dynamic card in dynData.data.mainBoard)
-            {
-                string uuid = card.uuid;
-                int quantity = card.count;
-                mainCardUuids.Add(new Tuple<string, int>(uuid, quantity));
-            }
-
-            List<Tuple<string, int>> sideCardUuids = new List<Tuple<string, int>>();
-            foreach (dynamic card in dynData.data.sideBoard)
-            {
-                string uuid = card.uuid;
-                int quantity = card.count;
-                sideCardUuids.Add(new Tuple<string, int>(uuid, quantity));
-            }
-
-            return new Preco()
-            {
-                Title = name,
-                Code = code,
-                ReleaseDate = releaseDate,
-                Kind = type,
-                CommanderCardUuids = CommanderCardUuids,
-                MainCardUuids = mainCardUuids,
-                SideCardUuids = sideCardUuids
-            };
-
-        }
-
-        #endregion
-
-        #region Prices
-
-        public async Task FetchPrices()
-        {
-            Logger.Log("Start");
-            using (CollectionDbContext collecContext = await collec.GetContext())
-            {
-                await collecContext.PriceLine.ExecuteDeleteAsync();
-                await collecContext.SaveChangesAsync();
-            }
-            using (FileStream s = File.Open(Folders.File_UpdatePrices, FileMode.Open))
-            using (StreamReader sr = new StreamReader(s))
-            using (Newtonsoft.Json.JsonReader reader = new Newtonsoft.Json.JsonTextReader(sr))
-            {
-                while (reader.Read())
-                {
-                    if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
-                    {
-                        bool metaSkip = false;
-                        while (reader.Read())
-                        {
-                            if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
-                            {
-                                if (!metaSkip) metaSkip = true;
-                                else await ProcessPriceData(reader);
-                            }
-                        }
-                    }
-                }
-            }
-            Logger.Log("Done - "+nbRecPrice+" records processed. - missing "+missingPrice);
-        }
-
-        private async Task ProcessPriceData(Newtonsoft.Json.JsonReader reader)
-        {
-            while (await reader.ReadAsync())
-            {
-                if (reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
-                {
-                    string UUID = reader.Value.ToString();
-                    await RecordPrice(GetPriceLine(UUID, reader));
-                }
-            }
-        }
-
-        int nbRecPrice = 0;
-        private async Task RecordPrice(PriceLine priceLine)
-        {
-            if (priceLine == null) return;
-            using (CollectionDbContext collecContext = await collec.GetContext())
-            {
-                await collecContext.PriceLine.AddAsync(priceLine);
-                await collecContext.SaveChangesAsync();
-                nbRecPrice++;
-            }
-        }
-
-        private PriceLine? GetPriceLine(string UUID, Newtonsoft.Json.JsonReader reader)
-        {
-            Console.WriteLine(">>> " + UUID);
-            string CardBlock = RegisterBlock(reader);
-            return ParsePriceBlock(UUID, CardBlock);
-        }
-
-        private string RegisterBlock(Newtonsoft.Json.JsonReader reader)
-        {
-            string data = string.Empty;
-            int deepness = 0;
-            int lastdeepness = -1;
-            bool starting = true;
-            data += "{";
-            while ((deepness >= 1 || starting == true) && reader.Read())
-            {
-                if (reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
-                {
-                    if (lastdeepness > deepness) data += ",";
-                    data += "\"" + reader.Value.ToString() + "\":";
-                }
-                else if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
-                {
-                    if (deepness > 0) data += "{";
-                    deepness++;
-                    if (deepness > 1) starting = false;
-                }
-                else if (reader.TokenType == Newtonsoft.Json.JsonToken.EndObject)
-                {
-                    lastdeepness = deepness;
-                    if (deepness > 1)
-                    {
-                        if (data.EndsWith(",")) data = data.Remove(data.Length - 1);
-                        data += "}";
-                    }
-                    deepness--;
-                }
-                else
-                {
-                    string value = reader.Value.ToString();
-                    if (value == "USD") data += "\"USD\"";
-                    else if (value == "EUR") data += "\"EUR\"";
-                    else data += value.Replace(",", ".") + ",";
-                }
-            }
-            data += "}";
-            data = data.Replace("\"\"", "\",\"");
-            return data;
-        }
-
-        int missingPrice = 0;
-        private PriceLine ParsePriceBlock(string UUID, string cardBlock)
-        {
-            PriceLine line = new PriceLine() { CardUuid = UUID };
-            //Console.WriteLine(cardBlock);
-            dynamic dynData = JObject.Parse(cardBlock);
-            try
-            {
-                if (dynData.paper!=null)
-                {
-                    if (dynData.paper.cardmarket != null)
-                    {
-                        dynamic v1 = dynData.paper.cardmarket.retail;
-                        line.PriceEur = (v1 == null) ? null : v1.ToString();
-                    }
-                    else missingPrice++;
-                    //if (dynData.paper.cardkingdom != null)
-                    //{
-                    //    dynamic v2 = dynData.paper.cardkingdom.retail;
-                    //    line.PriceUsd = (v2 == null) ? null : v2.ToString();
-                    //}
-                    //else if (dynData.paper.cardsphere != null)
-                    //{
-                    //    dynamic v2 = dynData.paper.cardsphere.retail;
-                    //    line.PriceUsd = (v2 == null) ? null : v2.ToString();
-                    //}
-                    //else
-                    //{
-
-                    //}
-                    return line;
-                }
-            }
-            catch
-            {
-                Console.WriteLine(dynData.ToString());
-            }
-            return null;
-        }
-
-        private PriceLine MakePriceLine(string UUID, string eur, string usd)
-        {
-            return new PriceLine()
-            {
-                CardUuid = UUID,
-                PriceEur = eur,
-                PriceUsd = usd,
-            };
-        }
-
-        private string FetchRetailPrice(Newtonsoft.Json.JsonReader reader)
-        {
-            while (reader.Read())
-            {
-                if (reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
-                {
-                    string property = reader.Value.ToString();
-                    if (property == "retail")
-                    {
-                        return RegisterBlock(reader);
-                    }
-                }
-            }
-            return null;
-        }
-
-        #endregion
-        
-        #endregion
-
-        #region Usage
 
         #region Cards
 
@@ -565,7 +106,7 @@ namespace MageekCore
             List<SearchedCards> retour = new();
             List<Cards> found = new();
             string lowerFilterName = filterName.ToLower();
-            string normalizedFilterName = StringExtension.RemoveDiacritics(filterName).Replace('-', ' ').ToLower();
+            string normalizedFilterName = filterName.RemoveDiacritics().Replace('-', ' ').ToLower();
 
             using (CollectionDbContext DB = await collec.GetContext())
             using (MtgDbContext DB2 = await mtg.GetContext())
@@ -593,7 +134,7 @@ namespace MageekCore
                     ));
                 }
             }
-            Logger.Log("Done - " + retour.Count + " results on "+ found.Count);
+            Logger.Log("Done - " + retour.Count + " results on " + found.Count);
             return retour;
         }
 
@@ -606,7 +147,7 @@ namespace MageekCore
         public async Task<List<SearchedCards>> AdvancedSearch(string filterName, string lang, string filterType, string filterKeyword, string filterText, string filterColor, string filterTag, bool onlyGot, bool colorisOr, int page, int pageSize)
         {
             Logger.Log("");
-            List<SearchedCards> retour = await NormalSearch(lang, filterName,page, pageSize);
+            List<SearchedCards> retour = await NormalSearch(lang, filterName, page, pageSize);
 
             try
             {
@@ -854,22 +395,15 @@ namespace MageekCore
             return await DB.cardRulings.Where(x => x.Uuid == CardUuid).ToListAsync();
         }
 
-        public async Task<List<CardCardRelation>> FindCard_Related(string SelectedUuid, string SelectedArchetype)
-        {
-            return await scryfall.FindCard_Related(SelectedUuid,SelectedArchetype);
-        }
-
-        // TODO cache data at db mtg import
-
-        public List<CardCardRelation> FindRelateds(string uuid, string originalarchetype)
+        public async Task<List<CardCardRelation>> FindRelated(string uuid) // TODO cache data at db mtg import
         {
             Logger.Log("");
-            return FindRelateds(uuid, originalarchetype);
-            /*List<CardCardRelation> outputCards = new();
+            List<CardCardRelation> outputCards = new();
             try
             {
                 if (string.IsNullOrEmpty(uuid)) return outputCards;
-                var scryCard = await GetScryfallCard(uuid);
+                var scryCard = await scryfall.GetScryfallCard(uuid);
+                string originalarchetype = scryCard.Name;
                 if (scryCard == null) return outputCards;
                 if (scryCard.AllParts == null) return outputCards;
                 foreach (var part in scryCard.AllParts)
@@ -915,7 +449,16 @@ namespace MageekCore
                 }
             }
             catch (Exception e) { Logger.Log(e); }
-            return outputCards;*/
+            return outputCards;
+        }
+
+        public async Task<Tokens> FindToken(string name)
+        {
+            Logger.Log("");
+            using MtgDbContext DB = await mtg.GetContext();
+            return await DB.tokens
+                .Where(x => x.Name == name)
+                .FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -928,7 +471,7 @@ namespace MageekCore
             try
             {
                 string localFileName = Path.Combine(
-                    Folders.Illustrations, 
+                    Folders.Illustrations,
                     string.Concat(cardUuid, "_", type.ToString(), "_", type.ToString())
                 );
                 if (!File.Exists(localFileName))
@@ -953,7 +496,7 @@ namespace MageekCore
         public async Task<PriceLine> EstimateCardPrice(string cardUuid)
         {
             using CollectionDbContext collecContext = await collec.GetContext();
-            return await collecContext.PriceLine.Where(x=>x.CardUuid == cardUuid).FirstOrDefaultAsync();
+            return await collecContext.PriceLine.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
         }
 
         #endregion
@@ -973,7 +516,7 @@ namespace MageekCore
         public async Task<Sets> GetSet(string setCode)
         {
             using MtgDbContext DB = await mtg.GetContext();
-            return await DB.sets.Where(x => x.Code==setCode).FirstOrDefaultAsync();
+            return await DB.sets.Where(x => x.Code == setCode).FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -1070,11 +613,11 @@ namespace MageekCore
         /// <param name="cardUuid">from mtgjson</param>
         /// <param name="quantityModification">how many</param>
         /// <returns>Quantity in collec before and after the move</returns>
-        public async Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification)
+        public async Task CollecMove(string cardUuid, int quantityModification)
         {
             Logger.Log("");
             // Guard
-            if (string.IsNullOrEmpty(cardUuid)) return new Tuple<int, int>(0, 0);
+            if (string.IsNullOrEmpty(cardUuid)) return;// new Tuple<int, int>(0, 0);
             // Get or create collected card
             using CollectionDbContext DB = await collec.GetContext();
             CollectedCard collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
@@ -1094,7 +637,7 @@ namespace MageekCore
             if (collectedCard.Collected < 0) collectedCard.Collected = 0;
             int quantityAfterMove = collectedCard.Collected;
             await DB.SaveChangesAsync();
-            return new Tuple<int, int>(quantityBeforeMove, quantityAfterMove);
+            //return new Tuple<int, int>(quantityBeforeMove, quantityAfterMove);
         }
 
         /// <summary>
@@ -1218,7 +761,7 @@ namespace MageekCore
         /// Auto estimate collection
         /// </summary>
         /// <returns>Estimated price and a list of missing estimations</returns>
-        public async Task<Tuple<float, List<string>>> AutoEstimatePrices(string currency)
+        public async Task<Tuple<float, List<string>>> AutoEstimateCollection(string currency)
         {
             float total = 0;
             List<string> missingList = new();
@@ -1308,7 +851,7 @@ namespace MageekCore
         /// <param name="title"></param>
         /// <param name="description"></param>
         /// <returns>a reference to the deck</returns>
-        public async Task<Deck> CreateDeck(string title, string description, string colors, int count)
+        public async Task<Deck> CreateDeck_Empty(string title, string description, string colors, int count)
         {
             Logger.Log("");
             if (string.IsNullOrEmpty(title)) return null;
@@ -1332,7 +875,7 @@ namespace MageekCore
                 return null;
             }
         }
-      
+
         /// <summary>
         /// Creates a filled deck
         /// </summary>
@@ -1344,7 +887,7 @@ namespace MageekCore
         {
             Logger.Log("");
             List<string> messages = new();
-            Deck deck = await CreateDeck(title, description,colors, count);
+            Deck deck = await CreateDeck_Empty(title, description, colors, count);
             //TODO determine deck count and colors
             try
             {
@@ -1377,7 +920,7 @@ namespace MageekCore
                 messages.Add("[error]" + e.Message);
                 Logger.Log(e);
             }
-            
+
             return deck;
         }
 
@@ -1410,7 +953,7 @@ namespace MageekCore
             var deckToCopy = await GetDeck(deckId);
             Logger.Log("");
             if (deckToCopy == null) return;
-            var newDeck = await CreateDeck(
+            var newDeck = await CreateDeck_Empty(
                 deckToCopy.Title + " - Copy",
                 deckToCopy.Description, deckToCopy.DeckColors, deckToCopy.CardCount);
             if (newDeck == null) return;
@@ -1434,14 +977,14 @@ namespace MageekCore
             await DB.SaveChangesAsync();
         }
 
-        public async Task SaveDeck(Deck header, List<DeckCard> lines)
+        public async Task SaveDeckContent(Deck header, List<DeckCard> lines)
         {
             try
             {
                 using CollectionDbContext DB = await collec.GetContext();
-                Deck d = DB.Decks.Where(x=>x.DeckId== header.DeckId).FirstOrDefault();
-                if (d!=null) await UpdateDeck(d.DeckId,d.Title, header.Description, header.DeckColors, header.CardCount, lines);
-                else await CreateDeck(header.Title,header.Description,header.DeckColors,header.CardCount, lines);
+                Deck d = DB.Decks.Where(x => x.DeckId == header.DeckId).FirstOrDefault();
+                if (d != null) await UpdateDeckHeader(d.DeckId, d.Title, header.Description, header.DeckColors, header.CardCount, lines);
+                else await CreateDeck(header.Title, header.Description, header.DeckColors, header.CardCount, lines);
             }
             catch (Exception e) { Logger.Log(e); }
         }
@@ -1455,11 +998,11 @@ namespace MageekCore
         /// <param name="content"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task UpdateDeck(string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content)
+        public async Task UpdateDeckHeader(string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content)
         {
             Logger.Log("");
             await DeleteDeck(deckId);
-            await CreateDeck(title, description,colors, count, content);
+            await CreateDeck(title, description, colors, count, content);
         }
 
         /// <summary>
@@ -1585,11 +1128,11 @@ namespace MageekCore
                 {
                     if (!string.IsNullOrEmpty(line))
                     {
-                        Logger.Log(string.Concat(">>>",line));
-                        if (line.Trim() == ("Main")) lineType = 0;
-                        if (line.Trim() == ("Commandant")) lineType = 1;
-                        if (line.Trim() == ("Side")) lineType = 2;
-                        else 
+                        Logger.Log(string.Concat(">>>", line));
+                        if (line.Trim() == "Main") lineType = 0;
+                        if (line.Trim() == "Commandant") lineType = 1;
+                        if (line.Trim() == "Side") lineType = 2;
+                        else
                         {
                             Tuple<string, DeckCard> entry = await ParseCardLine(line, lineType);
                             if (entry != null)
@@ -1601,7 +1144,7 @@ namespace MageekCore
                     }
                 }
                 if (result.Status == string.Empty) { result.Status = "OK"; }
-                else result.Status = (result.Detail.Count() - 1) + " errors";
+                else result.Status = result.Detail.Count() - 1 + " errors";
 
             }
             catch (Exception e)
@@ -1614,13 +1157,13 @@ namespace MageekCore
             return result;
         }
 
-        private async Task<Tuple<string,DeckCard>> ParseCardLine(string line, int lineType)
+        private async Task<Tuple<string, DeckCard>> ParseCardLine(string line, int lineType)
         {
             try
             {
-                if(IsLineEmpty(line)) return null;
+                if (IsLineEmpty(line)) return null;
                 var v = await ParseLine(line);
-                if (v.Item1>0)
+                if (v.Item1 > 0)
                 {
                     var c = new DeckCard()
                     {
@@ -1638,32 +1181,32 @@ namespace MageekCore
             catch (Exception e)
             {
                 Logger.Log(e);
-                return new Tuple<string, DeckCard> (e.Message,null);
+                return new Tuple<string, DeckCard>(e.Message, null);
             }
         }
 
-        private async Task<Tuple<int,string>> ParseLine(string line)
+        private async Task<Tuple<int, string>> ParseLine(string line)
         {
             string trimmed = line.Trim();
             try
             {
                 var splitted = line.Split(" ");
-                if (splitted.Count()<2) return new Tuple<int, string>(-1, "Ignored line");
+                if (splitted.Count() < 2) return new Tuple<int, string>(-1, "Ignored line");
 
                 int quantity = int.Parse(splitted[0]);
                 string name = line[(line.IndexOf(' ') + 1)..];
                 name = name.Split(" // ")[0];
                 var uuid = (await GetCardUuidsForGivenCardName(name)).FirstOrDefault();
-                if(uuid!=null) 
+                if (uuid != null)
                 {
-                    return new Tuple<int,string>(quantity, name);
+                    return new Tuple<int, string>(quantity, name);
                 }
                 else
                 {
                     return new Tuple<int, string>(-1, "Not found : " + name);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return new Tuple<int, string>(-1, "Error : " + e.Message);
             }
@@ -1701,7 +1244,7 @@ namespace MageekCore
         /// <returns>true if this card has this tag</returns>
         public async Task<bool> HasTag(string cardId, string tagFilterSelected)
         {
-            return (await GetTags(cardId)).Where(x => x.TagContent == tagFilterSelected).Any();
+            return (await GetCardTags(cardId)).Where(x => x.TagContent == tagFilterSelected).Any();
         }
 
         /// <summary>
@@ -1740,7 +1283,7 @@ namespace MageekCore
         /// </summary>
         /// <param name="archetypeId"></param>
         /// <returns>List of tags</returns>
-        public async Task<List<Tag>> GetTags(string archetypeId)
+        public async Task<List<Tag>> GetCardTags(string archetypeId)
         {
             List<Tag> tags = new();
             using CollectionDbContext DB = await collec.GetContext();
