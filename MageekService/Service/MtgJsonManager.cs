@@ -257,7 +257,7 @@ namespace MageekCore.Service
             string type = dynData.data.type;
 
             List<Tuple<string, int>> CommanderCardUuids = new List<Tuple<string, int>>();
-            foreach (object card in dynData.data.commander)
+            foreach (dynamic card in dynData.data.commander)
             {
                 string uuid = card.uuid;
                 int quantity = card.count;
@@ -265,7 +265,7 @@ namespace MageekCore.Service
             }
 
             List<Tuple<string, int>> mainCardUuids = new List<Tuple<string, int>>();
-            foreach (object card in dynData.data.mainBoard)
+            foreach (dynamic card in dynData.data.mainBoard)
             {
                 string uuid = card.uuid;
                 int quantity = card.count;
@@ -273,7 +273,7 @@ namespace MageekCore.Service
             }
 
             List<Tuple<string, int>> sideCardUuids = new List<Tuple<string, int>>();
-            foreach (object card in dynData.data.sideBoard)
+            foreach (dynamic card in dynData.data.sideBoard)
             {
                 string uuid = card.uuid;
                 int quantity = card.count;

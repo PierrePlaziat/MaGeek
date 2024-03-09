@@ -78,6 +78,7 @@ namespace MageekCore.Service
                     mtgjson.FetchData(),
                     scryfall.FetchSets()
                 };
+                await Task.WhenAll(tasks);
             }
             catch (Exception e)
             {
@@ -560,7 +561,8 @@ namespace MageekCore.Service
                 using CollectionDbContext DB = await collec.GetContext();
                 foreach (var card in cardUuids)
                 {
-                    if (await Collected(card.Uuid, strict) > 0) nb++;
+                    if (strict) nb += await Collected_SingleVariant(card.Uuid);
+                    else nb += await Collected_AllVariants(card.Name);
                 }
             }
             catch (Exception e)
@@ -646,22 +648,14 @@ namespace MageekCore.Service
         /// <param name="cardUuid"></param>
         /// <param name="onlyThisVariant">set to false if you want to perform archetypal search from this card variant</param>
         /// <returns>The count</returns>
-        public async Task<int> Collected(string cardUuid, bool onlyThisVariant = true)
+        public async Task<int> Collected_SingleVariant(string cardUuid)
         {
             try
             {
                 if (string.IsNullOrEmpty(cardUuid)) return 0;
                 using CollectionDbContext DB = await collec.GetContext();
-                if (onlyThisVariant)
-                {
-                    CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-                    return collectedCard != null ? collectedCard.Collected : 0;
-                }
-                else
-                {
-                    string archetypeId = DB.CardArchetypes.Where(x => x.CardUuid == cardUuid).First().ArchetypeId;
-                    return await Collected_AllVariants(archetypeId);
-                }
+                CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+                return collectedCard != null ? collectedCard.Collected : 0;
             }
             catch (Exception e)
             {
@@ -676,7 +670,7 @@ namespace MageekCore.Service
             int count = 0;
             using CollectionDbContext DB = await collec.GetContext();
             List<string> uuids = await DB.CardArchetypes.Where(x => x.ArchetypeId == archetypeId).Select(p => p.CardUuid).ToListAsync();
-            foreach (string uuid in uuids) count += await Collected(uuid);
+            foreach (string uuid in uuids) count += await Collected_SingleVariant(uuid);
             return count;
         }
 
@@ -774,8 +768,8 @@ namespace MageekCore.Service
                     var price = await EstimateCardPrice(collectedCard.CardUuid);
                     if (price != null)
                     {
-                        if (currency == "Eur") total += price.GetLastPriceEur;
-                        if (currency == "Usd") total += price.GetLastPriceUsd;
+                        //if (currency == "Eur") total += price.GetLastPriceEur;
+                        //if (currency == "Usd") total += price.GetLastPriceUsd;
                     }
                     else missingList.Add(collectedCard.CardUuid);
                 }
@@ -883,8 +877,9 @@ namespace MageekCore.Service
         /// <param name="description"></param>
         /// <param name="deckLines"></param>
         /// <returns>A list of messages, empty if everything went well</returns>
-        public async Task<Deck> CreateDeck(string title, string description, string colors, int count, IEnumerable<DeckCard> deckLines)
+        public async Task<Deck> CreateDeck(string title, string description, string colors, int count, IEnumerable<DeckCard> deckLines = null)
         {
+            if (deckLines == null) CreateDeck_Empty(title, description, colors, count);
             Logger.Log("");
             List<string> messages = new();
             Deck deck = await CreateDeck_Empty(title, description, colors, count);

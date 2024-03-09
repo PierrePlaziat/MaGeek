@@ -206,7 +206,9 @@ namespace MageekFrontWpf.MageekTools.DeckTools
             {
                 if (!v.Card.Type.Contains("Basic Land"))
                 {
-                    int got = await mageek.Collected(v.Line.CardUuid, false);
+                    int got = await mageek.Collected_AllVariants(
+                        await mageek.GetCardNameForGivenCardUuid(v.Line.CardUuid)
+                    );
                     int need = v.Line.Quantity;
                     int diff = need - got;
                     if (diff > 0) missList += diff + " " + v.Card.Name + "\n";
@@ -225,7 +227,7 @@ namespace MageekFrontWpf.MageekTools.DeckTools
                 if (!card.Type.Contains("Basic Land"))
                 {
                     total += entry.Line.Quantity;
-                    int got = await mageek.Collected(entry.Line.CardUuid, false);
+                    int got = await mageek.Collected_AllVariants(await mageek.GetCardNameForGivenCardUuid(entry.Line.CardUuid));
                     int need = entry.Line.Quantity;
                     int diff = need - got;
                     if (diff > 0) miss += diff;

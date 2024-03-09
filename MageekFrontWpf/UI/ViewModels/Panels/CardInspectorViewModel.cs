@@ -99,7 +99,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                     CardVariant v = new(
                         card,
                         await mageek.GetSet(card.SetCode),
-                        await mageek.Collected(card.Uuid),
+                        await mageek.Collected_SingleVariant(card.Uuid),
                         await mageek.EstimateCardPrice(card.Uuid)
                     );
                     Variants.Add(v);
@@ -117,7 +117,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
         private async Task GetRelatedCards()
         {
-            RelatedCards = await mageek.FindRelated(SelectedUuid, SelectedArchetype); 
+            RelatedCards = await mageek.FindRelated(SelectedUuid); 
         }
         private async Task GetTags()
         {

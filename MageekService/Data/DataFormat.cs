@@ -69,9 +69,10 @@ namespace MageekCore.Data
         {
             get
             {
-                if (Price == null) return null;
-                if (Price.GetLastPriceEur == null) return null;
-                return Price.GetLastPriceEur;
+                return 0;
+                //if (Price == null) return null;
+                //if (Price.GetLastPriceEur == null) return null;
+                //return Price.GetLastPriceEur;
             }
         }
     }

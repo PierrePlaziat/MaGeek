@@ -34,7 +34,7 @@ namespace MageekCore.Service
         Task<int> GetMtgSetCompletion(string setCode, bool strict);
 
         Task SetFav(string archetypeId, string cardUuid);
-        Task<Tuple<int, int>> CollecMove(string cardUuid, int quantityModification);
+        Task CollecMove(string cardUuid, int quantityModification);
         Task<int> Collected_SingleVariant(string cardUuid);
         Task<int> Collected_AllVariants(string archetypeId);
         Task<int> GetTotal_Collected();

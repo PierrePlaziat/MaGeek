@@ -8,11 +8,8 @@ namespace MageekCore.Data.Collection.Entities
     {
         [Key]
         public string CardUuid { get; set; }
-        public string PriceEur { get; set; }
-        public string PriceUsd { get; set; }
-
-        public float GetLastPriceEur { get { return -1; } }
-        public float GetLastPriceUsd { get { return -1; } }
+        public string? PriceEur { get; set; }
+        public string? PriceUsd { get; set; }
 
     }
 }

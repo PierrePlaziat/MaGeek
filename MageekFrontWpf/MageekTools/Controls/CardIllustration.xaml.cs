@@ -28,12 +28,15 @@ namespace MaGeek.UI
         public string CardUuid
         {
             get { return cardUuid; }
-            set { cardUuid = value; SetValue(CardUuidProperty, value); }
+            set {
+                cardUuid = value; 
+                SetValue(CardUuidProperty, value); 
+            }
         }
-        public static readonly DependencyProperty CardUuidProperty =  DependencyProperty.Register(
-            nameof(CardUuid),
-            typeof(string),
-            typeof(CardIllustration),
+
+        public static readonly DependencyProperty CardUuidProperty = DependencyProperty.Register
+        (
+            nameof(CardUuid),typeof(string),typeof(CardIllustration),
             new FrameworkPropertyMetadata(null,
             FrameworkPropertyMetadataOptions.AffectsRender,
             OnCardUuidChanged)
@@ -83,14 +86,6 @@ namespace MaGeek.UI
 
         bool flipped;
 
-        private bool showHud = false;
-
-        public bool ShowHud
-        {
-            get { return showHud; }
-            set { showHud = value; OnPropertyChanged(); }
-        }
-
         private static void OnCardUuidChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs)
         {
             CardIllustration control = _control as CardIllustration;
@@ -134,15 +129,6 @@ namespace MaGeek.UI
             if (url != null) ImageBack = new BitmapImage(url);
         }
 
-        private void Grid_MouseEnter(object sender, MouseEventArgs e)
-        {
-            ShowHud = true;
-        }
-
-        private void Grid_MouseLeave(object sender, MouseEventArgs e)
-        {
-            ShowHud = false;
-        }
 
         private void FlipClick(object sender, RoutedEventArgs e)
         {
@@ -157,6 +143,24 @@ namespace MaGeek.UI
                 SelectedCard = CardFront;
                 SelectedImage = ImageFront;
             }
+        }
+
+        private bool showHud = false;
+
+        public bool ShowHud
+        {
+            get { return showHud; }
+            set { showHud = value; OnPropertyChanged(); }
+        }
+
+        private void Grid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ShowHud = true;
+        }
+
+        private void Grid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ShowHud = false;
         }
 
     }

@@ -74,7 +74,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.CreateDeck_Empty(title, "", "", 0);
+            await mageek.CreateDeck(title, "", "", 0);
             await Reload();
         }
 
@@ -104,9 +104,9 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task EstimateDeckPrice(string deckId)
         {
-            var totalPrice = await mageek.EstimateDeckPrice(deckId, config.Settings[Setting.Currency]);
-            MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + "\n" +
-                            "Missing : " + totalPrice.Item2);
+            //var totalPrice = await mageek.EstimateDeckPrice(deckId, config.Settings[Setting.Currency]);
+            //MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + "\n" +
+            //                "Missing : " + totalPrice.Item2);
         }
 
         [RelayCommand]

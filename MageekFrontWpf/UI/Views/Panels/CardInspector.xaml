@@ -19,12 +19,12 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <local:CardIllustration Width="255"
+        <local:CardIllustration CardUuid="{Binding SelectedUuid, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                Width="255"
                                 Height="360"
                                 Margin="0"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Top"
-                                CardUuid="{Binding SelectedUuid, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                VerticalAlignment="Top" />
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>

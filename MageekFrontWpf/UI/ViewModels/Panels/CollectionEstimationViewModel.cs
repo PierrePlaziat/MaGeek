@@ -44,30 +44,30 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
 
         private async Task AutoEstimate()
         {
-            Logger.Log("AutoEstimate");
-            try
-            {
-                IsLoading = true;
-                await Task.Run(async () => {
-                    TotalDiffExist = await mageek.GetTotal_ExistingArchetypes();
-                    TotalDiffGot = await mageek.GetTotal_CollectedArchetype();
-                    TotalGot = await mageek.GetTotal_CollectedDiff();
-                    var est = await mageek.AutoEstimateCollection(config.Settings[Setting.ForeignLanguage]);
-                    AutoEstimation = est.Item1;
-                    MissingList = est.Item2;
-                    OnPropertyChanged(nameof(TotalDiffExist));
-                    OnPropertyChanged(nameof(TotalDiffGot));
-                    OnPropertyChanged(nameof(TotalGot));
-                    OnPropertyChanged(nameof(AutoEstimation));
-                    OnPropertyChanged(nameof(MissingList));
-                    OnPropertyChanged(nameof(MissingCount));
-                });
-                IsLoading = false;
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
+            //Logger.Log("AutoEstimate");
+            //try
+            //{
+            //    IsLoading = true;
+            //    await Task.Run(async () => {
+            //        TotalDiffExist = await mageek.GetTotal_ExistingArchetypes();
+            //        TotalDiffGot = await mageek.GetTotal_CollectedArchetype();
+            //        TotalGot = await mageek.GetTotal_CollectedDiff();
+            //        var est = await mageek.AutoEstimateCollection(config.Settings[Setting.ForeignLanguage]);
+            //        AutoEstimation = est.Item1;
+            //        MissingList = est.Item2;
+            //        OnPropertyChanged(nameof(TotalDiffExist));
+            //        OnPropertyChanged(nameof(TotalDiffGot));
+            //        OnPropertyChanged(nameof(TotalGot));
+            //        OnPropertyChanged(nameof(AutoEstimation));
+            //        OnPropertyChanged(nameof(MissingList));
+            //        OnPropertyChanged(nameof(MissingCount));
+            //    });
+            //    IsLoading = false;
+            //}
+            //catch (Exception e)
+            //{
+            //    Logger.Log(e);
+            //}
         }
 
     }
