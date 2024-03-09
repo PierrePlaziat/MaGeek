@@ -25,3 +25,9 @@ I needed a tool to manage my MTG card collection on local drive, that reflect my
 -	Auto deck / Deck helper
 -	Recent cards/searches 
 -	Token support
+
+## Donations
+
+If you like this piece of work,
+don't hesitate donating, here is my paypal:
+![MaGeek](/Graph/Title.png "MaGeek")
