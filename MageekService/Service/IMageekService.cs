@@ -25,7 +25,7 @@ namespace MageekCore.Service
         Task<CardLegalities> GetLegalities(string CardUuid);
         Task<List<CardRulings>> GetRulings(string CardUuid);
         Task<List<CardCardRelation>> FindRelated(string SelectedUuid);
-        Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type);
+        Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type, bool back = false);
         Task<PriceLine> EstimateCardPrice(string cardUuid);
 
         Task<List<Sets>> LoadSets();

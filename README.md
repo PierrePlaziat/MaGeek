@@ -10,20 +10,18 @@ I needed a tool to manage my MTG card collection on local drive, that reflect my
 
 ## Functionalities
 
+### Disponible
+-	Exaustive cards infos
 -	Advanced Search
 -	Collection gestion
 -	Proxy printing
 -	Price estimations
--	Nice UI
-
-## TODO
-
--	finish collection estimation
--	got cards from variant wont work well if !onlythisvariant
-- 	
-
-### Maybe later
-
--	Recent cards/searches 
+-	Customizable UI
+-	Import/Export 
+-	preco and set exploration
+-	statistics	
+### Later
+-	Mobile app companion (after serveur app done)
 -	Auto deck / Deck helper
--	Better preco importer (waiting for mtgsqlive to furnish data)
+-	Recent cards/searches 
+-	Token support

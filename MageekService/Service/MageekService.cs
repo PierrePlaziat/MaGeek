@@ -467,17 +467,18 @@ namespace MageekCore.Service
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>a local url to a jpg</returns>
-        public async Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type)
+        public async Task<Uri> RetrieveImage(string cardUuid, CardImageFormat type, bool back = false)
         {
             try
             {
                 string localFileName = Path.Combine(
                     Folders.Illustrations,
-                    string.Concat(cardUuid, "_", type.ToString(), "_", type.ToString())
+                    string.Concat(cardUuid, "_", type.ToString())
                 );
                 if (!File.Exists(localFileName))
                 {
-                    await scryfall.DownloadImage(cardUuid, type, localFileName);
+                    string name = await GetCardNameForGivenCardUuid(cardUuid);
+                    await scryfall.DownloadImage(cardUuid, type, localFileName,back);
                 }
                 return new("file://" + Path.GetFullPath(localFileName), UriKind.Absolute);
             }

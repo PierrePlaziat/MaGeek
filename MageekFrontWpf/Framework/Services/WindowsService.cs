@@ -96,7 +96,6 @@ namespace MageekFrontWpf.Framework.Services
                 {
                     Name = tool.ToString(),
                     DockMinWidth = 200,
-                    DockMinHeight = 100,
                 };
                 var GrpPane = new LayoutAnchorablePaneGroup(anchPane);
                 // add to layout

@@ -30,8 +30,8 @@ namespace MageekCore.Service
             Logger.Log("");
             try
             {
-                using MtgDbContext DB2 = await mtg.GetContext();
-                var v = DB2.cardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefault();
+                using MtgDbContext mtgContext = await mtg.GetContext();
+                var v = mtgContext.cardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefault();
                 if (v == null) return null;
                 string? scryfallId = v.ScryfallId;
                 if (scryfallId == null) return null;
@@ -47,11 +47,13 @@ namespace MageekCore.Service
             }
         }
 
-        public async Task DownloadImage(string cardUuid, CardImageFormat type, string localFileName)
+        public async Task DownloadImage(string cardUuid, CardImageFormat type, string localFileName, bool back = false)
         {
             var scryData = await GetScryfallCard(cardUuid);
             var httpClient = new HttpClient();
-            var uri = scryData.ImageUris[type.ToString()];
+            Uri uri;
+            if (scryData.ImageUris != null) uri = scryData.ImageUris[type.ToString()];
+            else uri = scryData.CardFaces[back?1:0].ImageUris[type.ToString()];
             using var stream = await httpClient.GetStreamAsync(uri);
             using var fileStream = new FileStream(localFileName, FileMode.Create);
             await stream.CopyToAsync(fileStream);

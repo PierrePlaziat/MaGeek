@@ -113,10 +113,14 @@ namespace MaGeek.UI
                 cardBack = await mageek.FindCard_Data(backUuid);
             }
             CardBack = cardBack;
+            CardFront = cardFront;
             try
             {
-                ImageBack = new BitmapImage(await mageek.RetrieveImage(cardBack.Uuid, CardImageFormat.png));
-                CardFront = cardFront;
+                ImageBack = new BitmapImage(await mageek.RetrieveImage(
+                    cardBack.Uuid,
+                    CardImageFormat.large,
+                    false
+                    ));
             }
             catch 
             {
@@ -124,24 +128,19 @@ namespace MaGeek.UI
             }
             try
             {
-                ImageFront = new BitmapImage(await mageek.RetrieveImage(cardFront.Uuid, CardImageFormat.png));
-                SelectedCard = cardFront;
+                ImageFront = new BitmapImage(await mageek.RetrieveImage(
+                    cardFront.Uuid,
+                    CardImageFormat.large,
+                    true
+                    ));
             }
             catch 
             {
                 ImageFront = ImageDefault;
             }
+            SelectedCard = cardFront;
             SelectedImage = ImageFront;
         }
-
-        private async Task LoadFront(Cards cardFront)
-        {
-        }
-
-        private async Task LoadBack(Cards cardBack)
-        {
-        }
-
 
         private void FlipClick(object sender, RoutedEventArgs e)
         {
