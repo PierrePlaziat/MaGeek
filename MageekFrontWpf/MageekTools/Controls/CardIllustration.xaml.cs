@@ -1,13 +1,13 @@
 ﻿using MageekFrontWpf.Framework.BaseMvvm;
 using MageekCore.Data;
 using MageekCore.Data.Mtg.Entities;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using MageekFrontWpf.Framework.Services;
 using MageekCore.Service;
+using System;
 
 namespace MaGeek.UI
 {
@@ -16,12 +16,15 @@ namespace MaGeek.UI
     {
 
         private IMageekService mageek;
+        BitmapImage ImageDefault;
 
         public CardIllustration()
         {
             mageek = ServiceHelper.GetService<IMageekService>();
             DataContext = this;
             InitializeComponent();
+            ImageDefault = new BitmapImage(new Uri("D:\\PROJECTS\\VS\\MaGeek\\MageekFrontWpf\\Resources\\Images\\cardback.jpg", UriKind.Absolute));
+            SelectCard(null).ConfigureAwait(false);
         }
 
         private string cardUuid;
@@ -84,7 +87,14 @@ namespace MaGeek.UI
             set { imageBack = value; OnPropertyChanged(); }
         }
 
-        bool flipped;
+        private bool flipped;
+
+        public bool Flipped
+        {
+            get { return flipped; }
+            set { flipped = value; }
+        }
+
 
         private static void OnCardUuidChanged(DependencyObject _control, DependencyPropertyChangedEventArgs eventArgs)
         {
@@ -94,39 +104,42 @@ namespace MaGeek.UI
 
         private async Task SelectCard(string uuid)
         {
-            flipped = false;
+            Flipped = false;
             Cards cardFront = await mageek.FindCard_Data(uuid);
             Cards cardBack = null;
-            SelectedCard = cardFront;
             if (cardFront != null && cardFront.OtherFaceIds != null)
             {
                 string backUuid = cardFront.OtherFaceIds;
                 cardBack = await mageek.FindCard_Data(backUuid);
             }
-            await Task.WhenAll(
-                new List<Task>
-                {
-                    LoadFront(cardFront),
-                    LoadBack(cardBack)
-                }
-            );
+            CardBack = cardBack;
+            try
+            {
+                ImageBack = new BitmapImage(await mageek.RetrieveImage(cardBack.Uuid, CardImageFormat.png));
+                CardFront = cardFront;
+            }
+            catch 
+            {
+                ImageBack = ImageDefault;
+            }
+            try
+            {
+                ImageFront = new BitmapImage(await mageek.RetrieveImage(cardFront.Uuid, CardImageFormat.png));
+                SelectedCard = cardFront;
+            }
+            catch 
+            {
+                ImageFront = ImageDefault;
+            }
             SelectedImage = ImageFront;
         }
 
         private async Task LoadFront(Cards cardFront)
         {
-            CardFront = cardFront;
-            ImageFront = null;
-            var url = await mageek.RetrieveImage(cardFront.Uuid, CardImageFormat.png);
-            if (url != null) ImageFront = new BitmapImage(url);
         }
 
         private async Task LoadBack(Cards cardBack)
         {
-            CardBack = cardBack;
-            ImageBack = null;
-            var url = await mageek.RetrieveImage(cardBack.Uuid, CardImageFormat.png);
-            if (url != null) ImageBack = new BitmapImage(url);
         }
 
 
