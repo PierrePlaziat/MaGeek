@@ -2,11 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
-using PlaziatTools;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MageekFrontWpf.Framework.AppValues;
 using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
