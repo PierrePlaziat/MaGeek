@@ -24,7 +24,7 @@ I needed a tool to manage my MTG card collection on local drive, that reflect my
 
 If you like, don't hesitate to donate!
 Here is my paypal:
-![MaGeek](/Graph/Title.png "MaGeek")
+![MaGeek](/Graph/qrcode.png "PaypalQrc")
 
 ## Todo
 
