@@ -14,17 +14,9 @@ namespace MageekFrontWpf.UI.ViewModels
 
         public TopMenuViewModel(WindowsService winManager, SettingService config)
         {
-            this.win = winManager;
-            this.conf = config;
+            win = winManager;
+            conf = config;
         }
-
-        //[RelayCommand]
-        //private void OpenWindow(string window)
-        //{
-        //    bool success = Enum.TryParse(window, out AppWindowEnum value);
-        //    if (!success) return;
-        //    win.OpenWindow(value);
-        //}
 
         [RelayCommand]
         private void OpenTool(string panel)
@@ -49,7 +41,7 @@ namespace MageekFrontWpf.UI.ViewModels
         [RelayCommand]
         private void ChangeLanguage(string lang)
         {
-            conf.SetSetting(Setting.ForeignLanguage, lang);
+            conf.SetSetting(Setting.Translations, lang);
         }
 
         [RelayCommand]

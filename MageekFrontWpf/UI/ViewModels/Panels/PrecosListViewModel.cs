@@ -12,7 +12,8 @@ using MageekCore.Service;
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
 
-    public partial class PrecoListViewModel : ObservableViewModel,
+    public partial class PrecoListViewModel : 
+        ObservableViewModel,
         IRecipient<LaunchAppMessage>
     {
 

@@ -23,11 +23,18 @@ namespace MageekCore.Service
         private CollectionDbManager collec;
         private MtgDbManager mtg;
 
+        int nbRecPrice = 0;
+        int missingPriceEur = 0;
+        int missingPriceUsd = 0;
+        List<PriceLine> priceList = new();
+
         public MtgJsonManager(MtgDbManager mtg, CollectionDbManager collec)
         {
             this.collec = collec;
             this.mtg = mtg;
         }
+
+        #region Initialisation
 
         public async Task<bool> CheckUpdate()
         {
@@ -106,15 +113,18 @@ namespace MageekCore.Service
                 FetchPrices(),
             };
         }
-
+        
+        #endregion
+        
         #region Prints
 
         private async Task FetchArchetypes()
         {
+            Logger.Log("Start...");
             try
             {
                 List<ArchetypeCard> archetypes = new();
-                Logger.Log("Parsing...");
+                Logger.Log("...Parsing...");
                 using (MtgDbContext mtgContext = await mtg.GetContext())
                 {
                     await Task.Run(() =>
@@ -134,7 +144,7 @@ namespace MageekCore.Service
                         }
                     });
                 }
-                Logger.Log("Saving...");
+                Logger.Log("...Saving...");
                 using (CollectionDbContext collecContext = await collec.GetContext())
                 {
                     await collecContext.CardArchetypes.ExecuteDeleteAsync();
@@ -143,20 +153,22 @@ namespace MageekCore.Service
                     await collecContext.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
-                Logger.Log("Done");
+                Logger.Log("...Done");
             }
             catch (Exception e)
             {
+                Logger.Log("...Error");
                 Logger.Log(e);
             }
         }
 
         private async Task FetchTranslations()
         {
+            Logger.Log("Start...");
             try
             {
                 List<CardTraduction> traductions = new();
-                Logger.Log("Parsing...");
+                Logger.Log("...Parsing...");
                 using (MtgDbContext mtgContext = await mtg.GetContext())
                 {
                     foreach (CardForeignData traduction in mtgContext.cardForeignData)
@@ -194,7 +206,7 @@ namespace MageekCore.Service
                         });
                     }
                 }
-                Logger.Log("Saving...");
+                Logger.Log("...Saving...");
                 using (CollectionDbContext collecContext = await collec.GetContext())
                 {
                     await collecContext.CardTraductions.ExecuteDeleteAsync();
@@ -203,10 +215,11 @@ namespace MageekCore.Service
                     await collecContext.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
-                Logger.Log("Done");
+                Logger.Log("...Done");
             }
             catch (Exception e)
             {
+                Logger.Log("...Error");
                 Logger.Log(e);
             }
         }
@@ -217,13 +230,14 @@ namespace MageekCore.Service
 
         private async Task FetchPrecos()
         {
-            Logger.Log("Uncompressing...");
+            Logger.Log("Start...");
+            Logger.Log("...Uncompressing...");
             System.IO.Compression.ZipFile.ExtractToDirectory(Folders.File_UpdatePrecos, Folders.TempPrecoFolder, overwriteFiles: true);
-            Logger.Log("Parsing...");
+            Logger.Log("...Parsing...");
             await ParsePrecos(Folders.TempPrecoFolder, Folders.File_Precos);
-            Logger.Log("Cleaning");
+            Logger.Log("...Cleaning");
             Directory.Delete(Folders.TempPrecoFolder, true);
-            Logger.Log("Done");
+            Logger.Log("...Done");
         }
 
         private async Task ParsePrecos(string tmpPath, string finalPath)
@@ -297,35 +311,58 @@ namespace MageekCore.Service
 
         #region Prices
 
+        // Pretty clunky, probably could be enhanced
+
         public async Task FetchPrices()
         {
-            Logger.Log("Start");
-            using (CollectionDbContext collecContext = await collec.GetContext())
+            Logger.Log("Start...");
+            try
             {
-                await collecContext.PriceLine.ExecuteDeleteAsync();
-                await collecContext.SaveChangesAsync();
-            }
-            using (FileStream s = File.Open(Folders.File_UpdatePrices, FileMode.Open))
-            using (StreamReader sr = new StreamReader(s))
-            using (Newtonsoft.Json.JsonReader reader = new Newtonsoft.Json.JsonTextReader(sr))
-            {
-                while (reader.Read())
+                using (CollectionDbContext collecContext = await collec.GetContext())
                 {
-                    if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
+                    await collecContext.PriceLine.ExecuteDeleteAsync();
+                    await collecContext.SaveChangesAsync();
+                }
+                using (FileStream s = File.Open(Folders.File_UpdatePrices, FileMode.Open))
+                using (StreamReader sr = new StreamReader(s))
+                using (Newtonsoft.Json.JsonReader reader = new Newtonsoft.Json.JsonTextReader(sr))
+                {
+                    while (reader.Read())
                     {
-                        bool metaSkip = false;
-                        while (reader.Read())
+                        if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
                         {
-                            if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
+                            bool metaSkip = false;
+                            while (reader.Read())
                             {
-                                if (!metaSkip) metaSkip = true;
-                                else await ProcessPriceData(reader);
+                                if (reader.TokenType == Newtonsoft.Json.JsonToken.StartObject)
+                                {
+                                    if (!metaSkip) metaSkip = true;
+                                    else await ProcessPriceData(reader);
+                                }
                             }
                         }
                     }
                 }
+
+                if (priceList.Count > 0)
+                {
+                    nbRecPrice += priceList.Count;
+                    using (CollectionDbContext collecContext = await collec.GetContext())
+                    {
+                        await collecContext.PriceLine.AddRangeAsync(priceList);
+                        await collecContext.SaveChangesAsync();
+                    }
+                    priceList.Clear();
+                }
+                Logger.Log("Results - " + nbRecPrice + " records processed, missing eur : " + missingPriceEur+ ", missing usd : "+missingPriceUsd+".");
+                Logger.Log("...Done");
             }
-            Logger.Log("Done - " + nbRecPrice + " records processed. - missing " + missingPrice);
+            catch (Exception e)
+            {
+                Logger.Log("...Error");
+                Logger.Log(e);
+
+            }
         }
 
         private async Task ProcessPriceData(Newtonsoft.Json.JsonReader reader)
@@ -340,21 +377,25 @@ namespace MageekCore.Service
             }
         }
 
-        int nbRecPrice = 0;
         private async Task RecordPrice(PriceLine priceLine)
         {
             if (priceLine == null) return;
-            using (CollectionDbContext collecContext = await collec.GetContext())
+            priceList.Add(priceLine);
+            if(priceList.Count >= 1000)
             {
-                await collecContext.PriceLine.AddAsync(priceLine);
-                await collecContext.SaveChangesAsync();
-                nbRecPrice++;
+                nbRecPrice+=1000;
+                using (CollectionDbContext collecContext = await collec.GetContext())
+                {
+                    await collecContext.PriceLine.AddRangeAsync(priceList);
+                    await collecContext.SaveChangesAsync();
+                }
+                priceList.Clear();
             }
         }
 
         private PriceLine? GetPriceLine(string UUID, Newtonsoft.Json.JsonReader reader)
         {
-            Console.WriteLine(">>> " + UUID);
+            //Console.WriteLine(">>> " + UUID);
             string CardBlock = RegisterBlock(reader);
             return ParsePriceBlock(UUID, CardBlock);
         }
@@ -402,11 +443,9 @@ namespace MageekCore.Service
             return data;
         }
 
-        int missingPrice = 0;
         private PriceLine ParsePriceBlock(string UUID, string cardBlock)
         {
             PriceLine line = new PriceLine() { CardUuid = UUID };
-            //Console.WriteLine(cardBlock);
             dynamic dynData = JObject.Parse(cardBlock);
             try
             {
@@ -414,57 +453,34 @@ namespace MageekCore.Service
                 {
                     if (dynData.paper.cardmarket != null)
                     {
-                        dynamic v1 = dynData.paper.cardmarket.retail;
-                        line.PriceEur = v1 == null ? null : v1.ToString();
+                        dynamic retail = dynData.paper.cardmarket.retail;
+                        if (retail != null)
+                        {
+                            string s = retail.ToString().Replace("}", "");
+                            line.PriceEurAccrossTime = s;
+                            string[] splitted = s.Split(",");
+                            string last = splitted[splitted.Length - 1].Split(":").Last();
+                            line.LastPriceEur = float.Parse(last.Trim().Replace(".", ","));
+                        }
                     }
-                    else missingPrice++;
-                    //if (dynData.paper.cardkingdom != null)
-                    //{
-                    //    dynamic v2 = dynData.paper.cardkingdom.retail;
-                    //    line.PriceUsd = (v2 == null) ? null : v2.ToString();
-                    //}
-                    //else if (dynData.paper.cardsphere != null)
-                    //{
-                    //    dynamic v2 = dynData.paper.cardsphere.retail;
-                    //    line.PriceUsd = (v2 == null) ? null : v2.ToString();
-                    //}
-                    //else
-                    //{
-
-                    //}
+                    else missingPriceEur++;
+                    if (dynData.paper.cardsphere != null)
+                    {
+                        dynamic retail = dynData.paper.cardsphere.retail;
+                        if (retail != null)
+                        {
+                            string s = retail.ToString().Replace("}", "");
+                            line.PriceUsdAccrossTime = s;
+                            string[] splitted = s.Split(",");
+                            string last = splitted[splitted.Length - 1].Split(":").Last();
+                            line.LastPriceUsd = float.Parse(last.Trim().Replace(".", ","));
+                        }
+                    }
+                    else missingPriceUsd++;
                     return line;
                 }
             }
-            catch
-            {
-                Console.WriteLine(dynData.ToString());
-            }
-            return null;
-        }
-
-        private PriceLine MakePriceLine(string UUID, string eur, string usd)
-        {
-            return new PriceLine()
-            {
-                CardUuid = UUID,
-                PriceEur = eur,
-                PriceUsd = usd,
-            };
-        }
-
-        private string FetchRetailPrice(Newtonsoft.Json.JsonReader reader)
-        {
-            while (reader.Read())
-            {
-                if (reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
-                {
-                    string property = reader.Value.ToString();
-                    if (property == "retail")
-                    {
-                        return RegisterBlock(reader);
-                    }
-                }
-            }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
             return null;
         }
 

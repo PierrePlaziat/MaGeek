@@ -62,6 +62,7 @@ namespace MageekCore.Service
 
         public async Task<MageekUpdateReturn> Update()
         {
+            Logger.Log("...Error");
             try
             {
                 await mtgjson.DownloadData();

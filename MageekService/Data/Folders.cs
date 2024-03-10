@@ -6,7 +6,7 @@ namespace MageekCore.Data
     public static class Folders
     {
 
-        public static string Roaming { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeekData");
+        public static string Roaming { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
 
 
         private static string DbFolder { get; } = Path.Combine(Roaming, "DB");

@@ -163,13 +163,21 @@
 
                             </DockPanel>
 
-                            <Label Content="{Binding GetPrice}"
-                                   Grid.Column="1"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,5,0,0"
-                                   Padding="0" />
-                            <!--Foreground="{Binding GetPriceColor}"-->
+                            <DockPanel
+                                       Grid.Column="1"
+                                       HorizontalAlignment="Center">
 
+                                <Label Content="{Binding Price.LastPriceEur}"
+                                       Margin="0,5,2,0"
+                                       Padding="0"
+                                       Foreground="White" />
+                                <Label Content="€"
+                                       Margin="0,5,0,0"
+                                       Padding="0"
+                                       Foreground="White" />
+
+                            </DockPanel>
+                        
                             <controls:SetIcon SetCode="{Binding Set.Code}"
                                               Rarity="{Binding Card.Rarity}"
                                               Grid.Column="2" 

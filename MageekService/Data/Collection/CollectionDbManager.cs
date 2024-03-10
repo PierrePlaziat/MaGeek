@@ -1,14 +1,8 @@
 ﻿#pragma warning disable CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
 #pragma warning disable CS8602 // Déréférencement d'une éventuelle référence null.
 
-using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg;
-using MageekCore.Data.Mtg.Entities;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using PlaziatTools;
-using ScryfallApi.Client.Models;
-using System.Text.Json;
 
 namespace MageekCore.Data.Collection
 {
@@ -31,7 +25,7 @@ namespace MageekCore.Data.Collection
             "CREATE TABLE \"DeckCard\" (\r\n\t\"DeckId\"\tTEXT,\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"CardType\"\tTEXT,\r\n\t\"Quantity\"\tINTEGER,\r\n\t\"RelationType\"\tINTEGER\r\n);",
             "CREATE TABLE \"FavVariant\" (\r\n\t\"ArchetypeId\"\tTEXT,\r\n\t\"FavUuid\"\tTEXT\r\n);",
             "CREATE TABLE \"Param\" (\r\n\t\"ParamName\"\tTEXT,\r\n\t\"ParamValue\"\tTEXT\r\n);",
-            "CREATE TABLE \"PriceLine\" (\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"PriceEur\"\tTEXT,\r\n\t\"PriceUsd\"\tTEXT\r\n);",
+            "CREATE TABLE \"PriceLine\" (\r\n\t\"CardUuid\"\tTEXT,\r\n\t\"PriceEurAccrossTime\"\tTEXT,\r\n\t\"PriceUsdAccrossTime\"\tTEXT,\r\n\t\"LastPriceEur\"\tNUMERIC,\r\n\t\"LastPriceUsd\"\tNUMERIC\r\n);",
             "CREATE TABLE \"Tag\" (\r\n\t\"TagId\"\tTEXT,\r\n\t\"TagContent\"\tTEXT,\r\n\t\"ArchetypeId\"\tTEXT\r\n);"
         };
 

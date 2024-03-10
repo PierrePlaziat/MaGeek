@@ -5,7 +5,7 @@ namespace MageekFrontWpf.Framework.AppValues
 {
     public enum Setting
     {
-        ForeignLanguage,
+        Translations,
         Currency,
     };
 
@@ -14,7 +14,7 @@ namespace MageekFrontWpf.Framework.AppValues
 
         internal static void InitSettings(SettingService Settings)
         {
-            if (!Settings.Settings.ContainsKey(Setting.ForeignLanguage)) Settings.Settings.Add(Setting.ForeignLanguage, "French");
+            if (!Settings.Settings.ContainsKey(Setting.Translations)) Settings.Settings.Add(Setting.Translations, "French");
             if (!Settings.Settings.ContainsKey(Setting.Currency)) Settings.Settings.Add(Setting.Currency, "Eur");
             Logger.Log("Done");
         }

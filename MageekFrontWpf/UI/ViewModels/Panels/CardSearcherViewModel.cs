@@ -80,14 +80,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                 if (!AdvancedMode)
                 {
                     CardList = await mageek.NormalSearch(
-                        FilterName, config.Settings[Setting.ForeignLanguage],
+                        FilterName, config.Settings[Setting.Translations],
                         CurrentPage, NbResulsts
                     );
                 }
                 if (AdvancedMode)
                 {
                     CardList = await mageek.AdvancedSearch(
-                        FilterName, config.Settings[Setting.ForeignLanguage],
+                        FilterName, config.Settings[Setting.Translations],
                         FilterType, FilterKeyword, FilterText,
                         FilterColor.ToString(),
                         "", // FilterTag.TagContent;

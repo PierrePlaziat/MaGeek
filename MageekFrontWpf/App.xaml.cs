@@ -12,7 +12,7 @@ namespace MageekFrontWpf
 
         public App()
         {
-            Folders.InitializeClientFolders();
+            //Folders.InitializeClientFolders();
             ServiceCollection services = new ServiceCollection();
             services.AddFrameworkServices();
             services.AddAppServices();

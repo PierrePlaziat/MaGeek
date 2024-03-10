@@ -104,6 +104,7 @@ namespace MaGeek.UI
 
         private async Task SelectCard(string uuid)
         {
+            if (uuid == null) return; //!\\ guard
             Flipped = false;
             Cards cardFront = await mageek.FindCard_Data(uuid);
             Cards cardBack = null;

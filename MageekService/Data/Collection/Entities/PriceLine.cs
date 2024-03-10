@@ -6,10 +6,13 @@ namespace MageekCore.Data.Collection.Entities
 {
     public class PriceLine
     {
+
         [Key]
         public string CardUuid { get; set; }
-        public string? PriceEur { get; set; }
-        public string? PriceUsd { get; set; }
+        public string? PriceEurAccrossTime { get; set; }
+        public string? PriceUsdAccrossTime { get; set; }
+        public float? LastPriceEur { get; set; }
+        public float? LastPriceUsd { get; set; }
 
     }
 }

@@ -3,6 +3,51 @@ using MageekCore.Data.Mtg.Entities;
 
 namespace MageekCore.Data
 {
+
+    public class CardVariant
+    {
+
+        public Cards Card { get; set; }
+        public Sets Set { get; set; }
+        public int Collected { get; set; }
+        public PriceLine Price { get; set; }
+
+        public CardVariant(Cards card, Sets set, int collected, PriceLine price)
+        {
+            Card = card;
+            Set = set;
+            Collected = collected;
+            Price = price;
+        }
+
+        public float? GetPrice //TODO multi monaie & colors
+        {
+            get
+            {
+                return 0;
+                //if (Price == null) return null;
+                //if (Price.GetLastPriceEur == null) return null;
+                //return Price.GetLastPriceEur;
+            }
+        }
+    }
+
+    public class SearchedCards
+    {
+
+        public SearchedCards(Cards card, int collected, CardForeignData translation)
+        {
+            Card = card;
+            Collected = collected;
+            if(translation!=null) Translation = translation.Name;
+        }
+
+        public Cards Card { get; }
+        public string Translation { get; } = string.Empty;
+        public int Collected { get; }
+
+    }
+
     public class TxtImportResult
     {
         public string Status { get; set; }
@@ -47,50 +92,6 @@ namespace MageekCore.Data
                 return i;
             }
         }
-    }
-
-    public class CardVariant
-    {
-
-        public Cards Card { get; set; }
-        public Sets Set { get; set; }
-        public int Collected { get; set; }
-        public PriceLine Price { get; set; }
-
-        public CardVariant(Cards card, Sets set, int collected, PriceLine price)
-        {
-            Card = card;
-            Set = set;
-            Collected = collected;
-            Price = price;
-        }
-
-        public float? GetPrice //TODO multi monaie & colors
-        {
-            get
-            {
-                return 0;
-                //if (Price == null) return null;
-                //if (Price.GetLastPriceEur == null) return null;
-                //return Price.GetLastPriceEur;
-            }
-        }
-    }
-
-    public class SearchedCards
-    {
-
-        public SearchedCards(Cards card, int collected, CardForeignData translation)
-        {
-            Card = card;
-            Translation = translation;
-            Collected = collected;
-        }
-
-        public Cards Card { get; }
-        public CardForeignData Translation { get; }
-        public int Collected { get; }
-
     }
 
     public enum MageekConnectReturn
