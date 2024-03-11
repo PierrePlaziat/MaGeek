@@ -21,4 +21,8 @@
     <ProjectReference Include="..\MageekService\MageekCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Protobuf Include="MageekProtocol.proto"/>
+  </ItemGroup>
+
 </Project>

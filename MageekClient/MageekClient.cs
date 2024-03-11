@@ -16,7 +16,7 @@ namespace MageekMaui
 
         bool connected = false;
         private GrpcChannel channel;
-        //Greeter.GreeterClient greeter;
+        //MageekProtocol.MageekProtocolService greeter;
         //Collectionner.CollectionnerClient collection;
 
         //Collectionner.CollectionnerClient collectionner;

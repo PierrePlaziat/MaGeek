@@ -19,9 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Service\MageekProtocol.proto">
-      <GrpcServices>Server</GrpcServices>
-    </None>
+    <Protobuf Include="MageekCore\Service\MageekProtocol.proto" Link="Service\MageekProtocol.proto" ProtoRoot=".."/>
   </ItemGroup>
 
 </Project>

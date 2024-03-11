@@ -6,7 +6,7 @@ package MageekProtocolPackage;
 
 service MageekProtocolService 
 {
-	rpc Cards_Search (Request_CardSearch) returns (Reply_SearchedCardList); // maybe simplify
+	rpc Cards_Search (Request_CardSearch) returns (Reply_SearchedCardList);
 	rpc Cards_UuidsForGivenCardName (Request_CardName) returns (Reply_ListCardUuid);
 	rpc Cards_NameForGivenCardUuid (Request_CardUuid) returns (Reply_CardName);
 	rpc Cards_UuidsForGivenCardUuid (Request_CardUuid) returns (Reply_ListCardUuid);
@@ -26,8 +26,7 @@ service MageekProtocolService
 	rpc Collec_OwnedVariant (Request_CardUuid) returns (Reply_Quantity);
 	rpc Collec_OwnedCombined (Request_CardName) returns (Reply_Quantity);
 	rpc Collec_TotalOwned (Request_Empty) returns (Reply_Quantity);
-	rpc Collec_TotalDifferentOwned (Request_combined) returns (Reply_Quantity);
-	rpc Collec_TotalDifferentOwned (Request_combined) returns (Reply_Quantity);
+	rpc Collec_TotalDifferentOwned (Request_combinedVariant) returns (Reply_Quantity);
 	rpc Decks_All (Request_Empty) returns (Reply_DeckList);
 	rpc Decks_Get (Request_DeckId) returns (Reply_Deck);
 	rpc Decks_Content (Request_DeckId) returns (Reply_DeckContent);
@@ -49,8 +48,8 @@ service MageekProtocolService
 message Request_CardSearch{
 	string cardName = 1;
 	string lang = 2;
-	int page = 3;
-	int pageSize = 4;
+	int32 page = 3;
+	int32 pageSize = 4;
 	string cardType = 5;
 	string keyword = 6;
 	string text = 7;
@@ -67,7 +66,7 @@ message Request_CardUuid {
 }
 message Request_CardTranslation {
 	string cardUuid = 1;
-	string lang = 1;
+	string lang = 2;
 }
 message Request_SetCode {
 	string setCode = 1;
@@ -106,7 +105,7 @@ message Request_SaveDeck {
 }
 message Request_CardTag {
 	string cardName = 1;
-	string tag = 1;
+	string tag = 2;
 }
 message Request_Txt{
 	string input = 1;
@@ -121,7 +120,7 @@ message Reply_SearchedCardList {
 message Reply_SearchedCard {
 	string CardUuid = 1;
     string Translation = 2;
-    int Collected = 3;
+    int32 Collected = 3;
 }
 message Reply_ListCardUuid{
 	repeated string cardUuidList = 1;
@@ -146,7 +145,7 @@ message Reply_CardData {
     string Colors = 11;
     string Defense = 12;
     string DuelDeck = 13;
-    int EdhrecRank = 14;
+    int32 EdhrecRank = 14;
     float EdhrecSaltiness = 15;
     float FaceConvertedManaCost = 16;
     string FaceFlavorName = 17;
@@ -169,7 +168,7 @@ message Reply_CardData {
     bool IsOversized = 34;
     bool IsPromo = 35;
     bool IsRebalanced = 36;
-    bool IsReprint = 37;
+    bool IsReprint32 = 37;
     bool IsReserved = 38;
     bool IsStarter = 39;
     bool IsStorySpotlight = 40;
@@ -185,16 +184,16 @@ message Reply_CardData {
     float ManaValue = 50;
     string Name = 51;
     string Number = 52;
-    string OriginalPrintings = 53;
+    string OriginalPrint32ings = 53;
     string OriginalReleaseDate = 54;
     string OriginalText = 55;
     string OriginalType = 56;
     string OtherFaceIds = 57;
     string Power = 58;
-    string Printings = 59;
+    string Print32ings = 59;
     string PromoTypes = 60;
     string Rarity = 61;
-    string RebalancedPrintings = 62;
+    string RebalancedPrint32ings = 62;
     string RelatedCards = 63;
     string SecurityStamp = 64;
     string SetCode = 65;
@@ -214,7 +213,7 @@ message Reply_CardTranslation {
     string FaceName = 1;
     string FlavorText = 2;
     string Language = 3;
-    int MultiverseId = 4;
+    int32 MultiverseId = 4;
     string Name = 5;
     string Text = 6;
     string Type = 7;
@@ -243,7 +242,7 @@ message Reply_CardLegalities {
     string Standardbrawl = 20;
     string Timeless = 21;
     string Uuid = 22;
-    string Vintage = 23;
+    string Vint32age = 23;
 }
 message Reply_CardRulings{
     string Date = 1;
@@ -251,9 +250,9 @@ message Reply_CardRulings{
     string Uuid = 3;
 }
 message Reply_CardRelations{
-    int Role = 1;
-    string CardUuid = 1;
-    string TokenUuid = 1;
+    int32 Role = 1;
+    string CardUuid = 2;
+    string TokenUuid = 3;
 }
 message Reply_Uri{
 	string uri = 1;
@@ -271,9 +270,9 @@ message Reply_ListSet {
 message Reply_Set{
     string Code = 1;
     string Name = 2;
-    int TotalSetSize = 3;
+    int32 TotalSetSize = 3;
     string Type = 4;
-    int BaseSetSize = 5;
+    int32 BaseSetSize = 5;
     string Block = 6;
     bool IsFoilOnly = 7;
     bool IsForeignOnly = 8;
@@ -282,13 +281,13 @@ message Reply_Set{
     bool IsPartialPreview = 11;
     string KeyruneCode = 12;
     string Languages = 13;
-    int McmId = 14;
-    int McmIdExtras = 15;
+    int32 McmId = 14;
+    int32 McmIdExtras = 15;
     string McmName = 16;
     string MtgoCode = 17;
     string ParentCode = 18;
     string ReleaseDate = 19;
-    int TcgplayerGroupId = 20;
+    int32 TcgplayerGroupId = 20;
     string TokenSetCode = 21;
 }
 message Reply_Percentage {
@@ -305,7 +304,7 @@ message Reply_Deck {
     string Title = 2;
     string Description = 3;
     string DeckColors = 4;
-    int CardCount = 5;
+    int32 CardCount = 5;
 }
 message Reply_DeckContent{
 	repeated Reply_Deck deckContent = 1;
@@ -313,8 +312,8 @@ message Reply_DeckContent{
 message Reply_DeckCard{
     string DeckId = 1;
     string CardUuid = 2;
-    int Quantity = 3;
-    int RelationType = 4;
+    int32 Quantity = 3;
+    int32 RelationType = 4;
 }
 message Reply_ListPreco{
 	repeated Reply_Preco precoList = 1;

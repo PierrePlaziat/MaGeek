@@ -9,12 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="MageekProtocol.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MageekService\MageekCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="MageekProtocol.proto" />
   </ItemGroup>
 
 </Project>

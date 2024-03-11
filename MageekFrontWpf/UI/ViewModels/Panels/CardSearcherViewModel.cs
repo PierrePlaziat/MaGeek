@@ -12,7 +12,8 @@ using MageekCore.Service;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
-    public partial class CardSearcherViewModel : ObservableViewModel,
+    public partial class CardSearcherViewModel : 
+        ObservableViewModel,
         IRecipient<LaunchAppMessage>
     {
 

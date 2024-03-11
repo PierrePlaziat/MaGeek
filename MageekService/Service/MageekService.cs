@@ -12,6 +12,7 @@ using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.Collection;
 using MageekCore.Data.Collection.Entities;
 using PlaziatTools;
+using System.Collections.Generic;
 
 namespace MageekCore.Service
 {
@@ -99,8 +100,9 @@ namespace MageekCore.Service
 
         #region Cards
 
-        public Task<List<SearchedCards>> Cards_Search(string filterName, string lang, int page, int pageSize, string? filterType = null, string? filterKeyword = null, string? filterText = null, string? filterColor = null, string? filterTag = null, bool onlyGot = false, bool colorisOr = false)
+        public async Task<List<SearchedCards>> Cards_Search(string filterName, string lang, int page, int pageSize, string? filterType = null, string? filterKeyword = null, string? filterText = null, string? filterColor = null, string? filterTag = null, bool onlyGot = false, bool colorisOr = false)
         {
+            List<SearchedCards> retour = new();
             if (filterType==null 
              && filterKeyword==null 
              && filterText==null 
@@ -109,11 +111,11 @@ namespace MageekCore.Service
              && onlyGot==false 
              && colorisOr==false
             ){
-                return NormalSearch(filterName, lang, page, pageSize);
+                retour = await NormalSearch(filterName, lang, page, pageSize);
             }
             else
             {
-                return AdvancedSearch
+                retour = await AdvancedSearch
                 (
                     filterName, lang, page, pageSize,
                     filterType, filterKeyword, filterText, filterColor, filterTag, 
@@ -121,44 +123,54 @@ namespace MageekCore.Service
                     colorisOr
                 );
             }
+            return retour;
         }
         
         private async Task<List<SearchedCards>> NormalSearch(string filterName, string lang, int page, int pageSize)
         {
             Logger.Log("searching...");
             List<SearchedCards> retour = new();
-            List<Cards> found = new();
-            string lowerFilterName = filterName.ToLower();
-            string normalizedFilterName = filterName.RemoveDiacritics().Replace('-', ' ').ToLower();
-
-            using (CollectionDbContext DB = await collec.GetContext())
-            using (MtgDbContext DB2 = await mtg.GetContext())
+            try 
             {
-                if (!string.IsNullOrEmpty(filterName))
+                List<Cards> found = new();
+                string lowerFilterName = filterName.ToLower();
+                string normalizedFilterName = filterName.RemoveDiacritics().Replace('-', ' ').ToLower();
+
+                using (CollectionDbContext DB = await collec.GetContext())
+                using (MtgDbContext DB2 = await mtg.GetContext())
                 {
-                    // Search in VO
-                    var voResults = await DB.CardArchetypes.Where(x => x.ArchetypeId.ToLower().Contains(lowerFilterName)).ToListAsync();
-                    foreach (var vo in voResults) found.AddRange(DB2.cards.Where(x => x.Uuid == vo.CardUuid));
-                    // Search in foreign
-                    var tradResults = await DB.CardTraductions.Where(x => x.Language == lang && x.NormalizedTraduction.Contains(normalizedFilterName)).ToListAsync();
-                    foreach (var trad in tradResults) found.AddRange(DB2.cards.Where(x => x.Uuid == trad.CardUuid));
-                }
-                else found.AddRange(await DB2.cards.ToArrayAsync());
-                // Remove duplicata
-                found = found.GroupBy(x => x.Name).Select(g => g.First()).ToList();
-                // Add infos
-                Logger.Log("find collec data...");
-                foreach (var card in found.Skip(page * pageSize).Take(pageSize))
-                {
-                    retour.Add(new SearchedCards() {
-                        Card = card,
-                        CardUuid = card.Uuid,
-                        Translation = (await Cards_GetTranslation(card.Uuid, lang)).Name,
-                        Collected = await Collec_OwnedCombined(card.Uuid),
-                    });
+                    if (!string.IsNullOrEmpty(filterName))
+                    {
+                        // Search in VO
+                        var voResults = await DB.CardArchetypes.Where(x => x.ArchetypeId.ToLower().Contains(lowerFilterName)).ToListAsync();
+                        foreach (var vo in voResults) found.AddRange(DB2.cards.Where(x => x.Uuid == vo.CardUuid));
+                        // Search in foreign
+                        var tradResults = await DB.CardTraductions.Where(x => x.Language == lang && x.NormalizedTraduction.Contains(normalizedFilterName)).ToListAsync();
+                        foreach (var trad in tradResults) found.AddRange(DB2.cards.Where(x => x.Uuid == trad.CardUuid));
+                    }
+                    else found.AddRange(await DB2.cards.ToArrayAsync());
+                    // Remove duplicata
+                    found = found.GroupBy(x => x.Name).Select(g => g.First()).ToList();
+                    // Add infos
+                    Logger.Log("find collec data...");
+                    foreach (var card in found.Skip(page * pageSize).Take(pageSize))
+                    {
+                        string translation;
+                        var v = await Cards_GetTranslation(card.Uuid, lang);
+                        if (v != null) translation = v.Name;
+                        else translation = card.Name;
+                        int collected = await Collec_OwnedCombined(card.Uuid);
+                        retour.Add(new SearchedCards()
+                        {
+                            Card = card,
+                            CardUuid = card.Uuid,
+                            Translation = translation,
+                            Collected = collected,
+                        });
+                    }
                 }
             }
-            Logger.Log("Done - " + retour.Count + " results on " + found.Count);
+            catch (Exception ex) { Logger.Log(ex); }
             return retour;
         }
         
@@ -166,9 +178,7 @@ namespace MageekCore.Service
         {
             Logger.Log("");
             List<SearchedCards> retour = await NormalSearch(lang, filterName, page, pageSize);
-
-            try
-            {
+            try {
 
                 if (!string.IsNullOrEmpty(filterType))
                 {
@@ -617,10 +627,10 @@ namespace MageekCore.Service
             return total;
         }
 
-        public Task<int> Collec_TotalDifferentOwned(bool combined = true)
+        public async Task<int> Collec_TotalDifferentOwned(bool combined = true)
         {
-            if (combined) return GetTotal_CollectedCombined();
-            else return GetTotal_CollectedDiff();
+            if (combined) return await GetTotal_CollectedCombined();
+            else return await GetTotal_CollectedDiff();
         }
 
         private async Task<int> GetTotal_CollectedDiff()
@@ -1010,7 +1020,7 @@ namespace MageekCore.Service
         {
             try
             {
-                if (IsLineEmpty(line)) return null;
+                if (line.Trim().Length == 0) return null;
                 var v = await ParseLine(line);
                 if (v.Item1 > 0)
                 {
@@ -1059,11 +1069,6 @@ namespace MageekCore.Service
             {
                 return new Tuple<int, string>(-1, "Error : " + e.Message);
             }
-        }
-
-        private bool IsLineEmpty(string line)
-        {
-            return line.Trim().Length == 0;
         }
 
         #endregion
