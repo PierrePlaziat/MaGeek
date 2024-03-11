@@ -36,10 +36,10 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [ObservableProperty] string checkDetail= string.Empty;
 
         [RelayCommand]
-        private async Task<TxtImportResult> Check()
+        private async Task<CardList> Check()
         {
             string cardList = FlowDocumentStringToSimpleString(Document);
-            TxtImportResult result = await mageek.ParseCardList(Document);
+            CardList result = await mageek.CardLists_Parse(Document);
             CheckResult = result.Status;
             CheckDetail = result.Detail;
             return result;
@@ -63,7 +63,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [RelayCommand]
         private async Task Collect()
         {
-            TxtImportResult result = await Check();
+            CardList result = await Check();
             bool ok = UserComfirmation(result);
             if (ok)
             {
@@ -74,7 +74,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [RelayCommand]
         private async Task Open()
         {
-            TxtImportResult result = await Check();
+            CardList result = await Check();
             bool ok = UserComfirmation(result);
             if (ok)
             {
@@ -85,7 +85,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         [RelayCommand]
         private async Task CollectAndOpen()
         {
-            TxtImportResult result = await Check();
+            CardList result = await Check();
             bool ok = UserComfirmation(result);
             if (ok)
             {
@@ -94,7 +94,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             }
         }
 
-        private bool UserComfirmation(TxtImportResult result)
+        private bool UserComfirmation(CardList result)
         {
             if (result.Status == "KO")
             {
@@ -108,7 +108,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
 
         private async void DoAddToCollec(List<DeckCard> cards)
         {
-            foreach (var v in cards) await mageek.CollecMove(v.CardUuid, v.Quantity);
+            foreach (var v in cards) await mageek.Collec_Move(v.CardUuid, v.Quantity);
         }
 
         private void DoOpenTheDeck(List<DeckCard> cards)

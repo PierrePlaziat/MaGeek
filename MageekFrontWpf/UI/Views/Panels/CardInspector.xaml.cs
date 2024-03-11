@@ -28,7 +28,7 @@ namespace MageekFrontWpf.UI.Views.AppPanels
         {
             bool found = false;
             var border = (resultStack.Parent as ScrollViewer).Parent as Border;
-            var data = await mageek.GetTags();
+            var data = await mageek.Tags_All();
             string query = (sender as TextBox).Text;
             if (query.Length == 0)
             {

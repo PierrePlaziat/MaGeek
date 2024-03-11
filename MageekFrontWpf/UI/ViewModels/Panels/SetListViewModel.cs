@@ -33,7 +33,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         public void Receive(LaunchAppMessage message)
         {
-            SetList = mageek.LoadSets().Result;
+            SetList = mageek.Sets_All().Result;
             FillTypes();
             FillBlocks();
         }
@@ -71,13 +71,13 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task Reload()
         {
             Logger.Log("Reload");
-            SetList = mageek.LoadSets().Result.Where(x => FilterBlock == "" || x.Block == FilterBlock)
+            SetList = mageek.Sets_All().Result.Where(x => FilterBlock == "" || x.Block == FilterBlock)
                                 .Where(x => FilterType == "" || x.Type == FilterType).ToList();
         }
 
         public async void SelectSet(Sets s)
         {
-            Variants = await mageek.GetCardsFromSet(s.Code);
+            Variants = await mageek.Sets_Content(s.Code);
         }
 
         public void SelectCard(Cards c)

@@ -1,5 +1,3 @@
-using MageekCore.Data.Collection;
-using MageekCore.Data.Mtg;
 using MageekServer.Services;
 using MageekCore.Service;
 
@@ -8,8 +6,7 @@ using MageekCore.Service;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
 var app = builder.Build();
-app.MapGrpcService<IdentificationService>();
-app.MapGrpcService<MageekProtocolService>();
+app.MapGrpcService<CollectionnerService>();
 app.MapGet("/", () => "Mageek Grpc endpoint");
 
 // MAGEEK

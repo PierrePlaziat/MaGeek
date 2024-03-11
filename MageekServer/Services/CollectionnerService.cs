@@ -4,7 +4,7 @@ using MageekCore.Service;
 namespace MageekServer.Services
 {
 
-    public class CollectionnerService : Collectionner.CollectionnerBase
+    public class CollectionnerService : MageekProtocolService.CollectionnerBase
     {
 
         private readonly ILogger<CollectionnerService> _logger;

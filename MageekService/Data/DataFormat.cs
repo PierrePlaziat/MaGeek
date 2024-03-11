@@ -20,35 +20,19 @@ namespace MageekCore.Data
             Price = price;
         }
 
-        public float? GetPrice //TODO multi monaie & colors
-        {
-            get
-            {
-                return 0;
-                //if (Price == null) return null;
-                //if (Price.GetLastPriceEur == null) return null;
-                //return Price.GetLastPriceEur;
-            }
-        }
     }
 
     public class SearchedCards
     {
 
-        public SearchedCards(Cards card, int collected, CardForeignData translation)
-        {
-            Card = card;
-            Collected = collected;
-            if(translation!=null) Translation = translation.Name;
-        }
-
-        public Cards Card { get; }
-        public string Translation { get; } = string.Empty;
-        public int Collected { get; }
+        public string CardUuid { get; set; }
+        public Cards Card { get; set; }
+        public string Translation { get; set; } = string.Empty;
+        public int Collected { get; set; }
 
     }
 
-    public class TxtImportResult
+    public class CardList
     {
         public string Status { get; set; }
         public string Detail { get; set; }
@@ -61,21 +45,15 @@ namespace MageekCore.Data
         public required string Title { get; set; }
         public required string ReleaseDate { get; set; }
         public required string Kind { get; set; }
-        public required List<Tuple<string,int>> CommanderCardUuids { get; set; }
-        public required List<Tuple<string, int>> MainCardUuids { get; set; }
-        public required List<Tuple<string, int>> SideCardUuids { get; set; }
+        public List<DeckCard> Cards { get; set; }
 
         public  int NbCards {
             get 
             {
                 int i = 0;
-                foreach(var card in CommanderCardUuids)
+                foreach(var card in Cards.Where(x=> x.RelationType == 0 || x.RelationType == 1))
                 {
-                    i += card.Item2;
-                }
-                foreach(var card in MainCardUuids)
-                {
-                    i += card.Item2;
+                    i += card.Quantity;
                 }
                 return i;
             }
@@ -85,9 +63,9 @@ namespace MageekCore.Data
             get
             {
                 int i = 0;
-                foreach (var card in SideCardUuids)
+                foreach (var card in Cards.Where(x => x.RelationType == 2))
                 {
-                    i += card.Item2;
+                    i += card.Quantity;
                 }
                 return i;
             }
@@ -104,8 +82,8 @@ namespace MageekCore.Data
     public enum MageekInitReturn
     {
         Error,
-        MtgUpToDate,
-        MtgOutdated,
+        UpToDate,
+        Outdated,
         NotImplementedForClient
     }
 
@@ -124,9 +102,11 @@ namespace MageekCore.Data
     /// <summary>
     /// Relations beetween cards incliding tokens, melds and combos
     /// </summary>
-    public class CardCardRelation
+    public class CardRelation
     {
         public CardCardRelationRole Role { get; set; }
+        public string CardUuid { get; set; }
+        public string TokenUuid { get; set; }
         public Cards Card { get; set; }
         public Tokens Token { get; set; }
     }

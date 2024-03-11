@@ -33,7 +33,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [ObservableProperty] private string selectedUuid;
         [ObservableProperty] private CardVariant selectedVariant;
         [ObservableProperty] private List<CardVariant> variants;
-        [ObservableProperty] private List<CardCardRelation> relatedCards;
+        [ObservableProperty] private List<CardRelation> relatedCards;
         [ObservableProperty] private CardLegalities legalities;
         [ObservableProperty] private List<CardRulings> rulings;
         [ObservableProperty] private List<Tag> tags;
@@ -56,7 +56,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             Logger.Log("Reload");
             IsLoading = true;
             await Task.Delay(100);
-            string archetype = await mageek.GetCardNameForGivenCardUuid(uuid);
+            string archetype = await mageek.Cards_NameForGivenCardUuid(uuid);
             if (archetype == null)
             {
                 IsLoading = false;
@@ -91,16 +91,16 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             Variants = null;
             Variants = new List<CardVariant>();
 
-            foreach (string variant in await mageek.GetCardUuidsForGivenCardName(SelectedArchetype))
+            foreach (string variant in await mageek.Cards_UuidsForGivenCardName(SelectedArchetype))
             {
-                var card = await mageek.FindCard_Data(variant);
+                var card = await mageek.Cards_GetData(variant);
                 if (card != null)
                 {
                     CardVariant v = new(
                         card,
-                        await mageek.GetSet(card.SetCode),
-                        await mageek.Collected_SingleVariant(card.Uuid),
-                        await mageek.EstimateCardPrice(card.Uuid)
+                        await mageek.Sets_Get(card.SetCode),
+                        await mageek.Collec_OwnedVariant(card.Uuid),
+                        await mageek.Cards_GetPrice(card.Uuid)
                     );
                     Variants.Add(v);
                     if (card.Uuid == SelectedUuid) SelectedVariant = v;
@@ -109,28 +109,28 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
         private async Task GetLegalities()
         {
-            Legalities = await mageek.GetLegalities(SelectedUuid); 
+            Legalities = await mageek.Cards_GetLegalities(SelectedUuid); 
         }
         private async Task GetRulings()
         {
-            Rulings = await mageek.GetRulings(SelectedUuid);
+            Rulings = await mageek.Cards_GetRulings(SelectedUuid);
         }
         private async Task GetRelatedCards()
         {
-            RelatedCards = await mageek.FindRelated(SelectedUuid); 
+            RelatedCards = await mageek.Cards_GetRelations(SelectedUuid); 
         }
         private async Task GetTags()
         {
-            Tags = await mageek.GetCardTags(SelectedArchetype);
+            Tags = await mageek.Tags_GetCardTags(SelectedArchetype);
         }
         private async Task GetTotalGot() 
         {
-            TotalGot = await mageek.Collected_AllVariants(SelectedArchetype);
+            TotalGot = await mageek.Collec_OwnedCombined(SelectedArchetype);
         }
         private async Task GetMeanPrice()
         {
             await Task.Run(() => {
-                MeanPrice = Variants.Count == 0 ? 0 : Variants.Where(x => x.GetPrice.HasValue).Sum(x => x.GetPrice.Value) / Variants.Count;
+                MeanPrice = Variants.Count == 0 ? 0 : Variants.Where(x => x.Price.LastPriceEur.HasValue).Sum(x => x.Price.LastPriceEur.Value) / Variants.Count;
             });
         }
         private async Task GetVariantCount()
@@ -143,7 +143,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task SetFav(string uuid)
         {
-            await mageek.SetFav(SelectedArchetype, uuid);
+            await mageek.Collec_SetFavCardVariant(SelectedArchetype, uuid);
             IsFav = true;
         }
 
@@ -159,36 +159,36 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand] 
         private async Task AddCardToCollection(string uuid)
         {
-            await mageek.CollecMove(uuid, 1);
+            await mageek.Collec_Move(uuid, 1);
             await GetCardVariants();
         }
 
         [RelayCommand]
         private async Task SubstractCardFromCollection(string uuid)
         {
-            await mageek.CollecMove(uuid, -1);
+            await mageek.Collec_Move(uuid, -1);
             await GetCardVariants();
         }
 
         [RelayCommand]
         private async Task AddTag(string txt)
         {
-            await mageek.TagCard(SelectedVariant.Card.Name, txt);
+            await mageek.Tags_TagCard(SelectedVariant.Card.Name, txt);
             await GetTags();
         }
 
         [RelayCommand]
         private async Task DeleteTag(string txt)
         {
-            await mageek.UnTagCard(SelectedVariant.Card.Name, txt);
+            await mageek.Tags_UntagCard(SelectedVariant.Card.Name, txt);
             await GetTags();
         }
 
         [RelayCommand]
-        private async Task GoToRelated(CardCardRelation c)
+        private async Task GoToRelated(CardRelation c)
         {
             if (c.Role == CardCardRelationRole.token) { }//TODO InspectToken(c.Token.Uuid);
-            else await Reload(c.Card.Uuid);
+            else await Reload(c.CardUuid);
         }
 
         [RelayCommand]

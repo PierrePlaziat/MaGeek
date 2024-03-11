@@ -59,15 +59,15 @@ namespace MageekFrontWpf.MageekTools.DeckTools
         {
             Header.DeckColors = DeckColors;
             Header.CardCount = count_All;
-            await mageek.SaveDeckContent(Header, deckManip.GetSavableCardList(Entries));
+            await mageek.Decks_Save(Header, deckManip.GetSavableCardList(Entries));
             WeakReferenceMessenger.Default.Send(new UpdateDeckListMessage(Header.DeckId));
         }
 
         public async Task AddCard(string uuid)
         {
-            var newCard = await mageek.FindCard_Data(uuid);
+            var newCard = await mageek.Cards_GetData(uuid);
 
-            List<string> newVariants = await mageek.GetCardUuidsForGivenCardUuid(uuid);
+            List<string> newVariants = await mageek.Cards_UuidsForGivenCardUuid(uuid);
 
             ManipulableDeckEntry previousEntry = Entries
                 .Where(x => newVariants.Contains(x.Line.CardUuid))
@@ -80,7 +80,7 @@ namespace MageekFrontWpf.MageekTools.DeckTools
             {
                 var v = new ManipulableDeckEntry()
                 {
-                    Card = await mageek.FindCard_Data(uuid),
+                    Card = await mageek.Cards_GetData(uuid),
                     Line = new DeckCard()
                     {
                         CardUuid = uuid,

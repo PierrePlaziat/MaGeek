@@ -43,10 +43,10 @@ namespace MageekFrontWpf.MageekTools.DeckTools
         public async Task<List<ManipulableDeckEntry>> GetEntriesFromDeck(string deckId)
         {
             List<ManipulableDeckEntry> newEntries = new();
-            var content = await mageek.GetDeckContent(deckId);
+            var content = await mageek.Decks_Content(deckId);
             foreach (var line in content)
             {
-                Cards card = await mageek.FindCard_Data(line.CardUuid);
+                Cards card = await mageek.Cards_GetData(line.CardUuid);
                 ManipulableDeckEntry entry = new ManipulableDeckEntry()
                 {
                     Line = line,
@@ -60,42 +60,16 @@ namespace MageekFrontWpf.MageekTools.DeckTools
         public async Task<List<ManipulableDeckEntry>> GetEntriesFromPreco(Preco preco)
         {
             List<ManipulableDeckEntry> list = new();
-            foreach (Tuple<string, int> line in preco.CommanderCardUuids)
+            foreach (DeckCard line in preco.Cards)
             {
                 list.Add(new ManipulableDeckEntry()
                 {
-                    Card = await mageek.FindCard_Data(line.Item1),
+                    Card = await mageek.Cards_GetData(line.CardUuid),
                     Line = new DeckCard()
                     {
-                        CardUuid = line.Item1,
-                        Quantity = line.Item2,
-                        RelationType = 1,
-                    }
-                });
-            }
-            foreach (Tuple<string, int> line in preco.MainCardUuids)
-            {
-                list.Add(new ManipulableDeckEntry()
-                {
-                    Card = await mageek.FindCard_Data(line.Item1),
-                    Line = new DeckCard()
-                    {
-                        CardUuid = line.Item1,
-                        Quantity = line.Item2,
-                        RelationType = 0,
-                    }
-                });
-            }
-            foreach (Tuple<string, int> line in preco.SideCardUuids)
-            {
-                list.Add(new ManipulableDeckEntry()
-                {
-                    Card = await mageek.FindCard_Data(line.Item1),
-                    Line = new DeckCard()
-                    {
-                        CardUuid = line.Item1,
-                        Quantity = line.Item2,
-                        RelationType = 2,
+                        CardUuid = line.CardUuid,
+                        Quantity = line.Quantity,
+                        RelationType = line.RelationType,
                     }
                 });
             }
@@ -109,7 +83,7 @@ namespace MageekFrontWpf.MageekTools.DeckTools
             {
                 list.Add(new ManipulableDeckEntry()
                 {
-                    Card = await mageek.FindCard_Data(line.CardUuid),
+                    Card = await mageek.Cards_GetData(line.CardUuid),
                     Line = new DeckCard()
                     {
                         CardUuid = line.CardUuid,
@@ -206,8 +180,8 @@ namespace MageekFrontWpf.MageekTools.DeckTools
             {
                 if (!v.Card.Type.Contains("Basic Land"))
                 {
-                    int got = await mageek.Collected_AllVariants(
-                        await mageek.GetCardNameForGivenCardUuid(v.Line.CardUuid)
+                    int got = await mageek.Collec_OwnedCombined(
+                        await mageek.Cards_NameForGivenCardUuid(v.Line.CardUuid)
                     );
                     int need = v.Line.Quantity;
                     int diff = need - got;
@@ -227,7 +201,7 @@ namespace MageekFrontWpf.MageekTools.DeckTools
                 if (!card.Type.Contains("Basic Land"))
                 {
                     total += entry.Line.Quantity;
-                    int got = await mageek.Collected_AllVariants(await mageek.GetCardNameForGivenCardUuid(entry.Line.CardUuid));
+                    int got = await mageek.Collec_OwnedCombined(await mageek.Cards_NameForGivenCardUuid(entry.Line.CardUuid));
                     int need = entry.Line.Quantity;
                     int diff = need - got;
                     if (diff > 0) miss += diff;
@@ -253,7 +227,7 @@ namespace MageekFrontWpf.MageekTools.DeckTools
                 Cards card = v.Card;
                 if (!card.Type.Contains("Basic Land"))
                 {
-                    CardLegalities cardLegalities = await mageek.GetLegalities(card.Uuid);
+                    CardLegalities cardLegalities = await mageek.Cards_GetLegalities(card.Uuid);
                     string legal = "";
                     switch (format)
                     {

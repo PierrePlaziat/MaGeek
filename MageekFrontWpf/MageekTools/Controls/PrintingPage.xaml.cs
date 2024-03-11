@@ -88,7 +88,7 @@ namespace MaGeek.UI.Controls
 
         public async Task SetCard(string cardUuid, int emplacement)
         {
-            BitmapImage bmp = new BitmapImage(await mageek.RetrieveImage(cardUuid, CardImageFormat.png));
+            BitmapImage bmp = new BitmapImage(await mageek.Cards_GetIllustration(cardUuid, CardImageFormat.png));
             switch (emplacement)
             {
                 case 0: Card0 = bmp; break;

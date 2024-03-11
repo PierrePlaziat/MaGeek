@@ -106,18 +106,18 @@ namespace MaGeek.UI
         {
             if (uuid == null) return; //!\\ guard
             Flipped = false;
-            Cards cardFront = await mageek.FindCard_Data(uuid);
+            Cards cardFront = await mageek.Cards_GetData(uuid);
             Cards cardBack = null;
             if (cardFront != null && cardFront.OtherFaceIds != null)
             {
                 string backUuid = cardFront.OtherFaceIds;
-                cardBack = await mageek.FindCard_Data(backUuid);
+                cardBack = await mageek.Cards_GetData(backUuid);
             }
             CardBack = cardBack;
             CardFront = cardFront;
             try
             {
-                ImageBack = new BitmapImage(await mageek.RetrieveImage(
+                ImageBack = new BitmapImage(await mageek.Cards_GetIllustration(
                     cardBack.Uuid,
                     CardImageFormat.large,
                     false
@@ -129,7 +129,7 @@ namespace MaGeek.UI
             }
             try
             {
-                ImageFront = new BitmapImage(await mageek.RetrieveImage(
+                ImageFront = new BitmapImage(await mageek.Cards_GetIllustration(
                     cardFront.Uuid,
                     CardImageFormat.large,
                     true

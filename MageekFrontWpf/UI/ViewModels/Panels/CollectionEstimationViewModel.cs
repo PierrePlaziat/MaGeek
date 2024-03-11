@@ -68,6 +68,29 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             //}
         }
 
+        //public async Task<Tuple<float, List<string>>> AutoEstimateCollection(string currency)
+        //{
+        //    float total = 0;
+        //    List<string> missingList = new();
+        //    try
+        //    {
+        //        using CollectionDbContext DB = await collec.GetContext();
+        //        var allGot = await DB.CollectedCard.Where(x => x.Collected > 0).ToListAsync();
+        //        foreach (CollectedCard collectedCard in allGot)
+        //        {
+        //            var price = await Cards_GetPrice(collectedCard.CardUuid);
+        //            if (price != null)
+        //            {
+        //                //if (currency == "Eur") total += price.GetLastPriceEur;
+        //                //if (currency == "Usd") total += price.GetLastPriceUsd;
+        //            }
+        //            else missingList.Add(collectedCard.CardUuid);
+        //        }
+        //    }
+        //    catch (Exception e) { Logger.Log(e); }
+        //    return new Tuple<float, List<string>>(total, missingList);
+        //}
+
     }
 
 }

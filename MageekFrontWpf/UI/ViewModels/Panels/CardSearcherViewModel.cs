@@ -79,20 +79,20 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                 FillHistoric();
                 if (!AdvancedMode)
                 {
-                    CardList = await mageek.NormalSearch(
+                    CardList = await mageek.Cards_Search(
                         FilterName, config.Settings[Setting.Translations],
                         CurrentPage, NbResulsts
                     );
                 }
                 if (AdvancedMode)
                 {
-                    CardList = await mageek.AdvancedSearch(
+                    CardList = await mageek.Cards_Search(
                         FilterName, config.Settings[Setting.Translations],
+                        CurrentPage, NbResulsts,
                         FilterType, FilterKeyword, FilterText,
                         FilterColor.ToString(),
                         "", // FilterTag.TagContent;
-                        OnlyGot, ColorIsOr,
-                        CurrentPage, NbResulsts
+                        OnlyGot, ColorIsOr
                     );
                 }
             });

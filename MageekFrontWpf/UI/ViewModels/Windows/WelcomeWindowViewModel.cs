@@ -33,7 +33,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             IsLoading = true;
             await Task.Delay(100);
             Message = "Init...";
-            var retour = await mageek.Initialize();
+            var retour = await mageek.Server_Initialize();
             switch (retour)
             {
                 case MageekInitReturn.Error:
@@ -41,13 +41,13 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
                     UpdateAvailable = false;
                     Message = "Error";
                     break;
-                case MageekInitReturn.MtgUpToDate:
+                case MageekInitReturn.UpToDate:
                     CanLaunch = true;
                     UpdateAvailable = false;
                     Message = "Up to date";
                     Launch();
                     break;
-                case MageekInitReturn.MtgOutdated:
+                case MageekInitReturn.Outdated:
                     CanLaunch = true;
                     UpdateAvailable = true;
                     Message = "Update available";
@@ -64,7 +64,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             UpdateAvailable = false;
             Message = "Updating...";
             await Task.Delay(100);
-            var retour = await mageek.Update();
+            var retour = await mageek.Server_Update();
             switch (retour)
             {
                 case MageekUpdateReturn.Success:

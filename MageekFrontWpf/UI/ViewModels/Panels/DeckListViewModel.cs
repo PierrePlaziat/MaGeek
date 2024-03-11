@@ -58,7 +58,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             Logger.Log("Reload");
             IsLoading = true;
             
-            Decks = FilterDeck(await mageek.GetDecks());
+            Decks = FilterDeck(await mageek.Decks_All());
             OnPropertyChanged(nameof(Decks));
             IsLoading = false;
         }
@@ -66,7 +66,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task SelectDeck(string deckId)
         {
-            DocumentArguments doc = new DocumentArguments(deck : await mageek.GetDeck(deckId));
+            DocumentArguments doc = new DocumentArguments(deck : await mageek.Decks_Get(deckId));
             wins.OpenDoc(doc);
         }
 
@@ -74,7 +74,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.CreateDeck(title, "", "", 0);
+            await mageek.Decks_Create(title, "");
             await Reload();
         }
 
@@ -82,14 +82,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task RenameDeck(string deckId)
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.RenameDeck(deckId, title);
+            await mageek.Decks_Rename(deckId, title);
             await Reload();
         }
 
         [RelayCommand]
         public async Task DuplicateDeck(string deckId)
         {
-            await mageek.DuplicateDeck(deckId);
+            await mageek.Decks_Duplicate(deckId);
             await Reload();
         }
 
@@ -97,7 +97,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task DeleteDeck(string deckId)
         {
             if (deckId == null) return;
-            await mageek.DeleteDeck(deckId);
+            await mageek.Decks_Delete(deckId);
             await Reload();
         }
 
@@ -112,7 +112,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task GetAsTxtList(string deckId)
         {
-            string txt = await mageek.DeckToTxt(deckId);
+            string txt = await mageek.CardLists_FromDeck(deckId);
             if (!string.IsNullOrEmpty(txt))
             {
                 Clipboard.SetText(txt);

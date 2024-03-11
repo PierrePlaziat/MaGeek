@@ -34,7 +34,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
 
         private async Task InitPrecos()
         {
-            PrecoList = await mageek.GetPrecos();
+            PrecoList = await mageek.Decks_Precos();
         }
 
         [ObservableProperty] List<Preco> precoList = new();

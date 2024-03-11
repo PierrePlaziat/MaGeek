@@ -264,47 +264,51 @@ namespace MageekCore.Service
             using StreamReader reader = new(precoPath);
             string jsonString = await reader.ReadToEndAsync();
             dynamic dynData = JObject.Parse(jsonString);
-
             string code = dynData.data.code;
             string name = dynData.data.name;
             string releaseDate = dynData.data.releaseDate;
             string type = dynData.data.type;
-
-            List<Tuple<string, int>> CommanderCardUuids = new List<Tuple<string, int>>();
+            List<DeckCard> CommanderCardUuids = new();
             foreach (dynamic card in dynData.data.commander)
             {
                 string uuid = card.uuid;
                 int quantity = card.count;
-                CommanderCardUuids.Add(new Tuple<string, int>(uuid, quantity));
+                CommanderCardUuids.Add(new DeckCard() {
+                    CardUuid = uuid,
+                    Quantity = quantity,
+                    RelationType = 1
+                });
             }
-
-            List<Tuple<string, int>> mainCardUuids = new List<Tuple<string, int>>();
             foreach (dynamic card in dynData.data.mainBoard)
             {
                 string uuid = card.uuid;
                 int quantity = card.count;
-                mainCardUuids.Add(new Tuple<string, int>(uuid, quantity));
+                CommanderCardUuids.Add(new DeckCard()
+                {
+                    CardUuid = uuid,
+                    Quantity = quantity,
+                    RelationType = 0
+                });
             }
-
-            List<Tuple<string, int>> sideCardUuids = new List<Tuple<string, int>>();
             foreach (dynamic card in dynData.data.sideBoard)
             {
                 string uuid = card.uuid;
                 int quantity = card.count;
-                sideCardUuids.Add(new Tuple<string, int>(uuid, quantity));
+                CommanderCardUuids.Add(new DeckCard()
+                {
+                    CardUuid = uuid,
+                    Quantity = quantity,
+                    RelationType = 2
+                });
             }
-
             return new Preco()
             {
                 Title = name,
                 Code = code,
                 ReleaseDate = releaseDate,
                 Kind = type,
-                CommanderCardUuids = CommanderCardUuids,
-                MainCardUuids = mainCardUuids,
-                SideCardUuids = sideCardUuids
+                Cards = CommanderCardUuids
             };
-
         }
 
         #endregion

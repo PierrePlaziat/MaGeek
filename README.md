@@ -45,6 +45,7 @@ Here is my paypal:
 - 	Advanced Search repair
 -	Cardinspector rulings sometime doubled
 -	double sided variant appear twice in variant list in inspector
+-	Usd not implemented but ui acts like it is
 	
 #### UX needs
 
