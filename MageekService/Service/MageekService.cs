@@ -160,13 +160,7 @@ namespace MageekCore.Service
                         if (v != null) translation = v.Name;
                         else translation = card.Name;
                         int collected = await Collec_OwnedCombined(card.Uuid);
-                        retour.Add(new SearchedCards()
-                        {
-                            Card = card,
-                            CardUuid = card.Uuid,
-                            Translation = translation,
-                            Collected = collected,
-                        });
+                        retour.Add(new SearchedCards(card.Uuid, translation, collected));
                     }
                 }
             }
@@ -395,19 +389,19 @@ namespace MageekCore.Service
                     {
                         if (archetype != originalarchetype)
                         {
-                            CardCardRelationRole? role = null;
+                            CardRelationRole? role = null;
                             switch (component)
                             {
-                                case "token": role = CardCardRelationRole.token; break;
-                                case "meld_part": role = CardCardRelationRole.meld_part; break;
-                                case "meld_result": role = CardCardRelationRole.meld_result; break;
-                                case "combo_piece": role = CardCardRelationRole.combo_piece; break;
+                                case "token": role = CardRelationRole.token; break;
+                                case "meld_part": role = CardRelationRole.meld_part; break;
+                                case "meld_result": role = CardRelationRole.meld_result; break;
+                                case "combo_piece": role = CardRelationRole.combo_piece; break;
                             }
                             if (role.HasValue)
                             {
                                 Cards cRes = null;
                                 Tokens tRes = null;
-                                if (role.Value == CardCardRelationRole.token)
+                                if (role.Value == CardRelationRole.token)
                                 {
                                     tRes = await FindToken(archetype);
                                 }
@@ -421,8 +415,8 @@ namespace MageekCore.Service
                                 outputCards.Add(new CardRelation()
                                 {
                                     Role = role.Value,
-                                    CardUuid = role.Value != CardCardRelationRole.token ? archetype : string.Empty,
-                                    TokenUuid = role.Value == CardCardRelationRole.token ? archetype : string.Empty
+                                    CardUuid = role.Value != CardRelationRole.token ? archetype : string.Empty,
+                                    TokenUuid = role.Value == CardRelationRole.token ? archetype : string.Empty
                                 });
                             }
                         }
@@ -486,7 +480,7 @@ namespace MageekCore.Service
             return await DB.sets.Where(x => x.Code == setCode).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Cards>> Sets_Content(string setCode)
+        public async Task<List<string>> Sets_Content(string setCode)
         {
             List<Cards> cards = new();
             if (!string.IsNullOrEmpty(setCode))
@@ -504,7 +498,7 @@ namespace MageekCore.Service
                     Logger.Log(e);
                 }
             }
-            return cards;
+            return cards.Select(x=>x.Uuid).ToList();
         }
 
         public async Task<int> Sets_Completion(string setCode, bool strict)
@@ -516,8 +510,8 @@ namespace MageekCore.Service
                 using CollectionDbContext DB = await collec.GetContext();
                 foreach (var card in cardUuids)
                 {
-                    if (strict) nb += await Collec_OwnedVariant(card.Uuid);
-                    else nb += await Collec_OwnedCombined(card.Name);
+                    if (strict) nb += await Collec_OwnedVariant(card);
+                    else nb += await Collec_OwnedCombined(card);
                 }
             }
             catch (Exception e)
@@ -726,7 +720,7 @@ namespace MageekCore.Service
             }
         }
 
-        public async Task<Deck> Decks_Create(string title, string description, IEnumerable<DeckCard> deckLines = null)
+        public async Task Decks_Create(string title, string description, IEnumerable<DeckCard> deckLines = null)
         {
             if (deckLines == null) await CreateDeck_Empty(title, description);
             Logger.Log("");
@@ -762,8 +756,6 @@ namespace MageekCore.Service
                 messages.Add("[error]" + e.Message);
                 Logger.Log(e);
             }
-
-            return deck;
         }
 
         private async Task<Deck> CreateDeck_Empty(string title, string description)
@@ -876,7 +868,7 @@ namespace MageekCore.Service
 
         #region Tags
 
-        public async Task<List<Tag>> Tags_All()
+        public async Task<List<string>> Tags_All()
         {
             List<Tag> tags = new();
             using CollectionDbContext DB = await collec.GetContext();
@@ -884,7 +876,7 @@ namespace MageekCore.Service
             tags.AddRange(
                     DB.Tag.GroupBy(x => x.TagContent).Select(x => x.First())
             );
-            return tags;
+            return tags.Select(x=>x.TagContent).ToList();
         }
 
         public async Task<bool> Tags_CardHasTag(string cardId, string tagFilterSelected)

@@ -187,7 +187,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task GoToRelated(CardRelation c)
         {
-            if (c.Role == CardCardRelationRole.token) { }//TODO InspectToken(c.Token.Uuid);
+            if (c.Role == CardRelationRole.token) { }//TODO InspectToken(c.Token.Uuid);
             else await Reload(c.CardUuid);
         }
 

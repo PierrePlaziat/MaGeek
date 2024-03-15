@@ -6,6 +6,8 @@ package MageekProtocolPackage;
 
 service MageekProtocolService 
 {
+    rpc Handshake (Request_Empty) returns (Reply_Empty);
+
 	rpc Cards_Search (Request_CardSearch) returns (Reply_SearchedCardList);
 	rpc Cards_UuidsForGivenCardName (Request_CardName) returns (Reply_ListCardUuid);
 	rpc Cards_NameForGivenCardUuid (Request_CardUuid) returns (Reply_CardName);
@@ -15,7 +17,7 @@ service MageekProtocolService
 	rpc Cards_GetLegalities (Request_CardUuid) returns (Reply_CardLegalities);
 	rpc Cards_GetRulings (Request_CardUuid) returns (Reply_CardRulings);
 	rpc Cards_GetRelations (Request_CardUuid) returns (Reply_CardRelations);
-	rpc Cards_GetIllustration (Request_CardUuid) returns (Reply_Uri);
+	rpc Cards_GetIllustration (Request_CardIllu) returns (Reply_Uri);
 	rpc Cards_GetPrice (Request_CardUuid) returns (Reply_PriceData);
 	rpc Sets_All (Request_Empty) returns (Reply_ListSet);
 	rpc Sets_Get (Request_SetCode) returns (Reply_Set);
@@ -27,6 +29,7 @@ service MageekProtocolService
 	rpc Collec_OwnedCombined (Request_CardName) returns (Reply_Quantity);
 	rpc Collec_TotalOwned (Request_Empty) returns (Reply_Quantity);
 	rpc Collec_TotalDifferentOwned (Request_combinedVariant) returns (Reply_Quantity);
+	rpc Collec_TotalDifferentExisting (Request_combinedVariant) returns (Reply_Quantity);
 	rpc Decks_All (Request_Empty) returns (Reply_DeckList);
 	rpc Decks_Get (Request_DeckId) returns (Reply_Deck);
 	rpc Decks_Content (Request_DeckId) returns (Reply_DeckContent);
@@ -64,6 +67,11 @@ message Request_CardName {
 message Request_CardUuid {
 	string cardUuid = 1;
 }
+message Request_CardIllu{
+	string cardUuid = 1;
+    int32 format = 2;
+    bool back = 3;
+}
 message Request_CardTranslation {
 	string cardUuid = 1;
 	string lang = 2;
@@ -81,7 +89,7 @@ message Request_Fav {
 }
 message Request_CollecMove{
 	string cardUuid = 1;
-	string quantity = 2;
+	int32 quantity = 2;
 }
 message Request_combinedVariant{
 	bool combined = 1;
@@ -92,6 +100,7 @@ message Request_DeckId{
 message Request_CreateDeck {
 	string title = 1;
 	string description = 2;
+    repeated Reply_DeckCard cards = 3;
 }
 message Request_RenameDeck {
 	string deckId = 1;
@@ -168,7 +177,7 @@ message Reply_CardData {
     bool IsOversized = 34;
     bool IsPromo = 35;
     bool IsRebalanced = 36;
-    bool IsReprint32 = 37;
+    bool IsReprint = 37;
     bool IsReserved = 38;
     bool IsStarter = 39;
     bool IsStorySpotlight = 40;
@@ -184,16 +193,16 @@ message Reply_CardData {
     float ManaValue = 50;
     string Name = 51;
     string Number = 52;
-    string OriginalPrint32ings = 53;
+    string OriginalPrintings = 53;
     string OriginalReleaseDate = 54;
     string OriginalText = 55;
     string OriginalType = 56;
     string OtherFaceIds = 57;
     string Power = 58;
-    string Print32ings = 59;
+    string Printings = 59;
     string PromoTypes = 60;
     string Rarity = 61;
-    string RebalancedPrint32ings = 62;
+    string RebalancedPrintings = 62;
     string RelatedCards = 63;
     string SecurityStamp = 64;
     string SetCode = 65;
@@ -242,14 +251,20 @@ message Reply_CardLegalities {
     string Standardbrawl = 20;
     string Timeless = 21;
     string Uuid = 22;
-    string Vint32age = 23;
+    string Vintage = 23;
 }
 message Reply_CardRulings{
+    repeated Reply_CardRuling rulings = 1;
+}
+message Reply_CardRuling{
     string Date = 1;
     string Text = 2;
     string Uuid = 3;
 }
 message Reply_CardRelations{
+    repeated Reply_CardRelation relations = 1;
+}
+message Reply_CardRelation{
     int32 Role = 1;
     string CardUuid = 2;
     string TokenUuid = 3;
@@ -300,40 +315,45 @@ message Reply_DeckList{
 	repeated Reply_Deck deckList = 1;
 }
 message Reply_Deck {
-    string DeckId = 1;
-    string Title = 2;
-    string Description = 3;
-    string DeckColors = 4;
-    int32 CardCount = 5;
+    string deckId = 1;
+    string title = 2;
+    string description = 3;
+    string deckColors = 4;
+    int32 cardCount = 5;
 }
 message Reply_DeckContent{
-	repeated Reply_Deck deckContent = 1;
+	repeated Reply_DeckCard deckContent = 1;
 }
 message Reply_DeckCard{
-    string DeckId = 1;
-    string CardUuid = 2;
-    int32 Quantity = 3;
-    int32 RelationType = 4;
+    string deckId = 1;
+    string cardUuid = 2;
+    int32 quantity = 3;
+    int32 relationType = 4;
 }
 message Reply_ListPreco{
 	repeated Reply_Preco precoList = 1;
 }
 message Reply_Preco{
-    string Code = 1;
-    string Title = 2;
-    string ReleaseDate = 3;
-    string Kind = 4;
+    string code = 1;
+    string title = 2;
+    string releaseDate = 3;
+    string kind = 4;
     repeated Reply_DeckCard Cards = 5;
 }
 message Reply_TagList {
-	repeated string tagList = 1;
+	repeated Reply_Tag tagList = 1;
+}
+message Reply_Tag {
+    string TagId = 1;
+    string TagContent = 2;
+    string ArchetypeId = 3;
 }
 message Reply_HasTag {
 	bool hasTag = 1;
 }
 message Reply_TxtImportResult {
-    string Status = 1;
-    string Detail = 2;
+    string status = 1;
+    string detail = 2;
     repeated Reply_DeckCard Cards = 3;
 }
 message Reply_Txt {

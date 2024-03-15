@@ -1,12 +1,12 @@
-using MageekServer.Services;
 using MageekCore.Service;
+using MageekProtocol;
 
 // GRPC
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
 var app = builder.Build();
-app.MapGrpcService<CollectionnerService>();
+app.MapGrpcService< MageekProtocolService>();
 app.MapGet("/", () => "Mageek Grpc endpoint");
 
 // MAGEEK

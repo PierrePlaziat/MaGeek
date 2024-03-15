@@ -139,7 +139,7 @@ namespace MageekCore.Service
         /// </summary>
         /// <param name="setCode"></param>
         /// <returns>Uuid list of cards in set</returns>
-        Task<List<Cards>> Sets_Content(string setCode);
+        Task<List<string>> Sets_Content(string setCode);
 
         /// <summary>
         /// How many cards collected in this set
@@ -237,7 +237,7 @@ namespace MageekCore.Service
         /// <param name="description"></param>
         /// <param name="deckLines"></param>
         /// <returns>A list of messages, empty if everything went well</returns>
-        Task<Deck> Decks_Create(string title, string description, /*string colors, int count,*/ IEnumerable<DeckCard> deckLines = null);
+        Task Decks_Create(string title, string description, IEnumerable<DeckCard> deckLines = null);
 
         /// <summary>
         /// Rename a deck
@@ -279,7 +279,7 @@ namespace MageekCore.Service
         /// List all existing tags
         /// </summary>
         /// <returns>List of distinct tags</returns>
-        Task<List<Tag>> Tags_All();
+        Task<List<string>> Tags_All();
 
         /// <summary>
         /// Does this card have this tag

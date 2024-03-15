@@ -7,7 +7,7 @@ namespace MageekCore.Data
     public class CardVariant
     {
 
-        public Cards Card { get; set; }
+        public Cards Card { get; set; } //TODO demeler
         public Sets Set { get; set; }
         public int Collected { get; set; }
         public PriceLine Price { get; set; }
@@ -24,6 +24,12 @@ namespace MageekCore.Data
 
     public class SearchedCards
     {
+        public SearchedCards(string cardUuid, string translation, int collected)
+        {
+            CardUuid = cardUuid;
+            Translation = translation;
+            Collected = collected;
+        }
 
         public string CardUuid { get; set; }
         public Cards Card { get; set; }
@@ -104,17 +110,17 @@ namespace MageekCore.Data
     /// </summary>
     public class CardRelation
     {
-        public CardCardRelationRole Role { get; set; }
+        public CardRelationRole Role { get; set; }
         public string CardUuid { get; set; }
         public string TokenUuid { get; set; }
-        public Cards Card { get; set; }
-        public Tokens Token { get; set; }
+        public Cards Card { get; set; } //demeler
+        public Tokens Token { get; set; } //demeler
     }
 
     /// <summary>
     /// Scryfall available roles
     /// </summary>
-    public enum CardCardRelationRole
+    public enum CardRelationRole
     {
         token, meld_part, meld_result, combo_piece
     }
