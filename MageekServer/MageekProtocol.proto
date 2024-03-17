@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+
 option csharp_namespace = "MageekProtocol";
 
 package MageekProtocolPackage;
@@ -33,7 +35,7 @@ service MageekProtocolService
 	rpc Decks_All (Request_Empty) returns (Reply_DeckList);
 	rpc Decks_Get (Request_DeckId) returns (Reply_Deck);
 	rpc Decks_Content (Request_DeckId) returns (Reply_DeckContent);
-	rpc Decks_Create (Request_CreateDeck) returns (Reply_Deck);
+	rpc Decks_Create (Request_CreateDeck) returns (Reply_Empty);
 	rpc Decks_Rename (Request_RenameDeck) returns (Reply_Empty);
 	rpc Decks_Duplicate (Request_DeckId) returns (Reply_Empty);
 	rpc Decks_Save (Request_SaveDeck) returns (Reply_Empty);
@@ -154,11 +156,11 @@ message Reply_CardData {
     string Colors = 11;
     string Defense = 12;
     string DuelDeck = 13;
-    int32 EdhrecRank = 14;
-    float EdhrecSaltiness = 15;
-    float FaceConvertedManaCost = 16;
+    google.protobuf.Int32Value EdhrecRank = 14;
+    google.protobuf.FloatValue EdhrecSaltiness = 15;
+    google.protobuf.FloatValue FaceConvertedManaCost = 16;
     string FaceFlavorName = 17;
-    float FaceManaValue = 18;
+    google.protobuf.FloatValue FaceManaValue = 18;
     string FaceName = 19;
     string Finishes = 20;
     string FlavorName = 21;
@@ -166,23 +168,23 @@ message Reply_CardData {
     string FrameEffects = 23;
     string FrameVersion = 24;
     string Hand = 25;
-    bool HasAlternativeDeckLimit = 26;
-    bool HasContentWarning = 27;
+    google.protobuf.BoolValue HasAlternativeDeckLimit = 26;
+    google.protobuf.BoolValue  HasContentWarning = 27;
     bool HasFoil = 28;
     bool HasNonFoil = 29;
-    bool IsAlternative = 30;
-    bool IsFullArt = 31;
-    bool IsFunny = 32;
-    bool IsOnlineOnly = 33;
-    bool IsOversized = 34;
-    bool IsPromo = 35;
-    bool IsRebalanced = 36;
-    bool IsReprint = 37;
-    bool IsReserved = 38;
-    bool IsStarter = 39;
-    bool IsStorySpotlight = 40;
-    bool IsTextless = 41;
-    bool IsTimeshifted = 42;
+    google.protobuf.BoolValue  IsAlternative = 30;
+    google.protobuf.BoolValue  IsFullArt = 31;
+    google.protobuf.BoolValue  IsFunny = 32;
+    google.protobuf.BoolValue  IsOnlineOnly = 33;
+    google.protobuf.BoolValue  IsOversized = 34;
+    google.protobuf.BoolValue  IsPromo = 35;
+    google.protobuf.BoolValue  IsRebalanced = 36;
+    google.protobuf.BoolValue  IsReprint = 37;
+    google.protobuf.BoolValue  IsReserved = 38;
+    google.protobuf.BoolValue  IsStarter = 39;
+    google.protobuf.BoolValue  IsStorySpotlight = 40;
+    google.protobuf.BoolValue  IsTextless = 41;
+    google.protobuf.BoolValue  IsTimeshifted = 42;
     string Keywords = 43;
     string Language = 44;
     string Layout = 45;
@@ -222,7 +224,7 @@ message Reply_CardTranslation {
     string FaceName = 1;
     string FlavorText = 2;
     string Language = 3;
-    int32 MultiverseId = 4;
+    google.protobuf.Int32Value MultiverseId = 4;
     string Name = 5;
     string Text = 6;
     string Type = 7;
@@ -270,14 +272,14 @@ message Reply_CardRelation{
     string TokenUuid = 3;
 }
 message Reply_Uri{
-	string uri = 1;
+	google.protobuf.StringValue uri = 1;
 }
 message Reply_PriceData{
     string CardUuid = 1;
     string PriceEurAccrossTime = 2;
     string PriceUsdAccrossTime = 3;
-    float LastPriceEur = 4;
-    float LastPriceUsd = 5;
+    google.protobuf.FloatValue  LastPriceEur = 4;
+    google.protobuf.FloatValue LastPriceUsd = 5;
 }
 message Reply_ListSet {
 	repeated Reply_Set setList = 1;
@@ -289,20 +291,20 @@ message Reply_Set{
     string Type = 4;
     int32 BaseSetSize = 5;
     string Block = 6;
-    bool IsFoilOnly = 7;
-    bool IsForeignOnly = 8;
-    bool IsNonFoilOnly = 9;
-    bool IsOnlineOnly = 10;
-    bool IsPartialPreview = 11;
+    google.protobuf.BoolValue IsFoilOnly = 7;
+    google.protobuf.BoolValue IsForeignOnly = 8;
+    google.protobuf.BoolValue IsNonFoilOnly = 9;
+    google.protobuf.BoolValue IsOnlineOnly = 10;
+    google.protobuf.BoolValue IsPartialPreview = 11;
     string KeyruneCode = 12;
     string Languages = 13;
-    int32 McmId = 14;
-    int32 McmIdExtras = 15;
+    google.protobuf.Int32Value McmId = 14;
+    google.protobuf.Int32Value McmIdExtras = 15;
     string McmName = 16;
     string MtgoCode = 17;
     string ParentCode = 18;
     string ReleaseDate = 19;
-    int32 TcgplayerGroupId = 20;
+    google.protobuf.Int32Value TcgplayerGroupId = 20;
     string TokenSetCode = 21;
 }
 message Reply_Percentage {

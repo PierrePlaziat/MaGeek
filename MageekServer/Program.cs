@@ -6,7 +6,7 @@ using MageekProtocol;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
 var app = builder.Build();
-app.MapGrpcService< MageekProtocolService>();
+app.MapGrpcService<MageekProtocolService.MageekProtocolServiceBase>();
 app.MapGet("/", () => "Mageek Grpc endpoint");
 
 // MAGEEK

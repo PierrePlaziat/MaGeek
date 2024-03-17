@@ -9,8 +9,6 @@ using PlaziatTools;
 namespace MageekMaui
 {
 
-    //TODO
-
     public class MageekClient : IMageekService
     {
 
@@ -26,6 +24,7 @@ namespace MageekMaui
         {
             try
             {
+                //channel = new GrpcChannel(serverAddress);
                 mageekClient = new(channel);
                 await mageekClient.HandshakeAsync(new Request_Empty());
                 connected = true;
@@ -207,8 +206,7 @@ namespace MageekMaui
             {
                 CardUuid = cardUuid
             });
-            Cards parsed = null;
-            parsed = MakeCard(reply);
+            Cards parsed = MakeCard(reply);
             return parsed;
         }
 
@@ -219,8 +217,7 @@ namespace MageekMaui
                 CardUuid = cardUuid,
                 Lang = lang
             });
-            CardForeignData parsed = null;
-            parsed = new CardForeignData()
+            CardForeignData parsed = new CardForeignData()
             {
                 Uuid = reply.Uuid,
                 Type = reply.Type,
@@ -240,8 +237,7 @@ namespace MageekMaui
             {
                 CardUuid = cardUuid
             });
-            CardLegalities parsed = null;
-            parsed = new CardLegalities()
+            CardLegalities parsed = new CardLegalities()
             {
                 Uuid = reply.Uuid,
                 Alchemy = reply.Alchemy,
@@ -316,8 +312,7 @@ namespace MageekMaui
                 Back = back,
                 Format = int.Parse(format.ToString())
             });
-            Uri parsed = null;
-            parsed = new Uri(reply.Uri);
+            Uri parsed = new Uri(reply.Uri);
             return parsed;
         }
 
@@ -327,8 +322,7 @@ namespace MageekMaui
             {
                 CardUuid = cardUuid
             });
-            PriceLine parsed = null;
-            parsed = new PriceLine()
+            PriceLine parsed = new PriceLine()
             {
                 CardUuid = reply.CardUuid,
                 LastPriceEur = reply.LastPriceEur,
@@ -379,8 +373,7 @@ namespace MageekMaui
             {
                 SetCode = setCode
             });
-            Sets parsed = null;
-            parsed = new Sets()
+            Sets parsed = new Sets()
             {
                 BaseSetSize = reply.BaseSetSize,
                 Block = reply.Block,
@@ -523,8 +516,7 @@ namespace MageekMaui
             {
                 DeckId = deckId
             });
-            Deck parsed = null;
-            parsed = new Deck()
+            Deck parsed = new Deck()
             {
                 CardCount = reply.CardCount,
                 DeckColors = reply.DeckColors,
@@ -716,8 +708,7 @@ namespace MageekMaui
             {
                 Input = input
             });
-            CardList parsed = null;
-            parsed = new CardList()
+            CardList parsed = new CardList()
             {
                 Detail = reply.Detail,
                 Status = reply.Status,
