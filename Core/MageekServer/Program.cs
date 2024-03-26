@@ -1,0 +1,25 @@
+using MageekCore.Data;
+using MageekCore.Service;
+using MageekServer.Services;
+using PlaziatTools;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddGrpc();
+builder.Services.AddSingleton<IMageekService, MageekLocalService>();
+var app = builder.Build();
+//ServiceHelper.Initialize(app.Services);
+
+Logger.Log("MAGEEK : Initializing");
+var mageek = app.Services.GetService<IMageekService>();
+//var initReturn = await mageek.Server_Initialize();
+//if (initReturn == MageekInitReturn.Outdated)
+//{
+//    Logger.Log("MAGEEK : Updating");
+//    _ = mageek.Server_Update().Result;
+//}
+//Logger.Log("MAGEEK : Ready");
+
+app.MapGrpcService<MageekServerService>();
+app.MapGet("/", () => "Mageek Grpc endpoint");
+
+app.Run();
