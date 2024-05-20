@@ -20,7 +20,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="210"></RowDefinition>
-            <RowDefinition Height="110"></RowDefinition>
+            <RowDefinition Height="128"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -36,20 +36,10 @@
                Grid.ColumnSpan="3"
                Source="/Resources/Images/splash.png"
                MouseDown="Window_MouseDown" />
-        <!-- Welcome -->
-        <Label Grid.Column="1"
-               Foreground="Black"
-               FontWeight="ExtraLight"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Margin="0,120,0,0"
-               Content="WELCOME"
-               MouseDown="Window_MouseDown" />
 
         <!-- BODY -->
         <Grid Grid.Row="1"
-              Grid.Column="1"
-              Background="Black">
+              Grid.Column="1">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"></RowDefinition>
@@ -63,12 +53,6 @@
                   Grid.RowSpan="2"
                   Background="#222" />
 
-            <controls:BusyIndicator HorizontalAlignment="Stretch"
-                                    Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"
-                                    VerticalAlignment="Stretch"
-                                    Grid.Row="1"
-                                    Grid.Column="1" />
-
             <Label Content="{Binding Message}"
                    FontWeight="Bold"
                    Foreground="White"
@@ -77,36 +61,72 @@
                    Padding="1" />
 
             <Grid Grid.Row="1"
-                  VerticalAlignment="Center">
+                  VerticalAlignment="Center" Background="black">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"></RowDefinition>
                     <RowDefinition Height="auto"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <Button Grid.Row="0"
-                        Command="{Binding UpdateCommand}"
-                        CommandParameter=""
-                        Content="Update"
-                        Margin="5"
-                        Background="#000"
-                        Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVis}}">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius"
-                                    Value="10" />
-                        </Style>
-                    </Button.Resources>
+                <StackPanel Orientation="Horizontal" Grid.Row="0" >
+                    <Label Width="55">Address:</Label>
+                    <TextBox
+                               Width="160"
+                               Background="#222"
+                               Text="{Binding Input_address}"
+                               Foreground="White">
 
-                </Button>
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius"
+                                        Value="5" />
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
 
-                <Button Grid.Row="1"
-                        Command="{Binding LaunchCommand}"
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Grid.Row="1" >
+                    <Label Width="55">User:</Label>
+                    <TextBox 
+                               Width="160"
+                               Background="#222"
+                               Text="{Binding Input_user}"
+                               Foreground="White">
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius"
+                                        Value="5" />
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Grid.Row="2" >
+                    <Label Width="55">Pass:</Label>
+                    <TextBox 
+                               Width="160"
+                               Background="#222"
+                               Text="{Binding Input_pass}"
+                               Foreground="White">
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius"
+                                        Value="5" />
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                </StackPanel>
+                
+                <Button Grid.Row="3"
+                        Command="{Binding ConnectCommand}"
                         CommandParameter=""
-                        Content="Launch"
+                        Content="Connect"
                         Margin="5"
-                        Background="#000"
-                        Visibility="{Binding CanLaunch, Converter={StaticResource BoolToVis}}">
+                        Background="#000">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius"
@@ -117,14 +137,13 @@
 
             </Grid>
 
-        </Grid>
+            <!--<controls:BusyIndicator HorizontalAlignment="Stretch"
+                                    Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"
+                                    VerticalAlignment="Stretch"
+                                    Grid.Row="1"
+                                    Grid.Column="1" />-->
 
-        <ui:OutputMsg Grid.Column="1"
-                      Grid.Row="2"
-                      Margin="0"
-                      Padding="0"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch"></ui:OutputMsg>
+        </Grid>
 
     </Grid>
 

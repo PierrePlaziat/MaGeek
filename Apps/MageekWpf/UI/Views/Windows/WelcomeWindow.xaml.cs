@@ -21,7 +21,7 @@ namespace MageekFrontWpf.UI.Views.AppWindows
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
-            vm.Init().ConfigureAwait(false);
+            //vm.Init().ConfigureAwait(false);
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
