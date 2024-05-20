@@ -137,11 +137,11 @@
 
             </Grid>
 
-            <!--<controls:BusyIndicator HorizontalAlignment="Stretch"
+            <controls:BusyIndicator HorizontalAlignment="Stretch"
                                     Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"
                                     VerticalAlignment="Stretch"
                                     Grid.Row="1"
-                                    Grid.Column="1" />-->
+                                    Grid.Column="1" />
 
         </Grid>
 
