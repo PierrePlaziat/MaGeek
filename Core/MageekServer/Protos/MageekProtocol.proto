@@ -144,30 +144,30 @@ message Reply_CardUuid{
 }
 message Reply_CardData {
     string Uuid = 1;
-    string Artist = 2;
-    string AsciiName = 3;
-    string AttractionLights = 4;
+    google.protobuf.StringValue Artist = 2;
+    google.protobuf.StringValue AsciiName = 3;
+    google.protobuf.StringValue AttractionLights = 4;
     string Availability = 5;
-    string BoosterTypes = 6;
+    google.protobuf.StringValue BoosterTypes = 6;
     string BorderColor = 7;
-    string CardParts = 8;
+    google.protobuf.StringValue CardParts = 8;
     string ColorIdentity = 9;
-    string ColorIndicator = 10;
+    google.protobuf.StringValue ColorIndicator = 10;
     string Colors = 11;
-    string Defense = 12;
-    string DuelDeck = 13;
+    google.protobuf.StringValue Defense = 12;
+    google.protobuf.StringValue DuelDeck = 13;
     google.protobuf.Int32Value EdhrecRank = 14;
     google.protobuf.FloatValue EdhrecSaltiness = 15;
     google.protobuf.FloatValue FaceConvertedManaCost = 16;
-    string FaceFlavorName = 17;
+    google.protobuf.StringValue FaceFlavorName = 17;
     google.protobuf.FloatValue FaceManaValue = 18;
-    string FaceName = 19;
+    google.protobuf.StringValue FaceName = 19;
     string Finishes = 20;
-    string FlavorName = 21;
-    string FlavorText = 22;
-    string FrameEffects = 23;
+    google.protobuf.StringValue FlavorName = 21;
+    google.protobuf.StringValue FlavorText = 22;
+    google.protobuf.StringValue FrameEffects = 23;
     string FrameVersion = 24;
-    string Hand = 25;
+    google.protobuf.StringValue Hand = 25;
     google.protobuf.BoolValue HasAlternativeDeckLimit = 26;
     google.protobuf.BoolValue  HasContentWarning = 27;
     bool HasFoil = 28;
@@ -185,40 +185,40 @@ message Reply_CardData {
     google.protobuf.BoolValue  IsStorySpotlight = 40;
     google.protobuf.BoolValue  IsTextless = 41;
     google.protobuf.BoolValue  IsTimeshifted = 42;
-    string Keywords = 43;
+    google.protobuf.StringValue Keywords = 43;
     string Language = 44;
     string Layout = 45;
-    string LeadershipSkills = 46;
-    string Life = 47;
-    string Loyalty = 48;
-    string ManaCost = 49;
+    google.protobuf.StringValue LeadershipSkills = 46;
+    google.protobuf.StringValue Life = 47;
+    google.protobuf.StringValue Loyalty = 48;
+    google.protobuf.StringValue ManaCost = 49;
     float ManaValue = 50;
     string Name = 51;
     string Number = 52;
-    string OriginalPrintings = 53;
-    string OriginalReleaseDate = 54;
-    string OriginalText = 55;
-    string OriginalType = 56;
-    string OtherFaceIds = 57;
-    string Power = 58;
+    google.protobuf.StringValue OriginalPrintings = 53;
+    google.protobuf.StringValue OriginalReleaseDate = 54;
+    google.protobuf.StringValue OriginalText = 55;
+    google.protobuf.StringValue OriginalType = 56;
+    google.protobuf.StringValue OtherFaceIds = 57;
+    google.protobuf.StringValue Power = 58;
     string Printings = 59;
-    string PromoTypes = 60;
+    google.protobuf.StringValue PromoTypes = 60;
     string Rarity = 61;
-    string RebalancedPrintings = 62;
-    string RelatedCards = 63;
-    string SecurityStamp = 64;
+    google.protobuf.StringValue RebalancedPrintings = 62;
+    google.protobuf.StringValue RelatedCards = 63;
+    google.protobuf.StringValue SecurityStamp = 64;
     string SetCode = 65;
-    string Side = 66;
-    string Signature = 67;
-    string Subsets = 68;
+    google.protobuf.StringValue Side = 66;
+    google.protobuf.StringValue Signature = 67;
+    google.protobuf.StringValue Subsets = 68;
     string Subtypes = 69;
     string Supertypes = 70;
-    string Text = 71;
-    string Toughness = 72;
+    google.protobuf.StringValue Text = 71;
+    google.protobuf.StringValue Toughness = 72;
     string Type = 73;
     string Types = 74;
-    string Variations = 75;
-    string Watermark = 76;
+    google.protobuf.StringValue Variations = 75;
+    google.protobuf.StringValue Watermark = 76;
 }
 message Reply_CardTranslation {
     string FaceName = 1;
@@ -290,22 +290,22 @@ message Reply_Set{
     int32 TotalSetSize = 3;
     string Type = 4;
     int32 BaseSetSize = 5;
-    string Block = 6;
+    google.protobuf.StringValue Block = 6;
     google.protobuf.BoolValue IsFoilOnly = 7;
     google.protobuf.BoolValue IsForeignOnly = 8;
     google.protobuf.BoolValue IsNonFoilOnly = 9;
     google.protobuf.BoolValue IsOnlineOnly = 10;
     google.protobuf.BoolValue IsPartialPreview = 11;
-    string KeyruneCode = 12;
-    string Languages = 13;
+    google.protobuf.StringValue KeyruneCode = 12;
+    google.protobuf.StringValue Languages = 13;
     google.protobuf.Int32Value McmId = 14;
     google.protobuf.Int32Value McmIdExtras = 15;
-    string McmName = 16;
-    string MtgoCode = 17;
-    string ParentCode = 18;
+    google.protobuf.StringValue McmName = 16;
+    google.protobuf.StringValue MtgoCode = 17;
+    google.protobuf.StringValue ParentCode = 18;
     string ReleaseDate = 19;
     google.protobuf.Int32Value TcgplayerGroupId = 20;
-    string TokenSetCode = 21;
+    google.protobuf.StringValue TokenSetCode = 21;
 }
 message Reply_Percentage {
 	int32  percentage = 1;
@@ -362,5 +362,7 @@ message Reply_Txt {
     string txt = 1;
 }
 
-message Reply_Empty  {}
-message Request_Empty {}
+message Reply_Empty  {
+}
+message Request_Empty  {
+}

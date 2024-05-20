@@ -31,7 +31,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             this.dialog = dialog;
         }
 
-        [ObservableProperty] string document;
+        [ObservableProperty] string document = string.Empty;
         [ObservableProperty] string checkResult = string.Empty;
         [ObservableProperty] string checkDetail= string.Empty;
 

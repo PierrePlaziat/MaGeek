@@ -24,6 +24,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
+        [ObservableProperty] List<Sets> setCached = new();
         [ObservableProperty] List<Sets> setList = new();
         [ObservableProperty] List<string> types = new();
         [ObservableProperty] string filterType;
@@ -33,9 +34,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         public void Receive(LaunchAppMessage message)
         {
-            SetList = mageek.Sets_All().Result;
-            FillTypes();
-            FillBlocks();
+            Init().ConfigureAwait(false);
         }
 
         private void FillTypes()
@@ -67,11 +66,19 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             FilterBlock = "";
         }
 
+        public async Task Init()
+        {
+            Logger.Log("Init");
+            SetList = SetCached = await mageek.Sets_All();
+            FillTypes();
+            FillBlocks();
+        }
+        
         [RelayCommand]
         public async Task Reload()
         {
             Logger.Log("Reload");
-            SetList = mageek.Sets_All().Result.Where(x => FilterBlock == "" || x.Block == FilterBlock)
+            SetList = SetCached.Where(x => FilterBlock == "" || x.Block == FilterBlock)
                                 .Where(x => FilterType == "" || x.Type == FilterType).ToList();
         }
 

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using MageekFrontWpf.Framework.AppValues;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Service;
+using PlaziatTools;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -27,6 +28,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             this.mageek = mageek;
             this.config = config;
             WeakReferenceMessenger.Default.RegisterAll(this);
+            Logger.Log("!");
         }
 
         [ObservableProperty] private bool colorIsOr;
@@ -47,8 +49,8 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
 
         public void Receive(LaunchAppMessage message)
         {
-            FilterName = "Edgar";
-            DoSearch().ConfigureAwait(false);
+            //FilterName = "Edgar";
+            //DoSearch().ConfigureAwait(false);
         }
 
         [RelayCommand] private async Task Search()

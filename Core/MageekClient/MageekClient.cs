@@ -14,7 +14,7 @@ namespace MageekClient
 
         #region Connexion
 
-        private GrpcChannel channel;
+        GrpcChannel channel;
         MageekProtocolService.MageekProtocolServiceClient mageekClient;
 
         bool connected = false;
@@ -22,11 +22,22 @@ namespace MageekClient
 
         public async Task<MageekConnectReturn> Client_Connect(string serverAddress)
         {
+            Logger.Log("Start");
             try
             {
                 var handler = new HttpClientHandler();
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                channel = GrpcChannel.ForAddress(serverAddress,new GrpcChannelOptions() { HttpHandler = handler });
+                
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator      ;
+                channel = GrpcChannel.ForAddress(
+                    serverAddress,
+                    new GrpcChannelOptions() {
+                        //HttpHandler = handler, 
+                        HttpClient = new HttpClient() { 
+                            DefaultRequestVersion = new Version(2, 0)
+                        }
+                    }
+                );
+
                 mageekClient = new(channel);
                 var call = await mageekClient.HandshakeAsync(new Request_Empty());
                 connected = true;
@@ -36,6 +47,10 @@ namespace MageekClient
             {
                 Logger.Log(e,inner:true);
                 return MageekConnectReturn.Failure;
+            }
+            finally
+            {
+                Logger.Log("Done, connected: " + connected);
             }
         }
 
@@ -337,6 +352,7 @@ namespace MageekClient
 
         public async Task<List<Sets>> Sets_All()
         {
+            Logger.Log("Calling...");
             var reply = await mageekClient.Sets_AllAsync(new Request_Empty());
             List<Sets> parsed = new();
             foreach (var item in reply.SetList)
@@ -366,6 +382,7 @@ namespace MageekClient
                     Type = item.Type
                 });
             }
+            Logger.Log("Done, found " + parsed.Count + " sets");
             return parsed;
         }
 

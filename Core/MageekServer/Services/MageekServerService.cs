@@ -3,6 +3,7 @@ using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Service;
 using MageekProtocol;
+using PlaziatTools;
 
 namespace MageekServer.Services
 {
@@ -19,6 +20,7 @@ namespace MageekServer.Services
 
         public override async Task<Reply_Empty> Handshake(Request_Empty request, ServerCallContext context)
         {
+            Logger.Log(context.Peer);
             return new Reply_Empty();
         }
 
@@ -461,6 +463,7 @@ namespace MageekServer.Services
         public override async Task<Reply_ListSet> Sets_All(Request_Empty request, ServerCallContext context)
         {
             var data = await mageek.Sets_All();
+            Logger.Log("count: " + data.Count);
             var sets = new Reply_ListSet();
             foreach (var item in data)
                 sets.SetList.Add(new Reply_Set()

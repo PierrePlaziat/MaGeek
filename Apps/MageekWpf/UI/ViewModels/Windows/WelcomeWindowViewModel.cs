@@ -5,7 +5,7 @@ using MageekFrontWpf.Framework.Services;
 using MageekCore.Data;
 using System.Threading.Tasks;
 using MageekCore.Service;
-using PlaziatTools;
+using static System.Net.WebRequestMethods;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -15,84 +15,39 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
 
         private readonly IMageekService mageek;
         private readonly WindowsService winManager;
+        private readonly DialogService dialogs;
 
         public WelcomeWindowViewModel(
             IMageekService mageek,
-            WindowsService winManager
-        ){
+            WindowsService winManager,
+            DialogService dialogs
+        )
+        {
             this.mageek = mageek;
             this.winManager = winManager;
+            this.dialogs = dialogs;
+            Message = "Welcome";
         }
 
-        [ObservableProperty] bool updateAvailable = false;
-        [ObservableProperty] bool canLaunch = false;
-        [ObservableProperty] bool isLoading = false;
-        [ObservableProperty] string message = "Welcome";
-
-        public async Task Init()
-        {
-            IsLoading = true;
-            await Task.Delay(100);
-            Message = "Init...";
-            var retour = await mageek.Server_Initialize();
-            switch (retour)
-            {
-                case MageekInitReturn.Error:
-                    CanLaunch = false;
-                    UpdateAvailable = false;
-                    Message = "Error";
-                    break;
-                case MageekInitReturn.UpToDate:
-                    CanLaunch = true;
-                    UpdateAvailable = false;
-                    Message = "Up to date";
-                    Launch();
-                    break;
-                case MageekInitReturn.Outdated:
-                    CanLaunch = true;
-                    UpdateAvailable = true;
-                    Message = "Update available";
-                    break;
-            }
-            IsLoading = false;
-        }
+        [ObservableProperty] string input_address = "http://192.168.1.10:55666/";
+        [ObservableProperty] string input_user;
+        [ObservableProperty] string input_pass;
+        [ObservableProperty] string message;
+        [ObservableProperty] bool isLoading;
 
         [RelayCommand]
-        public async Task Update()
+        public async Task Connect()
         {
             IsLoading = true;
-            CanLaunch = false;
-            UpdateAvailable = false;
-            Message = "Updating...";
-            await Task.Delay(100);
-            var retour = await mageek.Server_Update();
-            switch (retour)
+            Message = "Connecting";
+            var retour = await mageek.Client_Connect(Input_address);
+            if (retour == MageekConnectReturn.Success)
             {
-                case MageekUpdateReturn.Success:
-                    //await mageek.FetchPrecos();
-                    CanLaunch = true;
-                    UpdateAvailable = false;
-                    Message = "Updated";
-                    break;
-                case MageekUpdateReturn.ErrorDownloading:
-                    CanLaunch = true;
-                    UpdateAvailable = true;
-                    Message = "Update failed";
-                    break;
-                case MageekUpdateReturn.ErrorFetching:
-                    CanLaunch = false;
-                    UpdateAvailable = false;
-                    Message = "/!\\ Fatal Error /!\\"; //TODO backup system
-                    break;
+                Message = "Connected";
+                winManager.LaunchApp();
             }
+            else Message = "Couldnt connect";
             IsLoading = false;
-        }
-
-        [RelayCommand]
-        public void Launch()
-        {
-            IsLoading = true;
-            winManager.LaunchApp();
         }
 
     }

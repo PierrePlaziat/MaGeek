@@ -13,9 +13,8 @@ COPY ["MageekServer/MageekServer.csproj", "MageekServer/"]
 COPY ["MageekCore/MageekCore.csproj", "MageekCore/"]
 COPY ["PlaziatTools/PlaziatTools.csproj", "PlaziatTools/"]
 RUN dotnet restore "./MageekServer/./MageekServer.csproj"
+
 COPY . .
-#WORKDIR /src/MageekCore
-#RUN dotnet build "./MageekCore.csproj" -c $BUILD_CONFIGURATION -o /app/build
 WORKDIR /src/MageekServer
 RUN dotnet build "./MageekServer.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
