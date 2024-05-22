@@ -12,7 +12,7 @@ using MageekCore.Data;
 using System;
 using System.Diagnostics.Eventing.Reader;
 using System.Text.RegularExpressions;
-using MageekCore.Service;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {

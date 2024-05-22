@@ -7,7 +7,7 @@ using MageekCore.Data;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.Framework.AppValues;
 using CommunityToolkit.Mvvm.Messaging;
-using MageekCore.Service;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {

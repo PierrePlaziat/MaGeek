@@ -24,6 +24,15 @@
                    Grid.Row="1"
                    Grid.Column="1"
                    Margin="10"/>
+            <Label Text="User"
+                   Grid.Row="2"
+                   Grid.Column="0"
+                   Margin="10"
+                   VerticalOptions="Center"/>
+            <Entry Text="{Binding InputUser}"
+                   Grid.Row="2"
+                   Grid.Column="1"
+                   Margin="10" />
             <Label Text="Password"
                    Grid.Row="2"
                    Grid.Column="0"
@@ -54,7 +63,7 @@
 
         </Grid>
 
-        <ActivityIndicator IsRunning="{Binding IsBusy}" Background="AliceBlue"/>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" WidthRequest="50" HeightRequest="50"/>
 
     </Grid>
     

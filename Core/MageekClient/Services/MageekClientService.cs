@@ -1,15 +1,15 @@
 ﻿using Grpc.Net.Client;
+using MageekCore.Services;
 using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
-using MageekCore.Service;
 using MageekProtocol;
 using PlaziatTools;
 
-namespace MageekClient
+namespace MageekClient.Services
 {
 
-    public class MageekClient : IMageekService
+    public class MageekClientService : IMageekService
     {
 
         #region Connexion
@@ -25,19 +25,9 @@ namespace MageekClient
             Logger.Log("Start");
             try
             {
-                var handler = new HttpClientHandler();
-                
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator      ;
-                channel = GrpcChannel.ForAddress(
-                    serverAddress,
-                    new GrpcChannelOptions() {
-                        //HttpHandler = handler, 
-                        HttpClient = new HttpClient() { 
-                            DefaultRequestVersion = new Version(2, 0)
-                        }
-                    }
-                );
-
+                GrpcChannel channel1 = await Client_Connect_Method1(serverAddress);
+                GrpcChannel channel2 = await Client_Connect_Method2(serverAddress);
+                GrpcChannel channel = channel1 != null ? channel1 : channel2;
                 mageekClient = new(channel);
                 var call = await mageekClient.HandshakeAsync(new Request_Empty());
                 connected = true;
@@ -45,12 +35,63 @@ namespace MageekClient
             }
             catch (Exception e)
             {
-                Logger.Log(e,inner:true);
+                Logger.Log(e, inner: true);
                 return MageekConnectReturn.Failure;
             }
             finally
             {
                 Logger.Log("Done, connected: " + connected);
+            }
+        }
+
+        private async Task<GrpcChannel> Client_Connect_Method1(string serverAddress)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var handler = new HttpClientHandler();
+                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                    channel = GrpcChannel.ForAddress(
+                        serverAddress,
+                        new GrpcChannelOptions()
+                        {
+                            HttpHandler = handler
+                        }
+                    );
+                });
+                return channel;
+            }
+            catch(Exception e)
+            {
+                Logger.Log(e);
+                return null;
+            }
+        }
+
+        private async Task<GrpcChannel> Client_Connect_Method2(string serverAddress)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    channel = GrpcChannel.ForAddress(
+                        serverAddress,
+                        new GrpcChannelOptions()
+                        {
+                            HttpClient = new HttpClient()
+                            {
+                                DefaultRequestVersion = new Version(2, 0)
+                            }
+                        }
+                    );
+                });
+                return channel;
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return null;
             }
         }
 
@@ -153,7 +194,8 @@ namespace MageekClient
 
         public async Task<List<SearchedCards>> Cards_Search(string cardName, string lang, int page, int pageSize, string? cardType = null, string? keyword = null, string? text = null, string? color = null, string? tag = null, bool onlyGot = false, bool colorisOr = false)
         {
-            var reply = await mageekClient.Cards_SearchAsync(new Request_CardSearch(){
+            var reply = await mageekClient.Cards_SearchAsync(new Request_CardSearch()
+            {
                 CardName = cardName,
                 Lang = lang,
                 Page = page,
@@ -373,7 +415,7 @@ namespace MageekClient
                     McmIdExtras = item.McmIdExtras,
                     McmName = item.McmName,
                     MtgoCode = item.MtgoCode,
-                    Name    = item.Name,
+                    Name = item.Name,
                     ParentCode = item.ParentCode,
                     ReleaseDate = item.ReleaseDate,
                     TcgplayerGroupId = item.TcgplayerGroupId,
@@ -398,7 +440,7 @@ namespace MageekClient
                 Block = reply.Block,
                 ReleaseDate = reply.ReleaseDate,
                 TcgplayerGroupId = reply.TcgplayerGroupId,
-                TokenSetCode = reply.TokenSetCode, 
+                TokenSetCode = reply.TokenSetCode,
                 TotalSetSize = reply.TotalSetSize,
                 Type = reply.Type,
                 ParentCode = reply.ParentCode,
@@ -548,9 +590,9 @@ namespace MageekClient
 
         public async Task<List<DeckCard>> Decks_Content(string deckId)
         {
-            var reply = await mageekClient.Decks_ContentAsync(new Request_DeckId() 
+            var reply = await mageekClient.Decks_ContentAsync(new Request_DeckId()
             {
-                DeckId = deckId 
+                DeckId = deckId
             });
             List<DeckCard> parsed = new();
             foreach (var item in reply.DeckContent)
@@ -590,7 +632,7 @@ namespace MageekClient
         {
             var reply = await mageekClient.Decks_RenameAsync(new Request_RenameDeck()
             {
-                DeckId = deckId, 
+                DeckId = deckId,
                 Title = title
             });
         }
@@ -731,9 +773,9 @@ namespace MageekClient
             {
                 Detail = reply.Detail,
                 Status = reply.Status,
-                Cards = new(), 
+                Cards = new(),
             };
-            foreach(var item in reply.Cards)
+            foreach (var item in reply.Cards)
             {
                 parsed.Cards.Add(new DeckCard()
                 {

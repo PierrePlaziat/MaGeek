@@ -3,7 +3,7 @@ using MageekCore.Data;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using MageekFrontWpf.Framework.Services;
-using MageekCore.Service;
+using MageekCore.Services;
 
 namespace MaGeek.UI.Controls
 {

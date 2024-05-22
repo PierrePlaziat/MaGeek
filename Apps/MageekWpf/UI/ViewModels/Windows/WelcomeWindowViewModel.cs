@@ -4,8 +4,8 @@ using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.Framework.Services;
 using MageekCore.Data;
 using System.Threading.Tasks;
-using MageekCore.Service;
 using static System.Net.WebRequestMethods;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {

@@ -49,8 +49,9 @@
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 	</ItemGroup>
-	<ItemGroup>	  
-    
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Core\MageekClient\MageekClient.csproj" />
+	  <ProjectReference Include="..\..\Core\MageekCore\MageekCore.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Controls\PlayerControl.xaml.cs">

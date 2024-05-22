@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MageekFrontWpf.Framework.AppValues;
 using CommunityToolkit.Mvvm.Messaging;
-using MageekCore.Service;
 using PlaziatTools;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {

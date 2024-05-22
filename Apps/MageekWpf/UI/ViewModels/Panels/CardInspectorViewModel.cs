@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MageekFrontWpf.Framework.AppValues;
-using MageekCore.Service;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
-using MageekCore.Service;
+using MageekClient.Services;
+using MageekCore.Services;
 using MageekMaui.ViewModels;
 using MageekMaui.Views;
 using Microsoft.Extensions.Logging;
@@ -25,8 +26,8 @@ namespace MageekMaui
             builder.Logging.AddDebug();
 #endif
 
+            builder.Services.AddSingleton<IMageekService, MageekClientService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();
-            builder.Services.AddSingleton<IMageekService, MageekClient>();
 
             builder.Services.AddSingleton<WelcomeView>();
             builder.Services.AddSingleton<DeckView>();

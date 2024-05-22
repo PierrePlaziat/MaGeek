@@ -1,11 +1,11 @@
 using MageekCore.Data;
-using MageekCore.Service;
+using MageekCore.Services;
 using MageekServer.Services;
 using PlaziatTools;
 
 var builder = WebApplication.CreateBuilder(args);// Enable support for unencrypted 
 builder.Services.AddGrpc();
-builder.Services.AddSingleton<IMageekService, MageekLocalService>();
+builder.Services.AddSingleton<IMageekService, MageekService>();
 var app = builder.Build();
 
 Logger.Log("MAGEEK : Initializing");

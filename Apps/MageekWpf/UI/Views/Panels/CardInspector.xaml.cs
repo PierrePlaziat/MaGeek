@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using MageekCore.Data;
-using MageekCore.Service;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {

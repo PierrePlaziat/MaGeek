@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.MageekTools.DeckTools;
-using MageekCore.Service;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.UI.ViewModels
 {

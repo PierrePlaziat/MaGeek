@@ -6,8 +6,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using MageekFrontWpf.Framework.Services;
-using MageekCore.Service;
 using System;
+using MageekCore.Services;
 
 namespace MaGeek.UI
 {

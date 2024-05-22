@@ -1,12 +1,11 @@
-﻿using MageekCore.Data;
-using MageekCore.Data.Mtg;
+﻿using MageekCore.Data.Mtg;
 using MageekCore.Data.Mtg.Entities;
 using Microsoft.EntityFrameworkCore;
 using PlaziatTools;
 using ScryfallApi.Client.Models;
 using System.Text.Json;
 
-namespace MageekCore.Service
+namespace MageekCore.Data
 {
 
     internal class ScryManager
@@ -53,7 +52,7 @@ namespace MageekCore.Service
             var httpClient = new HttpClient();
             Uri uri;
             if (scryData.ImageUris != null) uri = scryData.ImageUris[type.ToString()];
-            else uri = scryData.CardFaces[back?1:0].ImageUris[type.ToString()];
+            else uri = scryData.CardFaces[back ? 1 : 0].ImageUris[type.ToString()];
             using var stream = await httpClient.GetStreamAsync(uri);
             using var fileStream = new FileStream(localFileName, FileMode.Create);
             await stream.CopyToAsync(fileStream);

@@ -5,7 +5,7 @@ using MageekFrontWpf.Framework.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MageekCore.Service;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {

@@ -9,7 +9,8 @@ using MageekFrontWpf.UI.ViewModels.Windows;
 using MageekFrontWpf.Framework.Services;
 using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.MageekTools.DeckTools;
-using MageekCore.Service;
+using MageekClient.Services;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.Framework.AppValues
 {
@@ -26,7 +27,7 @@ namespace MageekFrontWpf.Framework.AppValues
         
         public static ServiceCollection AddMageek(this ServiceCollection services)
         {
-            services.AddSingleton<IMageekService, MageekClient.MageekClient>();
+            services.AddSingleton<IMageekService, MageekClientService>();
             services.AddSingleton<DeckManipulator>();
 
             // Views //

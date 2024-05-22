@@ -1,11 +1,14 @@
-﻿namespace MageekMaui.ViewModels
+﻿using MageekClient.Services;
+using MageekCore.Services;
+
+namespace MageekMaui.ViewModels
 {
     public partial class CollecViewModel : ViewModel
     {
 
-        private MageekClient client;
+        private IMageekService client;
 
-        public CollecViewModel(MageekClient client)
+        public CollecViewModel(IMageekService client)
         {
             this.client = client;
         }

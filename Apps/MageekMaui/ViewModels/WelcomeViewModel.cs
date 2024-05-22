@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MageekClient.Services;
+using MageekCore.Services;
 using MageekMaui.Views;
-using Microsoft.Extensions.Logging;
 
 namespace MageekMaui.ViewModels
 {
@@ -9,16 +10,17 @@ namespace MageekMaui.ViewModels
     public partial class WelcomeViewModel : ViewModel
     {
 
-        [ObservableProperty] string inputAddress = "";
+        [ObservableProperty] string inputAddress = "http://192.168.1.10:55666/";
+        [ObservableProperty] string inputUser= "";
         [ObservableProperty] string inputPassword = "";
         [ObservableProperty] string message = "";
 
         private INavigationService navigation;
-        private MageekClient client;
+        private IMageekService client;
 
         public WelcomeViewModel(
             INavigationService navigation,
-            MageekClient client)
+            IMageekService client)
         {
             this.client = client;
             this.navigation = navigation;
@@ -33,6 +35,7 @@ namespace MageekMaui.ViewModels
         [RelayCommand]
         async Task Connect()
         {
+            Message = "Connecting";
             IsBusy = true;
             var retour = await client.Client_Connect(InputAddress);
             if (retour==MageekCore.Data.MageekConnectReturn.Success)

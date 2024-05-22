@@ -10,7 +10,7 @@ using System.Windows;
 using System.Linq;
 using MageekFrontWpf.Framework.AppValues;
 using PlaziatTools;
-using MageekCore.Service;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {

@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
 using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
-using MageekCore.Service;
+using MageekCore.Services;
 using MageekProtocol;
 using PlaziatTools;
 
@@ -428,6 +428,24 @@ namespace MageekServer.Services
                 reply.PrecoList.Add(preco);
             }
 
+            if (reply.PrecoList.Count <= 0)
+            {
+                var preco = new Reply_Preco()
+                {
+                    Title = "Dummy",
+                    Code = "Dummy",
+                    Kind = "Dummy",
+                    ReleaseDate = "Dummy",
+                };
+                preco.Cards.Add(new Reply_DeckCard()
+                {
+                    CardUuid = "Dummy",
+                    DeckId = "Dummy",
+                    Quantity = 0,
+                    RelationType = 0,
+                });
+                reply.PrecoList.Add(preco);
+            }
 
 
             reply.PrecoList.Add(new Reply_Preco());

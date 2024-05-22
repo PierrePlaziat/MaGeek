@@ -1,9 +1,4 @@
-﻿#pragma warning disable CS8602 // Déréférencement d'une éventuelle référence null.
-#pragma warning disable CS8600 // Conversion de littéral ayant une valeur null ou d'une éventuelle valeur null en type non-nullable.
-#pragma warning disable CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
-#pragma warning disable CS8603 // Existence possible d'un retour de référence null.
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Text.Json;
 using MageekCore.Data;
@@ -12,14 +7,15 @@ using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.Collection;
 using MageekCore.Data.Collection.Entities;
 using PlaziatTools;
+using MageekCore.Service;
 
-namespace MageekCore.Service
+namespace MageekCore.Services
 {
 
     /// <summary>
     /// IMageekService implementation for local operations (monolith archi / server side)
     /// </summary>
-    public class MageekLocalService : IMageekService
+    public class MageekService : IMageekService
     {
 
         #region Construction
@@ -30,7 +26,7 @@ namespace MageekCore.Service
         private readonly MtgJsonManager mtgjson;
         private readonly ScryManager scryfall;
 
-        public MageekLocalService()
+        public MageekService()
         {
             mtg = new MtgDbManager();
             collec = new CollectionDbManager(mtg);
@@ -104,14 +100,15 @@ namespace MageekCore.Service
         public async Task<List<SearchedCards>> Cards_Search(string filterName, string lang, int page, int pageSize, string? filterType = null, string? filterKeyword = null, string? filterText = null, string? filterColor = null, string? filterTag = null, bool onlyGot = false, bool colorisOr = false)
         {
             List<SearchedCards> retour = new();
-            if (filterType==null 
-             && filterKeyword==null 
-             && filterText==null 
-             && filterColor==null 
-             && filterTag==null 
-             && onlyGot==false 
-             && colorisOr==false
-            ){
+            if (filterType == null
+             && filterKeyword == null
+             && filterText == null
+             && filterColor == null
+             && filterTag == null
+             && onlyGot == false
+             && colorisOr == false
+            )
+            {
                 retour = await NormalSearch(filterName, lang, page, pageSize);
             }
             else
@@ -119,19 +116,19 @@ namespace MageekCore.Service
                 retour = await AdvancedSearch
                 (
                     filterName, lang, page, pageSize,
-                    filterType, filterKeyword, filterText, filterColor, filterTag, 
-                    onlyGot, 
+                    filterType, filterKeyword, filterText, filterColor, filterTag,
+                    onlyGot,
                     colorisOr
                 );
             }
             return retour;
         }
-        
+
         private async Task<List<SearchedCards>> NormalSearch(string filterName, string lang, int page, int pageSize)
         {
             Logger.Log("searching...");
             List<SearchedCards> retour = new();
-            try 
+            try
             {
                 List<Cards> found = new();
                 string lowerFilterName = filterName.ToLower();
@@ -168,12 +165,13 @@ namespace MageekCore.Service
             catch (Exception ex) { Logger.Log(ex); }
             return retour;
         }
-        
+
         private async Task<List<SearchedCards>> AdvancedSearch(string filterName, string lang, int page, int pageSize, string? filterType, string? filterKeyword, string? filterText, string? filterColor, string? filterTag, bool onlyGot, bool colorisOr)
         {
             Logger.Log("");
             List<SearchedCards> retour = await NormalSearch(lang, filterName, page, pageSize);
-            try {
+            try
+            {
 
                 if (!string.IsNullOrEmpty(filterType))
                 {
@@ -448,7 +446,7 @@ namespace MageekCore.Service
                 if (!File.Exists(localFileName))
                 {
                     string name = await Cards_NameForGivenCardUuid(cardUuid);
-                    await scryfall.DownloadImage(cardUuid, type, localFileName,back);
+                    await scryfall.DownloadImage(cardUuid, type, localFileName, back);
                 }
                 return new("file://" + Path.GetFullPath(localFileName), UriKind.Absolute);
             }
@@ -463,7 +461,7 @@ namespace MageekCore.Service
         {
             using CollectionDbContext collecContext = await collec.GetContext();
             var p = await collecContext.PriceLine.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-            if(p==null)
+            if (p == null)
             {
                 p = new PriceLine()
                 {
@@ -511,7 +509,7 @@ namespace MageekCore.Service
                     Logger.Log(e);
                 }
             }
-            return cards.Select(x=>x.Uuid).ToList();
+            return cards.Select(x => x.Uuid).ToList();
         }
 
         public async Task<int> Sets_Completion(string setCode, bool strict)
@@ -659,7 +657,7 @@ namespace MageekCore.Service
             try
             {
                 using CollectionDbContext DB = await collec.GetContext();
-                return DB.CollectedCard.Sum(x=>x.Collected);
+                return DB.CollectedCard.Sum(x => x.Collected);
             }
             catch (Exception e)
             {
@@ -889,7 +887,7 @@ namespace MageekCore.Service
             tags.AddRange(
                     DB.Tag.GroupBy(x => x.TagContent).Select(x => x.First())
             );
-            return tags.Select(x=>x.TagContent).ToList();
+            return tags.Select(x => x.TagContent).ToList();
         }
 
         public async Task<bool> Tags_CardHasTag(string cardId, string tagFilterSelected)

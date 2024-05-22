@@ -9,7 +9,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Linq;
 using System.Collections.ObjectModel;
-using MageekCore.Service;
+using MageekCore.Services;
 
 namespace MageekFrontWpf.MageekTools.DeckTools
 {

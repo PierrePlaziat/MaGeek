@@ -2,7 +2,7 @@
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 
-namespace MageekCore.Service
+namespace MageekCore.Services
 {
 
     /// <summary>
@@ -55,8 +55,8 @@ namespace MageekCore.Service
         /// <param name="colorisOr">Advanced parameter, Precises how the color filter is interpreted</param>
         /// <returns>List of cards with some additional data</returns>
         Task<List<SearchedCards>> Cards_Search(
-            string cardName, string lang, int page, int pageSize, 
-            string? cardType = null, string? keyword = null, string? text = null, string? color = null, string? tag = null, 
+            string cardName, string lang, int page, int pageSize,
+            string? cardType = null, string? keyword = null, string? text = null, string? color = null, string? tag = null,
             bool onlyGot = false, bool colorisOr = false
         );
 
@@ -72,7 +72,7 @@ namespace MageekCore.Service
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>a single archetype id</returns>
-        Task<string> Cards_NameForGivenCardUuid (string cardUuid);
+        Task<string> Cards_NameForGivenCardUuid(string cardUuid);
 
         Task<List<string>> Cards_UuidsForGivenCardUuid(string cardUuid);
 

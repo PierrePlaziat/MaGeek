@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MageekClient.Services;
+using MageekCore.Services;
 
 namespace MageekMaui.ViewModels
 {
@@ -6,12 +8,12 @@ namespace MageekMaui.ViewModels
     public partial class DeckViewModel : ViewModel
     {
 
-        private MageekClient client;
+        private IMageekService client;
 
         [ObservableProperty]
         List<string> deckList;
 
-        public DeckViewModel(MageekClient client)
+        public DeckViewModel(IMageekService client)
         {
             this.client = client;
         }
