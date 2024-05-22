@@ -462,7 +462,19 @@ namespace MageekCore.Service
         public async Task<PriceLine> Cards_GetPrice(string cardUuid)
         {
             using CollectionDbContext collecContext = await collec.GetContext();
-            return await collecContext.PriceLine.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+            var p = await collecContext.PriceLine.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+            if(p==null)
+            {
+                p = new PriceLine()
+                {
+                    CardUuid = cardUuid,
+                    LastPriceEur = null,
+                    LastPriceUsd = null,
+                    PriceEurAccrossTime = null,
+                    PriceUsdAccrossTime = null,
+                };
+            }
+            return p;
         }
 
         #endregion

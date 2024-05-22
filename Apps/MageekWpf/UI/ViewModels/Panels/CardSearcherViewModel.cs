@@ -78,27 +78,25 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task DoSearch()
         {
             IsLoading = true;
-            await Task.Run(async () => {
-                FillHistoric();
-                if (!AdvancedMode)
-                {
-                    CardList = await mageek.Cards_Search(
-                        FilterName, config.Settings[Setting.Translations],
-                        CurrentPage, NbResulsts
-                    );
-                }
-                if (AdvancedMode)
-                {
-                    CardList = await mageek.Cards_Search(
-                        FilterName, config.Settings[Setting.Translations],
-                        CurrentPage, NbResulsts,
-                        FilterType, FilterKeyword, FilterText,
-                        FilterColor.ToString(),
-                        "", // FilterTag.TagContent;
-                        OnlyGot, ColorIsOr
-                    );
-                }
-            });
+            FillHistoric();
+            if (!AdvancedMode)
+            {
+                CardList = await mageek.Cards_Search(
+                    FilterName, config.Settings[Setting.Translations],
+                    CurrentPage, NbResulsts
+                );
+            }
+            if (AdvancedMode)
+            {
+                CardList = await mageek.Cards_Search(
+                    FilterName, config.Settings[Setting.Translations],
+                    CurrentPage, NbResulsts,
+                    FilterType, FilterKeyword, FilterText,
+                    FilterColor.ToString(),
+                    "", // FilterTag.TagContent;
+                    OnlyGot, ColorIsOr
+                );
+            }
             IsLoading = false;
         }
 

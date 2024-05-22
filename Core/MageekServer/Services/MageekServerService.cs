@@ -413,15 +413,18 @@ namespace MageekServer.Services
                     Title = item.Title,
                     Code = item.Code,
                     Kind = item.Kind,
-                    ReleaseDate = item.ReleaseDate
+                    ReleaseDate = item.ReleaseDate,
                 };
-                foreach (var v in item.Cards) preco.Cards.Add(new Reply_DeckCard()
+                foreach (var v in item.Cards)
                 {
-                    CardUuid = v.CardUuid,
-                    DeckId = v.DeckId,
-                    Quantity = v.Quantity,
-                    RelationType = v.RelationType,
-                });
+                    preco.Cards.Add(new Reply_DeckCard()
+                    {
+                        CardUuid = v.CardUuid,
+                        DeckId = v.DeckId,
+                        Quantity = v.Quantity,
+                        RelationType = v.RelationType,
+                    });
+                }
                 reply.PrecoList.Add(preco);
             }
 

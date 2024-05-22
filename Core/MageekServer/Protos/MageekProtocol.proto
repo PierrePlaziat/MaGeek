@@ -231,29 +231,29 @@ message Reply_CardTranslation {
     string Uuid = 8;
 }
 message Reply_CardLegalities {
-    string Alchemy = 1;
-    string Brawl = 2;
-    string Commander = 3;
-    string Duel = 4;
-    string Explorer = 5;
-    string Future = 6;
-    string Gladiator = 7;
-    string Historic = 8;
-	string Legacy = 9;
-    string Modern = 10;
-    string Oathbreaker = 11;
-    string Oldschool = 12;
-    string Pauper = 13;
-    string Paupercommander = 14;
-    string Penny = 15;
-    string Pioneer = 16;
-    string Predh = 17;
-    string Premodern = 18;
-    string Standard = 19;
-    string Standardbrawl = 20;
-    string Timeless = 21;
+    google.protobuf.StringValue Alchemy = 1;
+    google.protobuf.StringValue Brawl = 2;
+    google.protobuf.StringValue Commander = 3;
+    google.protobuf.StringValue Duel = 4;
+    google.protobuf.StringValue Explorer = 5;
+    google.protobuf.StringValue Future = 6;
+    google.protobuf.StringValue Gladiator = 7;
+    google.protobuf.StringValue Historic = 8;
+	google.protobuf.StringValue Legacy = 9;
+    google.protobuf.StringValue Modern = 10;
+    google.protobuf.StringValue Oathbreaker = 11;
+    google.protobuf.StringValue Oldschool = 12;
+    google.protobuf.StringValue Pauper = 13;
+    google.protobuf.StringValue Paupercommander = 14;
+    google.protobuf.StringValue Penny = 15;
+    google.protobuf.StringValue Pioneer = 16;
+    google.protobuf.StringValue Predh = 17;
+    google.protobuf.StringValue Premodern = 18;
+    google.protobuf.StringValue Standard = 19;
+    google.protobuf.StringValue Standardbrawl = 20;
+    google.protobuf.StringValue Timeless = 21;
     string Uuid = 22;
-    string Vintage = 23;
+    google.protobuf.StringValue Vintage = 23;
 }
 message Reply_CardRulings{
     repeated Reply_CardRuling rulings = 1;
@@ -276,8 +276,8 @@ message Reply_Uri{
 }
 message Reply_PriceData{
     string CardUuid = 1;
-    string PriceEurAccrossTime = 2;
-    string PriceUsdAccrossTime = 3;
+    google.protobuf.StringValue PriceEurAccrossTime = 2;
+    google.protobuf.StringValue PriceUsdAccrossTime = 3;
     google.protobuf.FloatValue  LastPriceEur = 4;
     google.protobuf.FloatValue LastPriceUsd = 5;
 }
