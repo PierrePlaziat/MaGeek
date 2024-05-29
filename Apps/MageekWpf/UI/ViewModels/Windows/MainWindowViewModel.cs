@@ -1,4 +1,4 @@
-﻿using MageekFrontWpf.Framework.BaseMvvm;
+﻿using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.ViewModels.Windows
 {

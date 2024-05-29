@@ -1,6 +1,6 @@
-﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.MageekTools.DeckTools;
+﻿using MageekFrontWpf.MageekTools.DeckTools;
 using MageekFrontWpf.UI.ViewModels;
+using PlaziatWpf.Mvvm;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;

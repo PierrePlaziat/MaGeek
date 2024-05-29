@@ -1,4 +1,4 @@
-﻿namespace PlaziatTools
+﻿namespace PlaziatCore
 {
 
     /// <summary>
@@ -6,6 +6,7 @@
     /// </summary>
     public static class FileUtils
     {
+
 
         /// <summary>
         /// Check if the content of two files are identical

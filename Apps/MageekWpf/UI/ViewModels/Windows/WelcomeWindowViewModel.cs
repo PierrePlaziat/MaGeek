@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.Framework.Services;
+using PlaziatWpf.Services;
 using MageekCore.Data;
 using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
 using MageekCore.Services;
+using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -44,7 +43,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
             if (retour == MageekConnectReturn.Success)
             {
                 Message = "Connected";
-                winManager.LaunchApp();
+                App.Launch();
             }
             else Message = "Couldnt connect";
             IsLoading = false;

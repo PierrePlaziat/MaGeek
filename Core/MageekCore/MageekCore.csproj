@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlaziatTools\PlaziatTools.csproj" />
+    <ProjectReference Include="..\PlaziatTools\PlaziatCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

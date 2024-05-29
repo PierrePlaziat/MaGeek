@@ -3,9 +3,9 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:local="clr-namespace:MaGeek.UI"
-                      xmlns:controls="clr-namespace:MaGeek.UI.Controls"
-                      xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
+                      xmlns:controls="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
+                      xmlns:mgctrl="clr-namespace:MaGeek.UI.Controls"
+                      xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
                       mc:Ignorable="d">
 
     <mvvm:BaseUserControl.Resources>
@@ -24,7 +24,7 @@
                        Padding="4,1,1,1"
                        Grid.Column="3"
                        Content="{Binding Card.Name}" />
-                <local:ManaCost Grid.Column="4"
+                <mgctrl:ManaCost Grid.Column="4"
                                 Cost="{Binding Card.ManaCost}"
                                 HorizontalAlignment="Right"
                                 Foreground="Black" />

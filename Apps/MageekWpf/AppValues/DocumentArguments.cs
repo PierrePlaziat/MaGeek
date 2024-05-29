@@ -2,7 +2,7 @@
 using MageekCore.Data;
 using System.Collections.Generic;
 using System;
-using MageekFrontWpf.Framework.BaseMvvm;
+using PlaziatWpf.Docking;
 
 namespace MageekFrontWpf.Framework.AppValues
 {

@@ -3,7 +3,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
+                 xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
                  mc:Ignorable="d"
                  Title="ProxyPrint"
                  Width="820"

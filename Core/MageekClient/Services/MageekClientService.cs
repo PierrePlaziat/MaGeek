@@ -4,7 +4,7 @@ using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 using MageekProtocol;
-using PlaziatTools;
+using PlaziatCore;
 
 namespace MageekClient.Services
 {

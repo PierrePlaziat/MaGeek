@@ -1,5 +1,4 @@
-﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels.AppPanels;
+﻿using MageekFrontWpf.UI.ViewModels.AppPanels;
 using MageekCore.Data.Collection.Entities;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using MageekCore.Data;
 using MageekCore.Services;
+using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {

@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Net.Sockets;
 
-namespace PlaziatTools
+namespace PlaziatCore
 {
 
     /// <summary>

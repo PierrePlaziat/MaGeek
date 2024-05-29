@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\MageekClient\MageekClient.csproj" />
     <ProjectReference Include="..\..\Core\MageekCore\MageekCore.csproj" />
+    <ProjectReference Include="..\..\PlaziatWpfLibrary\PlaziatWpf.csproj" />
   </ItemGroup>
   
   <ItemGroup>

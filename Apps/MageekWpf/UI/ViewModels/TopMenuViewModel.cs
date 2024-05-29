@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.Framework.Services;
-using PlaziatTools;
+using PlaziatWpf.Services;
+using PlaziatCore;
 using System;
 using MageekFrontWpf.Framework.AppValues;
 
@@ -23,7 +23,7 @@ namespace MageekFrontWpf.UI.ViewModels
         {
             bool success = Enum.TryParse(panel, out AppToolsEnum value);
             if (!success) return;
-            win.OpenTool(value);
+            win.OpenTool(value.ToString());
         }
 
         [RelayCommand]
@@ -41,13 +41,13 @@ namespace MageekFrontWpf.UI.ViewModels
         [RelayCommand]
         private void ChangeLanguage(string lang)
         {
-            conf.SetSetting(Setting.Translations, lang);
+            conf.SetSetting(Setting.Translations.ToString(), lang);
         }
 
         [RelayCommand]
         private void ChangeCurrency(string currency)
         {
-            conf.SetSetting(Setting.Currency, currency);
+            conf.SetSetting(Setting.Currency.ToString(), currency);
         }
 
         [RelayCommand]

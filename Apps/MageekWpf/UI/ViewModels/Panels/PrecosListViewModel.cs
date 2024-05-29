@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.Framework.BaseMvvm;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MageekCore.Data;
-using MageekFrontWpf.Framework.Services;
+using PlaziatWpf.Services;
 using MageekFrontWpf.Framework.AppValues;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Services;
+using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {

@@ -3,7 +3,7 @@ using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Services;
 using MageekProtocol;
-using PlaziatTools;
+using PlaziatCore;
 
 namespace MageekServer.Services
 {

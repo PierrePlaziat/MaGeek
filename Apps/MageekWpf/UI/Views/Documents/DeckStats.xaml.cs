@@ -1,5 +1,5 @@
-﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels;
+﻿using MageekFrontWpf.UI.ViewModels;
+using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {

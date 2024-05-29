@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.Framework.Services;
+using PlaziatWpf.Services;
 using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MageekFrontWpf.Framework.AppValues;
 using CommunityToolkit.Mvvm.Messaging;
-using PlaziatTools;
+using PlaziatCore;
 using MageekCore.Services;
+using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -82,14 +82,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             if (!AdvancedMode)
             {
                 CardList = await mageek.Cards_Search(
-                    FilterName, config.Settings[Setting.Translations],
+                    FilterName, config.Settings[Setting.Translations.ToString()],
                     CurrentPage, NbResulsts
                 );
             }
             if (AdvancedMode)
             {
                 CardList = await mageek.Cards_Search(
-                    FilterName, config.Settings[Setting.Translations],
+                    FilterName, config.Settings[Setting.Translations.ToString()],
                     CurrentPage, NbResulsts,
                     FilterType, FilterKeyword, FilterText,
                     FilterColor.ToString(),

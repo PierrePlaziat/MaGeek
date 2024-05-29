@@ -4,7 +4,7 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
-                 xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
+                 xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
                  xmlns:menu="clr-namespace:MageekFrontWpf.UI.Views"
                  mc:Ignorable="d"
                  Title="MaGeek"
@@ -19,11 +19,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <menu:TopMenu Grid.Row="0"
-                       x:Name="TopMenuControl"/>
+        <menu:TopMenu Grid.Row="0" x:Name="TopMenuControl"/>
 
-        <avalonDock:DockingManager Grid.Row="1"
-                                   x:Name="DockingManager">
+        <avalonDock:DockingManager Grid.Row="1" x:Name="DockingManager">
 
             <avalonDock:DockingManager.Theme>
                 <avalonDock:Vs2013DarkTheme />

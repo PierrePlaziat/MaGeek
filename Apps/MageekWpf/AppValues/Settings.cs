@@ -1,5 +1,5 @@
-﻿using PlaziatTools;
-using MageekFrontWpf.Framework.Services;
+﻿using PlaziatCore;
+using PlaziatWpf.Services;
 
 namespace MageekFrontWpf.Framework.AppValues
 {
@@ -14,8 +14,8 @@ namespace MageekFrontWpf.Framework.AppValues
 
         internal static void InitSettings(SettingService Settings)
         {
-            if (!Settings.Settings.ContainsKey(Setting.Translations)) Settings.Settings.Add(Setting.Translations, "French");
-            if (!Settings.Settings.ContainsKey(Setting.Currency)) Settings.Settings.Add(Setting.Currency, "Eur");
+            if (!Settings.Settings.ContainsKey("Translations")) Settings.Settings.Add("Translations", "French");
+            if (!Settings.Settings.ContainsKey("Currency")) Settings.Settings.Add("Currency", "Eur");
             Logger.Log("Done");
         }
 

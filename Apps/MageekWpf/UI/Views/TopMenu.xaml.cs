@@ -1,7 +1,7 @@
-﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.Framework.Services;
-using MageekFrontWpf.UI.ViewModels;
+﻿using MageekFrontWpf.UI.ViewModels;
+using PlaziatWpf.Mvvm;
 using System;
+using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.Views
 {

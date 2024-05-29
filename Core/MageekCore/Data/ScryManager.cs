@@ -1,7 +1,7 @@
 ﻿using MageekCore.Data.Mtg;
 using MageekCore.Data.Mtg.Entities;
 using Microsoft.EntityFrameworkCore;
-using PlaziatTools;
+using PlaziatCore;
 using ScryfallApi.Client.Models;
 using System.Text.Json;
 

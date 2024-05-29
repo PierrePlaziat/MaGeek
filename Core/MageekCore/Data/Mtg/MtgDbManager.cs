@@ -1,4 +1,4 @@
-﻿using PlaziatTools;
+﻿using PlaziatCore;
 
 namespace MageekCore.Data.Mtg
 {

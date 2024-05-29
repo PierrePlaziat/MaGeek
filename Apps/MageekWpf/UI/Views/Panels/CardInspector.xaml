@@ -4,8 +4,9 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:controls="clr-namespace:MaGeek.UI.Controls"
-                      xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
+                      xmlns:controls="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
+                      xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                      xmlns:mgui="clr-namespace:MaGeek.UI.Controls"
                       mc:Ignorable="d"
                       x:Name="CardInspectorName">
 
@@ -19,7 +20,7 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <local:CardIllustration CardUuid="{Binding DataContext.SelectedUuid, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+        <mgui:CardIllustration CardUuid="{Binding DataContext.SelectedUuid, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                 Width="255"
                                 Height="360"
                                 Margin="0"
@@ -177,8 +178,8 @@
                                        Foreground="White" />
 
                             </DockPanel>
-                        
-                            <controls:SetIcon SetCode="{Binding Set.Code}"
+
+                            <mgui:SetIcon SetCode="{Binding Set.Code}"
                                               Rarity="{Binding Card.Rarity}"
                                               Grid.Column="2" 
                                               Grid.RowSpan="2"

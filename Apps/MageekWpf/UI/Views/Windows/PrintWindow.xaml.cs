@@ -1,5 +1,5 @@
-﻿using MageekFrontWpf.Framework.BaseMvvm;
-using MageekFrontWpf.UI.ViewModels.AppWindows;
+﻿using MageekFrontWpf.UI.ViewModels.AppWindows;
+using PlaziatWpf.Mvvm;
 using System.ComponentModel;
 
 namespace MageekFrontWpf.UI.Views.AppWindows

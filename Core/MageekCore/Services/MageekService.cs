@@ -6,7 +6,7 @@ using MageekCore.Data.Mtg;
 using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.Collection;
 using MageekCore.Data.Collection.Entities;
-using PlaziatTools;
+using PlaziatCore;
 using MageekCore.Service;
 
 namespace MageekCore.Services

@@ -3,9 +3,9 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:local="clr-namespace:MaGeek.UI"
-                      xmlns:controls="clr-namespace:MaGeek.UI.Controls"
-                      xmlns:mvvm="clr-namespace:MageekFrontWpf.Framework.BaseMvvm"
+                      xmlns:mgctrl="clr-namespace:MaGeek.UI.Controls"
+                      xmlns:controls="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
+                      xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
                       mc:Ignorable="d"
                       d:DesignHeight="450"
                       d:DesignWidth="750">
@@ -185,7 +185,7 @@
                     <DataGridTemplateColumn Header="| ManaCost   " >
                         <DataGridTemplateColumn.CellTemplate >
                             <DataTemplate >
-                                <local:ManaCost Cost="{Binding Card.ManaCost}"
+                                <mgctrl:ManaCost Cost="{Binding Card.ManaCost}"
                                                 HorizontalAlignment="Right"
                                                 Margin="0,-2,0,0" Padding="0"/>
                             </DataTemplate>

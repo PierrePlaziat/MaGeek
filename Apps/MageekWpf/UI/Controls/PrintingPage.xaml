@@ -1,0 +1,101 @@
+﻿<mvvm:BaseUserControl  xmlns:ui="clr-namespace:MaGeek.UI.Controls"
+                          x:Class="MaGeek.UI.Controls.PrintingPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:local="clr-namespace:MaGeek.UI.Controls"
+                       xmlns:controls="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
+                       xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                       mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid x:Name="ContentToPrint">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="326"></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="326"></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="326"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Grid Background="#fff"
+                  Grid.Row="1"
+                  Grid.Column="1">
+                <Image Source="{Binding Card0}"></Image>
+            </Grid>
+
+            <Grid Name="Emplacement1"
+                  Background="#fff"
+                  Grid.Row="1"
+                  Grid.Column="3">
+                <Image Source="{Binding Card1}"></Image>
+            </Grid>
+
+            <Grid Name="Emplacement2"
+                  Background="#fff"
+                  Grid.Row="1"
+                  Grid.Column="5">
+                <Image Source="{Binding Card2}"></Image>
+            </Grid>
+
+            <Grid Name="Emplacement3"
+                  Background="#fff"
+                  Grid.Row="3"
+                  Grid.Column="1">
+                <Image Source="{Binding Card3}"></Image>
+            </Grid>
+
+            <Grid Name="Emplacement4"
+                  Background="#fff"
+                  Grid.Row="3"
+                  Grid.Column="3">
+                <Image Source="{Binding Card4}"></Image>
+            </Grid>
+
+            <Grid Name="Emplacement5"
+                  Background="#fff"
+                  Grid.Row="3"
+                  Grid.Column="5">
+                <Image Source="{Binding Card5}"></Image>
+            </Grid>
+
+            <Grid Name="Emplacement6"
+                  Background="#fff"
+                  Grid.Row="5"
+                  Grid.Column="1">
+                <Image Source="{Binding Card6}"></Image>
+            </Grid>
+
+            <Grid Name="Emplacement7"
+                  Background="#fff"
+                  Grid.Row="5"
+                  Grid.Column="3">
+                <Image Source="{Binding Card7}"></Image>
+            </Grid>
+
+            <Grid Name="Emplacement8"
+                  Background="#fff"
+                  Grid.Row="5"
+                  Grid.Column="5">
+                <Image Source="{Binding Card8}"></Image>
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+
+</mvvm:BaseUserControl>

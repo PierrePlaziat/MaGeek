@@ -6,11 +6,11 @@ using MageekFrontWpf.UI.Views.AppPanels;
 using MageekFrontWpf.UI.ViewModels;
 using MageekFrontWpf.UI.Views;
 using MageekFrontWpf.UI.ViewModels.Windows;
-using MageekFrontWpf.Framework.Services;
-using MageekFrontWpf.Framework.BaseMvvm;
+using PlaziatWpf.Services;
 using MageekFrontWpf.MageekTools.DeckTools;
 using MageekClient.Services;
 using MageekCore.Services;
+using PlaziatWpf.Docking;
 
 namespace MageekFrontWpf.Framework.AppValues
 {

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
-using MageekFrontWpf.Framework.BaseMvvm;
 using MageekCore.Data.Collection.Entities;
-using MageekFrontWpf.Framework.Services;
+using PlaziatWpf.Services;
 using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.MageekTools.DeckTools;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -13,6 +12,8 @@ using System;
 using System.Diagnostics.Eventing.Reader;
 using System.Text.RegularExpressions;
 using MageekCore.Services;
+using PlaziatWpf.Mvvm;
+using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {

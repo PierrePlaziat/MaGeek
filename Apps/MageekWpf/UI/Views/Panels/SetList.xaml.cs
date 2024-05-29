@@ -2,8 +2,8 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using MageekCore.Data.Mtg.Entities;
-using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels.AppPanels;
+using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {

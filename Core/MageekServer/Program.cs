@@ -1,7 +1,7 @@
 using MageekCore.Data;
 using MageekCore.Services;
 using MageekServer.Services;
-using PlaziatTools;
+using PlaziatCore;
 
 var builder = WebApplication.CreateBuilder(args);// Enable support for unencrypted 
 builder.Services.AddGrpc();

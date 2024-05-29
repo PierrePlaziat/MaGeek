@@ -1,14 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using MageekFrontWpf.Framework.BaseMvvm;
 using MageekCore.Data.Mtg.Entities;
-using PlaziatTools;
+using PlaziatCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MageekFrontWpf.Framework.AppValues;
 using MageekCore.Services;
+using PlaziatWpf.Mvvm;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {

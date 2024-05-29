@@ -5,7 +5,7 @@ using MageekCore.Data.Collection;
 using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.Mtg;
 using Newtonsoft.Json.Linq;
-using PlaziatTools;
+using PlaziatCore;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 

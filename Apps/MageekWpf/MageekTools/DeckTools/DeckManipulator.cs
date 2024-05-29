@@ -4,7 +4,7 @@ using MageekCore.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
-using PlaziatTools;
+using PlaziatCore;
 using System.Windows.Media;
 using System.Windows;
 using System.Linq;

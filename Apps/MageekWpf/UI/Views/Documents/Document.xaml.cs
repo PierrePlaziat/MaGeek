@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using MageekFrontWpf.Framework.AppValues;
-using MageekFrontWpf.Framework.BaseMvvm;
 using MageekFrontWpf.UI.ViewModels;
+using PlaziatWpf.Mvvm;
+using PlaziatWpf.Docking;
 using System;
 
 namespace MageekFrontWpf.UI.Views
