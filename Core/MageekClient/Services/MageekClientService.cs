@@ -5,6 +5,12 @@ using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 using MageekProtocol;
 using PlaziatCore;
+using ScryfallApi.Client.Models;
+using System.Text.Json;
+using Grpc.Core;
+using System.Net;
+using MageekCore.Data.MtgFetched.Entities;
+using PlaziatIdentity;
 
 namespace MageekClient.Services
 {
@@ -20,8 +26,9 @@ namespace MageekClient.Services
         bool connected = false;
         const int timeout = 5;
 
-        public async Task<MageekConnectReturn> Client_Connect(string serverAddress)
+        public async Task<MageekConnectReturn> Client_Connect(string user, string pass, string serverAddress)
         {
+            //TODO auth
             Logger.Log("Start");
             try
             {
@@ -365,14 +372,57 @@ namespace MageekClient.Services
 
         public async Task<Uri> Cards_GetIllustration(string cardUuid, CardImageFormat format, bool back = false)
         {
-            var reply = await mageekClient.Cards_GetIllustrationAsync(new Request_CardIllu()
+            try
             {
-                CardUuid = cardUuid,
-                Back = back,
-                Format = int.Parse(format.ToString())
-            });
-            Uri parsed = new Uri(reply.Uri);
-            return parsed;
+                string localFileName = Path.Combine(
+                    Folders.Illustrations,
+                    string.Concat(cardUuid, "_", format.ToString())
+                );
+                if (!File.Exists(localFileName))
+                {
+                    await CacheIllustration(cardUuid, format, localFileName, back);
+                }
+                return new("file://" + Path.GetFullPath(localFileName), UriKind.Absolute);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return null;
+            }
+        }
+        public async Task CacheIllustration(string cardUuid, CardImageFormat format, string localFileName, bool back = false)
+        {
+            Logger.Log("");
+            try
+            {
+                // Get scryfall ID
+                var reply = await mageekClient.Cards_GetIllustrationAsync(new Request_CardIllu()
+                {
+                    CardUuid = cardUuid, 
+                    Back = back,
+                    Format = (int)format
+                });
+                string scryfallId = reply.Uri.ToString();
+                // Get scryfall Card data
+                if (scryfallId == null) return;
+                Thread.Sleep(150);
+                string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + scryfallId);
+                Card scryData = JsonSerializer.Deserialize<Card>(json_data);
+                // Retrieve Image link
+                Uri uri;
+                if (scryData.ImageUris != null) uri = scryData.ImageUris[format.ToString()];
+                else uri = scryData.CardFaces[back ? 1 : 0].ImageUris[format.ToString()];
+                // Download it
+                var httpClient = new HttpClient();
+                using var stream = await httpClient.GetStreamAsync(uri);
+                using var fileStream = new FileStream(localFileName, FileMode.Create);
+                await stream.CopyToAsync(fileStream);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return;
+            }
         }
 
         public async Task<PriceLine> Cards_GetPrice(string cardUuid)
@@ -471,7 +521,7 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<int> Sets_Completion(string setCode, bool strict)
+        public async Task<int> Sets_Completion(string user, string setCode, bool strict)
         {
             var reply = await mageekClient.Sets_CompletionAsync(new Request_SetCompletion()
             {
@@ -483,7 +533,7 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task Collec_SetFavCardVariant(string cardName, string cardUuid)
+        public async Task Collec_SetFavCardVariant(string user, string cardName, string cardUuid)
         {
             var reply = await mageekClient.Collec_SetFavCardVariantAsync(new Request_Fav()
             {
@@ -492,7 +542,7 @@ namespace MageekClient.Services
             });
         }
 
-        public async Task Collec_Move(string cardUuid, int quantity)
+        public async Task Collec_Move(string user, string cardUuid, int quantity)
         {
             var reply = await mageekClient.Collec_MoveAsync(new Request_CollecMove()
             {
@@ -501,10 +551,11 @@ namespace MageekClient.Services
             });
         }
 
-        public async Task<int> Collec_OwnedVariant(string cardUuid)
+        public async Task<int> Collec_OwnedVariant(string user, string cardUuid)
         {
-            var reply = await mageekClient.Collec_OwnedVariantAsync(new Request_CardUuid()
+            var reply = await mageekClient.Collec_OwnedVariantAsync(new Request_CardUuidUser()
             {
+                User = user,
                 CardUuid = cardUuid
             });
             int parsed = -1;
@@ -512,10 +563,11 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<int> Collec_OwnedCombined(string cardName)
+        public async Task<int> Collec_OwnedCombined(string user, string cardName)
         {
-            var reply = await mageekClient.Collec_OwnedCombinedAsync(new Request_CardName()
+            var reply = await mageekClient.Collec_OwnedCombinedAsync(new Request_CardNameUser()
             {
+                User = user,
                 CardName = cardName
             });
             int parsed = -1;
@@ -523,15 +575,18 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<int> Collec_TotalOwned()
+        public async Task<int> Collec_TotalOwned(string user)
         {
-            var reply = await mageekClient.Collec_TotalOwnedAsync(new Request_Empty());
+            var reply = await mageekClient.Collec_TotalOwnedAsync(new Request_User()
+            {
+                User = user,
+            });
             int parsed = -1;
             parsed = reply.Quantity;
             return parsed;
         }
 
-        public async Task<int> Collec_TotalDifferentOwned(bool combined = true)
+        public async Task<int> Collec_TotalDifferentOwned(string user, bool combined = true)
         {
             var reply = await mageekClient.Collec_TotalDifferentOwnedAsync(new Request_combinedVariant()
             {
@@ -553,9 +608,12 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<List<Deck>> Decks_All()
+        public async Task<List<Deck>> Decks_All(string user)
         {
-            var reply = await mageekClient.Decks_AllAsync(new Request_Empty());
+            var reply = await mageekClient.Decks_AllAsync(new Request_User()
+            {
+                User = user,
+            });
             List<Deck> parsed = new();
             foreach (var item in reply.DeckList)
             {
@@ -571,7 +629,7 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<Deck> Decks_Get(string deckId)
+        public async Task<Deck> Decks_Get(string user, string deckId)
         {
             var reply = await mageekClient.Decks_GetAsync(new Request_DeckId()
             {
@@ -588,7 +646,7 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<List<DeckCard>> Decks_Content(string deckId)
+        public async Task<List<DeckCard>> Decks_Content(string user, string deckId)
         {
             var reply = await mageekClient.Decks_ContentAsync(new Request_DeckId()
             {
@@ -608,7 +666,7 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task Decks_Create(string title, string description, IEnumerable<DeckCard> deckLines = null)
+        public async Task Decks_Create(string user, string title, string description, IEnumerable<DeckCard> deckLines = null)
         {
             var req = new Request_CreateDeck()
             {
@@ -628,7 +686,7 @@ namespace MageekClient.Services
             var reply = await mageekClient.Decks_CreateAsync(req);
         }
 
-        public async Task Decks_Rename(string deckId, string title)
+        public async Task Decks_Rename(string user, string deckId, string title)
         {
             var reply = await mageekClient.Decks_RenameAsync(new Request_RenameDeck()
             {
@@ -637,7 +695,7 @@ namespace MageekClient.Services
             });
         }
 
-        public async Task Decks_Duplicate(string deckId)
+        public async Task Decks_Duplicate(string user, string deckId)
         {
             var reply = await mageekClient.Decks_DuplicateAsync(new Request_DeckId()
             {
@@ -645,7 +703,7 @@ namespace MageekClient.Services
             });
         }
 
-        public async Task Decks_Save(Deck header, List<DeckCard> lines)
+        public async Task Decks_Save(string user, Deck header, List<DeckCard> lines)
         {
             var req = new Request_SaveDeck()
             {
@@ -666,7 +724,7 @@ namespace MageekClient.Services
             var reply = await mageekClient.Decks_SaveAsync(req);
         }
 
-        public async Task Decks_Delete(string deckId)
+        public async Task Decks_Delete(string user, string deckId)
         {
             var reply = await mageekClient.Decks_DeleteAsync(new Request_DeckId()
             {
@@ -703,9 +761,12 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<List<string>> Tags_All()
+        public async Task<List<string>> Tags_All(string user)
         {
-            var reply = await mageekClient.Tags_AllAsync(new Request_Empty());
+            var reply = await mageekClient.Tags_AllAsync(new Request_User()
+            {
+                User = user,
+            });
             List<string> parsed = new();
             foreach (var item in reply.TagList)
             {
@@ -714,7 +775,7 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<bool> Tags_CardHasTag(string cardName, string tag)
+        public async Task<bool> Tags_CardHasTag(string user, string cardName, string tag)
         {
             var reply = await mageekClient.Tags_CardHasTagAsync(new Request_CardTag()
             {
@@ -726,7 +787,7 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task Tags_TagCard(string cardName, string tag)
+        public async Task Tags_TagCard(string user, string cardName, string tag)
         {
             var reply = await mageekClient.Tags_UntagCardAsync(new Request_CardTag()
             {
@@ -735,7 +796,7 @@ namespace MageekClient.Services
             });
         }
 
-        public async Task Tags_UntagCard(string cardName, string tag)
+        public async Task Tags_UntagCard(string user, string cardName, string tag)
         {
             var reply = await mageekClient.Tags_UntagCardAsync(new Request_CardTag()
             {
@@ -744,10 +805,11 @@ namespace MageekClient.Services
             });
         }
 
-        public async Task<List<Tag>> Tags_GetCardTags(string cardName)
+        public async Task<List<Tag>> Tags_GetCardTags(string user, string cardName)
         {
-            var reply = await mageekClient.Tags_GetCardTagsAsync(new Request_CardName()
+            var reply = await mageekClient.Tags_GetCardTagsAsync(new Request_CardNameUser()
             {
+                User = user,
                 CardName = cardName
             });
             List<Tag> parsed = new();
@@ -788,7 +850,7 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<string> CardLists_FromDeck(string deckId, bool withSetCode = false)
+        public async Task<string> CardLists_FromDeck(string user, string deckId, bool withSetCode = false)
         {
             var reply = await mageekClient.CardLists_FromDeckAsync(new Request_DeckToTxt()
             {

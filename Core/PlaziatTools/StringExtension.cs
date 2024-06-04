@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 
 namespace PlaziatCore
 {
@@ -42,6 +43,27 @@ namespace PlaziatCore
             return Enumerable
                 .Range(0, str.Length / n)
                 .Select(i => str.Substring(i * n, n));
+        }
+        
+        public static bool IsValidUsername(this string str)
+        {
+            if (string.IsNullOrEmpty(str)) return false;
+            //TODO
+            return true;
+        }
+        
+        public static bool IsValidPassword(this string str)
+        {
+            if (string.IsNullOrEmpty(str)) return false;
+            //TODO
+            return true;
+        }
+        
+        public static bool IsValidMailAddr(this string str)
+        {
+            if (string.IsNullOrEmpty(str)) return false;
+            //TODO
+            return true;
         }
 
     }

@@ -8,11 +8,14 @@ using Newtonsoft.Json.Linq;
 using PlaziatCore;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using PlaziatIdentity;
+using MageekCore.Data.MtgFetched.Entities;
+using MageekCore.Data.MtgFetched;
 
-namespace MageekCore.Service
+namespace MageekCore.Services
 {
 
-    public class MtgJsonManager
+    public class MtgJsonService
     {
 
         const string Url_MtgjsonHash = "https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256";
@@ -20,7 +23,7 @@ namespace MageekCore.Service
         const string Url_UpdatePrices = "https://mtgjson.com/api/v5/AllPrices.json";
         const string Url_UpdatePrecos = "https://mtgjson.com/api/v5/AllDeckFiles.zip";
 
-        private CollectionDbManager collec;
+        private MtgFetchedDbManager collec;
         private MtgDbManager mtg;
 
         int nbRecPrice = 0;
@@ -28,7 +31,7 @@ namespace MageekCore.Service
         int missingPriceUsd = 0;
         List<PriceLine> priceList = new();
 
-        public MtgJsonManager(MtgDbManager mtg, CollectionDbManager collec)
+        public MtgJsonService(MtgDbManager mtg, MtgFetchedDbManager collec)
         {
             this.collec = collec;
             this.mtg = mtg;
@@ -113,9 +116,9 @@ namespace MageekCore.Service
                 FetchPrices(),
             };
         }
-        
+
         #endregion
-        
+
         #region Prints
 
         private async Task FetchArchetypes()
@@ -145,7 +148,7 @@ namespace MageekCore.Service
                     });
                 }
                 Logger.Log("...Saving...");
-                using (CollectionDbContext collecContext = await collec.GetContext())
+                using (MtgFetchedDbContext collecContext = await collec.GetContext())
                 {
                     await collecContext.CardArchetypes.ExecuteDeleteAsync();
                     using var transaction = await collecContext.Database.BeginTransactionAsync();
@@ -207,7 +210,7 @@ namespace MageekCore.Service
                     }
                 }
                 Logger.Log("...Saving...");
-                using (CollectionDbContext collecContext = await collec.GetContext())
+                using (MtgFetchedDbContext collecContext = await collec.GetContext())
                 {
                     await collecContext.CardTraductions.ExecuteDeleteAsync();
                     using var transaction = await collecContext.Database.BeginTransactionAsync();
@@ -272,7 +275,8 @@ namespace MageekCore.Service
             {
                 string uuid = card.uuid;
                 int quantity = card.count;
-                CommanderCardUuids.Add(new DeckCard() {
+                CommanderCardUuids.Add(new DeckCard()
+                {
                     CardUuid = uuid,
                     Quantity = quantity,
                     RelationType = 1
@@ -321,7 +325,7 @@ namespace MageekCore.Service
             Logger.Log("Start...");
             try
             {
-                using (CollectionDbContext collecContext = await collec.GetContext())
+                using (MtgFetchedDbContext collecContext = await collec.GetContext())
                 {
                     await collecContext.PriceLine.ExecuteDeleteAsync();
                     await collecContext.SaveChangesAsync();
@@ -350,14 +354,14 @@ namespace MageekCore.Service
                 if (priceList.Count > 0)
                 {
                     nbRecPrice += priceList.Count;
-                    using (CollectionDbContext collecContext = await collec.GetContext())
+                    using (MtgFetchedDbContext collecContext = await collec.GetContext())
                     {
                         await collecContext.PriceLine.AddRangeAsync(priceList);
                         await collecContext.SaveChangesAsync();
                     }
                     priceList.Clear();
                 }
-                Logger.Log("Results - " + nbRecPrice + " records processed, missing eur : " + missingPriceEur+ ", missing usd : "+missingPriceUsd+".");
+                Logger.Log("Results - " + nbRecPrice + " records processed, missing eur : " + missingPriceEur + ", missing usd : " + missingPriceUsd + ".");
                 Logger.Log("...Done");
             }
             catch (Exception e)
@@ -384,10 +388,10 @@ namespace MageekCore.Service
         {
             if (priceLine == null) return;
             priceList.Add(priceLine);
-            if(priceList.Count >= 1000)
+            if (priceList.Count >= 1000)
             {
-                nbRecPrice+=1000;
-                using (CollectionDbContext collecContext = await collec.GetContext())
+                nbRecPrice += 1000;
+                using (MtgFetchedDbContext collecContext = await collec.GetContext())
                 {
                     await collecContext.PriceLine.AddRangeAsync(priceList);
                     await collecContext.SaveChangesAsync();

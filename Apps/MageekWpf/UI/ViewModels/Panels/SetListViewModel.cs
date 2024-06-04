@@ -6,9 +6,9 @@ using PlaziatCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MageekFrontWpf.Framework.AppValues;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {

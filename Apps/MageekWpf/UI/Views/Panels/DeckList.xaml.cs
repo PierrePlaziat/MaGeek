@@ -2,12 +2,12 @@
 using MageekCore.Data.Collection.Entities;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.Messaging;
-using MageekFrontWpf.Framework.AppValues;
 using System;
 using System.Windows.Input;
 using System.Windows.Data;
 using System.Windows;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using MageekCore.Data.Collection.Entities;
 using PlaziatWpf.Services;
-using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.MageekTools.DeckTools;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Windows.Documents;
@@ -14,6 +13,7 @@ using System.Text.RegularExpressions;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {
@@ -24,12 +24,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         IMageekService mageek;
         WindowsService win;
         DialogService dialog;
+        SessionService session;
 
-        public TxtInputViewModel(IMageekService mageek, WindowsService win, DialogService dialog)
+        public TxtInputViewModel(IMageekService mageek, WindowsService win, DialogService dialog, SessionService session)
         {
             this.mageek = mageek;
             this.win = win;
             this.dialog = dialog;
+            this.session = session;
         }
 
         [ObservableProperty] string document = string.Empty;
@@ -109,7 +111,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
 
         private async void DoAddToCollec(List<DeckCard> cards)
         {
-            foreach (var v in cards) await mageek.Collec_Move(v.CardUuid, v.Quantity);
+            foreach (var v in cards) await mageek.Collec_Move(session.User, v.CardUuid, v.Quantity);
         }
 
         private void DoOpenTheDeck(List<DeckCard> cards)

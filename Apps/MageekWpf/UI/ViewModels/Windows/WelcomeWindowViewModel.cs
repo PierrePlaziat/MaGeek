@@ -39,11 +39,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppWindows
         {
             IsLoading = true;
             Message = "Connecting";
-            var retour = await mageek.Client_Connect(Input_address);
+            var retour = await mageek.Client_Connect(Input_user, Input_pass, Input_address);
             if (retour == MageekConnectReturn.Success)
             {
                 Message = "Connected";
-                App.Launch();
+                App.Launch(Input_user);
             }
             else Message = "Couldnt connect";
             IsLoading = false;

@@ -10,18 +10,22 @@ using System.Windows;
 using System.Linq;
 using System.Collections.ObjectModel;
 using MageekCore.Services;
+using MageekFrontWpf.MageekTools.DeckTools;
+using PlaziatWpf.Services;
 
-namespace MageekFrontWpf.MageekTools.DeckTools
+namespace MageekFrontWpf.DeckTools
 {
 
     public class DeckManipulator
     {
 
         private IMageekService mageek;
+        private SessionService session;
 
-        public DeckManipulator(IMageekService mageek)
+        public DeckManipulator(IMageekService mageek, SessionService session)
         {
             this.mageek = mageek;
+            this.session = session;
         }
 
         public List<DeckCard> GetSavableCardList(IEnumerable<ManipulableDeckEntry> entries)
@@ -43,7 +47,7 @@ namespace MageekFrontWpf.MageekTools.DeckTools
         public async Task<List<ManipulableDeckEntry>> GetEntriesFromDeck(string deckId)
         {
             List<ManipulableDeckEntry> newEntries = new();
-            var content = await mageek.Decks_Content(deckId);
+            var content = await mageek.Decks_Content(session.User, deckId);
             foreach (var line in content)
             {
                 Cards card = await mageek.Cards_GetData(line.CardUuid);
@@ -181,6 +185,7 @@ namespace MageekFrontWpf.MageekTools.DeckTools
                 if (!v.Card.Type.Contains("Basic Land"))
                 {
                     int got = await mageek.Collec_OwnedCombined(
+                        session.User,
                         await mageek.Cards_NameForGivenCardUuid(v.Line.CardUuid)
                     );
                     int need = v.Line.Quantity;
@@ -201,7 +206,10 @@ namespace MageekFrontWpf.MageekTools.DeckTools
                 if (!card.Type.Contains("Basic Land"))
                 {
                     total += entry.Line.Quantity;
-                    int got = await mageek.Collec_OwnedCombined(await mageek.Cards_NameForGivenCardUuid(entry.Line.CardUuid));
+                    int got = await mageek.Collec_OwnedCombined(
+                        session.User, 
+                        await mageek.Cards_NameForGivenCardUuid(entry.Line.CardUuid)
+                    );
                     int need = entry.Line.Quantity;
                     int diff = need - got;
                     if (diff > 0) miss += diff;

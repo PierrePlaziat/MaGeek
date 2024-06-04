@@ -1,6 +1,4 @@
 ﻿using MageekCore.Data.Mtg;
-using MageekCore.Data.Mtg.Entities;
-using Microsoft.EntityFrameworkCore;
 using PlaziatCore;
 using ScryfallApi.Client.Models;
 using System.Text.Json;
@@ -8,7 +6,7 @@ using System.Text.Json;
 namespace MageekCore.Data
 {
 
-    internal class ScryManager
+    public class ScryManager
     {
 
         private MtgDbManager mtg;

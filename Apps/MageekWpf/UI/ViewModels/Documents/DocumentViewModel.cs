@@ -2,10 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
-using MageekFrontWpf.Framework.AppValues;
 using MageekFrontWpf.MageekTools.DeckTools;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf.UI.ViewModels
 {

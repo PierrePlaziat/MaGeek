@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using System;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using PlaziatCore;
 
 namespace MaGeek.UI.Controls
 {
@@ -22,7 +23,7 @@ namespace MaGeek.UI.Controls
             mageek = ServiceHelper.GetService<IMageekService>();
             DataContext = this;
             InitializeComponent();
-            ImageDefault = new BitmapImage(new Uri("D:\\PROJECTS\\VS\\Mageek\\Apps\\MageekWpf\\Resources\\Images\\cardback.jpg", UriKind.Absolute));
+            ImageDefault = new BitmapImage(new Uri("D:\\PROJECTS\\VS\\Mageek\\Apps\\MageekWpf\\Resources\\Images\\cardback.jpg", UriKind.Absolute)); //TODO softer please
             SelectCard(null).ConfigureAwait(false);
         }
 
@@ -30,15 +31,16 @@ namespace MaGeek.UI.Controls
         public string CardUuid
         {
             get { return cardUuid; }
-            set {
-                cardUuid = value; 
-                SetValue(CardUuidProperty, value); 
+            set
+            {
+                cardUuid = value;
+                SetValue(CardUuidProperty, value);
             }
         }
 
         public static readonly DependencyProperty CardUuidProperty = DependencyProperty.Register
         (
-            nameof(CardUuid),typeof(string),typeof(CardIllustration),
+            nameof(CardUuid), typeof(string), typeof(CardIllustration),
             new FrameworkPropertyMetadata(null,
             FrameworkPropertyMetadataOptions.AffectsRender,
             OnCardUuidChanged)
@@ -64,14 +66,14 @@ namespace MaGeek.UI.Controls
             get { return cardFront; }
             set { cardFront = value; OnPropertyChanged(); }
         }
-        
+
         private BitmapImage imageFront;
         public BitmapImage ImageFront
         {
             get { return imageFront; }
             set { imageFront = value; OnPropertyChanged(); }
         }
-        
+
         private Cards cardBack;
         public Cards CardBack
         {
@@ -116,26 +118,31 @@ namespace MaGeek.UI.Controls
             CardFront = cardFront;
             try
             {
-                ImageBack = new BitmapImage(await mageek.Cards_GetIllustration(
-                    cardBack.Uuid,
-                    CardImageFormat.large,
-                    false
-                    ));
+                ImageBack = cardBack == null ? null: new BitmapImage(
+                    await mageek.Cards_GetIllustration(
+                        cardBack.Uuid,
+                        CardImageFormat.png,
+                        false
+                    )
+                );
             }
-            catch 
+            catch (Exception ex)
             {
+                Logger.Log(ex);
                 ImageBack = ImageDefault;
             }
             try
             {
-                ImageFront = new BitmapImage(await mageek.Cards_GetIllustration(
+                var v = await mageek.Cards_GetIllustration(
                     cardFront.Uuid,
-                    CardImageFormat.large,
+                    CardImageFormat.png,
                     true
-                    ));
+                );
+                ImageFront = new BitmapImage(v); 
             }
-            catch 
+            catch (Exception e)
             {
+                Logger.Log(e);
                 ImageFront = ImageDefault;
             }
             SelectedCard = cardFront;

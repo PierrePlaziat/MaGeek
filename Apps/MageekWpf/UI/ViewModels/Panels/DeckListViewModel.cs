@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Linq;
-using MageekFrontWpf.Framework.AppValues;
 using PlaziatCore;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -24,17 +24,21 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         private WindowsService wins;
         private SettingService config;
         private DialogService dialog;
+        private SessionService session;
 
         public DeckListViewModel(
             IMageekService mageek,
             WindowsService wins,
             SettingService config,
-            DialogService dialog
-        ){
+            DialogService dialog,
+            SessionService session
+        )
+        {
             this.wins = wins;
             this.mageek = mageek;
             this.config = config;
             this.dialog = dialog;
+            this.session = session;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
@@ -58,7 +62,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
             Logger.Log("Reload");
             IsLoading = true;
             
-            Decks = FilterDeck(await mageek.Decks_All());
+            Decks = FilterDeck(await mageek.Decks_All(session.User));
             OnPropertyChanged(nameof(Decks));
             IsLoading = false;
         }
@@ -66,7 +70,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task SelectDeck(string deckId)
         {
-            DocumentArguments doc = new DocumentArguments(deck : await mageek.Decks_Get(deckId));
+            DocumentArguments doc = new DocumentArguments(deck : await mageek.Decks_Get(session.User, deckId));
             wins.OpenDoc(doc);
         }
 
@@ -74,7 +78,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.Decks_Create(title, "");
+            await mageek.Decks_Create(session.User, title, "");
             await Reload();
         }
 
@@ -82,14 +86,14 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task RenameDeck(string deckId)
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.Decks_Rename(deckId, title);
+            await mageek.Decks_Rename(session.User, deckId, title);
             await Reload();
         }
 
         [RelayCommand]
         public async Task DuplicateDeck(string deckId)
         {
-            await mageek.Decks_Duplicate(deckId);
+            await mageek.Decks_Duplicate(session.User, deckId);
             await Reload();
         }
 
@@ -97,7 +101,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         public async Task DeleteDeck(string deckId)
         {
             if (deckId == null) return;
-            await mageek.Decks_Delete(deckId);
+            await mageek.Decks_Delete(session.User, deckId);
             await Reload();
         }
 
@@ -112,7 +116,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task GetAsTxtList(string deckId)
         {
-            string txt = await mageek.CardLists_FromDeck(deckId);
+            string txt = await mageek.CardLists_FromDeck(session.User, deckId);
             if (!string.IsNullOrEmpty(txt))
             {
                 Clipboard.SetText(txt);

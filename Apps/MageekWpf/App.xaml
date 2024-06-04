@@ -9,17 +9,15 @@
         <FontFamily x:Key="MtgSymbols">pack://application:,,,/Resources/Fonts/Magic_Symbols_2008.ttf#Magic Symbols 2008</FontFamily>
 
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        
-        
-        <ResourceDictionary x:Key="stylecombobox"
-                            Source="pack://application:,,,/PlaziatWpf;PlaziatWpf\styles\stylecombobox.xaml"/>
-        <ResourceDictionary x:Key="styleScrollbar"
-                            Source="pack://application:,,,/PlaziatWpf;PlaziatWpf\styles\styleScrollbar.xaml" />
 
-        <!-- BASE -->
-        <!--<ResourceDictionary x:Key="stylebase" 
-                            Source="pack://application:,,,/PlaziatWpf;PlaziatWpf\styles\stylebase.xaml" />-->
-        
+        <!--<ResourceDictionary x:Key="PlaziatWpfTheme">
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/PlaziatWpf;PlaziatWpf\styles\stylecombobox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/PlaziatWpf;PlaziatWpf\styles\styleScrollbar.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/PlaziatWpf;PlaziatWpf\styles\stylebase.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>-->
+
         <Style TargetType="{x:Type Label}">
             <Setter Property="Foreground" Value="#999"/>
         </Style>

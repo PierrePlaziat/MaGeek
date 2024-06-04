@@ -6,37 +6,52 @@ namespace MageekCore.Data
     public static class Folders
     {
 
+        // Both sides
+
         public static string Roaming { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek");
 
+        public static void CheckFolder(string path)
+        {
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+        }
 
-        private static string DbFolder { get; } = Path.Combine(Roaming, "DB");
-        public static string File_UpdatePrints { get; } = Path.Combine(DbFolder, "mtgjson.sqlite");
-        public static string File_UpdateNewHash { get; } = Path.Combine(DbFolder, "mtgjson.sqlite.sha256");
-        public static string File_UpdateOldHash { get; } = Path.Combine(DbFolder, "mtgjson.sqlite.sha256_old");
-        public static string File_UpdatePrices { get; } = Path.Combine(DbFolder, "Prices.json");
-        public static string File_UpdatePrecos { get; } = Path.Combine(DbFolder, "Precos.zip");
-        public static string File_Precos { get; } = Path.Combine(DbFolder, "Precos.json");
-        public static string File_CollectionDB { get; } = Path.Combine(DbFolder, "MaGeek.db");
-        public static string SetIcon { get; } = Path.Combine(Roaming, "SetIcons");
-        public static string TempPrecoFolder { get; } = Path.Combine(DbFolder, "temp");
+        // Server side
 
-        public static string Illustrations { get; } = Path.Combine(Roaming, "CardsIllus");
-        public static string LayoutFolder { get; } = Path.Combine(Roaming, "Layout");
+        public static string UserData { get; } = Path.Combine(Roaming, "UserData");
+        public static string UserDbPath { get; } = Path.Combine(UserData, "Users");
+        private static string CommonData { get; } = Path.Combine(Roaming, "CommonData");
+        public static string File_UpdatePrints { get; } = Path.Combine(CommonData, "mtgjson.sqlite");
+        public static string File_UpdateNewHash { get; } = Path.Combine(CommonData, "mtgjson.sqlite.sha256");
+        public static string File_UpdateOldHash { get; } = Path.Combine(CommonData, "mtgjson.sqlite.sha256_old");
+        public static string File_UpdatePrices { get; } = Path.Combine(CommonData, "Prices.json");
+        public static string File_UpdatePrecos { get; } = Path.Combine(CommonData, "Precos.zip");
+        public static string File_Precos { get; } = Path.Combine(CommonData, "Precos.json");
+        public static string File_CollectionDB { get; } = Path.Combine(CommonData, "MaGeek.db");
+        public static string TempPrecoFolder { get; } = Path.Combine(CommonData, "temp");
 
         public static void InitServerFolders()
         {
-            if (!File.Exists(DbFolder)) Directory.CreateDirectory(DbFolder);
-            InitializeClientFolders();
+            Logger.Log("...");
+            CheckFolder(Roaming);
+            CheckFolder(UserData);
+            CheckFolder(CommonData);
+            CheckFolder(TempPrecoFolder);
             Logger.Log("Done");
         }
-        
+
+        // Client side
+
+        public static string Illustrations { get; } = Path.Combine(Roaming, "CardsIllus");
+        public static string LayoutFolder { get; } = Path.Combine(Roaming, "Layout");
+        public static string SetIcon { get; } = Path.Combine(Roaming, "SetIcons");
+
         public static void InitializeClientFolders()
         {
-            if (!File.Exists(Roaming)) Directory.CreateDirectory(Roaming);
-            if (!File.Exists(LayoutFolder)) Directory.CreateDirectory(LayoutFolder);
-            if (!File.Exists(Illustrations)) Directory.CreateDirectory(Illustrations);
-            if (!File.Exists(SetIcon)) Directory.CreateDirectory(SetIcon);
-            if (!File.Exists(TempPrecoFolder)) Directory.CreateDirectory(TempPrecoFolder);
+            Logger.Log("...");
+            CheckFolder(Roaming);
+            CheckFolder(LayoutFolder);
+            CheckFolder(Illustrations);
+            CheckFolder(SetIcon);
             Logger.Log("Done");
         }
 

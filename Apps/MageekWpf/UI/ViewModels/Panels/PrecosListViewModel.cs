@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MageekCore.Data;
 using PlaziatWpf.Services;
-using MageekFrontWpf.Framework.AppValues;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf.UI.ViewModels.AppWindows
 {

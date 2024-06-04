@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Protos\MageekProtocol.proto" />
+  </ItemGroup>
+
   <!-- Mageek Client -->
   
   <ItemGroup>

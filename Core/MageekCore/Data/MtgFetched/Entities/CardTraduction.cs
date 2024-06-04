@@ -3,7 +3,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MageekCore.Data.Collection.Entities
+namespace MageekCore.Data.MtgFetched.Entities
 {
 
     public class CardTraduction

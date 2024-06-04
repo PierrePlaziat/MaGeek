@@ -26,7 +26,7 @@ namespace MageekServer.Services
 
         public override async Task<Reply_Txt> CardLists_FromDeck(Request_DeckToTxt request, ServerCallContext context)
         {
-            var item = await mageek.CardLists_FromDeck(request.DeckId, request.WithSetCode);
+            var item = await mageek.CardLists_FromDeck(request.User, request.DeckId, request.WithSetCode);
             return new Reply_Txt()
             {
                 Txt = item
@@ -274,22 +274,22 @@ namespace MageekServer.Services
 
         public override async Task<Reply_Empty> Collec_Move(Request_CollecMove request, ServerCallContext context)
         {
-            await mageek.Collec_Move(request.CardUuid, request.Quantity);
+            await mageek.Collec_Move(request.User, request.CardUuid, request.Quantity);
             return new Reply_Empty();
         }
 
-        public override async Task<Reply_Quantity> Collec_OwnedCombined(Request_CardName request, ServerCallContext context)
+        public override async Task<Reply_Quantity> Collec_OwnedCombined(Request_CardNameUser request, ServerCallContext context)
         {
-            var item = await mageek.Collec_OwnedCombined(request.CardName);
+            var item = await mageek.Collec_OwnedCombined(request.User, request.CardName);
             return new Reply_Quantity()
             {
                 Quantity = item,
             };
         }
 
-        public override async Task<Reply_Quantity> Collec_OwnedVariant(Request_CardUuid request, ServerCallContext context)
+        public override async Task<Reply_Quantity> Collec_OwnedVariant(Request_CardUuidUser request, ServerCallContext context)
         {
-            var item = await mageek.Collec_OwnedVariant(request.CardUuid);
+            var item = await mageek.Collec_OwnedVariant(request.User, request.CardUuid);
             return new Reply_Quantity()
             {
                 Quantity = item,
@@ -298,7 +298,7 @@ namespace MageekServer.Services
 
         public override async Task<Reply_Empty> Collec_SetFavCardVariant(Request_Fav request, ServerCallContext context)
         {
-            await mageek.Collec_SetFavCardVariant(request.CardName, request.CardUuid);
+            await mageek.Collec_SetFavCardVariant(request.User, request.CardName, request.CardUuid);
             return new Reply_Empty();
         }
 
@@ -313,25 +313,25 @@ namespace MageekServer.Services
 
         public override async Task<Reply_Quantity> Collec_TotalDifferentOwned(Request_combinedVariant request, ServerCallContext context)
         {
-            var item = await mageek.Collec_TotalDifferentOwned(request.Combined);
+            var item = await mageek.Collec_TotalDifferentOwned(request.User, request.Combined);
             return new Reply_Quantity()
             {
                 Quantity = item,
             };
         }
 
-        public override async Task<Reply_Quantity> Collec_TotalOwned(Request_Empty request, ServerCallContext context)
+        public override async Task<Reply_Quantity> Collec_TotalOwned(Request_User request, ServerCallContext context)
         {
-            var item = await mageek.Collec_TotalOwned();
+            var item = await mageek.Collec_TotalOwned(request.User);
             return new Reply_Quantity()
             {
                 Quantity = item,
             };
         }
 
-        public override async Task<Reply_DeckList> Decks_All(Request_Empty request, ServerCallContext context)
+        public override async Task<Reply_DeckList> Decks_All(Request_User request, ServerCallContext context)
         {
-            var data = await mageek.Decks_All();
+            var data = await mageek.Decks_All(request.User);
             var reply = new Reply_DeckList();
             foreach (var item in data)
                 reply.DeckList.Add(new Reply_Deck()
@@ -347,7 +347,7 @@ namespace MageekServer.Services
 
         public override async Task<Reply_DeckContent> Decks_Content(Request_DeckId request, ServerCallContext context)
         {
-            var data = await mageek.Decks_Content(request.DeckId);
+            var data = await mageek.Decks_Content(request.User, request.DeckId);
             var reply = new Reply_DeckContent();
             foreach (var item in data)
                 reply.DeckContent.Add(new Reply_DeckCard()
@@ -373,25 +373,25 @@ namespace MageekServer.Services
                     RelationType = v.RelationType
                 });
             }
-            await mageek.Decks_Create(request.Title, request.Description, lines);
+            await mageek.Decks_Create(request.User, request.Title, request.Description, lines);
             return new Reply_Empty();
         }
 
         public override async Task<Reply_Empty> Decks_Delete(Request_DeckId request, ServerCallContext context)
         {
-            await mageek.Decks_Delete(request.DeckId);
+            await mageek.Decks_Delete(request.User, request.DeckId);
             return new Reply_Empty();
         }
 
         public override async Task<Reply_Empty> Decks_Duplicate(Request_DeckId request, ServerCallContext context)
         {
-            await mageek.Decks_Duplicate(request.DeckId);
+            await mageek.Decks_Duplicate(request.User, request.DeckId);
             return new Reply_Empty();
         }
 
         public override async Task<Reply_Deck> Decks_Get(Request_DeckId request, ServerCallContext context)
         {
-            var item = await mageek.Decks_Get(request.DeckId);
+            var item = await mageek.Decks_Get(request.User, request.DeckId);
             return new Reply_Deck()
             {
                 DeckId = item.DeckId,
@@ -454,7 +454,7 @@ namespace MageekServer.Services
 
         public override async Task<Reply_Empty> Decks_Rename(Request_RenameDeck request, ServerCallContext context)
         {
-            await mageek.Decks_Rename(request.DeckId, request.Title);
+            await mageek.Decks_Rename(request.User, request.DeckId, request.Title);
             return new Reply_Empty();
         }
 
@@ -477,7 +477,7 @@ namespace MageekServer.Services
                     RelationType = item.RelationType
                 });
             }
-            await mageek.Decks_Save(deck, cards);
+            await mageek.Decks_Save(request.User, deck, cards);
             return new Reply_Empty();
         }
 
@@ -516,7 +516,7 @@ namespace MageekServer.Services
 
         public override async Task<Reply_Percentage> Sets_Completion(Request_SetCompletion request, ServerCallContext context)
         {
-            var item = await mageek.Sets_Completion(request.Code, request.Strict);
+            var item = await mageek.Sets_Completion(request.User, request.Code, request.Strict);
             return new Reply_Percentage()
             {
                 Percentage = item
@@ -560,9 +560,9 @@ namespace MageekServer.Services
             };
         }
 
-        public override async Task<Reply_TagList> Tags_All(Request_Empty request, ServerCallContext context)
+        public override async Task<Reply_TagList> Tags_All(Request_User request, ServerCallContext context)
         {
-            var data = await mageek.Tags_All();
+            var data = await mageek.Tags_All(request.User);
             var reply = new Reply_TagList();
             foreach (var item in data)
             {
@@ -578,16 +578,16 @@ namespace MageekServer.Services
 
         public override async Task<Reply_HasTag> Tags_CardHasTag(Request_CardTag request, ServerCallContext context)
         {
-            var item = await mageek.Tags_CardHasTag(request.CardName, request.Tag);
+            var item = await mageek.Tags_CardHasTag(request.User, request.CardName, request.Tag);
             return new Reply_HasTag()
             {
                 HasTag = item
             };
         }
 
-        public override async Task<Reply_TagList> Tags_GetCardTags(Request_CardName request, ServerCallContext context)
+        public override async Task<Reply_TagList> Tags_GetCardTags(Request_CardNameUser request, ServerCallContext context)
         {
-            var data = await mageek.Tags_GetCardTags(request.CardName);
+            var data = await mageek.Tags_GetCardTags(request.User, request.CardName);
             var reply = new Reply_TagList();
             foreach (var item in data)
             {
@@ -603,13 +603,13 @@ namespace MageekServer.Services
 
         public override async Task<Reply_Empty> Tags_TagCard(Request_CardTag request, ServerCallContext context)
         {
-            await mageek.Tags_TagCard(request.CardName, request.Tag);
+            await mageek.Tags_TagCard(request.User, request.CardName, request.Tag);
             return new Reply_Empty();
         }
 
         public override async Task<Reply_Empty> Tags_UntagCard(Request_CardTag request, ServerCallContext context)
         {
-            await mageek.Tags_UntagCard(request.CardName, request.Tag);
+            await mageek.Tags_UntagCard(request.User, request.CardName, request.Tag);
             return new Reply_Empty();
         }
 

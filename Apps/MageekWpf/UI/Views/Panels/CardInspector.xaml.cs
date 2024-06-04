@@ -7,6 +7,7 @@ using System.Windows.Media;
 using MageekCore.Data;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using PlaziatWpf.Services;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {
@@ -15,11 +16,13 @@ namespace MageekFrontWpf.UI.Views.AppPanels
     {
         private IMageekService mageek;
         private CardInspectorViewModel vm;
+        private SessionService session;
 
-        public CardInspector(CardInspectorViewModel vm, IMageekService mageek)
+        public CardInspector(CardInspectorViewModel vm, IMageekService mageek, SessionService session)
         {
             this.mageek = mageek;
             this.vm = vm;
+            this.session = session;
             DataContext = vm;
             InitializeComponent();
         }
@@ -28,7 +31,7 @@ namespace MageekFrontWpf.UI.Views.AppPanels
         {
             bool found = false;
             var border = (resultStack.Parent as ScrollViewer).Parent as Border;
-            var data = await mageek.Tags_All();
+            var data = await mageek.Tags_All(session.User);
             string query = (sender as TextBox).Text;
             if (query.Length == 0)
             {

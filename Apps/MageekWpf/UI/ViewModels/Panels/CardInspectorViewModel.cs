@@ -9,9 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MageekFrontWpf.Framework.AppValues;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
+using PlaziatWpf.Services;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {
@@ -22,10 +23,12 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
     {
 
         IMageekService mageek;
+        private SessionService session;
 
-        public CardInspectorViewModel(IMageekService mageek)
+        public CardInspectorViewModel(IMageekService mageek, SessionService session)
         {
             this.mageek = mageek;
+            this.session = session;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
@@ -99,7 +102,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
                     CardVariant v = new(
                         card,
                         await mageek.Sets_Get(card.SetCode),
-                        await mageek.Collec_OwnedVariant(card.Uuid),
+                        await mageek.Collec_OwnedVariant(session.User, card.Uuid),
                         await mageek.Cards_GetPrice(card.Uuid)
                     );
                     Variants.Add(v);
@@ -121,11 +124,11 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         }
         private async Task GetTags()
         {
-            Tags = await mageek.Tags_GetCardTags(SelectedArchetype);
+            Tags = await mageek.Tags_GetCardTags(session.User, SelectedArchetype);
         }
         private async Task GetTotalGot() 
         {
-            TotalGot = await mageek.Collec_OwnedCombined(SelectedArchetype);
+            TotalGot = await mageek.Collec_OwnedCombined(session.User, SelectedArchetype);
         }
         private async Task GetMeanPrice()
         {
@@ -143,7 +146,7 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task SetFav(string uuid)
         {
-            await mageek.Collec_SetFavCardVariant(SelectedArchetype, uuid);
+            await mageek.Collec_SetFavCardVariant(session.User, SelectedArchetype, uuid);
             IsFav = true;
         }
 
@@ -159,28 +162,28 @@ namespace MageekFrontWpf.UI.ViewModels.AppPanels
         [RelayCommand] 
         private async Task AddCardToCollection(string uuid)
         {
-            await mageek.Collec_Move(uuid, 1);
+            await mageek.Collec_Move(session.User, uuid, 1);
             await GetCardVariants();
         }
 
         [RelayCommand]
         private async Task SubstractCardFromCollection(string uuid)
         {
-            await mageek.Collec_Move(uuid, -1);
+            await mageek.Collec_Move(session.User, uuid, -1);
             await GetCardVariants();
         }
 
         [RelayCommand]
         private async Task AddTag(string txt)
         {
-            await mageek.Tags_TagCard(SelectedVariant.Card.Name, txt);
+            await mageek.Tags_TagCard(session.User, SelectedVariant.Card.Name, txt);
             await GetTags();
         }
 
         [RelayCommand]
         private async Task DeleteTag(string txt)
         {
-            await mageek.Tags_UntagCard(SelectedVariant.Card.Name, txt);
+            await mageek.Tags_UntagCard(session.User, SelectedVariant.Card.Name, txt);
             await GetTags();
         }
 

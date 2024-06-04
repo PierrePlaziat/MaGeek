@@ -5,11 +5,11 @@ using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MageekFrontWpf.Framework.AppValues;
 using CommunityToolkit.Mvvm.Messaging;
 using PlaziatCore;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf.UI.ViewModels.AppPanels
 {

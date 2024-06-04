@@ -2,7 +2,7 @@
 using PlaziatWpf.Services;
 using PlaziatCore;
 using System;
-using MageekFrontWpf.Framework.AppValues;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf.UI.ViewModels
 {

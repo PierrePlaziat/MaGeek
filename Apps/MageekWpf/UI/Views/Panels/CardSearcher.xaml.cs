@@ -4,9 +4,9 @@ using MageekFrontWpf.UI.ViewModels.AppPanels;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Data;
-using MageekFrontWpf.Framework.AppValues;
 using System.Windows.Media;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf.UI.Views.AppPanels
 {

@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <ApplicationIcon>Resources\Images\Icone.ico</ApplicationIcon>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
     <UseWPF>true</UseWPF>
-    <UseWindowsForms>True</UseWindowsForms>
-    <ApplicationIcon>Resources\Images\Icone.ico</ApplicationIcon>
-    <StartupObject></StartupObject>
     <Nullable>annotations</Nullable>
   </PropertyGroup>
 
@@ -22,16 +20,13 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Content Include="Resources\Images\Icone.ico" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <ProjectReference Include="..\..\Core\MageekClient\MageekClient.csproj" />
     <ProjectReference Include="..\..\Core\MageekCore\MageekCore.csproj" />
     <ProjectReference Include="..\..\PlaziatWpfLibrary\PlaziatWpf.csproj" />
   </ItemGroup>
   
   <ItemGroup>
+    <Content Include="Resources\Images\Icone.ico" />
     <SplashScreen Include="Resources\Images\splash.png" />
   </ItemGroup>
 
@@ -52,15 +47,5 @@
     <Resource Include="Resources\Images\TickOn.jpg" />
     <Resource Include="Resources\Images\wut.svg" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="UI\Views\Panels\CollectionEstimation.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="echo F | xcopy /Y &quot;$(ProjectDir)Resources\Images\wut.svg&quot; &quot;$(TargetDir)wut.svg&quot;" />
-  </Target>
 
 </Project>

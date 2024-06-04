@@ -8,7 +8,7 @@ using PlaziatCore;
 using MageekFrontWpf.UI.ViewModels.Windows;
 using PlaziatWpf.Mvvm;
 
-namespace MageekFrontWpf.Framework.AppValues
+namespace MageekFrontWpf.Framework
 {
 
     public enum AppWindowEnum

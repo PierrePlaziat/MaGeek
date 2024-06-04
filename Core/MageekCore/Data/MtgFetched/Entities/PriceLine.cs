@@ -2,14 +2,17 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace MageekCore.Data.Collection.Entities
+namespace MageekCore.Data.MtgFetched.Entities
 {
-
-    public class ArchetypeCard
+    public class PriceLine
     {
+
         [Key]
         public string CardUuid { get; set; }
-        public string ArchetypeId { get; set; }
-    }
+        public string? PriceEurAccrossTime { get; set; }
+        public string? PriceUsdAccrossTime { get; set; }
+        public float? LastPriceEur { get; set; }
+        public float? LastPriceUsd { get; set; }
 
+    }
 }

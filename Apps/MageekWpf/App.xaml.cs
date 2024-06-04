@@ -1,12 +1,12 @@
 ﻿using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using PlaziatWpf.Services;
-using MageekFrontWpf.Framework.AppValues;
 using System;
 using System.IO;
 using MageekFrontWpf.UI.Views.AppWindows;
 using CommunityToolkit.Mvvm.Messaging;
 using PlaziatWpf.Mvvm;
+using MageekFrontWpf.Framework;
 
 namespace MageekFrontWpf
 {
@@ -33,8 +33,10 @@ namespace MageekFrontWpf
             ServiceHelper.GetService<WindowsService>().OpenWindow(AppWindowEnum.Welcome.ToString());
         }
 
-        public static void Launch()
+        public static void Launch(string user)
         {
+            //TODO stock user session 
+            ServiceHelper.GetService<SessionService>().User = user;
             ServiceHelper.GetService<WindowsService>().CloseWindow("Welcome");
             ServiceHelper.GetService<WindowsService>().OpenWindow("Main");
             ServiceHelper.GetService<WindowsService>().LoadLayout("Default");

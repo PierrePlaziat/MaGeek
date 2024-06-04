@@ -1,7 +1,7 @@
 ﻿using PlaziatCore;
 using PlaziatWpf.Services;
 
-namespace MageekFrontWpf.Framework.AppValues
+namespace MageekFrontWpf.Framework
 {
     public enum Setting
     {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MageekCore.Data.Collection.Entities;
+using MageekCore.Data.MtgFetched.Entities;
 
 namespace MageekCore.Data.Collection
 {
@@ -16,19 +17,15 @@ namespace MageekCore.Data.Collection
             optionsBuilder.EnableSensitiveDataLogging();
         }
 
-        public DbSet<ArchetypeCard> CardArchetypes { get; set; }
         public DbSet<Tag> Tag { get; set; }
-        public DbSet<CardTraduction> CardTraductions { get; set; }
         public DbSet<Deck> Decks { get; set; }
         public DbSet<DeckCard> DeckCard { get; set; }
         public DbSet<Param> Params { get; set; }
         public DbSet<FavVariant> FavVariant { get; set; }
         public DbSet<CollectedCard> CollectedCard { get; set; }
-        public DbSet<PriceLine> PriceLine { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CardTraduction>().HasKey(m => new { m.CardUuid, m.Language });
             modelBuilder.Entity<DeckCard>().HasKey(m => new { m.DeckId, m.CardUuid });
             modelBuilder.Entity<Tag>().Property(e => e.TagId).ValueGeneratedOnAdd();
             modelBuilder.Entity<Deck>().Property(e => e.DeckId).ValueGeneratedOnAdd();

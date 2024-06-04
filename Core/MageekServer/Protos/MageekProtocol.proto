@@ -27,12 +27,12 @@ service MageekProtocolService
 	rpc Sets_Completion (Request_SetCompletion) returns (Reply_Percentage);
 	rpc Collec_SetFavCardVariant (Request_Fav) returns (Reply_Empty);
 	rpc Collec_Move (Request_CollecMove) returns (Reply_Empty);
-	rpc Collec_OwnedVariant (Request_CardUuid) returns (Reply_Quantity);
-	rpc Collec_OwnedCombined (Request_CardName) returns (Reply_Quantity);
-	rpc Collec_TotalOwned (Request_Empty) returns (Reply_Quantity);
+	rpc Collec_OwnedVariant (Request_CardUuidUser) returns (Reply_Quantity);
+	rpc Collec_OwnedCombined (Request_CardNameUser) returns (Reply_Quantity);
+	rpc Collec_TotalOwned (Request_User) returns (Reply_Quantity);
 	rpc Collec_TotalDifferentOwned (Request_combinedVariant) returns (Reply_Quantity);
 	rpc Collec_TotalDifferentExisting (Request_combinedVariant) returns (Reply_Quantity);
-	rpc Decks_All (Request_Empty) returns (Reply_DeckList);
+	rpc Decks_All (Request_User) returns (Reply_DeckList);
 	rpc Decks_Get (Request_DeckId) returns (Reply_Deck);
 	rpc Decks_Content (Request_DeckId) returns (Reply_DeckContent);
 	rpc Decks_Create (Request_CreateDeck) returns (Reply_Empty);
@@ -41,11 +41,11 @@ service MageekProtocolService
 	rpc Decks_Save (Request_SaveDeck) returns (Reply_Empty);
 	rpc Decks_Delete (Request_DeckId) returns (Reply_Empty);
 	rpc Decks_Precos (Request_Empty) returns (Reply_ListPreco);
-	rpc Tags_All (Request_Empty) returns (Reply_TagList);
+	rpc Tags_All (Request_User) returns (Reply_TagList);
 	rpc Tags_CardHasTag (Request_CardTag) returns (Reply_HasTag);
 	rpc Tags_TagCard (Request_CardTag) returns (Reply_Empty);
 	rpc Tags_UntagCard (Request_CardTag) returns (Reply_Empty);
-	rpc Tags_GetCardTags (Request_CardName) returns (Reply_TagList);
+	rpc Tags_GetCardTags (Request_CardNameUser) returns (Reply_TagList);
 	rpc CardLists_FromDeck (Request_DeckToTxt) returns (Reply_Txt);
 	rpc CardLists_Parse (Request_Txt) returns (Reply_TxtImportResult);
 }
@@ -66,8 +66,16 @@ message Request_CardSearch{
 message Request_CardName {
 	string cardName = 1;
 }
+message Request_CardNameUser {
+	string user = 1;
+	string cardName = 2;
+}
 message Request_CardUuid {
 	string cardUuid = 1;
+}
+message Request_CardUuidUser {
+	string user = 1;
+	string cardUuid = 2;
 }
 message Request_CardIllu{
 	string cardUuid = 1;
@@ -82,48 +90,58 @@ message Request_SetCode {
 	string setCode = 1;
 }
 message Request_SetCompletion {
-	string code = 1;
-	bool strict = 2;
+	string user = 1;
+	string code = 2;
+	bool strict = 3;
 }
 message Request_Fav {
-	string cardName = 1;
+	string user = 1;
+	string cardName = 2;
+	string cardUuid = 3;
+}
+message Request_CollecMove {
+	string user = 1;
 	string cardUuid = 2;
+	int32 quantity = 3;
 }
-message Request_CollecMove{
-	string cardUuid = 1;
-	int32 quantity = 2;
+message Request_combinedVariant {
+	string user = 1;
+	bool combined = 2;
 }
-message Request_combinedVariant{
-	bool combined = 1;
-}
-message Request_DeckId{
-	string deckId = 1;
+message Request_DeckId {
+	string user = 1;
+	string deckId = 2;
 }
 message Request_CreateDeck {
-	string title = 1;
-	string description = 2;
-    repeated Reply_DeckCard cards = 3;
+	string user = 1;
+	string title = 2;
+	string description = 3;
+    repeated Reply_DeckCard cards = 4;
 }
 message Request_RenameDeck {
-	string deckId = 1;
-	string title = 2;
+	string user = 1;
+	string deckId = 2;
+	string title = 3;
 }
 message Request_SaveDeck {
-    string deckId = 1;
-    string title = 2;
-    string description = 3;
-    repeated Reply_DeckCard lines = 4;
+	string user = 1;
+    string deckId = 2;
+    string title = 3;
+    string description = 4;
+    repeated Reply_DeckCard lines = 5;
 }
 message Request_CardTag {
-	string cardName = 1;
-	string tag = 2;
+	string user = 1;
+	string cardName = 2;
+	string tag = 3;
 }
 message Request_Txt{
 	string input = 1;
 }
 message Request_DeckToTxt {
-	string deckId = 1;
-	bool withSetCode = 2;
+	string user = 1;
+	string deckId = 2;
+	bool withSetCode = 3;
 }
 message Reply_SearchedCardList {
 	repeated Reply_SearchedCard searchedCardList = 1;
@@ -365,4 +383,8 @@ message Reply_Txt {
 message Reply_Empty  {
 }
 message Request_Empty  {
+}
+
+message Request_User  {
+	string user = 1;
 }

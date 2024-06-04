@@ -11,8 +11,9 @@ using MageekFrontWpf.MageekTools.DeckTools;
 using MageekClient.Services;
 using MageekCore.Services;
 using PlaziatWpf.Docking;
+using MageekFrontWpf.DeckTools;
 
-namespace MageekFrontWpf.Framework.AppValues
+namespace MageekFrontWpf.Framework
 {
     public static class ServiceCollectionExtensions
     {
@@ -22,9 +23,10 @@ namespace MageekFrontWpf.Framework.AppValues
             services.AddSingleton<WindowsService>();
             services.AddSingleton<DialogService>();
             services.AddSingleton<SettingService>();
+            services.AddSingleton<SessionService>();
             return services;
         }
-        
+
         public static ServiceCollection AddMageek(this ServiceCollection services)
         {
             services.AddSingleton<IMageekService, MageekClientService>();
@@ -45,7 +47,7 @@ namespace MageekFrontWpf.Framework.AppValues
             services.AddSingleton<CollecEstimation>();
             services.AddSingleton<TxtInput>();
             // Documents
-            services.AddTransient<IDocument,Document>();
+            services.AddTransient<IDocument, Document>();
             services.AddTransient<ManipulableDeck>();
 
             // ViewModels //

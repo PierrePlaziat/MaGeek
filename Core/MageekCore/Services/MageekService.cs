@@ -7,7 +7,8 @@ using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.Collection;
 using MageekCore.Data.Collection.Entities;
 using PlaziatCore;
-using MageekCore.Service;
+using MageekCore.Data.MtgFetched.Entities;
+using MageekCore.Data.MtgFetched;
 
 namespace MageekCore.Services
 {
@@ -21,17 +22,17 @@ namespace MageekCore.Services
         #region Construction
 
         private readonly MtgDbManager mtg;
+        private readonly MtgFetchedDbManager mtgFetched;
         private readonly CollectionDbManager collec;
-
-        private readonly MtgJsonManager mtgjson;
+        private readonly MtgJsonService mtgjson;
         private readonly ScryManager scryfall;
 
         public MageekService()
         {
             mtg = new MtgDbManager();
-            collec = new CollectionDbManager(mtg);
+            mtgFetched = new MtgFetchedDbManager();
             scryfall = new ScryManager(mtg);
-            mtgjson = new MtgJsonManager(mtg, collec);
+            mtgjson = new MtgJsonService(mtg, mtgFetched);
         }
 
         #endregion
@@ -40,7 +41,7 @@ namespace MageekCore.Services
 
         #region initialisation
 
-        public async Task<MageekConnectReturn> Client_Connect(string address)
+        public async Task<MageekConnectReturn> Client_Connect(string user, string pass, string address)
         {
             return MageekConnectReturn.NotImplementedForServer;
         }
@@ -51,7 +52,7 @@ namespace MageekCore.Services
             try
             {
                 Folders.InitServerFolders();
-                if (!File.Exists(Folders.File_CollectionDB)) collec.CreateDb();
+                if (!File.Exists(Folders.File_CollectionDB)) mtgFetched.CreateDb();
                 bool needsUpdate = await mtgjson.CheckUpdate();
                 return needsUpdate ? MageekInitReturn.Outdated : MageekInitReturn.UpToDate;
             }
@@ -134,7 +135,7 @@ namespace MageekCore.Services
                 string lowerFilterName = filterName.ToLower();
                 string normalizedFilterName = filterName.RemoveDiacritics().Replace('-', ' ').ToLower();
 
-                using (CollectionDbContext DB = await collec.GetContext())
+                using (MtgFetchedDbContext DB = await mtgFetched.GetContext())
                 using (MtgDbContext DB2 = await mtg.GetContext())
                 {
                     if (!string.IsNullOrEmpty(filterName))
@@ -157,8 +158,8 @@ namespace MageekCore.Services
                         var v = await Cards_GetTranslation(card.Uuid, lang);
                         if (v != null) translation = v.Name;
                         else translation = card.Name;
-                        int collected = await Collec_OwnedCombined(card.Uuid);
-                        retour.Add(new SearchedCards(card.Uuid, translation, collected));
+                        //int collected = await Collec_OwnedCombined(user,card.Uuid); //TODO, another way
+                        retour.Add(new SearchedCards(card.Uuid, translation, /*collected*/0));
                     }
                 }
             }
@@ -273,18 +274,18 @@ namespace MageekCore.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(filterTag))
-                {
-                    var tagged = new List<SearchedCards>();
-                    foreach (var card in retour)
-                    {
-                        if (await Tags_CardHasTag(card.Card.Name, filterTag))
-                        {
-                            tagged.Add(card);
-                        }
-                    }
-                    retour = new List<SearchedCards>(tagged);
-                }
+                //if (!string.IsNullOrEmpty(filterTag))
+                //{
+                //    var tagged = new List<SearchedCards>();
+                //    foreach (var card in retour)
+                //    {
+                //        if (await Tags_CardHasTag(user, card.Card.Name, filterTag))
+                //        {
+                //            tagged.Add(card);
+                //        }
+                //    }
+                //    retour = new List<SearchedCards>(tagged);
+                //}
 
                 //if (onlyGot)
                 //{
@@ -299,7 +300,7 @@ namespace MageekCore.Services
         public async Task<List<string>> Cards_UuidsForGivenCardName(string archetypeId)
         {
             Logger.Log("");
-            using CollectionDbContext DB = await collec.GetContext();
+            using MtgFetchedDbContext DB = await mtgFetched.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.ArchetypeId == archetypeId)
                 .Select(p => p.CardUuid)
@@ -309,7 +310,7 @@ namespace MageekCore.Services
         public async Task<string> Cards_NameForGivenCardUuid(string cardUuid)
         {
             Logger.Log("");
-            using CollectionDbContext DB = await collec.GetContext();
+            using MtgFetchedDbContext DB = await mtgFetched.GetContext();
             return await DB.CardArchetypes
                 .Where(x => x.CardUuid == cardUuid)
                 .Select(p => p.ArchetypeId)
@@ -435,31 +436,17 @@ namespace MageekCore.Services
                 .FirstOrDefaultAsync();
         }
 
+        // TODO transform into getScryfallId
         public async Task<Uri> Cards_GetIllustration(string cardUuid, CardImageFormat type, bool back = false)
         {
-            try
-            {
-                string localFileName = Path.Combine(
-                    Folders.Illustrations,
-                    string.Concat(cardUuid, "_", type.ToString())
-                );
-                if (!File.Exists(localFileName))
-                {
-                    string name = await Cards_NameForGivenCardUuid(cardUuid);
-                    await scryfall.DownloadImage(cardUuid, type, localFileName, back);
-                }
-                return new("file://" + Path.GetFullPath(localFileName), UriKind.Absolute);
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return null;
-            }
+            using MtgDbContext DB = await mtg.GetContext();
+            var v = await DB.cardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefaultAsync();
+            return new Uri(v.ScryfallId);
         }
 
         public async Task<PriceLine> Cards_GetPrice(string cardUuid)
         {
-            using CollectionDbContext collecContext = await collec.GetContext();
+            using MtgFetchedDbContext collecContext = await mtgFetched.GetContext();
             var p = await collecContext.PriceLine.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
             if (p == null)
             {
@@ -512,17 +499,17 @@ namespace MageekCore.Services
             return cards.Select(x => x.Uuid).ToList();
         }
 
-        public async Task<int> Sets_Completion(string setCode, bool strict)
+        public async Task<int> Sets_Completion(string user, string setCode, bool strict)
         {
             int nb = 0;
             try
             {
                 var cardUuids = await Sets_Content(setCode);
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 foreach (var card in cardUuids)
                 {
-                    if (strict) nb += await Collec_OwnedVariant(card);
-                    else nb += await Collec_OwnedCombined(card);
+                    if (strict) nb += await Collec_OwnedVariant(user,card);
+                    else nb += await Collec_OwnedCombined(user, card);
                 }
             }
             catch (Exception e)
@@ -536,13 +523,13 @@ namespace MageekCore.Services
 
         #region Collection
 
-        public async Task Collec_SetFavCardVariant(string archetypeId, string cardUuid)
+        public async Task Collec_SetFavCardVariant(string user, string archetypeId, string cardUuid)
         {
             Logger.Log("");
             try
             {
                 if (string.IsNullOrEmpty(archetypeId)) return;
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 FavVariant? favCard = await DB.FavVariant.Where(x => x.ArchetypeId == archetypeId).FirstOrDefaultAsync();
                 if (favCard == null)
                 {
@@ -564,13 +551,13 @@ namespace MageekCore.Services
             catch (Exception e) { Logger.Log(e); }
         }
 
-        public async Task Collec_Move(string cardUuid, int quantityModification)
+        public async Task Collec_Move(string user, string cardUuid, int quantityModification)
         {
             Logger.Log("");
             // Guard
             if (string.IsNullOrEmpty(cardUuid)) return;// new Tuple<int, int>(0, 0);
             // Get or create collected card
-            using CollectionDbContext DB = await collec.GetContext();
+            using CollectionDbContext DB = await collec.GetContext(user);
             CollectedCard collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
             if (collectedCard == null)
             {
@@ -591,12 +578,12 @@ namespace MageekCore.Services
             //return new Tuple<int, int>(quantityBeforeMove, quantityAfterMove);
         }
 
-        public async Task<int> Collec_OwnedVariant(string cardUuid)
+        public async Task<int> Collec_OwnedVariant(string user, string cardUuid)
         {
             try
             {
                 if (string.IsNullOrEmpty(cardUuid)) return 0;
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
                 return collectedCard != null ? collectedCard.Collected : 0;
             }
@@ -607,22 +594,22 @@ namespace MageekCore.Services
             }
         }
 
-        public async Task<int> Collec_OwnedCombined(string archetypeId)
+        public async Task<int> Collec_OwnedCombined(string user, string archetypeId)
         {
             if (string.IsNullOrEmpty(archetypeId)) return 0;
             int count = 0;
-            using CollectionDbContext DB = await collec.GetContext();
+            using MtgFetchedDbContext DB = await mtgFetched.GetContext();
             List<string> uuids = await DB.CardArchetypes.Where(x => x.ArchetypeId == archetypeId).Select(p => p.CardUuid).ToListAsync();
-            foreach (string uuid in uuids) count += await Collec_OwnedVariant(uuid);
+            foreach (string uuid in uuids) count += await Collec_OwnedVariant(user,uuid);
             return count;
         }
 
-        public async Task<int> Collec_TotalOwned()
+        public async Task<int> Collec_TotalOwned(string user)
         {
             int total = 0;
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 total = DB.CollectedCard.Sum(x => x.Collected);
             }
             catch (Exception e)
@@ -632,17 +619,17 @@ namespace MageekCore.Services
             return total;
         }
 
-        public async Task<int> Collec_TotalDifferentOwned(bool combined = true)
+        public async Task<int> Collec_TotalDifferentOwned(string user, bool combined = true)
         {
-            if (combined) return await GetTotal_CollectedCombined();
-            else return await GetTotal_CollectedDiff();
+            if (combined) return await GetTotal_CollectedCombined(user);
+            else return await GetTotal_CollectedDiff(user);
         }
 
-        private async Task<int> GetTotal_CollectedDiff()
+        private async Task<int> GetTotal_CollectedDiff(string user)
         {
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 return DB.CollectedCard.Count();
             }
             catch (Exception e)
@@ -652,11 +639,11 @@ namespace MageekCore.Services
             }
         }
 
-        private async Task<int> GetTotal_CollectedCombined()
+        private async Task<int> GetTotal_CollectedCombined(string user)
         {
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 return DB.CollectedCard.Sum(x => x.Collected);
             }
             catch (Exception e)
@@ -671,7 +658,7 @@ namespace MageekCore.Services
             int total = 0;
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using MtgFetchedDbContext DB = await mtgFetched.GetContext();
                 total = DB.CardArchetypes
                     .GroupBy(x => x.ArchetypeId)
                     .Select(grp => grp.First())
@@ -688,25 +675,25 @@ namespace MageekCore.Services
 
         #region Decks
 
-        public async Task<List<Deck>> Decks_All()
+        public async Task<List<Deck>> Decks_All(string user)
         {
             Logger.Log("");
             List<Deck> decks = new();
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 decks = await DB.Decks.ToListAsync();
             }
             catch (Exception e) { Logger.Log(e); }
             return decks;
         }
 
-        public async Task<Deck> Decks_Get(string deckId)
+        public async Task<Deck> Decks_Get(string user, string deckId)
         {
             Logger.Log(deckId);
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 Deck deck = await DB.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
                 return deck;
             }
@@ -717,11 +704,11 @@ namespace MageekCore.Services
             }
         }
 
-        public async Task<List<DeckCard>> Decks_Content(string deckId)
+        public async Task<List<DeckCard>> Decks_Content(string user, string deckId)
         {
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 return await DB.DeckCard.Where(x => x.DeckId == deckId).ToListAsync();
             }
             catch (Exception e)
@@ -731,20 +718,21 @@ namespace MageekCore.Services
             }
         }
 
-        public async Task Decks_Create(string title, string description, IEnumerable<DeckCard> deckLines = null)
+        public async Task Decks_Create(string user, string title, string description, IEnumerable<DeckCard> deckLines = null)
         {
-            if (deckLines == null) await CreateDeck_Empty(title, description);
+            if (deckLines == null) await CreateDeck_Empty(user, title, description);
             Logger.Log("");
             List<string> messages = new();
-            Deck deck = await CreateDeck_Empty(title, description);
+            Deck deck = await CreateDeck_Empty(user, title, description);
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using MtgFetchedDbContext DB = await mtgFetched.GetContext();
+                using CollectionDbContext DB2 = await collec.GetContext(user);
                 foreach (DeckCard deckLine in deckLines)
                 {
                     if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.CardUuid).Any())
                     {
-                        DB.DeckCard.Add(
+                        DB2.DeckCard.Add(
                             new DeckCard()
                             {
                                 DeckId = deck.DeckId,
@@ -769,13 +757,13 @@ namespace MageekCore.Services
             }
         }
 
-        private async Task<Deck> CreateDeck_Empty(string title, string description)
+        private async Task<Deck> CreateDeck_Empty(string user, string title, string description)
         {
             Logger.Log("");
             if (string.IsNullOrEmpty(title)) return null;
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 Deck deck = new()
                 {
                     Title = title,
@@ -794,11 +782,11 @@ namespace MageekCore.Services
             }
         }
 
-        public async Task Decks_Rename(string deckId, string title)
+        public async Task Decks_Rename(string user, string deckId, string title)
         {
             Logger.Log("");
             if (string.IsNullOrEmpty(title)) return;
-            using CollectionDbContext DB = await collec.GetContext();
+            using CollectionDbContext DB = await collec.GetContext(user);
             var deck = await DB.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
             if (deck != null)
             {
@@ -808,18 +796,19 @@ namespace MageekCore.Services
             }
         }
 
-        public async Task Decks_Duplicate(string deckId)
+        public async Task Decks_Duplicate(string user, string deckId)
         {
             Logger.Log("");
-            var deckToCopy = await Decks_Get(deckId);
+            var deckToCopy = await Decks_Get(user, deckId);
             Logger.Log("");
             if (deckToCopy == null) return;
             var newDeck = await CreateDeck_Empty(
+                user,
                 deckToCopy.Title + " - Copy",
                 deckToCopy.Description/*, deckToCopy.DeckColors, deckToCopy.CardCount*/);
             if (newDeck == null) return;
 
-            using CollectionDbContext DB = await collec.GetContext();
+            using CollectionDbContext DB = await collec.GetContext(user);
             foreach (DeckCard relation in DB.DeckCard.Where(x => x.DeckId == deckToCopy.DeckId))
             {
                 DB.DeckCard.Add(
@@ -838,31 +827,31 @@ namespace MageekCore.Services
             await DB.SaveChangesAsync();
         }
 
-        public async Task Decks_Save(Deck header, List<DeckCard> lines)
+        public async Task Decks_Save(string user, Deck header, List<DeckCard> lines)
         {
             //TODO count and colors
             try
             {
-                using CollectionDbContext DB = await collec.GetContext();
+                using CollectionDbContext DB = await collec.GetContext(user);
                 Deck d = DB.Decks.Where(x => x.DeckId == header.DeckId).FirstOrDefault();
-                if (d != null) await UpdateDeckHeader(d.DeckId, d.Title, header.Description, header.DeckColors, header.CardCount, lines);
-                else await Decks_Create(header.Title, header.Description, /*header.DeckColors, header.CardCount,*/ lines);
+                if (d != null) await UpdateDeckHeader(user, d.DeckId, d.Title, header.Description, header.DeckColors, header.CardCount, lines);
+                else await Decks_Create(user, header.Title, header.Description, /*header.DeckColors, header.CardCount,*/ lines);
             }
             catch (Exception e) { Logger.Log(e); }
         }
 
-        public async Task UpdateDeckHeader(string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content)
+        public async Task UpdateDeckHeader(string user, string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content)
         {
             Logger.Log("");
-            await Decks_Delete(deckId);
-            await Decks_Create(title, description, /*colors, count,*/ content);
+            await Decks_Delete(user, deckId);
+            await Decks_Create(user, title, description, /*colors, count,*/ content);
         }
 
-        public async Task Decks_Delete(string deckId)
+        public async Task Decks_Delete(string user, string deckId)
         {
-            var deck = await Decks_Get(deckId);
+            var deck = await Decks_Get(user, deckId);
             Logger.Log("");
-            using CollectionDbContext DB = await collec.GetContext();
+            using CollectionDbContext DB = await collec.GetContext(user);
             DB.Decks.Remove(deck);
             var cards = DB.DeckCard.Where(x => x.DeckId == deck.DeckId).ToList();
             DB.DeckCard.RemoveRange(cards);
@@ -879,10 +868,10 @@ namespace MageekCore.Services
 
         #region Tags
 
-        public async Task<List<string>> Tags_All()
+        public async Task<List<string>> Tags_All(string user)
         {
             List<Tag> tags = new();
-            using CollectionDbContext DB = await collec.GetContext();
+            using CollectionDbContext DB = await collec.GetContext(user);
             tags.Add(null);
             tags.AddRange(
                     DB.Tag.GroupBy(x => x.TagContent).Select(x => x.First())
@@ -890,14 +879,14 @@ namespace MageekCore.Services
             return tags.Select(x => x.TagContent).ToList();
         }
 
-        public async Task<bool> Tags_CardHasTag(string cardId, string tagFilterSelected)
+        public async Task<bool> Tags_CardHasTag(string user, string cardId, string tagFilterSelected)
         {
-            return (await Tags_GetCardTags(cardId)).Where(x => x.TagContent == tagFilterSelected).Any();
+            return (await Tags_GetCardTags(user, cardId)).Where(x => x.TagContent == tagFilterSelected).Any();
         }
 
-        public async Task Tags_TagCard(string archetypeId, string text)
+        public async Task Tags_TagCard(string user, string archetypeId, string text)
         {
-            using CollectionDbContext DB = await collec.GetContext();
+            using CollectionDbContext DB = await collec.GetContext(user);
             DB.Tag.Add(new Tag()
             {
                 TagContent = text,
@@ -906,9 +895,9 @@ namespace MageekCore.Services
             await DB.SaveChangesAsync();
         }
 
-        public async Task Tags_UntagCard(string archetypeId, string text)
+        public async Task Tags_UntagCard(string user, string archetypeId, string text)
         {
-            using CollectionDbContext DB = await collec.GetContext();
+            using CollectionDbContext DB = await collec.GetContext(user);
             var cardTag = DB.Tag.Where(x => x.ArchetypeId == archetypeId && x.TagContent == text).FirstOrDefault();
             if (cardTag != null)
             {
@@ -917,10 +906,10 @@ namespace MageekCore.Services
             }
         }
 
-        public async Task<List<Tag>> Tags_GetCardTags(string archetypeId)
+        public async Task<List<Tag>> Tags_GetCardTags(string user, string archetypeId)
         {
             List<Tag> tags = new();
-            using CollectionDbContext DB = await collec.GetContext();
+            using CollectionDbContext DB = await collec.GetContext(user);
             tags.AddRange(DB.Tag.Where(x => x.ArchetypeId == archetypeId));
             return tags;
         }
@@ -929,10 +918,10 @@ namespace MageekCore.Services
 
         #region CardLists
 
-        public async Task<string> CardLists_FromDeck(string deckId, bool withSetCode = false)
+        public async Task<string> CardLists_FromDeck(string user, string deckId, bool withSetCode = false)
         {
             Logger.Log("");
-            using CollectionDbContext collecDb = await collec.GetContext();
+            using CollectionDbContext collecDb = await collec.GetContext(user);
             using MtgDbContext cardInfos = await mtg.GetContext();
             var deck = await collecDb.Decks.Where(x => x.DeckId == deckId).FirstOrDefaultAsync();
             if (deck == null) return "";
@@ -941,7 +930,7 @@ namespace MageekCore.Services
             result.AppendLine(deck.Title);
             result.AppendLine(deck.Description);
             result.AppendLine();
-            var cardRelations = await Decks_Content(deck.DeckId);
+            var cardRelations = await Decks_Content(user, deck.DeckId);
             int lastRelationType = -1;
             foreach (DeckCard cardRelation in cardRelations
                 .Where(x => x.RelationType == 0)

@@ -1,14 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using System;
 
-namespace MageekFrontWpf.Framework.AppValues
+namespace MageekFrontWpf.Framework
 {
 
     public class LaunchAppMessage : ValueChangedMessage<string>
     {
         public LaunchAppMessage(string _) : base(_) { }
     }
-    
+
     public class CardSelectedMessage : ValueChangedMessage<string>
     {
         public CardSelectedMessage(string uuid) : base(uuid) { }
@@ -18,8 +18,8 @@ namespace MageekFrontWpf.Framework.AppValues
     {
         public UpdateDeckListMessage(string data) : base(data) { }
     }
-    
-    public class AddCardToDeckMessage : ValueChangedMessage<Tuple<string,string>>
+
+    public class AddCardToDeckMessage : ValueChangedMessage<Tuple<string, string>>
     {
         public AddCardToDeckMessage(Tuple<string, string> data) : base(data) { }
     }
