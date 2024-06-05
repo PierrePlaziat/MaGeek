@@ -7,10 +7,10 @@ using MageekProtocol;
 using PlaziatCore;
 using ScryfallApi.Client.Models;
 using System.Text.Json;
+using MageekCore.Data.MtgFetched.Entities;
+using PlaziatIdentity; //TODO
 using Grpc.Core;
 using System.Net;
-using MageekCore.Data.MtgFetched.Entities;
-using PlaziatIdentity;
 
 namespace MageekClient.Services
 {

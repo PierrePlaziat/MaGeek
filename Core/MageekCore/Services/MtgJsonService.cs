@@ -1,14 +1,11 @@
-﻿
-using MageekCore.Data;
+﻿using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
-using MageekCore.Data.Collection;
 using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.Mtg;
 using Newtonsoft.Json.Linq;
 using PlaziatCore;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using PlaziatIdentity;
 using MageekCore.Data.MtgFetched.Entities;
 using MageekCore.Data.MtgFetched;
 

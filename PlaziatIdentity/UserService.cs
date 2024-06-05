@@ -15,7 +15,7 @@ namespace PlaziatIdentity
             using var context = db.GetContext();
             if (context.Users.Any(user => user.Name == name)) return false;
             if (context.Users.Any(user => user.Mail == mail)) return false;
-            context.Users.Add(new User { Name = name, Password = Encryption.Encrypt(pass) });
+            context.Users.Add(new User { Name = name, Password = PlaziatCore.Encryption.Hash(pass) });
             context.SaveChanges();
             return true;
         }
@@ -27,7 +27,7 @@ namespace PlaziatIdentity
             using var context = db.GetContext();
             User? user = context.Users.Where(x => x.Name == name).FirstOrDefault();
             if (user == null) return null;
-            if (Encryption.Encrypt(user.Password) != Encryption.Encrypt(pass)) return null;
+            if (PlaziatCore.Encryption.Hash(user.Password) != PlaziatCore.Encryption.Hash(pass)) return null;
             return new Token(user).Value;
         }
 
@@ -52,12 +52,12 @@ namespace PlaziatIdentity
 
             public Token(User user)
             {
-                value = Encryption.Encrypt(user.Name + '|' + DateTime.Now.AddMinutes(2).ToString());
+                value = PlaziatCore.Encryption.Encrypt(user.Name + '|' + DateTime.Now.AddMinutes(2).ToString());
             }
 
             public bool IsValid()
             {
-                DateTime limit = DateTime.Parse(Encryption.Decrypt(value).Split('|')[1]);
+                DateTime limit = DateTime.Parse(PlaziatCore.Encryption.Decrypt(value).Split('|')[1]);
                 return DateTime.Now > limit;
             }
         }
