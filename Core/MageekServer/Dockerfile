@@ -25,4 +25,5 @@ RUN dotnet publish "./MageekServer.csproj" -c $BUILD_CONFIGURATION -o /app/publi
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+#COPY path-to-certificate.pfx /app/ # Add this line to copy the certificate into the image
 ENTRYPOINT ["dotnet", "MageekServer.dll"]

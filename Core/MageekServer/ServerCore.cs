@@ -25,7 +25,20 @@ namespace MageekServer
                 {
                     listenOptions.Protocols = HttpProtocols.Http2;
                 });
+
+
+                //options.ListenAnyIP(8080, listenOptions =>
+                //{
+                //    listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+                //});
+
+                //options.ListenAnyIP(8081, listenOptions =>
+                //{
+                //    listenOptions.UseHttps("path-to-certificate.pfx", "certificate-password");
+                //    listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+                //});
             });
+
             //builder.Services.AddAuthorization();
         }
         
