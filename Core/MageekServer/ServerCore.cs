@@ -1,6 +1,10 @@
-﻿using MageekCore.Data;
+﻿using Grpc.Core;
+using MageekCore.Data;
 using MageekCore.Services;
 using MageekServer.Services;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.DependencyInjection;
 using PlaziatIdentity;
 using PlaziatTools;
 
@@ -15,13 +19,23 @@ namespace MageekServer
             builder.Services.AddGrpc();
             builder.Services.AddSingleton<IMageekService, MageekService>();
             builder.Services.AddSingleton<IUserService, UserService>();
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ConfigureEndpointDefaults(listenOptions =>
+                {
+                    listenOptions.Protocols = HttpProtocols.Http2;
+                });
+            });
+            //builder.Services.AddAuthorization();
         }
         
         public static void InitAuth(WebApplication app)
         {
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme);
+            //app.AddScheme<BasicAuthenticationOptions, BasicAuthenticationHandler>("MyScheme", options => { /* configure options */ });
+            //app.UseAuthorization();
+            //app.UseRouting();
         }
         
         public static async Task InitBusiness(WebApplication app)

@@ -31,19 +31,20 @@ namespace MageekClient.Services
             {
                 connected = false;
                 Logger.Log("Established channel...");
-                GrpcChannel channel;
                 try
                 {
                     channel = await Client_Connect_Method1(serverAddress);
-                    mageekClient = new(channel); 
+                    mageekClient = new(channel);
                 }
                 catch
                 {
-                    try {
+                    try
+                    {
                         channel = await Client_Connect_Method2(serverAddress);
-                        mageekClient = new(channel); 
+                        mageekClient = new(channel);
                     }
-                    catch {
+                    catch
+                    {
                         return MageekConnectReturn.Failure;
                     }
                 }
@@ -74,9 +75,10 @@ namespace MageekClient.Services
                 Logger.Log("Done, connected: " + connected);
             }
         }
-
+        
         private async Task<GrpcChannel> Client_Connect_Method1(string serverAddress)
         {
+            GrpcChannel channel = null;
             try
             {
                 Logger.Log("Trying...");
@@ -106,6 +108,7 @@ namespace MageekClient.Services
         {
             try
             {
+                GrpcChannel channel = null;
                 Logger.Log("Trying...");
                 await Task.Run(() =>
                 {
