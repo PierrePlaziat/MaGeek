@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using MageekClient.Services;
 using MageekCore.Services;
-using MageekMaui.Views;
+using MageekMobile.Views;
 
-namespace MageekMaui.ViewModels
+namespace MageekMobile.ViewModels
 {
 
     public partial class WelcomeViewModel : ViewModel

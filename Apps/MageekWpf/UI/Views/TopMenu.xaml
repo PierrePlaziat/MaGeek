@@ -1,12 +1,11 @@
-﻿<mvvm:BaseUserControl x:Class="MageekFrontWpf.UI.Views.TopMenu"
-                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                    xmlns:ui="clr-namespace:MaGeek.UI"
-                    xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
-                    mc:Ignorable="d"
-                         d:DesignHeight="20">
+﻿<mvvm:BaseUserControl x:Class="MageekDesktop.UI.Views.TopMenu"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                      mc:Ignorable="d"
+                      d:DesignHeight="20">
 
     <Menu Background="Black"
           Foreground="White">
@@ -15,7 +14,7 @@
             <MenuItem Header="Card Searcher"
                       Foreground="Black"
                       Command="{Binding OpenToolCommand}"
-                      CommandParameter="CardSearcher" >
+                      CommandParameter="CardSearcher">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/IconCard.jpg" />
                 </MenuItem.Icon>
@@ -23,7 +22,7 @@
             <MenuItem Header="Card Inspector"
                       Foreground="Black"
                       Command="{Binding OpenToolCommand}"
-                      CommandParameter="CardInspector" >
+                      CommandParameter="CardInspector">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/IconCard.jpg" />
                 </MenuItem.Icon>
@@ -32,7 +31,7 @@
             <MenuItem Header="Set List"
                       Foreground="Black"
                       Command="{Binding OpenToolCommand}"
-                      CommandParameter="SetList" >
+                      CommandParameter="SetList">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/IconDeck.jpg" />
                 </MenuItem.Icon>
@@ -40,7 +39,7 @@
             <MenuItem Header="Deck List"
                       Foreground="Black"
                       Command="{Binding OpenToolCommand}"
-                      CommandParameter="DeckList" >
+                      CommandParameter="DeckList">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/IconDeck.jpg" />
                 </MenuItem.Icon>
@@ -48,7 +47,7 @@
             <MenuItem Header="Preco List"
                       Foreground="Black"
                       Command="{Binding OpenToolCommand}"
-                      CommandParameter="PrecoList" >
+                      CommandParameter="PrecoList">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/IconDeck.jpg" />
                 </MenuItem.Icon>
@@ -66,7 +65,7 @@
             <MenuItem Header="Collec Estimation"
                       Foreground="Black"
                       Command="{Binding OpenToolCommand}"
-                      CommandParameter="CollecEstimation" >
+                      CommandParameter="CollecEstimation">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/Icon_Currency.jpg" />
                 </MenuItem.Icon>
@@ -94,7 +93,8 @@
         </MenuItem>
 
         <MenuItem Header="Options">
-        <MenuItem Header="Language" Name="LangBox"
+            <MenuItem Header="Language"
+                      Name="LangBox"
                       Foreground="Black">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/Icon_Lang.jpg" />

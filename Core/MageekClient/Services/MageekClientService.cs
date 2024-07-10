@@ -4,12 +4,10 @@ using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 using MageekProtocol;
-using PlaziatCore;
+using PlaziatTools;
 using ScryfallApi.Client.Models;
 using System.Text.Json;
 using MageekCore.Data.MtgFetched.Entities;
-using PlaziatIdentity; //TODO
-using Grpc.Core;
 using System.Net;
 
 namespace MageekClient.Services
@@ -24,20 +22,46 @@ namespace MageekClient.Services
         MageekProtocolService.MageekProtocolServiceClient mageekClient;
 
         bool connected = false;
+        private string token;
         const int timeout = 5;
 
         public async Task<MageekConnectReturn> Client_Connect(string user, string pass, string serverAddress)
         {
-            //TODO auth
-            Logger.Log("Start");
             try
             {
-                GrpcChannel channel1 = await Client_Connect_Method1(serverAddress);
-                GrpcChannel channel2 = await Client_Connect_Method2(serverAddress);
-                GrpcChannel channel = channel1 != null ? channel1 : channel2;
-                mageekClient = new(channel);
+                connected = false;
+                Logger.Log("Established channel...");
+                GrpcChannel channel;
+                try
+                {
+                    channel = await Client_Connect_Method1(serverAddress);
+                    mageekClient = new(channel); 
+                }
+                catch
+                {
+                    try {
+                        channel = await Client_Connect_Method2(serverAddress);
+                        mageekClient = new(channel); 
+                    }
+                    catch {
+                        return MageekConnectReturn.Failure;
+                    }
+                }
+                Logger.Log("Handshake...");
                 var call = await mageekClient.HandshakeAsync(new Request_Empty());
+                Logger.Log("Identifying...");
+                var result = await mageekClient.IdentifyAsync(new Request_Identity()
+                {
+                    Pass = Encryption.Hash(pass),
+                    User = user,
+                });
+                if (string.IsNullOrEmpty(result.Token))
+                {
+                    return MageekConnectReturn.Failure;
+                }
+                Logger.Log("token : " + result.Token);
                 connected = true;
+                this.token = result.Token;
                 return MageekConnectReturn.Success;
             }
             catch (Exception e)
@@ -55,6 +79,7 @@ namespace MageekClient.Services
         {
             try
             {
+                Logger.Log("Trying...");
                 await Task.Run(() =>
                 {
                     var handler = new HttpClientHandler();
@@ -63,10 +88,11 @@ namespace MageekClient.Services
                         serverAddress,
                         new GrpcChannelOptions()
                         {
-                            HttpHandler = handler
+                            HttpHandler = handler,
                         }
                     );
                 });
+                Logger.Log("Success");
                 return channel;
             }
             catch(Exception e)
@@ -80,6 +106,7 @@ namespace MageekClient.Services
         {
             try
             {
+                Logger.Log("Trying...");
                 await Task.Run(() =>
                 {
                     channel = GrpcChannel.ForAddress(
@@ -93,6 +120,7 @@ namespace MageekClient.Services
                         }
                     );
                 });
+                Logger.Log("Success");
                 return channel;
             }
             catch (Exception e)

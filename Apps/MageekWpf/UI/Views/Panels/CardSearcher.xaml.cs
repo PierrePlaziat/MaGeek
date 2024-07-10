@@ -1,14 +1,14 @@
 ﻿using System.Windows;
 using System;
-using MageekFrontWpf.UI.ViewModels.AppPanels;
+using MageekDesktop.UI.ViewModels.AppPanels;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Data;
 using System.Windows.Media;
 using PlaziatWpf.Mvvm;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 
-namespace MageekFrontWpf.UI.Views.AppPanels
+namespace MageekDesktop.UI.Views.AppPanels
 {
 
 

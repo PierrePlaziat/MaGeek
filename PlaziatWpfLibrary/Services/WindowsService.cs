@@ -2,7 +2,7 @@
 using AvalonDock;
 using AvalonDock.Layout;
 using AvalonDock.Layout.Serialization;
-using PlaziatCore;
+using PlaziatTools;
 using PlaziatWpf.Docking;
 using PlaziatWpf.Mvvm;
 

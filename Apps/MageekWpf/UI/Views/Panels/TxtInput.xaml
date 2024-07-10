@@ -1,12 +1,12 @@
-﻿<mvvm:BaseUserControl x:Class="MageekFrontWpf.UI.Views.AppWindows.TxtInput"
-                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                 xmlns:ctrl="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
-                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                  xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
-                 mc:Ignorable="d"
-                 Background="#555">
+﻿<mvvm:BaseUserControl x:Class="MageekDesktop.UI.Views.AppWindows.TxtInput"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:ctrl="clr-namespace:PlaziatWpf.Controls.TextBoxHelpers;assembly=PlaziatWpf"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                      mc:Ignorable="d"
+                      Background="#555">
 
     <Grid>
 
@@ -16,7 +16,7 @@
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <RichTextBox ctrl:RichTextBoxHelper.DocumentXaml="{Binding Document}" 
+        <RichTextBox ctrl:RichTextBoxBinder.DocumentXaml="{Binding Document}"
                      InputLanguageManager.InputLanguage=""
                      Grid.Row="0"
                      x:Name="ImportTxt"
@@ -41,47 +41,47 @@
                             Value="0" />
                 </Style>
             </RichTextBox.Resources>
-            
+
         </RichTextBox>
 
         <Grid Grid.Row="1"
               Grid.Column="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Command="{Binding CheckCommand}"
                     Grid.Column="0"
-                    Content="Check"/>
-            <Label Grid.Column="1" 
-                   HorizontalAlignment="Center" 
-                   Height="20" 
+                    Content="Check" />
+            <Label Grid.Column="1"
+                   HorizontalAlignment="Center"
+                   Height="20"
                    Margin="0"
                    Padding="0"
-                   Content="{Binding CheckResult}"/>
+                   Content="{Binding CheckResult}" />
             <Button Command="{Binding ClearCommand}"
                     Grid.Column="2"
-                Content="Clear"/>
-            
+                    Content="Clear" />
+
         </Grid>
 
         <Grid Grid.Row="2"
               Grid.Column="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Command="{Binding CollectCommand}"
                     Grid.Column="0"
-                Content="Add as collected"/>
+                    Content="Add as collected" />
             <Button Command="{Binding OpenCommand}"
                     Grid.Column="1"
-                Content="Open as deck"/>
+                    Content="Open as deck" />
             <Button Command="{Binding CollectAndOpenCommand}"
                     Grid.Column="2"
-                Content="Do both"/>
+                    Content="Do both" />
         </Grid>
 
     </Grid>

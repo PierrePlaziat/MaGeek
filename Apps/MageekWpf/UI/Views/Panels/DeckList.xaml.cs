@@ -1,4 +1,4 @@
-﻿using MageekFrontWpf.UI.ViewModels.AppPanels;
+﻿using MageekDesktop.UI.ViewModels.AppPanels;
 using MageekCore.Data.Collection.Entities;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.Messaging;
@@ -7,9 +7,9 @@ using System.Windows.Input;
 using System.Windows.Data;
 using System.Windows;
 using PlaziatWpf.Mvvm;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 
-namespace MageekFrontWpf.UI.Views.AppPanels
+namespace MageekDesktop.UI.Views.AppPanels
 {
 
     public partial class DeckList : BaseUserControl

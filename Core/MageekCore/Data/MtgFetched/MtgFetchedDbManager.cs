@@ -1,6 +1,5 @@
-﻿using MageekCore.Data.Collection;
-using Microsoft.Data.Sqlite;
-using PlaziatIdentity;
+﻿using Microsoft.Data.Sqlite;
+using PlaziatTools;
 
 namespace MageekCore.Data.MtgFetched
 {
@@ -20,17 +19,12 @@ namespace MageekCore.Data.MtgFetched
 
         public async Task<MtgFetchedDbContext?> GetContext()
         {
-            return new MtgFetchedDbContext(GetDBPath());
-        }
-
-        private string GetDBPath()
-        {
-            return Path.Combine(Folders.UserDbPath, "MtgFetched.db");
+            return new MtgFetchedDbContext(Folders.File_MtgFetchedDb);
         }
 
         public void CreateDb()
         {
-            SqliteConnection dbCo = new SqliteConnection("Data Source = " + GetDBPath());
+            SqliteConnection dbCo = new SqliteConnection("Data Source = " + Folders.File_MtgFetchedDb);
             dbCo.Open();
             foreach (string instruction in description) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
             dbCo.Close();

@@ -1,11 +1,11 @@
-﻿using MageekFrontWpf.MageekTools.DeckTools;
-using MageekFrontWpf.UI.ViewModels;
+﻿using MageekDesktop.MageekTools.DeckTools;
+using MageekDesktop.UI.ViewModels;
 using PlaziatWpf.Mvvm;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace MageekFrontWpf.UI.Views.AppPanels
+namespace MageekDesktop.UI.Views.AppPanels
 {
 
     public partial class DeckContent : BaseUserControl

@@ -2,12 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
-using MageekFrontWpf.MageekTools.DeckTools;
+using MageekDesktop.MageekTools.DeckTools;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 
-namespace MageekFrontWpf.UI.ViewModels
+namespace MageekDesktop.UI.ViewModels
 {
 
     public partial class DocumentViewModel : ObservableViewModel, 

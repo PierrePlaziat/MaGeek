@@ -1,8 +1,8 @@
-﻿using MageekFrontWpf.UI.ViewModels.AppWindows;
+﻿using MageekDesktop.UI.ViewModels.AppWindows;
 using PlaziatWpf.Mvvm;
 using System.ComponentModel;
 
-namespace MageekFrontWpf.UI.Views.AppWindows
+namespace MageekDesktop.UI.Views.AppWindows
 {
 
     public partial class PrintWindow : BaseWindow, INotifyPropertyChanged

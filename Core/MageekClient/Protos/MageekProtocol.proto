@@ -8,7 +8,8 @@ package MageekProtocolPackage;
 
 service MageekProtocolService 
 {
-    rpc Handshake (Request_Empty) returns (Reply_Empty);
+        rpc Handshake (Request_Empty) returns (Reply_Empty);
+    rpc Identify (Request_Identity) returns (Reply_Token);
 
 	rpc Cards_Search (Request_CardSearch) returns (Reply_SearchedCardList);
 	rpc Cards_UuidsForGivenCardName (Request_CardName) returns (Reply_ListCardUuid);
@@ -48,6 +49,14 @@ service MageekProtocolService
 	rpc Tags_GetCardTags (Request_CardNameUser) returns (Reply_TagList);
 	rpc CardLists_FromDeck (Request_DeckToTxt) returns (Reply_Txt);
 	rpc CardLists_Parse (Request_Txt) returns (Reply_TxtImportResult);
+}
+
+message Request_Identity{
+	string user = 1;
+	string pass = 2;
+}
+message Reply_Token{
+	string token = 1;
 }
 
 message Request_CardSearch{

@@ -1,0 +1,25 @@
+﻿<Window x:Class="MageekDesktopServer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MageekDesktopServer"
+        mc:Ignorable="d"
+        Title="Mageek Desktop Server" Height="450" Width="800">
+    <Grid>
+        
+        <RichTextBox Name="RTB"
+                     BorderThickness="0"
+                     Background="Black"
+                     Foreground="gray"
+                     IsReadOnly="True">
+            <RichTextBox.Resources>
+                <Style TargetType="{x:Type Paragraph}">
+                    <Setter Property="Margin"
+                            Value="0" />
+                </Style>
+            </RichTextBox.Resources>
+        </RichTextBox>
+
+    </Grid>
+</Window>

@@ -4,17 +4,17 @@ using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
-using PlaziatCore;
+using PlaziatTools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 using PlaziatWpf.Services;
 
-namespace MageekFrontWpf.UI.ViewModels.AppPanels
+namespace MageekDesktop.UI.ViewModels.AppPanels
 {
 
     public partial class CardInspectorViewModel : 

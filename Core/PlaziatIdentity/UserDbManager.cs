@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using PlaziatTools.Data;
 
 namespace PlaziatIdentity
 {
@@ -9,14 +10,16 @@ namespace PlaziatIdentity
         private readonly string path;
 
         private string[] description { get; } = new string[] {
-            "TODO user table"
+            "CREATE TABLE \"Users\" (\r\n\t\"Id\"\tTEXT,\r\n\t\"Name\"\tTEXT,\r\n\t\"Password\"\tTEXT,\r\n\t\"Mail\"\tTEXT,\r\n\t\"State\"\tINTEGER,\r\n\t\"Type\"\tINTEGER\r\n);"
         };
 
         public UserDbManager()
         {
             string roaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string folder = Path.Combine(roaming, "Identity");
-            path = Path.Combine(folder, "Users"); 
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            path = Path.Combine(folder, "Users");
+            if (!File.Exists(path)) CreateDb();
         }
 
         public UserDbContext GetContext()
@@ -24,7 +27,7 @@ namespace PlaziatIdentity
             return new UserDbContext(path);
         }
 
-        public void CreateDb(User user)
+        public void CreateDb()
         {
             SqliteConnection dbCo = new SqliteConnection("Data Source = " + path);
             dbCo.Open();

@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace MageekMaui
+namespace MageekMobile
 {
 
     public interface INavigationService

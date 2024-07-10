@@ -1,7 +1,7 @@
 ﻿using MageekClient.Services;
 using MageekCore.Services;
 
-namespace MageekMaui.ViewModels
+namespace MageekMobile.ViewModels
 {
     public partial class CollecViewModel : ViewModel
     {

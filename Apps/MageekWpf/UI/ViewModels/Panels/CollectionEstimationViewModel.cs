@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 
-namespace MageekFrontWpf.UI.ViewModels.AppWindows
+namespace MageekDesktop.UI.ViewModels.AppWindows
 {
 
     public partial class CollecEstimationViewModel : ObservableViewModel

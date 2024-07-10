@@ -1,9 +1,9 @@
-﻿using MageekFrontWpf.UI.ViewModels;
+﻿using MageekDesktop.UI.ViewModels;
 using PlaziatWpf.Mvvm;
 using System;
 using PlaziatWpf.Mvvm;
 
-namespace MageekFrontWpf.UI.Views
+namespace MageekDesktop.UI.Views
 {
 
     public partial class TopMenu : BaseUserControl

@@ -2,7 +2,7 @@
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 
-namespace MageekFrontWpf.MageekTools.DeckTools
+namespace MageekDesktop.MageekTools.DeckTools
 {
 
     public partial class ManipulableDeckEntry : ObservableObject

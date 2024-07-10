@@ -1,6 +1,6 @@
 ﻿using PlaziatWpf.Mvvm;
 
-namespace MageekFrontWpf.UI.ViewModels.Windows
+namespace MageekDesktop.UI.ViewModels.Windows
 {
 
     public class MainWindowViewModel : ObservableViewModel

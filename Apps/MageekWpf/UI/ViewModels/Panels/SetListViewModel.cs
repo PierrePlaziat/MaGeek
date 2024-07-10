@@ -2,15 +2,15 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Data.Mtg.Entities;
-using PlaziatCore;
+using PlaziatTools;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 
-namespace MageekFrontWpf.UI.ViewModels.AppPanels
+namespace MageekDesktop.UI.ViewModels.AppPanels
 {
     public partial class SetListViewModel : ObservableViewModel,
         IRecipient<LaunchAppMessage>

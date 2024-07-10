@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace PlaziatCore
+namespace PlaziatTools
 {
 
     public enum LogLevels {Infos, Error}

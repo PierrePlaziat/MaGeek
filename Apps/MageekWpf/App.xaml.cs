@@ -1,14 +1,16 @@
-﻿using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
-using PlaziatWpf.Services;
-using System;
+﻿using System;
 using System.IO;
-using MageekFrontWpf.UI.Views.AppWindows;
-using CommunityToolkit.Mvvm.Messaging;
+using System.Windows;
 using PlaziatWpf.Mvvm;
-using MageekFrontWpf.Framework;
+using PlaziatWpf.Services;
+using MageekDesktop.Framework;
+using MageekDesktop.UI.Views.AppWindows;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
+using PlaziatTools;
 
-namespace MageekFrontWpf
+namespace MageekDesktop
 {
 
     public partial class App : Application
@@ -24,8 +26,12 @@ namespace MageekFrontWpf
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
+
             ServiceHelper.GetService<WindowsService>().Init(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MaGeek"),
+                Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
+                    Assembly.GetExecutingAssembly().GetName().Name
+                ),
                 ServiceHelper.GetService<MainWindow>().DockingManager,
                 AppElements.LoadWindows(),
                 AppElements.LoadTools()
@@ -35,10 +41,9 @@ namespace MageekFrontWpf
 
         public static void Launch(string user)
         {
-            //TODO stock user session 
             ServiceHelper.GetService<SessionService>().User = user;
-            ServiceHelper.GetService<WindowsService>().CloseWindow("Welcome");
-            ServiceHelper.GetService<WindowsService>().OpenWindow("Main");
+            ServiceHelper.GetService<WindowsService>().CloseWindow(AppWindowEnum.Welcome.ToString());
+            ServiceHelper.GetService<WindowsService>().OpenWindow(AppWindowEnum.Main.ToString());
             ServiceHelper.GetService<WindowsService>().LoadLayout("Default");
             WeakReferenceMessenger.Default.Send(new LaunchAppMessage(""));
         }

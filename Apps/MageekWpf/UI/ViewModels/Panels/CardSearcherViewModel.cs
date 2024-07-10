@@ -6,12 +6,12 @@ using MageekCore.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
-using PlaziatCore;
+using PlaziatTools;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 
-namespace MageekFrontWpf.UI.ViewModels.AppPanels
+namespace MageekDesktop.UI.ViewModels.AppPanels
 {
     public partial class CardSearcherViewModel : 
         ObservableViewModel,

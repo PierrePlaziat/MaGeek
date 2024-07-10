@@ -1,4 +1,4 @@
-﻿namespace MageekMaui.ViewModels
+﻿namespace MageekMobile.ViewModels
 {
     public partial class GameViewModel : ViewModel
     {

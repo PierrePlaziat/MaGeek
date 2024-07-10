@@ -1,6 +1,6 @@
-using MageekMaui.ViewModels;
+using MageekMobile.ViewModels;
 
-namespace MageekMaui.Views;
+namespace MageekMobile.Views;
 
 public partial class DeckView : ContentPage
 {

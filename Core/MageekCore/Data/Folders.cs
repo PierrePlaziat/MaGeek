@@ -1,4 +1,4 @@
-﻿using PlaziatCore;
+﻿using PlaziatTools;
 
 namespace MageekCore.Data
 {
@@ -18,6 +18,7 @@ namespace MageekCore.Data
         // Server side
 
         public static string UserData { get; } = Path.Combine(Roaming, "UserData");
+        public static string GetUserDataFolder(string userName) { return Path.Combine(Path.Combine(Roaming, "UserData"), userName); }
         public static string UserDbPath { get; } = Path.Combine(UserData, "Users");
         private static string CommonData { get; } = Path.Combine(Roaming, "CommonData");
         public static string File_UpdatePrints { get; } = Path.Combine(CommonData, "mtgjson.sqlite");
@@ -26,7 +27,7 @@ namespace MageekCore.Data
         public static string File_UpdatePrices { get; } = Path.Combine(CommonData, "Prices.json");
         public static string File_UpdatePrecos { get; } = Path.Combine(CommonData, "Precos.zip");
         public static string File_Precos { get; } = Path.Combine(CommonData, "Precos.json");
-        public static string File_CollectionDB { get; } = Path.Combine(CommonData, "MaGeek.db");
+        public static string File_MtgFetchedDb { get; } = Path.Combine(CommonData, "MaGeek.db");
         public static string TempPrecoFolder { get; } = Path.Combine(CommonData, "temp");
 
         public static void InitServerFolders()
@@ -36,6 +37,8 @@ namespace MageekCore.Data
             CheckFolder(UserData);
             CheckFolder(CommonData);
             CheckFolder(TempPrecoFolder);
+            Logger.Log("...?");
+            CheckFolder(SetIcon);//!\\client/server side not decided
             Logger.Log("Done");
         }
 

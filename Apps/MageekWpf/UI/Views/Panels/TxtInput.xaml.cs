@@ -1,7 +1,7 @@
-﻿using MageekFrontWpf.UI.ViewModels.AppWindows;
+﻿using MageekDesktop.UI.ViewModels.AppWindows;
 using PlaziatWpf.Mvvm;
 
-namespace MageekFrontWpf.UI.Views.AppWindows
+namespace MageekDesktop.UI.Views.AppWindows
 {
 
     public partial class TxtInput : BaseUserControl

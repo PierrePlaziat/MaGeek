@@ -3,7 +3,7 @@ using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.Mtg;
 using Newtonsoft.Json.Linq;
-using PlaziatCore;
+using PlaziatTools;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using MageekCore.Data.MtgFetched.Entities;

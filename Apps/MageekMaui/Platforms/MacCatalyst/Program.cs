@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace MageekMaui
+namespace MageekMobile
 {
     public class Program
     {

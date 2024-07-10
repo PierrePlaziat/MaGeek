@@ -1,4 +1,4 @@
-namespace MageekMaui.Controls;
+namespace MageekMobile.Controls;
 
 public partial class PlayerControl : ContentView
 {

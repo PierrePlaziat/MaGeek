@@ -3,19 +3,16 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using MageekCore.Data.Collection.Entities;
 using PlaziatWpf.Services;
-using MageekFrontWpf.MageekTools.DeckTools;
+using MageekDesktop.MageekTools.DeckTools;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Windows.Documents;
 using MageekCore.Data;
 using System;
-using System.Diagnostics.Eventing.Reader;
 using System.Text.RegularExpressions;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
-using PlaziatWpf.Mvvm;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 
-namespace MageekFrontWpf.UI.ViewModels.AppWindows
+namespace MageekDesktop.UI.ViewModels.AppWindows
 {
 
     public partial class TxtInputViewModel : ObservableViewModel

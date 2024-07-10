@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace MaGeek.UI.Controls
+namespace MageekDesktop.UI.Controls
 {
 
     public partial class ManaCost : UserControl

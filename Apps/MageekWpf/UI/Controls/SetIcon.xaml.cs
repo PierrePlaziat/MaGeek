@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using MageekCore.Data;
 
-namespace MaGeek.UI.Controls
+namespace MageekDesktop.UI.Controls
 {
 
     public partial class SetIcon : UserControl

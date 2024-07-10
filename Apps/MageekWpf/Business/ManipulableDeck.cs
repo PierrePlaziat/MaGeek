@@ -9,11 +9,11 @@ using System.Collections.ObjectModel;
 using System.Windows.Media;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Services;
-using MageekFrontWpf.DeckTools;
-using MageekFrontWpf.Framework;
+using MageekDesktop.DeckTools;
+using MageekDesktop.Framework;
 using PlaziatWpf.Services;
 
-namespace MageekFrontWpf.MageekTools.DeckTools
+namespace MageekDesktop.MageekTools.DeckTools
 {
 
     public partial class ManipulableDeck : ObservableObject

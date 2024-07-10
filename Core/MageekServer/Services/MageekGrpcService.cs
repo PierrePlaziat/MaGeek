@@ -3,25 +3,39 @@ using MageekCore.Data;
 using MageekCore.Data.Collection.Entities;
 using MageekCore.Services;
 using MageekProtocol;
-using PlaziatCore;
+using PlaziatTools;
+using PlaziatIdentity;
 
 namespace MageekServer.Services
 {
 
-    public class MageekServerService : MageekProtocolService.MageekProtocolServiceBase
+    public class MageekGrpcService : MageekProtocolService.MageekProtocolServiceBase
     {
 
         private readonly IMageekService mageek;
+        private readonly IUserService userService;
 
-        public MageekServerService(IMageekService mageek)
+        public MageekGrpcService(IMageekService mageek, IUserService userService)
         {
             this.mageek = mageek;
+            this.userService = userService;
         }
-
         public override async Task<Reply_Empty> Handshake(Request_Empty request, ServerCallContext context)
         {
             Logger.Log(context.Peer);
             return new Reply_Empty();
+        }
+
+        public override async Task<Reply_Token> Identify(Request_Identity request, ServerCallContext context)
+        {
+            Logger.Log(context.Peer + " - " + request.User + " - " + request.Pass);
+            string token = userService.IdentifyUser(request.User,request.Pass);
+
+            if (token == null) token = string.Empty;
+            return new Reply_Token()
+            {
+                Token = token,
+            };
         }
 
         public override async Task<Reply_Txt> CardLists_FromDeck(Request_DeckToTxt request, ServerCallContext context)

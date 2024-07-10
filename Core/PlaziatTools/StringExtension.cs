@@ -2,7 +2,7 @@
 using System.Text;
 using System.Xml.Linq;
 
-namespace PlaziatCore
+namespace PlaziatTools
 {
 
     public static class StringExtension
@@ -44,7 +44,18 @@ namespace PlaziatCore
                 .Range(0, str.Length / n)
                 .Select(i => str.Substring(i * n, n));
         }
-        
+
+        public static char[] SubArray(this char[] input, int startIndex, int length)
+        {
+            List<char> result = new List<char>();
+            for (int i = startIndex; i < length; i++)
+            {
+                result.Add(input[i]);
+            }
+
+            return result.ToArray();
+        }
+
         public static bool IsValidUsername(this string str)
         {
             if (string.IsNullOrEmpty(str)) return false;
@@ -61,7 +72,7 @@ namespace PlaziatCore
         
         public static bool IsValidMailAddr(this string str)
         {
-            if (string.IsNullOrEmpty(str)) return false;
+            //if (string.IsNullOrEmpty(str)) return false;
             //TODO
             return true;
         }

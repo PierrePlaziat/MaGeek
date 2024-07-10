@@ -1,4 +1,4 @@
-﻿namespace PlaziatCore
+﻿namespace PlaziatTools
 {
 
     /// <summary>

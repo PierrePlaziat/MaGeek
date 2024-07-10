@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace MageekMaui
+namespace MageekMobile
 {
     [Application]
     public class MainApplication : MauiApplication

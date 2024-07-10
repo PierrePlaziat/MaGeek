@@ -7,9 +7,9 @@ using PlaziatWpf.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 
-namespace MageekFrontWpf.UI.ViewModels.AppWindows
+namespace MageekDesktop.UI.ViewModels.AppWindows
 {
 
     public partial class PrecoListViewModel : 

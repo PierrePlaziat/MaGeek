@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace PlaziatCore
+namespace PlaziatTools
 {
 
     public static class Encryption

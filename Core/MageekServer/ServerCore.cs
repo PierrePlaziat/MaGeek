@@ -1,8 +1,8 @@
-﻿using Grpc.Core;
-using MageekCore.Data;
+﻿using MageekCore.Data;
 using MageekCore.Services;
 using MageekServer.Services;
-using PlaziatCore;
+using PlaziatIdentity;
+using PlaziatTools;
 
 namespace MageekServer
 {
@@ -14,6 +14,7 @@ namespace MageekServer
         {
             builder.Services.AddGrpc();
             builder.Services.AddSingleton<IMageekService, MageekService>();
+            builder.Services.AddSingleton<IUserService, UserService>();
         }
         
         public static void InitAuth(WebApplication app)
@@ -25,16 +26,16 @@ namespace MageekServer
         
         public static async Task InitBusiness(WebApplication app)
         {
+            Logger.Log("Initializing...");
             var mageek = app.Services.GetService<IMageekService>();
             var initReturn = await mageek.Server_Initialize();
-            Logger.Log("MAGEEK : Initializing");
             if (initReturn == MageekInitReturn.Outdated)
             {
-                Logger.Log("MAGEEK : Updating");
+                Logger.Log("Updating...");
                 _ = mageek.Server_Update().Result;
             }
-            Logger.Log("MAGEEK : Ready");
-            app.MapGrpcService<MageekServerService>(); // Service endpoint
+            Logger.Log("Done");
+            app.MapGrpcService<MageekGrpcService>();
         }
 
     }

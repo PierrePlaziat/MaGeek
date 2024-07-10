@@ -1,7 +1,7 @@
-﻿using MageekFrontWpf.UI.ViewModels;
+﻿using MageekDesktop.UI.ViewModels;
 using PlaziatWpf.Mvvm;
 
-namespace MageekFrontWpf.UI.Views.AppPanels
+namespace MageekDesktop.UI.Views.AppPanels
 {
 
     public partial class DeckTable : BaseUserControl

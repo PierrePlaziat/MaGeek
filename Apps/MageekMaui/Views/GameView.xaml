@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MageekMaui.Views.GameView"
-             xmlns:vm="clr-namespace:MageekMaui.ViewModels"
-             xmlns:control="clr-namespace:MageekMaui.Controls"
+             x:Class="MageekMobile.Views.GameView"
+             xmlns:vm="clr-namespace:MageekMobile.ViewModels"
+             xmlns:control="clr-namespace:MageekMobile.Controls"
              x:DataType="vm:GameViewModel"
              Title="Game"
              Background="LightGray">

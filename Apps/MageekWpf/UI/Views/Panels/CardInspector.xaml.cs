@@ -1,4 +1,4 @@
-﻿using MageekFrontWpf.UI.ViewModels.AppPanels;
+﻿using MageekDesktop.UI.ViewModels.AppPanels;
 using MageekCore.Data.Collection.Entities;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +9,7 @@ using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using PlaziatWpf.Services;
 
-namespace MageekFrontWpf.UI.Views.AppPanels
+namespace MageekDesktop.UI.Views.AppPanels
 {
 
     public partial class CardInspector : BaseUserControl

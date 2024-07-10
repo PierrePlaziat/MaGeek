@@ -4,10 +4,10 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Markup;
 
-namespace PlaziatWpf.Controls
+namespace PlaziatWpf.Controls.TextBoxHelpers
 {
 
-    public class RichTextBoxHelper : DependencyObject
+    public class RichTextBoxBinder : DependencyObject
     {
         private static List<Guid> _recursionProtection = new List<Guid>();
 
@@ -29,7 +29,7 @@ namespace PlaziatWpf.Controls
         public static readonly DependencyProperty DocumentXamlProperty = DependencyProperty.RegisterAttached(
             "DocumentXaml",
             typeof(string),
-            typeof(RichTextBoxHelper),
+            typeof(RichTextBoxBinder),
             new FrameworkPropertyMetadata(
                 "",
                 FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
@@ -76,6 +76,7 @@ namespace PlaziatWpf.Controls
                 }
             )
         );
+
     }
 
 }

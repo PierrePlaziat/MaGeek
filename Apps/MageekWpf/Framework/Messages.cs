@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using System;
 
-namespace MageekFrontWpf.Framework
+namespace MageekDesktop.Framework
 {
 
     public class LaunchAppMessage : ValueChangedMessage<string>

@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace MageekMaui
+namespace MageekMobile
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

@@ -1,4 +1,4 @@
-namespace MageekMaui;
+namespace MageekMobile;
 
 public partial class NewPage1 : ShellContent
 {

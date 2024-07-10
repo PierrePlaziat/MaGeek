@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Net.Sockets;
 
-namespace PlaziatCore
+namespace PlaziatTools
 {
 
     /// <summary>
@@ -29,7 +29,6 @@ namespace PlaziatCore
             try
             {
                 bool done = false;
-                int i;
                 byte[] bytes = new byte[1];
                 await stream.ReadAsync(bytes, 0, 1);
                 if (Encoding.ASCII.GetString(bytes, 0, 1) == "\x02")

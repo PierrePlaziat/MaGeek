@@ -1,4 +1,4 @@
-﻿namespace PlaziatCore.Data
+﻿namespace PlaziatTools.Data
 {
 
     public class Folders

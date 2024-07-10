@@ -6,7 +6,7 @@ using MageekCore.Data.Mtg;
 using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.Collection;
 using MageekCore.Data.Collection.Entities;
-using PlaziatCore;
+using PlaziatTools;
 using MageekCore.Data.MtgFetched.Entities;
 using MageekCore.Data.MtgFetched;
 
@@ -52,7 +52,7 @@ namespace MageekCore.Services
             try
             {
                 Folders.InitServerFolders();
-                if (!File.Exists(Folders.File_CollectionDB)) mtgFetched.CreateDb();
+                if (!File.Exists(Folders.File_MtgFetchedDb)) mtgFetched.CreateDb();
                 bool needsUpdate = await mtgjson.CheckUpdate();
                 return needsUpdate ? MageekInitReturn.Outdated : MageekInitReturn.UpToDate;
             }

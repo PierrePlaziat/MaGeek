@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Maui;
 using MageekClient.Services;
 using MageekCore.Services;
-using MageekMaui.ViewModels;
-using MageekMaui.Views;
+using MageekMobile.ViewModels;
+using MageekMobile.Views;
 using Microsoft.Extensions.Logging;
 
-namespace MageekMaui
+namespace MageekMobile
 {
     public static class MauiProgram
     {

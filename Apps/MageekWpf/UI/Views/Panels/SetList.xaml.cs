@@ -2,10 +2,10 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using MageekCore.Data.Mtg.Entities;
-using MageekFrontWpf.UI.ViewModels.AppPanels;
+using MageekDesktop.UI.ViewModels.AppPanels;
 using PlaziatWpf.Mvvm;
 
-namespace MageekFrontWpf.UI.Views.AppPanels
+namespace MageekDesktop.UI.Views.AppPanels
 {
     public partial class SetList : BaseUserControl
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using PlaziatWpf.Docking;
 
-namespace MageekFrontWpf.Framework
+namespace MageekDesktop.Framework
 {
 
     public class DocumentArguments : AbstractDocumentArguments

@@ -1,5 +1,5 @@
 ﻿using MageekCore.Data.Mtg;
-using PlaziatCore;
+using PlaziatTools;
 using ScryfallApi.Client.Models;
 using System.Text.Json;
 

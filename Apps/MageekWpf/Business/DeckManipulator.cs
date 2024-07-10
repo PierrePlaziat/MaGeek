@@ -4,16 +4,16 @@ using MageekCore.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
-using PlaziatCore;
+using PlaziatTools;
 using System.Windows.Media;
 using System.Windows;
 using System.Linq;
 using System.Collections.ObjectModel;
 using MageekCore.Services;
-using MageekFrontWpf.MageekTools.DeckTools;
+using MageekDesktop.MageekTools.DeckTools;
 using PlaziatWpf.Services;
 
-namespace MageekFrontWpf.DeckTools
+namespace MageekDesktop.DeckTools
 {
 
     public class DeckManipulator

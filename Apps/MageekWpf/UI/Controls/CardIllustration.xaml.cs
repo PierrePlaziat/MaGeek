@@ -7,9 +7,9 @@ using System.Windows.Media.Imaging;
 using System;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
-using PlaziatCore;
+using PlaziatTools;
 
-namespace MaGeek.UI.Controls
+namespace MageekDesktop.UI.Controls
 {
 
     public partial class CardIllustration : BaseUserControl

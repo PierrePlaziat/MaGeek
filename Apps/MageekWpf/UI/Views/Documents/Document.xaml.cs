@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using MageekFrontWpf.UI.ViewModels;
+using MageekDesktop.UI.ViewModels;
 using PlaziatWpf.Mvvm;
 using PlaziatWpf.Docking;
 using System;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 
-namespace MageekFrontWpf.UI.Views
+namespace MageekDesktop.UI.Views
 {
 
     public partial class Document : BaseUserControl, IDocument

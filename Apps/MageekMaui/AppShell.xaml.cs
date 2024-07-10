@@ -1,6 +1,6 @@
-﻿using MageekMaui.Views;
+﻿using MageekMobile.Views;
 
-namespace MageekMaui
+namespace MageekMobile
 {
 
     public partial class AppShell : Shell

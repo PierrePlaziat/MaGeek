@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows;
-using MageekFrontWpf.UI.ViewModels.Windows;
+using MageekDesktop.UI.ViewModels.Windows;
 using PlaziatWpf.Mvvm;
 
-namespace MageekFrontWpf.UI.Views.AppWindows
+namespace MageekDesktop.UI.Views.AppWindows
 {
 
     public partial class MainWindow : BaseWindow

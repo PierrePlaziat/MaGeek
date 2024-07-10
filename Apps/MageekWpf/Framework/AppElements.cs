@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using PlaziatWpf.Services;
-using MageekFrontWpf.UI.ViewModels.AppPanels;
-using MageekFrontWpf.UI.ViewModels.AppWindows;
-using MageekFrontWpf.UI.Views.AppWindows;
-using MageekFrontWpf.UI.Views.AppPanels;
-using PlaziatCore;
-using MageekFrontWpf.UI.ViewModels.Windows;
+using MageekDesktop.UI.ViewModels.AppPanels;
+using MageekDesktop.UI.ViewModels.AppWindows;
+using MageekDesktop.UI.Views.AppWindows;
+using MageekDesktop.UI.Views.AppPanels;
+using PlaziatTools;
+using MageekDesktop.UI.ViewModels.Windows;
 using PlaziatWpf.Mvvm;
 
-namespace MageekFrontWpf.Framework
+namespace MageekDesktop.Framework
 {
 
     public enum AppWindowEnum

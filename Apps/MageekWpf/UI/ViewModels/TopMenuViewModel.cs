@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using PlaziatWpf.Services;
-using PlaziatCore;
+using PlaziatTools;
 using System;
-using MageekFrontWpf.Framework;
+using MageekDesktop.Framework;
 
-namespace MageekFrontWpf.UI.ViewModels
+namespace MageekDesktop.UI.ViewModels
 {
     public partial class TopMenuViewModel
     {

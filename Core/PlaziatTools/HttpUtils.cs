@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace PlaziatCore
+namespace PlaziatTools
 {
 
     /// <summary>

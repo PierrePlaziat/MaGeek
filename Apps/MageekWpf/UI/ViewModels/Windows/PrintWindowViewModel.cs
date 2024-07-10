@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using MaGeek.UI.Controls;
 using MageekCore.Data.Collection.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,8 +6,9 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using MageekDesktop.UI.Controls;
 
-namespace MageekFrontWpf.UI.ViewModels.AppWindows
+namespace MageekDesktop.UI.ViewModels.AppWindows
 {
 
     public partial class PrintWindowViewModel : ObservableViewModel

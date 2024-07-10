@@ -4,7 +4,7 @@ using System.Windows.Media.Imaging;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 
-namespace MaGeek.UI.Controls
+namespace MageekDesktop.UI.Controls
 {
     /// <summary>
     /// Logique d'interaction pour PrintingPage.xaml
