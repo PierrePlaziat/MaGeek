@@ -53,7 +53,7 @@ namespace MageekClient.Services
                 Logger.Log("Identifying...");
                 var result = await mageekClient.IdentifyAsync(new Request_Identity()
                 {
-                    Pass = Encryption.Hash(pass),
+                    Pass = "",//Encryption.Hash(pass),
                     User = user,
                 });
                 if (string.IsNullOrEmpty(result.Token))

@@ -29,7 +29,7 @@ namespace MageekServer.Services
         public override async Task<Reply_Token> Identify(Request_Identity request, ServerCallContext context)
         {
             Logger.Log(context.Peer + " - " + request.User + " - " + request.Pass);
-            string token = userService.IdentifyUser(request.User,request.Pass);
+            string token = await userService.AuthenticateUserAsync(request.User,request.Pass);
 
             if (token == null) token = string.Empty;
             return new Reply_Token()

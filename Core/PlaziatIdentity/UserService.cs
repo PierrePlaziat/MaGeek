@@ -1,101 +1,96 @@
-﻿using PlaziatTools;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
     
 namespace PlaziatIdentity
 {
-    public class UserService : IUserService
+
+    public interface IUserService
     {
 
-        private UserDbManager db = new UserDbManager(); 
+        Task<bool> RegisterUserAsync(string username, string password);
+        Task<string?> AuthenticateUserAsync(string username, string password);
+        Task<bool> ValidateTokenAsync(string token);
 
-        public bool RegisterUser(string name, string pass)
+    }
+
+    public class UserService : IUserService
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IConfiguration _configuration;
+
+        public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration)
         {
-            if (!name.IsValidUsername()) return false;
-            if (!pass.IsValidPassword()) return false;
-            //if (!mail.IsValidMailAddr()) return false;
-            Logger.Log("Valid credentials...");
-            using (var context = db.GetContext())
-            {
-                if (context.Users.Any(user => user.Name == name))
-                {
-                    Logger.Log("User already exists");
-                    return false;
-                }
-                Logger.Log("Registering user...");
-                //if (context.Users.Any(user => user.Mail == mail)) return false;
-                context.Users.Add(new User { Name = name, Password = PlaziatTools.Encryption.Hash(pass) });
-                context.SaveChanges();
-            }
-            using (var context = db.GetContext())
-            {
-                if (context.Users.Any(user => user.Name == name))
-                {
-                    Logger.Log("Success");
-                    return true;
-                }
-                Logger.Log("Failure",LogLevels.Error);
-                return true;
-            }
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _configuration = configuration;
         }
 
-        public string? IdentifyUser(string name, string pass)
+        public async Task<bool> RegisterUserAsync(string username, string password)
         {
-            if (!name.IsValidUsername()) return null;
-            if (!pass.IsValidPassword()) return null;
-            User? user;
-            using (var context = db.GetContext())
+            var user = new ApplicationUser { UserName = username };
+            var result = await _userManager.CreateAsync(user, password);
+
+            return result.Succeeded;
+        }
+
+        public async Task<string?> AuthenticateUserAsync(string username, string password)
+        {
+            var result = await _signInManager.PasswordSignInAsync(username, password, false, false);
+
+            if (!result.Succeeded)
             {
-               user = context.Users.Where(x => x.Name == name).FirstOrDefault();
-            }
-            if (user == null)  RegisterUser(name, pass);
-            using (var context = db.GetContext())
-            {
-                user = context.Users.Where(x => x.Name == name).FirstOrDefault();
-            }
-            if (user == null)
-            {
-                Logger.Log("User doesnt exists");
                 return null;
             }
-            if (PlaziatTools.Encryption.Hash(user.Password) != pass)
+
+            var user = await _userManager.FindByNameAsync(username);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Logger.Log("Wrong password");
-                return null;
-            }
-            Logger.Log("Success");
-            return new Token(user).Value;
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(30),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"]
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
 
-        public bool CheckToken(string token)
+        public async Task<bool> ValidateTokenAsync(string token)
         {
-            return new Token(token).IsValid();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidAudience = _configuration["Jwt:Audience"],
+                    ValidateLifetime = true
+                }, out SecurityToken validatedToken);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
-
-        class Token
-        {
-
-            string value;
-            public string Value
-            {
-                get { return value; }
-            }
-
-            public Token(string value)
-            {
-                this.value = value;
-            }
-
-            public Token(User user)
-            {
-                value = PlaziatTools.Encryption.Encrypt(user.Name + '|' + DateTime.Now.AddMinutes(2).ToString());
-            }
-
-            public bool IsValid()
-            {
-                DateTime limit = DateTime.Parse(PlaziatTools.Encryption.Decrypt(value).Split('|')[1]);
-                return DateTime.Now > limit;
-            }
-        }
-
     }
 
 }
