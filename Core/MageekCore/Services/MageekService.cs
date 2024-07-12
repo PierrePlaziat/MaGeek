@@ -46,6 +46,16 @@ namespace MageekCore.Services
             return MageekConnectReturn.NotImplementedForServer;
         }
 
+        public async Task<MageekConnectReturn> Client_Register(string user, string pass)
+        {
+            return MageekConnectReturn.NotImplementedForServer;
+        }
+
+        public async Task<MageekConnectReturn> Client_Authentify(string user, string pass)
+        {
+            return MageekConnectReturn.NotImplementedForServer;
+        }
+
         public async Task<MageekInitReturn> Server_Initialize()
         {
             Logger.Log("Init");

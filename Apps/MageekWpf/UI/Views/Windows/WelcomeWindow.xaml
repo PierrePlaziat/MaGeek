@@ -120,21 +120,37 @@
                     </TextBox>
 
                 </StackPanel>
-                
-                <Button Grid.Row="3"
-                        Command="{Binding ConnectCommand}"
+
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="3">
+                    <Button 
+                        Command="{Binding RegisterCommand}"
                         CommandParameter=""
-                        Content="Connect"
+                        Content="Register"
                         Margin="5"
                         Background="#000">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius"
-                                    Value="10" />
-                        </Style>
-                    </Button.Resources>
-                </Button>
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius"
+                                        Value="10" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button Command="{Binding ConnectCommand}"
+                            CommandParameter=""
+                            Content="Connect"
+                            Margin="5"
+                            Background="#000">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius"
+                                        Value="10" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
 
+                </StackPanel>
+                
             </Grid>
 
             <controls:BusyIndicator HorizontalAlignment="Stretch"

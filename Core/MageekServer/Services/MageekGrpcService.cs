@@ -20,17 +20,28 @@ namespace MageekServer.Services
             this.mageek = mageek;
             this.userService = userService;
         }
-        public override async Task<Reply_Empty> Handshake(Request_Empty request, ServerCallContext context)
+        public override async Task<Reply_Empty> Users_Handshake(Request_Empty request, ServerCallContext context)
         {
             Logger.Log(context.Peer);
             return new Reply_Empty();
         }
 
-        public override async Task<Reply_Token> Identify(Request_Identity request, ServerCallContext context)
+        public override async Task<Reply_Token> Users_Register(Request_Identity request, ServerCallContext context)
+        {
+            Logger.Log(context.Peer + " - " + request.User + " - " + request.Pass);
+            string token = (await userService.RegisterUserAsync(request.User,request.Pass)) ?
+                "Ok":null;
+            if (token == null) token = string.Empty;
+            return new Reply_Token()
+            {
+                Token = token,
+            };
+        }
+        
+        public override async Task<Reply_Token> Users_Identify(Request_Identity request, ServerCallContext context)
         {
             Logger.Log(context.Peer + " - " + request.User + " - " + request.Pass);
             string token = await userService.AuthenticateUserAsync(request.User,request.Pass);
-
             if (token == null) token = string.Empty;
             return new Reply_Token()
             {

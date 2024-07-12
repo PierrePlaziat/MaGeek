@@ -40,8 +40,9 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
         private void RetrieveRegisteredCredentials()
         {
             IsLoading = true;
-            Input_address = "http://127.0.0.1:5000/";// Unraid:"http://192.168.1.10:55666/";
+            Input_address = "https://127.0.0.1:5000/";// Unraid:"http://192.168.1.10:55666/";
             Input_user = "Pierre";
+            Input_pass = "p";
             IsLoading = false;
         }
 
@@ -61,6 +62,24 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
                 App.Launch(Input_user);
             }
             else Message = "Couldnt connect";
+            IsLoading = false;
+        }
+        
+        [RelayCommand]
+        public async Task Register()
+        {
+            IsLoading = true;
+            Message = "Registering";
+            var retour = await mageek.Client_Register(
+                Input_user, 
+                Input_pass
+            );
+            if (retour == MageekConnectReturn.Success)
+            {
+                Message = "Registered";
+                await Connect();
+            }
+            else Message = "Couldnt register";
             IsLoading = false;
         }
 

@@ -49,20 +49,8 @@ namespace MageekClient.Services
                     }
                 }
                 Logger.Log("Handshake...");
-                var call = await mageekClient.HandshakeAsync(new Request_Empty());
-                Logger.Log("Identifying...");
-                var result = await mageekClient.IdentifyAsync(new Request_Identity()
-                {
-                    Pass = "",//Encryption.Hash(pass),
-                    User = user,
-                });
-                if (string.IsNullOrEmpty(result.Token))
-                {
-                    return MageekConnectReturn.Failure;
-                }
-                Logger.Log("token : " + result.Token);
+                var call = await mageekClient.Users_HandshakeAsync(new Request_Empty());
                 connected = true;
-                this.token = result.Token;
                 return MageekConnectReturn.Success;
             }
             catch (Exception e)
@@ -70,12 +58,7 @@ namespace MageekClient.Services
                 Logger.Log(e, inner: true);
                 return MageekConnectReturn.Failure;
             }
-            finally
-            {
-                Logger.Log("Done, connected: " + connected);
-            }
         }
-        
         private async Task<GrpcChannel> Client_Connect_Method1(string serverAddress)
         {
             GrpcChannel channel = null;
@@ -103,7 +86,6 @@ namespace MageekClient.Services
                 return null;
             }
         }
-
         private async Task<GrpcChannel> Client_Connect_Method2(string serverAddress)
         {
             try
@@ -130,6 +112,57 @@ namespace MageekClient.Services
             {
                 Logger.Log(e);
                 return null;
+            }
+        }
+
+        public async Task<MageekConnectReturn> Client_Register(string user, string pass)
+        {
+            if (!connected) return MageekConnectReturn.Failure;
+            try
+            {
+                Logger.Log("Registering...");
+                var result = await mageekClient.Users_RegisterAsync(new Request_Identity()
+                {
+                    Pass = pass,
+                    User = user,
+                });
+                if (string.IsNullOrEmpty(result.Token))
+                {
+                    return MageekConnectReturn.Failure;
+                }
+                Logger.Log("token : " + result.Token);
+                return MageekConnectReturn.Success;
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e, inner: true);
+                return MageekConnectReturn.Failure;
+            }
+        }
+
+        public async Task<MageekConnectReturn> Client_Authentify(string user, string pass)
+        {
+            if (!connected) return MageekConnectReturn.Failure;
+            try
+            {
+                Logger.Log("Identifying...");
+                var result = await mageekClient.Users_IdentifyAsync(new Request_Identity()
+                {
+                    Pass = pass,
+                    User = user,
+                });
+                if (string.IsNullOrEmpty(result.Token))
+                {
+                    return MageekConnectReturn.Failure;
+                }
+                Logger.Log("token : " + result.Token);
+                this.token = result.Token;
+                return MageekConnectReturn.Success;
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e, inner: true);
+                return MageekConnectReturn.Failure;
             }
         }
 

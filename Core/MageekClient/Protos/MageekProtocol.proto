@@ -8,9 +8,9 @@ package MageekProtocolPackage;
 
 service MageekProtocolService 
 {
-        rpc Handshake (Request_Empty) returns (Reply_Empty);
-    rpc Identify (Request_Identity) returns (Reply_Token);
-
+    rpc Users_Handshake (Request_Empty) returns (Reply_Empty);
+    rpc Users_Register (Request_Identity) returns (Reply_Token);
+    rpc Users_Identify (Request_Identity) returns (Reply_Token);
 	rpc Cards_Search (Request_CardSearch) returns (Reply_SearchedCardList);
 	rpc Cards_UuidsForGivenCardName (Request_CardName) returns (Reply_ListCardUuid);
 	rpc Cards_NameForGivenCardUuid (Request_CardUuid) returns (Reply_CardName);
@@ -56,7 +56,7 @@ message Request_Identity{
 	string pass = 2;
 }
 message Reply_Token{
-	string token = 1;
+	google.protobuf.StringValue token = 1;
 }
 
 message Request_CardSearch{

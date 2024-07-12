@@ -23,6 +23,20 @@ namespace MageekCore.Services
         /// <param name="serverAddress">formatted as "ip:port"</param>
         /// <returns>Comprehensive enum</returns>
         Task<MageekConnectReturn> Client_Connect(string user, string pass, string serverAddress);
+        
+        /// <summary>
+        /// Register a new user
+        /// </summary>
+        /// <param name="serverAddress">formatted as "ip:port"</param>
+        /// <returns>Comprehensive enum</returns>
+        Task<MageekConnectReturn> Client_Register(string user, string pass);
+        
+        /// <summary>
+        /// Register a new user
+        /// </summary>
+        /// <param name="serverAddress">formatted as "ip:port"</param>
+        /// <returns>Comprehensive enum</returns>
+        Task<MageekConnectReturn> Client_Authentify(string user, string pass);
 
         /// <summary>
         /// Setup system for server abilities

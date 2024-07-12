@@ -7,17 +7,34 @@ using MageekServer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using PlaziatIdentity;
 using MageekCore.Services;
+using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>  options.UseSqlite(
-        builder.Configuration.GetConnectionString("Data Source = " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PlaziatIdentity\\Users.db")
-    ));
+//////////
+// INIT //
+//////////
 
+// Grpc 
+// ssl http2 sole endpoint
+builder.Services.AddGrpc(options =>
+{
+    options.EnableDetailedErrors = true;
+});
+builder.WebHost.ConfigureKestrel(options => {
+    options.ListenLocalhost(5000, listenOptions => {
+        listenOptions.Protocols = HttpProtocols.Http2;
+        listenOptions.UseHttps("C:/certificates/mageek.pfx", "pwd666");
+    });
+});
+// Identity framework
+// over ef sqlite with jwt auth
+using var dbConn = new SqliteConnection("Data Source = " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PlaziatIdentity\\Users.db");
+await dbConn.OpenAsync();
+builder.Services.AddDbContext<UsersDbContext>(options =>  options.UseSqlite(dbConn));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddEntityFrameworkStores<UsersDbContext>()
     .AddDefaultTokenProviders();
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => {
         options.TokenValidationParameters = new TokenValidationParameters {
@@ -30,32 +47,34 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
-
 builder.Services.AddAuthorization(options => {
         options.AddPolicy("AdminPolicy", policy => policy.RequireClaim("AdminClaim", "Admin"));
     });
-
-
-builder.Services.AddGrpc();
-
-builder.WebHost.ConfigureKestrel(options => {
-    options.ListenLocalhost(5000, listenOptions => {
-        listenOptions.Protocols = HttpProtocols.Http2;
-        listenOptions.UseHttps("C:/certificates/mageek.pfx", "pwd666");
-    });
-});
-
-builder.Services.AddSingleton<IMageekService, MageekService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-var app = builder.Build();
+//////////////
+// Business //
+//////////////
 
+builder.Services.AddSingleton<IMageekService, MageekService>();
+
+////////////
+// Launch //
+////////////
+
+// Build
+var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
-
+// Db migration
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<UsersDbContext>();
+    dbContext.Database.EnsureCreated();
+    dbContext.Database.Migrate();
+}
+await dbConn.CloseAsync();
+// Go
 await Business.InitBusiness(app);
-
-//app.MapGrpcService<YourGrpcService>().RequireAuthorization();
-app.MapGet("/", () => "Hello World!");
-
 app.Run();
