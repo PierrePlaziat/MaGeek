@@ -5,6 +5,8 @@ using MageekCore.Services;
 using MageekProtocol;
 using PlaziatTools;
 using PlaziatIdentity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace MageekServer.Services
 {
@@ -20,6 +22,7 @@ namespace MageekServer.Services
             this.mageek = mageek;
             this.userService = userService;
         }
+
         public override async Task<Reply_Empty> Users_Handshake(Request_Empty request, ServerCallContext context)
         {
             Logger.Log(context.Peer);
@@ -28,20 +31,23 @@ namespace MageekServer.Services
 
         public override async Task<Reply_Token> Users_Register(Request_Identity request, ServerCallContext context)
         {
-            Logger.Log(context.Peer + " - " + request.User + " - " + request.Pass);
-            string token = (await userService.RegisterUserAsync(request.User,request.Pass)) ?
-                "Ok":null;
-            if (token == null) token = string.Empty;
-            return new Reply_Token()
+            Logger.Log($"Registering user: {request.User}");
+            var result = await userService.RegisterUser(request.User, request.Pass);
+            if (!result.Succeeded)
             {
-                Token = token,
-            };
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                Logger.Log($"User registration failed: {errors}");
+                return new Reply_Token { Token = "false" };
+            }
+
+            Logger.Log($"User registered: {request.User}");
+            return new Reply_Token { Token = "true" };
         }
         
         public override async Task<Reply_Token> Users_Identify(Request_Identity request, ServerCallContext context)
         {
             Logger.Log(context.Peer + " - " + request.User + " - " + request.Pass);
-            string token = await userService.AuthenticateUserAsync(request.User,request.Pass);
+            string token = await userService.AuthenticateUser(request.User,request.Pass);
             if (token == null) token = string.Empty;
             return new Reply_Token()
             {
@@ -49,6 +55,7 @@ namespace MageekServer.Services
             };
         }
 
+        [Authorize]
         public override async Task<Reply_Txt> CardLists_FromDeck(Request_DeckToTxt request, ServerCallContext context)
         {
             var item = await mageek.CardLists_FromDeck(request.User, request.DeckId, request.WithSetCode);
@@ -58,6 +65,7 @@ namespace MageekServer.Services
             };
         }
 
+        [Authorize]
         public override async Task<Reply_TxtImportResult> CardLists_Parse(Request_Txt request, ServerCallContext context)
         {
             var data = await mageek.CardLists_Parse(request.Input);
@@ -77,6 +85,7 @@ namespace MageekServer.Services
             return reply;
         }
 
+        [Authorize]
         public override async Task<Reply_CardData> Cards_GetData(Request_CardUuid request, ServerCallContext context)
         {
             var item = await mageek.Cards_GetData(request.CardUuid);
@@ -161,6 +170,7 @@ namespace MageekServer.Services
             };
         }
 
+        [Authorize]
         public override async Task<Reply_Uri> Cards_GetIllustration(Request_CardIllu request, ServerCallContext context)
         {
             var item = await mageek.Cards_GetIllustration(request.CardUuid, (CardImageFormat)request.Format);
@@ -170,6 +180,7 @@ namespace MageekServer.Services
             };
         }
 
+        [Authorize]
         public override async Task<Reply_CardLegalities> Cards_GetLegalities(Request_CardUuid request, ServerCallContext context)
         {
             var item = await mageek.Cards_GetLegalities(request.CardUuid);
@@ -201,6 +212,7 @@ namespace MageekServer.Services
             };
         }
 
+        [Authorize]
         public override async Task<Reply_PriceData> Cards_GetPrice(Request_CardUuid request, ServerCallContext context)
         {
             var item = await mageek.Cards_GetPrice(request.CardUuid);
@@ -214,6 +226,7 @@ namespace MageekServer.Services
             };
         }
 
+        [Authorize]
         public override async Task<Reply_CardRelations> Cards_GetRelations(Request_CardUuid request, ServerCallContext context)
         {
             var data = await mageek.Cards_GetRelations(request.CardUuid);
@@ -228,6 +241,7 @@ namespace MageekServer.Services
             return reply;
         }
 
+        [Authorize]
         public override async Task<Reply_CardRulings> Cards_GetRulings(Request_CardUuid request, ServerCallContext context)
         {
             var data = await mageek.Cards_GetRulings(request.CardUuid);
@@ -242,6 +256,7 @@ namespace MageekServer.Services
             return reply;
         }
 
+        [Authorize]
         public override async Task<Reply_CardTranslation> Cards_GetTranslation(Request_CardTranslation request, ServerCallContext context)
         {
             var item = await mageek.Cards_GetTranslation(request.CardUuid, request.Lang);
@@ -258,6 +273,7 @@ namespace MageekServer.Services
             };
         }
 
+        [Authorize]
         public override async Task<Reply_CardName> Cards_NameForGivenCardUuid(Request_CardUuid request, ServerCallContext context)
         {
             var item = await mageek.Cards_NameForGivenCardUuid(request.CardUuid);
@@ -267,6 +283,7 @@ namespace MageekServer.Services
             };
         }
 
+        [Authorize]
         public override async Task<Reply_SearchedCardList> Cards_Search(Request_CardSearch request, ServerCallContext context)
         {
             var data = await mageek.Cards_Search(request.CardName, request.Lang, request.Page, request.PageSize, request.CardType, request.Keyword, request.Text, request.Color, request.Tag, request.OnlyGot, request.ColorisOr);
@@ -281,6 +298,7 @@ namespace MageekServer.Services
             return reply;
         }
 
+        [Authorize]
         public override async Task<Reply_ListCardUuid> Cards_UuidsForGivenCardName(Request_CardName request, ServerCallContext context)
         {
             var item = await mageek.Cards_UuidsForGivenCardName(request.CardName);
@@ -289,6 +307,7 @@ namespace MageekServer.Services
             return reply;
         }
 
+        [Authorize]
         public override async Task<Reply_ListCardUuid> Cards_UuidsForGivenCardUuid(Request_CardUuid request, ServerCallContext context)
         {
             var item = await mageek.Cards_UuidsForGivenCardUuid(request.CardUuid);
@@ -297,12 +316,14 @@ namespace MageekServer.Services
             return reply;
         }
 
+        [Authorize]
         public override async Task<Reply_Empty> Collec_Move(Request_CollecMove request, ServerCallContext context)
         {
             await mageek.Collec_Move(request.User, request.CardUuid, request.Quantity);
             return new Reply_Empty();
         }
 
+        [Authorize]
         public override async Task<Reply_Quantity> Collec_OwnedCombined(Request_CardNameUser request, ServerCallContext context)
         {
             var item = await mageek.Collec_OwnedCombined(request.User, request.CardName);
@@ -312,6 +333,7 @@ namespace MageekServer.Services
             };
         }
 
+        [Authorize]
         public override async Task<Reply_Quantity> Collec_OwnedVariant(Request_CardUuidUser request, ServerCallContext context)
         {
             var item = await mageek.Collec_OwnedVariant(request.User, request.CardUuid);
@@ -321,12 +343,16 @@ namespace MageekServer.Services
             };
         }
 
+
+        [Authorize]
         public override async Task<Reply_Empty> Collec_SetFavCardVariant(Request_Fav request, ServerCallContext context)
         {
             await mageek.Collec_SetFavCardVariant(request.User, request.CardName, request.CardUuid);
             return new Reply_Empty();
         }
 
+
+        [Authorize]
         public override async Task<Reply_Quantity> Collec_TotalDifferentExisting(Request_combinedVariant request, ServerCallContext context)
         {
             var item = await mageek.Collec_TotalDifferentExisting(request.Combined);
@@ -336,6 +362,8 @@ namespace MageekServer.Services
             };
         }
 
+
+        [Authorize]
         public override async Task<Reply_Quantity> Collec_TotalDifferentOwned(Request_combinedVariant request, ServerCallContext context)
         {
             var item = await mageek.Collec_TotalDifferentOwned(request.User, request.Combined);
@@ -345,6 +373,8 @@ namespace MageekServer.Services
             };
         }
 
+
+        [Authorize]
         public override async Task<Reply_Quantity> Collec_TotalOwned(Request_User request, ServerCallContext context)
         {
             var item = await mageek.Collec_TotalOwned(request.User);
@@ -354,6 +384,8 @@ namespace MageekServer.Services
             };
         }
 
+
+        [Authorize]
         public override async Task<Reply_DeckList> Decks_All(Request_User request, ServerCallContext context)
         {
             var data = await mageek.Decks_All(request.User);
@@ -370,6 +402,8 @@ namespace MageekServer.Services
             return reply;
         }
 
+
+        [Authorize]
         public override async Task<Reply_DeckContent> Decks_Content(Request_DeckId request, ServerCallContext context)
         {
             var data = await mageek.Decks_Content(request.User, request.DeckId);
@@ -385,6 +419,8 @@ namespace MageekServer.Services
             return reply;
         }
 
+
+        [Authorize]
         public override async Task<Reply_Empty> Decks_Create(Request_CreateDeck request, ServerCallContext context)
         {
             var lines = new List<DeckCard>();
@@ -402,18 +438,24 @@ namespace MageekServer.Services
             return new Reply_Empty();
         }
 
+
+        [Authorize]
         public override async Task<Reply_Empty> Decks_Delete(Request_DeckId request, ServerCallContext context)
         {
             await mageek.Decks_Delete(request.User, request.DeckId);
             return new Reply_Empty();
         }
 
+
+        [Authorize]
         public override async Task<Reply_Empty> Decks_Duplicate(Request_DeckId request, ServerCallContext context)
         {
             await mageek.Decks_Duplicate(request.User, request.DeckId);
             return new Reply_Empty();
         }
 
+
+        [Authorize]
         public override async Task<Reply_Deck> Decks_Get(Request_DeckId request, ServerCallContext context)
         {
             var item = await mageek.Decks_Get(request.User, request.DeckId);
@@ -427,6 +469,8 @@ namespace MageekServer.Services
             };
         }
 
+
+        [Authorize]
         public override async Task<Reply_ListPreco> Decks_Precos(Request_Empty request, ServerCallContext context)
         {
             var data = await mageek.Decks_Precos();
@@ -477,12 +521,16 @@ namespace MageekServer.Services
             return reply;
         }
 
+
+        [Authorize]
         public override async Task<Reply_Empty> Decks_Rename(Request_RenameDeck request, ServerCallContext context)
         {
             await mageek.Decks_Rename(request.User, request.DeckId, request.Title);
             return new Reply_Empty();
         }
 
+
+        [Authorize]
         public override async Task<Reply_Empty> Decks_Save(Request_SaveDeck request, ServerCallContext context)
         {
             Deck deck = new Deck()
@@ -506,6 +554,8 @@ namespace MageekServer.Services
             return new Reply_Empty();
         }
 
+
+        [Authorize]
         public override async Task<Reply_ListSet> Sets_All(Request_Empty request, ServerCallContext context)
         {
             var data = await mageek.Sets_All();
@@ -539,6 +589,8 @@ namespace MageekServer.Services
             return sets;
         }
 
+
+        [Authorize]
         public override async Task<Reply_Percentage> Sets_Completion(Request_SetCompletion request, ServerCallContext context)
         {
             var item = await mageek.Sets_Completion(request.User, request.Code, request.Strict);
@@ -548,6 +600,8 @@ namespace MageekServer.Services
             };
         }
 
+
+        [Authorize]
         public override async Task<Reply_ListCardUuid> Sets_Content(Request_SetCode request, ServerCallContext context)
         {
             var data = await mageek.Sets_Content(request.SetCode);
@@ -556,6 +610,8 @@ namespace MageekServer.Services
             return reply;
         }
 
+
+        [Authorize]
         public override async Task<Reply_Set> Sets_Get(Request_SetCode request, ServerCallContext context)
         {
             var item = await mageek.Sets_Get(request.SetCode);
@@ -585,6 +641,8 @@ namespace MageekServer.Services
             };
         }
 
+
+        [Authorize]
         public override async Task<Reply_TagList> Tags_All(Request_User request, ServerCallContext context)
         {
             var data = await mageek.Tags_All(request.User);
@@ -601,6 +659,8 @@ namespace MageekServer.Services
             return reply;
         }
 
+
+        [Authorize]
         public override async Task<Reply_HasTag> Tags_CardHasTag(Request_CardTag request, ServerCallContext context)
         {
             var item = await mageek.Tags_CardHasTag(request.User, request.CardName, request.Tag);
@@ -610,6 +670,8 @@ namespace MageekServer.Services
             };
         }
 
+
+        [Authorize]
         public override async Task<Reply_TagList> Tags_GetCardTags(Request_CardNameUser request, ServerCallContext context)
         {
             var data = await mageek.Tags_GetCardTags(request.User, request.CardName);
@@ -626,12 +688,16 @@ namespace MageekServer.Services
             return reply;
         }
 
+
+        [Authorize]
         public override async Task<Reply_Empty> Tags_TagCard(Request_CardTag request, ServerCallContext context)
         {
             await mageek.Tags_TagCard(request.User, request.CardName, request.Tag);
             return new Reply_Empty();
         }
 
+
+        [Authorize]
         public override async Task<Reply_Empty> Tags_UntagCard(Request_CardTag request, ServerCallContext context)
         {
             await mageek.Tags_UntagCard(request.User, request.CardName, request.Tag);

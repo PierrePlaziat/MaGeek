@@ -12,6 +12,7 @@ namespace PlaziatWpf.Controls.TextBoxHelpers
             BrushConverter bc = new BrushConverter();
             TextRange tr = new TextRange(box.Document.ContentEnd, box.Document.ContentEnd);
             tr.Text = text;
+            tr.ApplyPropertyValue(TextElement.FontFamilyProperty, "Consolas");
             try
             {
                 tr.ApplyPropertyValue(TextElement.ForegroundProperty, bc.ConvertFromString(color));

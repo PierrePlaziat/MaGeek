@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 
 namespace MageekDesktopServer
@@ -18,7 +17,7 @@ namespace MageekDesktopServer
             ConfigureTrayIcon();
             base.OnStartup(e);
             manager = new ConsoleAppManager("D:\\PROJECTS\\VS\\MaGeek\\Core\\MageekServer\\bin\\Debug\\net8.0\\MageekServer.exe");
-            logWin = new MageekDesktopServer.MainWindow(manager);
+            logWin = new MainWindow(manager);
             manager.ExecuteAsync();
         }
 

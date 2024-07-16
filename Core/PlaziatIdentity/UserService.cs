@@ -12,9 +12,9 @@ namespace PlaziatIdentity
     public interface IUserService
     {
 
-        Task<bool> RegisterUserAsync(string username, string password);
-        Task<string?> AuthenticateUserAsync(string username, string password);
-        Task<bool> ValidateTokenAsync(string token);
+        Task<IdentityResult> RegisterUser(string username, string password);
+        Task<string?> AuthenticateUser(string username, string password);
+        Task<bool> ValidateToken(string token);
 
     }
 
@@ -31,15 +31,14 @@ namespace PlaziatIdentity
             _configuration = configuration;
         }
 
-        public async Task<bool> RegisterUserAsync(string username, string password)
+        public async Task<IdentityResult> RegisterUser(string username, string password)
         {
             var user = new ApplicationUser { UserName = username };
             var result = await _userManager.CreateAsync(user, password);
-
-            return result.Succeeded;
+            return result;
         }
 
-        public async Task<string?> AuthenticateUserAsync(string username, string password)
+        public async Task<string?> AuthenticateUser(string username, string password)
         {
             var result = await _signInManager.PasswordSignInAsync(username, password, false, false);
 
@@ -68,7 +67,7 @@ namespace PlaziatIdentity
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<bool> ValidateTokenAsync(string token)
+        public async Task<bool> ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);

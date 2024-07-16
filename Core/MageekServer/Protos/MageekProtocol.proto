@@ -56,7 +56,7 @@ message Request_Identity{
 	string pass = 2;
 }
 message Reply_Token{
-	string token = 1;
+	google.protobuf.StringValue token = 1;
 }
 
 message Request_CardSearch{

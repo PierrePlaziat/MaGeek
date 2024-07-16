@@ -8,15 +8,12 @@ using PlaziatTools;
 using ScryfallApi.Client.Models;
 using System.Text.Json;
 using MageekCore.Data.MtgFetched.Entities;
-using System.Net;
 
 namespace MageekClient.Services
 {
 
     public class MageekClientService : IMageekService
     {
-
-        #region Connexion
 
         GrpcChannel channel;
         MageekProtocolService.MageekProtocolServiceClient mageekClient;
@@ -25,11 +22,13 @@ namespace MageekClient.Services
         private string token;
         const int timeout = 5;
 
+        #region Connexion
+
         public async Task<MageekConnectReturn> Client_Connect(string user, string pass, string serverAddress)
         {
+            if (connected) return MageekConnectReturn.Success;
             try
             {
-                connected = false;
                 Logger.Log("Established channel...");
                 try
                 {
@@ -123,8 +122,8 @@ namespace MageekClient.Services
                 Logger.Log("Registering...");
                 var result = await mageekClient.Users_RegisterAsync(new Request_Identity()
                 {
-                    Pass = pass,
                     User = user,
+                    Pass = pass,
                 });
                 if (string.IsNullOrEmpty(result.Token))
                 {

@@ -40,7 +40,7 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
         private void RetrieveRegisteredCredentials()
         {
             IsLoading = true;
-            Input_address = "https://127.0.0.1:5000/";// Unraid:"http://192.168.1.10:55666/";
+            Input_address = "https://127.0.0.1:5000/"; // Unraid:"http://192.168.1.10:55666/";
             Input_user = "Pierre";
             Input_pass = "p";
             IsLoading = false;
@@ -51,36 +51,58 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
         {
             IsLoading = true;
             Message = "Connecting";
-            var retour = await mageek.Client_Connect(
+            var success = await mageek.Client_Connect(
                 Input_user, 
                 Input_pass, 
                 Input_address
             );
-            if (retour == MageekConnectReturn.Success)
+            if (success != MageekConnectReturn.Success)
+            {
+                Message = "Couldnt connect";
+                IsLoading = false;
+                return;
+            }
+            Message = "Authenticating";
+            success = await mageek.Client_Authentify(
+                Input_user,
+                Input_pass
+            );
+            if (success == MageekConnectReturn.Success)
             {
                 Message = "Launching";
                 App.Launch(Input_user);
             }
-            else Message = "Couldnt connect";
-            IsLoading = false;
         }
         
         [RelayCommand]
         public async Task Register()
         {
             IsLoading = true;
+            Message = "Connecting";
+            var success = await mageek.Client_Connect(
+                Input_user,
+                Input_pass,
+                Input_address
+            );
+            if (success != MageekConnectReturn.Success)
+            {
+                Message = "Couldnt connect";
+                IsLoading = false;
+                return;
+            }
             Message = "Registering";
             var retour = await mageek.Client_Register(
                 Input_user, 
                 Input_pass
             );
-            if (retour == MageekConnectReturn.Success)
+            if (retour != MageekConnectReturn.Success)
             {
-                Message = "Registered";
-                await Connect();
+                Message = "Couldnt register";
+                IsLoading = false;
+                return;
             }
-            else Message = "Couldnt register";
-            IsLoading = false;
+            Message = "Registered";
+            await Connect();
         }
 
     }
