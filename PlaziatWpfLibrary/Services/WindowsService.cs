@@ -12,37 +12,34 @@ namespace PlaziatWpf.Services
     public class WindowsService
     {
 
-        private List<AppWindow> windows = new();
-        private List<AppTool> tools = new();
+        private List<AppWindow> appWindows = new();
+        private List<AppPanels> appPanels = new();
         private DockingManager dockingManager;
 
-        private string layoutPath;
-
-        public void Init(string layoutPath, DockingManager dockingManager, List<AppWindow> windows, List<AppTool> tools)
+        public void Init(DockingManager dockingManager, List<AppWindow> appWindows, List<AppPanels> appPanels)
         {
-            this.layoutPath = layoutPath;
             this.dockingManager = dockingManager;
-            this.windows = windows;
-            this.tools = tools;
+            this.appWindows = appWindows;
+            this.appPanels = appPanels;
         }
 
-        public void OpenWindow(string win)
+        public void OpenWindow(string window)
         {
-            Logger.Log(win.ToString());
+            Logger.Log(window.ToString());
             try
             {
-                AppWindow appWindow = windows.Where(x => x.id == win).First();
+                AppWindow appWindow = appWindows.Where(x => x.id == window).First();
                 appWindow.window.Show();
             }
             catch (Exception e) { Logger.Log(e); }
         }
 
-        public void CloseWindow(string win)
+        public void CloseWindow(string window)
         {
-            Logger.Log(win.ToString());
+            Logger.Log(window.ToString());
             try
             {
-                AppWindow appWindow = windows.Where(x => x.id == win).First();
+                AppWindow appWindow = appWindows.Where(x => x.id == window).First();
                 appWindow.window.Close();
             }
             catch (Exception e) { Logger.Log(e); }
@@ -50,15 +47,15 @@ namespace PlaziatWpf.Services
 
         #region Docking system
 
-        public void OpenTool(string tool)
+        public void OpenPanel(string panel)
         {
-            Logger.Log(tool.ToString());
+            Logger.Log(panel.ToString());
             try
             {
                 // not first time
                 LayoutAnchorable anch = dockingManager.Layout
                     .Descendents().OfType<LayoutAnchorable>()
-                    .FirstOrDefault(d => d.Title == tool.ToString());
+                    .FirstOrDefault(d => d.Title == panel.ToString());
                 if (anch != null)
                 {
                     // already opened
@@ -71,17 +68,17 @@ namespace PlaziatWpf.Services
                     }
                 }
                 //  first time
-                BaseUserControl control = tools.Find(t => t.id == tool).tool;
+                BaseUserControl control = appPanels.Find(t => t.id == panel).panel;
                 anch = new LayoutAnchorable()
                 {
-                    ContentId = tool.ToString(),
-                    Title = tool.ToString(),
+                    ContentId = panel.ToString(),
+                    Title = panel.ToString(),
                     Content = control,
                     CanFloat = true,
                 };
                 var anchPane = new LayoutAnchorablePane(anch)
                 {
-                    Name = tool.ToString(),
+                    Name = panel.ToString(),
                     DockMinWidth = 200,
                 };
                 var GrpPane = new LayoutAnchorablePaneGroup(anchPane);
@@ -91,15 +88,15 @@ namespace PlaziatWpf.Services
             catch (Exception e) { Logger.Log(e); }
         }
 
-        public void OpenDoc(AbstractDocumentArguments args)
+        public void OpenDocument(AbstractDocumentArguments document)
         {
-            if (!args.validated) return;
+            if (!document.validated) return;
             try
             {
                 // not first time
                 LayoutDocument anch = dockingManager.Layout
                     .Descendents().OfType<LayoutDocument>()
-                    .FirstOrDefault(d => d.ContentId == args.documentId);
+                    .FirstOrDefault(d => d.ContentId == document.documentId);
                 if (anch == null)
                 {
                     //  first time
@@ -107,8 +104,8 @@ namespace PlaziatWpf.Services
                     anch = new LayoutDocument()
                     {
                         Content = view,
-                        Title = args.documentTitle,
-                        ContentId = args.documentId,
+                        Title = document.documentTitle,
+                        ContentId = document.documentId,
                         CanFloat = true,
                     };
                     LayoutDocumentPane anchPane = dockingManager.Layout
@@ -124,7 +121,7 @@ namespace PlaziatWpf.Services
                     {
                         anchPane.Children.Add(anch);
                     }
-                    view.OpenDocument(args); 
+                    view.OpenDocument(document); 
                 }
             }
             catch (Exception e) { Logger.Log(e); }
@@ -157,10 +154,10 @@ namespace PlaziatWpf.Services
                 serializer.Deserialize(GetLayoutPath(arg));
                 foreach (var element in dockingManager.Layout.Descendents().OfType<LayoutAnchorable>())
                 {
-                    var panel = tools.Find(control => control.id.ToString() == element.ContentId);
+                    var panel = appPanels.Find(control => control.id.ToString() == element.ContentId);
                     if (panel != null)
                     {
-                        element.Content = panel.tool;
+                        element.Content = panel.panel;
                     }
                 }
             }
@@ -169,7 +166,19 @@ namespace PlaziatWpf.Services
 
         private string GetLayoutPath(string layoutName)
         {
-            return layoutPath + "\\" + layoutName + ".avalonXml";
+            string filePath = Paths.Folder_ApplicationData + "\\" + layoutName + ".avalonXml";
+            if (!File.Exists(filePath)) SetDefaultLayout(filePath); 
+            return filePath;
+        }
+
+        private void SetDefaultLayout(string path)
+        {
+            //TODO SetDefaultLayout
+        }
+
+        public void OnConnected()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -179,15 +188,27 @@ namespace PlaziatWpf.Services
     public class AppWindow
     {
         public string id;
-        public BaseWindow window;
         public ObservableViewModel vm;
+        public BaseWindow window;
+        public AppWindow(string id, ObservableViewModel vm, BaseWindow window)
+        {
+            this.id = id;
+            this.vm = vm;
+            this.window = window;
+        }
     }
 
-    public class AppTool
+    public class AppPanels
     {
         public string id;
-        public BaseUserControl tool;
         public ObservableViewModel vm;
+        public BaseUserControl panel;
+        public AppPanels(string id, ObservableViewModel vm, BaseUserControl panel)
+        {
+            this.id = id;
+            this.vm = vm;
+            this.panel = panel;
+        }
     }
 
 }

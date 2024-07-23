@@ -94,6 +94,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -203,7 +211,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MageekSetup"
         "ProductCode" = "8:{BB532107-7154-496F-8727-165C461BEF70}"
-        "PackageCode" = "8:{DFD9CF56-15D1-458A-BB1D-E0A2FDDCDD28}"
+        "PackageCode" = "8:{A98E5D0F-D9AA-41F0-89CC-52C95FA0F601}"
         "UpgradeCode" = "8:{85DAE6EB-3EE5-4192-89B5-DF74C1898921}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

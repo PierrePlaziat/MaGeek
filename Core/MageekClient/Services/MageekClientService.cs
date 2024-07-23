@@ -5,8 +5,6 @@ using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 using MageekProtocol;
 using PlaziatTools;
-using ScryfallApi.Client.Models;
-using System.Text.Json;
 using MageekCore.Data.MtgFetched.Entities;
 
 namespace MageekClient.Services
@@ -17,10 +15,16 @@ namespace MageekClient.Services
 
         GrpcChannel channel;
         MageekProtocolService.MageekProtocolServiceClient mageekClient;
+        private readonly ScryManager scryfall = new ScryManager();
 
         bool connected = false;
         private string token;
         const int timeout = 5;
+
+        public MageekClientService()
+        {
+            scryfall.FetchSets().ConfigureAwait(false);
+        }
 
         #region Connexion
 
@@ -438,12 +442,21 @@ namespace MageekClient.Services
             try
             {
                 string localFileName = Path.Combine(
-                    Folders.Illustrations,
+                    MageekCore.Data.Paths.Folder_Illustrations,
                     string.Concat(cardUuid, "_", format.ToString())
                 );
                 if (!File.Exists(localFileName))
                 {
-                    await CacheIllustration(cardUuid, format, localFileName, back);
+
+                    // Get scryfall ID
+                    var reply = await mageekClient.Cards_GetIllustrationAsync(new Request_CardIllu()
+                    {
+                        CardUuid = cardUuid,
+                        Back = back,
+                        Format = (int)format
+                    });
+                    string scryfallId = reply.Uri.ToString();
+                    await scryfall.CacheIllustration(scryfallId, format, localFileName, back);
                 }
                 return new("file://" + Path.GetFullPath(localFileName), UriKind.Absolute);
             }
@@ -453,41 +466,7 @@ namespace MageekClient.Services
                 return null;
             }
         }
-        public async Task CacheIllustration(string cardUuid, CardImageFormat format, string localFileName, bool back = false)
-        {
-            Logger.Log("");
-            try
-            {
-                // Get scryfall ID
-                var reply = await mageekClient.Cards_GetIllustrationAsync(new Request_CardIllu()
-                {
-                    CardUuid = cardUuid, 
-                    Back = back,
-                    Format = (int)format
-                });
-                string scryfallId = reply.Uri.ToString();
-                // Get scryfall Card data
-                if (scryfallId == null) return;
-                Thread.Sleep(150);
-                string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + scryfallId);
-                Card scryData = JsonSerializer.Deserialize<Card>(json_data);
-                // Retrieve Image link
-                Uri uri;
-                if (scryData.ImageUris != null) uri = scryData.ImageUris[format.ToString()];
-                else uri = scryData.CardFaces[back ? 1 : 0].ImageUris[format.ToString()];
-                // Download it
-                var httpClient = new HttpClient();
-                using var stream = await httpClient.GetStreamAsync(uri);
-                using var fileStream = new FileStream(localFileName, FileMode.Create);
-                await stream.CopyToAsync(fileStream);
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return;
-            }
-        }
-
+        
         public async Task<PriceLine> Cards_GetPrice(string cardUuid)
         {
             var reply = await mageekClient.Cards_GetPriceAsync(new Request_CardUuid()

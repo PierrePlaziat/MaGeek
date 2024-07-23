@@ -31,7 +31,7 @@ namespace MageekCore.Services
         {
             mtg = new MtgDbManager();
             mtgFetched = new MtgFetchedDbManager();
-            scryfall = new ScryManager(mtg);
+            scryfall = new ScryManager();
             mtgjson = new MtgJsonService(mtg, mtgFetched);
         }
 
@@ -58,11 +58,11 @@ namespace MageekCore.Services
 
         public async Task<MageekInitReturn> Server_Initialize()
         {
+            Data.Paths.InitServer();
             Logger.Log("Init");
             try
             {
-                Folders.InitServerFolders();
-                if (!File.Exists(Folders.File_MtgFetchedDb)) mtgFetched.CreateDb();
+                if (!File.Exists(Data.Paths.File_MageekDb)) mtgFetched.CreateDb();
                 bool needsUpdate = await mtgjson.CheckUpdate();
                 return needsUpdate ? MageekInitReturn.Outdated : MageekInitReturn.UpToDate;
             }
@@ -387,7 +387,17 @@ namespace MageekCore.Services
             try
             {
                 if (string.IsNullOrEmpty(uuid)) return outputCards;
-                var scryCard = await scryfall.GetScryfallCard(uuid);
+
+                string? scryfallId;
+                using (MtgDbContext mtgContext = await mtg.GetContext())
+                {
+                    var v = mtgContext.cardIdentifiers.Where(x => x.Uuid == uuid).FirstOrDefault();
+                    if (v == null) return null;
+                    scryfallId = v.ScryfallId;
+                }
+                if (scryfallId == null) return null;
+
+                var scryCard = await scryfall.GetScryfallCard(scryfallId);
                 string originalarchetype = scryCard.Name;
                 if (scryCard == null) return outputCards;
                 if (scryCard.AllParts == null) return outputCards;
@@ -870,7 +880,7 @@ namespace MageekCore.Services
 
         public async Task<List<Preco>> Decks_Precos()
         {
-            string data = await File.ReadAllTextAsync(Folders.File_Precos);
+            string data = await File.ReadAllTextAsync(Data.Paths.File_PrecosJson);
             return JsonSerializer.Deserialize<List<Preco>>(data, new JsonSerializerOptions { IncludeFields = true });
         }
 

@@ -1,14 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using PlaziatWpf.Mvvm;
 using PlaziatWpf.Services;
 using MageekDesktop.Framework;
 using MageekDesktop.UI.Views.AppWindows;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
-using PlaziatTools;
 
 namespace MageekDesktop
 {
@@ -18,20 +14,19 @@ namespace MageekDesktop
 
         public App()
         {
+            // Initialize services
             ServiceCollection services = new ServiceCollection();
-            services.AddFrameworkServices();
-            services.AddMageek();
+            services.AddPlaziatFramework();
+            services.AddBusiness();
+            services.AddViewModels();
+            services.AddViews();
             ServiceHelper.Initialize(services.BuildServiceProvider());
         }
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
-
+            // Launch welcome window
             ServiceHelper.GetService<WindowsService>().Init(
-                Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
-                    Assembly.GetExecutingAssembly().GetName().Name
-                ),
                 ServiceHelper.GetService<MainWindow>().DockingManager,
                 AppElements.LoadWindows(),
                 AppElements.LoadTools()
@@ -39,12 +34,13 @@ namespace MageekDesktop
             ServiceHelper.GetService<WindowsService>().OpenWindow(AppWindowEnum.Welcome.ToString());
         }
 
-        public static void Launch(string user)
+        public static void OnConnected(string userName)
         {
-            ServiceHelper.GetService<SessionService>().User = user;
+            // Launch main window
+            ServiceHelper.GetService<SessionBag>().UserName = userName;
             ServiceHelper.GetService<WindowsService>().CloseWindow(AppWindowEnum.Welcome.ToString());
             ServiceHelper.GetService<WindowsService>().OpenWindow(AppWindowEnum.Main.ToString());
-            ServiceHelper.GetService<WindowsService>().LoadLayout("Default");
+            ServiceHelper.GetService<WindowsService>().LoadLayout("Cached");
             WeakReferenceMessenger.Default.Send(new LaunchAppMessage(""));
         }
 

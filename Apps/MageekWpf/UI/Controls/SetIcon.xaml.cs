@@ -87,7 +87,7 @@ namespace MageekDesktop.UI.Controls
 
         private Uri GetSvgPath(string code)
         {
-            string s = Path.Combine(Folders.SetIcon, code + "_.svg");
+            string s = Path.Combine(Paths.Folder_SetIcons, code + "_.svg");
             if (File.Exists(s)) return new Uri(s);
             else return null;
         }

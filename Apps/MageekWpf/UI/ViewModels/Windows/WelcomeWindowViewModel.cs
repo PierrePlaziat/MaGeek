@@ -27,6 +27,7 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
             this.mageek = mageek;
             this.winManager = winManager;
             this.dialogs = dialogs;
+            Paths.InitClient();
             RetrieveRegisteredCredentials();
             Message = "Welcome";
         }
@@ -42,7 +43,7 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
             IsLoading = true;
             Input_address = "https://127.0.0.1:5000/"; // Unraid:"http://192.168.1.10:55666/";
             Input_user = "Pierre";
-            Input_pass = "p";
+            Input_pass = "Pierre0!";
             IsLoading = false;
         }
 
@@ -70,7 +71,7 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
             if (success == MageekConnectReturn.Success)
             {
                 Message = "Launching";
-                App.Launch(Input_user);
+                App.OnConnected(Input_user);
             }
         }
         

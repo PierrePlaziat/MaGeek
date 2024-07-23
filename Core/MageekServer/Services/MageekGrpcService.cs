@@ -6,7 +6,6 @@ using MageekProtocol;
 using PlaziatTools;
 using PlaziatIdentity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 namespace MageekServer.Services
 {
@@ -39,7 +38,6 @@ namespace MageekServer.Services
                 Logger.Log($"User registration failed: {errors}");
                 return new Reply_Token { Token = "false" };
             }
-
             Logger.Log($"User registered: {request.User}");
             return new Reply_Token { Token = "true" };
         }

@@ -43,7 +43,7 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
         public async Task SelectDeck(Preco preco)
         {
             DocumentArguments doc = new DocumentArguments(preco: preco);
-            win.OpenDoc(doc);
+            win.OpenDocument(doc);
         }
 
     }

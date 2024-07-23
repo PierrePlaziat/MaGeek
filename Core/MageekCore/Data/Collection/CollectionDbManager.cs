@@ -26,7 +26,7 @@ namespace MageekCore.Data.Collection
 
         private string GetDBPath(string user)
         {
-            return Path.Combine(Folders.UserData, user);
+            return Path.Combine(PlaziatTools.Paths.Folder_UserSystem, user);
         }
 
         public void CreateDb(string user)

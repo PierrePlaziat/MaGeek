@@ -24,8 +24,8 @@ namespace PlaziatWpf.Controls.TextBoxHelpers
             await Task.Run(() =>
             {
                 Application.Current.Dispatcher.Invoke(() => {
-                    logBox.AppendText(log /*+ "\n"*/, color);
-                    logBox.ScrollToEnd();
+                    logBox.AppendText(log, color);
+                    if(logBox.Selection.IsEmpty) logBox.ScrollToEnd();
                     return Task.CompletedTask;
                 });
             });

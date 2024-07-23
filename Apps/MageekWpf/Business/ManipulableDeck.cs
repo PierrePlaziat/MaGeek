@@ -21,7 +21,7 @@ namespace MageekDesktop.MageekTools.DeckTools
 
         private IMageekService mageek;
         private DeckManipulator deckManip;
-        private SessionService session;
+        private SessionBag session;
 
         public ManipulableDeck(IMageekService mageek, DeckManipulator deckManip)
         {
@@ -63,7 +63,7 @@ namespace MageekDesktop.MageekTools.DeckTools
         {
             Header.DeckColors = DeckColors;
             Header.CardCount = count_All;
-            await mageek.Decks_Save(session.User, Header, deckManip.GetSavableCardList(Entries));
+            await mageek.Decks_Save(session.UserName, Header, deckManip.GetSavableCardList(Entries));
             WeakReferenceMessenger.Default.Send(new UpdateDeckListMessage(Header.DeckId));
         }
 

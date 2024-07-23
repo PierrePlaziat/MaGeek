@@ -23,7 +23,7 @@ namespace MageekDesktop.UI.ViewModels
         {
             bool success = Enum.TryParse(panel, out AppToolsEnum value);
             if (!success) return;
-            win.OpenTool(value.ToString());
+            win.OpenPanel(value.ToString());
         }
 
         [RelayCommand]

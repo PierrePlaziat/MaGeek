@@ -19,12 +19,12 @@ namespace MageekCore.Data.MtgFetched
 
         public async Task<MtgFetchedDbContext?> GetContext()
         {
-            return new MtgFetchedDbContext(Folders.File_MtgFetchedDb);
+            return new MtgFetchedDbContext(Paths.File_MageekDb);
         }
 
         public void CreateDb()
         {
-            SqliteConnection dbCo = new SqliteConnection("Data Source = " + Folders.File_MtgFetchedDb);
+            SqliteConnection dbCo = new SqliteConnection("Data Source = " + Paths.File_MageekDb);
             dbCo.Open();
             foreach (string instruction in description) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
             dbCo.Close();

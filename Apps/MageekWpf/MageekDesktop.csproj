@@ -47,4 +47,10 @@
     <Resource Include="Resources\Images\wut.svg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\Default.avalonXml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

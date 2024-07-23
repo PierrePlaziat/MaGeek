@@ -41,7 +41,7 @@ namespace MageekDesktopServer
 
         private void Manager_ErrorTextReceived(object sender, string e)
         {
-            logger.LogAsync(e, "Red").ConfigureAwait(false);
+            logger.Log(e, "Red");
         }
 
         private void Manager_StandartTextReceived(object sender, string e)
@@ -49,7 +49,7 @@ namespace MageekDesktopServer
             string color = "White";
             if (e.Contains("fail: ")) color = "Red";
             if (e.Contains("/!\\")) color = "Red";
-            logger.LogAsync(e, color).ConfigureAwait(false);
+            logger.Log(e, color);
         }
 
     }

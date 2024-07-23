@@ -1,5 +1,4 @@
-﻿using MageekCore.Data.Mtg;
-using PlaziatTools;
+﻿using PlaziatTools;
 using ScryfallApi.Client.Models;
 using System.Text.Json;
 
@@ -9,29 +8,17 @@ namespace MageekCore.Data
     public class ScryManager
     {
 
-        private MtgDbManager mtg;
-
-        public ScryManager(MtgDbManager mtg)
-        {
-            this.mtg = mtg;
-        }
-
         /// <summary>
         /// This will disappear when using mtgsqlive data,
         /// get card data from scryfall from a card uuid
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>A scryfall card</returns>
-        public async Task<Card?> GetScryfallCard(string cardUuid)
+        public async Task<Card?> GetScryfallCard(string scryfallId)
         {
             Logger.Log("");
             try
             {
-                using MtgDbContext mtgContext = await mtg.GetContext();
-                var v = mtgContext.cardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefault();
-                if (v == null) return null;
-                string? scryfallId = v.ScryfallId;
-                if (scryfallId == null) return null;
                 Thread.Sleep(150);
                 string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + scryfallId);
                 Card scryfallCard = JsonSerializer.Deserialize<Card>(json_data);
@@ -44,16 +31,31 @@ namespace MageekCore.Data
             }
         }
 
-        public async Task DownloadImage(string cardUuid, CardImageFormat type, string localFileName, bool back = false)
+        public async Task CacheIllustration(string scryfallId, CardImageFormat format, string localFileName, bool back = false)
         {
-            var scryData = await GetScryfallCard(cardUuid);
-            var httpClient = new HttpClient();
-            Uri uri;
-            if (scryData.ImageUris != null) uri = scryData.ImageUris[type.ToString()];
-            else uri = scryData.CardFaces[back ? 1 : 0].ImageUris[type.ToString()];
-            using var stream = await httpClient.GetStreamAsync(uri);
-            using var fileStream = new FileStream(localFileName, FileMode.Create);
-            await stream.CopyToAsync(fileStream);
+            Logger.Log("");
+            try
+            {
+                // Get scryfall Card data
+                if (scryfallId == null) return;
+                Thread.Sleep(150);
+                string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + scryfallId);
+                Card scryData = JsonSerializer.Deserialize<Card>(json_data);
+                // Retrieve Image link
+                Uri uri;
+                if (scryData.ImageUris != null) uri = scryData.ImageUris[format.ToString()];
+                else uri = scryData.CardFaces[back ? 1 : 0].ImageUris[format.ToString()];
+                // Download it
+                var httpClient = new HttpClient();
+                using var stream = await httpClient.GetStreamAsync(uri);
+                using var fileStream = new FileStream(localFileName, FileMode.Create);
+                await stream.CopyToAsync(fileStream);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e);
+                return;
+            }
         }
 
         public async Task<ResultList<Set>> GetSetsJson()
@@ -74,7 +76,7 @@ namespace MageekCore.Data
                     foreach (Set set in sets.Data)
                     {
                         var uri = set.IconSvgUri;
-                        string localFileName = Path.Combine(Folders.SetIcon, set.Code.ToUpper() + "_.svg");
+                        string localFileName = Path.Combine(Paths.Folder_SetIcons, set.Code.ToUpper() + "_.svg");
                         if (!File.Exists(localFileName))
                         {
                             using (var s = await client.GetStreamAsync(uri))

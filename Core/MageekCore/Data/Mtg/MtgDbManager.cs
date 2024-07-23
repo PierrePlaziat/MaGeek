@@ -10,7 +10,7 @@
 
         public async Task<MtgDbContext?> GetContext()
         {
-            return new MtgDbContext(Folders.File_UpdatePrints);
+            return new MtgDbContext(Paths.File_MtgDb);
         }
 
     }

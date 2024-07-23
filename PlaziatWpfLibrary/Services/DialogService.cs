@@ -29,7 +29,7 @@ namespace PlaziatWpf.Services
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if (Directory.Exists(dlg.SelectedPath)) return dlg.SelectedPath;
-                else InformUser("Couldnt find this path:\n " + dlg.SelectedPath);
+                else InformUser("Couldnt find this path:" + Environment.NewLine + dlg.SelectedPath);
             }
             return null;
         }
@@ -47,7 +47,7 @@ namespace PlaziatWpf.Services
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if (File.Exists(dlg.FileName)) return dlg.FileName;
-                else InformUser("Couldnt find this file:\n " + dlg.FileName);
+                else InformUser("Couldnt find this file:" + Environment.NewLine + dlg.FileName);
             }
             return null;
         }

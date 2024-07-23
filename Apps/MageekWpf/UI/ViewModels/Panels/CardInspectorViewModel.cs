@@ -23,9 +23,9 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
     {
 
         IMageekService mageek;
-        private SessionService session;
+        private SessionBag session;
 
-        public CardInspectorViewModel(IMageekService mageek, SessionService session)
+        public CardInspectorViewModel(IMageekService mageek, SessionBag session)
         {
             this.mageek = mageek;
             this.session = session;
@@ -102,7 +102,7 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
                     CardVariant v = new(
                         card,
                         await mageek.Sets_Get(card.SetCode),
-                        await mageek.Collec_OwnedVariant(session.User, card.Uuid),
+                        await mageek.Collec_OwnedVariant(session.UserName, card.Uuid),
                         await mageek.Cards_GetPrice(card.Uuid)
                     );
                     Variants.Add(v);
@@ -124,11 +124,11 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
         }
         private async Task GetTags()
         {
-            Tags = await mageek.Tags_GetCardTags(session.User, SelectedArchetype);
+            Tags = await mageek.Tags_GetCardTags(session.UserName, SelectedArchetype);
         }
         private async Task GetTotalGot() 
         {
-            TotalGot = await mageek.Collec_OwnedCombined(session.User, SelectedArchetype);
+            TotalGot = await mageek.Collec_OwnedCombined(session.UserName, SelectedArchetype);
         }
         private async Task GetMeanPrice()
         {
@@ -146,7 +146,7 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
         [RelayCommand]
         private async Task SetFav(string uuid)
         {
-            await mageek.Collec_SetFavCardVariant(session.User, SelectedArchetype, uuid);
+            await mageek.Collec_SetFavCardVariant(session.UserName, SelectedArchetype, uuid);
             IsFav = true;
         }
 
@@ -162,28 +162,28 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
         [RelayCommand] 
         private async Task AddCardToCollection(string uuid)
         {
-            await mageek.Collec_Move(session.User, uuid, 1);
+            await mageek.Collec_Move(session.UserName, uuid, 1);
             await GetCardVariants();
         }
 
         [RelayCommand]
         private async Task SubstractCardFromCollection(string uuid)
         {
-            await mageek.Collec_Move(session.User, uuid, -1);
+            await mageek.Collec_Move(session.UserName, uuid, -1);
             await GetCardVariants();
         }
 
         [RelayCommand]
         private async Task AddTag(string txt)
         {
-            await mageek.Tags_TagCard(session.User, SelectedVariant.Card.Name, txt);
+            await mageek.Tags_TagCard(session.UserName, SelectedVariant.Card.Name, txt);
             await GetTags();
         }
 
         [RelayCommand]
         private async Task DeleteTag(string txt)
         {
-            await mageek.Tags_UntagCard(session.User, SelectedVariant.Card.Name, txt);
+            await mageek.Tags_UntagCard(session.UserName, SelectedVariant.Card.Name, txt);
             await GetTags();
         }
 

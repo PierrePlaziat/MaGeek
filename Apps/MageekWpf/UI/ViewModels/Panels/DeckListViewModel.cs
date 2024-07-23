@@ -24,16 +24,15 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
         private WindowsService wins;
         private SettingService config;
         private DialogService dialog;
-        private SessionService session;
+        private SessionBag session;
 
         public DeckListViewModel(
             IMageekService mageek,
             WindowsService wins,
             SettingService config,
             DialogService dialog,
-            SessionService session
-        )
-        {
+            SessionBag session
+        ){
             this.wins = wins;
             this.mageek = mageek;
             this.config = config;
@@ -62,7 +61,7 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
             Logger.Log("Reload");
             IsLoading = true;
             
-            Decks = FilterDeck(await mageek.Decks_All(session.User));
+            Decks = FilterDeck(await mageek.Decks_All(session.UserName));
             OnPropertyChanged(nameof(Decks));
             IsLoading = false;
         }
@@ -70,15 +69,15 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
         [RelayCommand]
         public async Task SelectDeck(string deckId)
         {
-            DocumentArguments doc = new DocumentArguments(deck : await mageek.Decks_Get(session.User, deckId));
-            wins.OpenDoc(doc);
+            DocumentArguments doc = new DocumentArguments(deck : await mageek.Decks_Get(session.UserName, deckId));
+            wins.OpenDocument(doc);
         }
 
         [RelayCommand]
         public async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.Decks_Create(session.User, title, "");
+            await mageek.Decks_Create(session.UserName, title, "");
             await Reload();
         }
 
@@ -86,14 +85,14 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
         public async Task RenameDeck(string deckId)
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.Decks_Rename(session.User, deckId, title);
+            await mageek.Decks_Rename(session.UserName, deckId, title);
             await Reload();
         }
 
         [RelayCommand]
         public async Task DuplicateDeck(string deckId)
         {
-            await mageek.Decks_Duplicate(session.User, deckId);
+            await mageek.Decks_Duplicate(session.UserName, deckId);
             await Reload();
         }
 
@@ -101,7 +100,7 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
         public async Task DeleteDeck(string deckId)
         {
             if (deckId == null) return;
-            await mageek.Decks_Delete(session.User, deckId);
+            await mageek.Decks_Delete(session.UserName, deckId);
             await Reload();
         }
 
@@ -109,14 +108,14 @@ namespace MageekDesktop.UI.ViewModels.AppPanels
         public async Task EstimateDeckPrice(string deckId)
         {
             //var totalPrice = await mageek.EstimateDeckPrice(deckId, config.Settings[Setting.Currency]);
-            //MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + "\n" +
+            //MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + Environment.NewLine +
             //                "Missing : " + totalPrice.Item2);
         }
 
         [RelayCommand]
         public async Task GetAsTxtList(string deckId)
         {
-            string txt = await mageek.CardLists_FromDeck(session.User, deckId);
+            string txt = await mageek.CardLists_FromDeck(session.UserName, deckId);
             if (!string.IsNullOrEmpty(txt))
             {
                 Clipboard.SetText(txt);

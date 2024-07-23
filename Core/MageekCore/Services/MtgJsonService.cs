@@ -8,6 +8,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using MageekCore.Data.MtgFetched.Entities;
 using MageekCore.Data.MtgFetched;
+using Paths = MageekCore.Data.Paths;
 
 namespace MageekCore.Services
 {
@@ -41,7 +42,7 @@ namespace MageekCore.Services
             Logger.Log("Checking...");
             try
             {
-                bool? tooOld = FileUtils.IsFileOlder(Folders.File_UpdateOldHash, new TimeSpan(2, 0, 0, 0));
+                bool? tooOld = FileUtils.IsFileOlder(Data.Paths.File_MtgDb_HashOld, new TimeSpan(2, 0, 0, 0));
                 if (tooOld.HasValue && !tooOld.Value)
                 {
                     Logger.Log("Already updated recently");
@@ -62,13 +63,13 @@ namespace MageekCore.Services
         {
             try
             {
-                await HttpUtils.Download(Url_MtgjsonHash, Folders.File_UpdateNewHash);
+                await HttpUtils.Download(Url_MtgjsonHash, Data.Paths.File_MtgDb_HashNew);
                 bool check = true;
-                if (File.Exists(Folders.File_UpdateOldHash))
+                if (File.Exists(Paths.File_MtgDb_HashOld))
                 {
                     check = FileUtils.ContentDiffers(
-                        Folders.File_UpdateNewHash,
-                        Folders.File_UpdateOldHash
+                        Paths.File_MtgDb_HashNew,
+                        Paths.File_MtgDb_HashOld
                     );
                 }
                 return check;
@@ -84,9 +85,9 @@ namespace MageekCore.Services
         {
             List<Task> tasks = new()
             {
-                HttpUtils.Download(Url_UpdatePrints, Folders.File_UpdatePrints),
-                HttpUtils.Download(Url_UpdatePrices, Folders.File_UpdatePrices),
-                HttpUtils.Download(Url_UpdatePrecos, Folders.File_UpdatePrecos),
+                HttpUtils.Download(Url_UpdatePrints, Paths.File_MtgDb),
+                HttpUtils.Download(Url_UpdatePrices, Paths.File_PricesJson),
+                HttpUtils.Download(Url_UpdatePrecos, Paths.File_PrecosZip),
             };
             await Task.WhenAll(tasks);
         }
@@ -95,7 +96,7 @@ namespace MageekCore.Services
         {
             try
             {
-                File.Copy(Folders.File_UpdateNewHash, Folders.File_UpdateOldHash, true);
+                File.Copy(Paths.File_MtgDb_HashNew, Paths.File_MtgDb_HashOld, true);
             }
             catch (Exception e)
             {
@@ -112,6 +113,7 @@ namespace MageekCore.Services
                 FetchPrecos(),
                 FetchPrices(),
             };
+            await Task.WhenAll(tasks);
         }
 
         #endregion
@@ -232,11 +234,11 @@ namespace MageekCore.Services
         {
             Logger.Log("Start...");
             Logger.Log("...Uncompressing...");
-            System.IO.Compression.ZipFile.ExtractToDirectory(Folders.File_UpdatePrecos, Folders.TempPrecoFolder, overwriteFiles: true);
+            System.IO.Compression.ZipFile.ExtractToDirectory(Paths.File_PrecosZip, Paths.Folder_PrecosTemp, overwriteFiles: true);
             Logger.Log("...Parsing...");
-            await ParsePrecos(Folders.TempPrecoFolder, Folders.File_Precos);
+            await ParsePrecos(Paths.Folder_PrecosTemp, Paths.File_PrecosJson);
             Logger.Log("...Cleaning");
-            Directory.Delete(Folders.TempPrecoFolder, true);
+            Directory.Delete(Paths.Folder_PrecosTemp, true);
             Logger.Log("...Done");
         }
 
@@ -327,7 +329,7 @@ namespace MageekCore.Services
                     await collecContext.PriceLine.ExecuteDeleteAsync();
                     await collecContext.SaveChangesAsync();
                 }
-                using (FileStream s = File.Open(Folders.File_UpdatePrices, FileMode.Open))
+                using (FileStream s = File.Open(Paths.File_PricesJson, FileMode.Open))
                 using (StreamReader sr = new StreamReader(s))
                 using (Newtonsoft.Json.JsonReader reader = new Newtonsoft.Json.JsonTextReader(sr))
                 {

@@ -3,17 +3,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using MageekServer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using PlaziatIdentity;
 using MageekCore.Services;
 using Microsoft.Data.Sqlite;
+using MageekCore.Data;
+using MageekServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //////////
 // INIT //
 //////////
+
+PlaziatTools.Paths.Init();
 
 // Grpc 
 // ssl http2 sole endpoint
@@ -51,11 +54,7 @@ builder.Services.AddAuthorization(options => {
         options.AddPolicy("AdminPolicy", policy => policy.RequireClaim("AdminClaim", "Admin"));
     });
 builder.Services.AddScoped<IUserService, UserService>();
-
-//////////////
-// Business //
-//////////////
-
+// Business service
 builder.Services.AddSingleton<IMageekService, MageekService>();
 
 ////////////
@@ -75,6 +74,10 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 }
 await dbConn.CloseAsync();
+// Business
+var mageek = app.Services.GetService<IMageekService>();
+var initReturn = await mageek.Server_Initialize();
+if (initReturn == MageekInitReturn.Outdated) _ = mageek.Server_Update().Result;
 // Go
-await Business.InitBusiness(app);
+app.MapGrpcService<MageekGrpcService>();
 app.Run();

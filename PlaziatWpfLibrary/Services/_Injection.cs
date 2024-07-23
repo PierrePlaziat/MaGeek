@@ -5,12 +5,12 @@ namespace PlaziatWpf.Services
     public static class FrameworkServiceCollectionExtensions
     {
 
-        public static ServiceCollection AddFrameworkServices(this ServiceCollection services)
+        public static ServiceCollection AddPlaziatFramework(this ServiceCollection services)
         {
             services.AddSingleton<WindowsService>();
             services.AddSingleton<DialogService>();
             services.AddSingleton<SettingService>();
-            services.AddSingleton<SessionService>();
+            services.AddSingleton<SessionBag>();
             return services;
         }
 

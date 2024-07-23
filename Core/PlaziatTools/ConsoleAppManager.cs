@@ -1,21 +1,18 @@
 ﻿using PlaziatTools;
-using System;
 using System.Diagnostics;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 public class ConsoleAppManager
 {
     private readonly string appName;
     private readonly Process process = new Process();
-    private readonly object theLock = new object();
+    private readonly object locker = new object();
     private SynchronizationContext context;
     private string pendingWriteData;
 
     public int ExitCode
     {
-        get { return this.process.ExitCode; }
+        get { return process.ExitCode; }
     }
 
     public bool Running
@@ -26,16 +23,16 @@ public class ConsoleAppManager
     public ConsoleAppManager(string appName)
     {
         this.appName = appName;
-        this.process.StartInfo.FileName = this.appName;
-        this.process.StartInfo.RedirectStandardError = true;
-        this.process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
-        this.process.StartInfo.RedirectStandardInput = true;
-        this.process.StartInfo.RedirectStandardOutput = true;
-        this.process.EnableRaisingEvents = true;
-        this.process.StartInfo.CreateNoWindow = true;
-        this.process.StartInfo.UseShellExecute = false;
-        this.process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-        this.process.Exited += this.ProcessOnExited;
+        process.StartInfo.FileName = appName;
+        process.StartInfo.RedirectStandardError = true;
+        process.StartInfo.RedirectStandardInput = true;
+        process.StartInfo.RedirectStandardOutput = true;
+        process.EnableRaisingEvents = true;
+        process.StartInfo.CreateNoWindow = true;
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+        process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+        process.Exited += ProcessOnExited;
     }
 
     public event EventHandler<string> ErrorTextReceived;
@@ -44,53 +41,36 @@ public class ConsoleAppManager
 
     public void ExecuteAsync(params string[] args)
     {
-        if (this.Running)
-        {
-            throw new InvalidOperationException(
-                "Process is still Running. Please wait for the process to complete.");
-        }
-
+        if (Running) throw new InvalidOperationException("Process is still Running. Please wait for the process to complete.");
         string arguments = string.Join(" ", args);
-
-        this.process.StartInfo.Arguments = arguments;
-
-        this.context = SynchronizationContext.Current;
-
-        this.process.Start();
-        this.Running = true;
-
-        new Task(this.ReadOutputAsync).Start();
-        new Task(this.WriteInputTask).Start();
-        new Task(this.ReadOutputErrorAsync).Start();
+        process.StartInfo.Arguments = arguments;
+        context = SynchronizationContext.Current;
+        process.Start();
+        Running = true;
+        new Task(ReadOutputAsync).Start();
+        new Task(WriteInputTask).Start();
+        new Task(ReadOutputErrorAsync).Start();
     }
 
     public void Write(string data)
     {
-        if (data == null)
-        {
-            return;
-        }
-
-        lock (this.theLock)
-        {
-            this.pendingWriteData = data;
-        }
+        if (data == null) return;
+        lock (locker) pendingWriteData = data;
     }
 
     public void WriteLine(string data)
     {
-        this.Write(data + Environment.NewLine);
+        Write(data + Environment.NewLine);
     }
 
     protected virtual void OnErrorTextReceived(string e)
     {
-        EventHandler<string> handler = this.ErrorTextReceived;
-
+        EventHandler<string> handler = ErrorTextReceived;
         if (handler != null)
         {
-            if (this.context != null)
+            if (context != null)
             {
-                this.context.Post(delegate { handler(this, e); }, null);
+                context.Post(delegate { handler(this, e); }, null);
             }
             else
             {
@@ -101,7 +81,7 @@ public class ConsoleAppManager
 
     protected virtual void OnProcessExited()
     {
-        EventHandler handler = this.ProcessExited;
+        EventHandler handler = ProcessExited;
         if (handler != null)
         {
             handler(this, EventArgs.Empty);
@@ -110,13 +90,12 @@ public class ConsoleAppManager
 
     protected virtual void OnStandartTextReceived(string e)
     {
-        EventHandler<string> handler = this.StandartTextReceived;
-
+        EventHandler<string> handler = StandartTextReceived;
         if (handler != null)
         {
-            if (this.context != null)
+            if (context != null)
             {
-                this.context.Post(delegate { handler(this, e); }, null);
+                context.Post(delegate { handler(this, e); }, null);
             }
             else
             {
@@ -127,7 +106,7 @@ public class ConsoleAppManager
 
     private void ProcessOnExited(object sender, EventArgs eventArgs)
     {
-        this.OnProcessExited();
+        OnProcessExited();
     }
 
     private async void ReadOutputAsync()
@@ -135,50 +114,47 @@ public class ConsoleAppManager
         var standart = new StringBuilder();
         var buff = new char[1024];
         int length;
-
-        while (this.process.HasExited == false)
+        while (process.HasExited == false)
         {
             standart.Clear();
 
-            length = await this.process.StandardOutput.ReadAsync(buff, 0, buff.Length);
+            length = await process.StandardOutput.ReadAsync(buff, 0, buff.Length);
             standart.Append(buff.SubArray(0, length));
-            this.OnStandartTextReceived(standart.ToString());
-            Thread.Sleep(1);
+            OnStandartTextReceived(standart.ToString());
+            await Task.Delay(1);
         }
-
-        this.Running = false;
+        Running = false;
     }
 
     private async void ReadOutputErrorAsync()
     {
         var sb = new StringBuilder();
-
         do
         {
             sb.Clear();
             var buff = new char[1024];
-            int length = await this.process.StandardError.ReadAsync(buff, 0, buff.Length);
+            int length = await process.StandardError.ReadAsync(buff, 0, buff.Length);
             sb.Append(buff.SubArray(0, length));
-            this.OnErrorTextReceived(sb.ToString());
-            Thread.Sleep(1);
+            OnErrorTextReceived(sb.ToString());
+            await Task.Delay(1);
         }
-        while (this.process.HasExited == false);
+        while (process.HasExited == false);
     }
 
     private async void WriteInputTask()
     {
-        while (this.process.HasExited == false)
+        while (process.HasExited == false)
         {
-            Thread.Sleep(1);
+            await Task.Delay(1);
 
-            if (this.pendingWriteData != null)
+            if (pendingWriteData != null)
             {
-                await this.process.StandardInput.WriteLineAsync(this.pendingWriteData);
-                await this.process.StandardInput.FlushAsync();
+                await process.StandardInput.WriteLineAsync(pendingWriteData);
+                await process.StandardInput.FlushAsync();
 
-                lock (this.theLock)
+                lock (locker)
                 {
-                    this.pendingWriteData = null;
+                    pendingWriteData = null;
                 }
             }
         }
@@ -186,7 +162,7 @@ public class ConsoleAppManager
 
     public void EndProcess()
     {
-        lock (this.theLock)
+        lock (locker)
         {
             process.Kill();
             process.WaitForExit();

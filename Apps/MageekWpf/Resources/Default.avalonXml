@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-16"?>
+<LayoutRoot>
+  <RootPanel Orientation="Horizontal">
+    <LayoutAnchorablePane DockWidth="0.4520174482006544*" DockMinWidth="200" FloatingWidth="374" FloatingHeight="1037" FloatingLeft="87" FloatingTop="545">
+      <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="DeckList" IsSelected="True" ContentId="DeckList" FloatingLeft="87" FloatingTop="545" FloatingWidth="374" FloatingHeight="1037" LastActivationTimeStamp="07/19/2024 21:50:08" />
+    </LayoutAnchorablePane>
+    <LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="2.082878953107961*">
+      <LayoutAnchorablePane Name="CardSearcher" DockHeight="0.5788607694115804*" DockMinWidth="200">
+        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="CardSearcher" IsSelected="True" ContentId="CardSearcher" />
+      </LayoutAnchorablePane>
+      <LayoutAnchorablePane DockHeight="1.4211392305884196*" DockMinWidth="200" FloatingWidth="374" FloatingHeight="1037" FloatingLeft="757" FloatingTop="603">
+        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="PrecoList" ContentId="PrecoList" FloatingLeft="995" FloatingTop="706" FloatingWidth="467" FloatingHeight="1037" LastActivationTimeStamp="07/19/2024 21:50:27" />
+        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="SetList" IsSelected="True" ContentId="SetList" FloatingLeft="757" FloatingTop="603" FloatingWidth="374" FloatingHeight="1037" LastActivationTimeStamp="07/19/2024 21:50:28" />
+      </LayoutAnchorablePane>
+    </LayoutAnchorablePaneGroup>
+    <LayoutAnchorablePaneGroup Orientation="Horizontal">
+      <LayoutAnchorablePane Id="c89cb3ac-1648-44df-9983-4e9f8ba9b5a9" Name="TxtInput" DockMinWidth="200" />
+    </LayoutAnchorablePaneGroup>
+    <LayoutAnchorablePane DockWidth="0.4651035986913849*" DockMinWidth="200" FloatingWidth="374" FloatingHeight="1037" FloatingLeft="1884" FloatingTop="557">
+      <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="CardInspector" IsSelected="True" ContentId="CardInspector" FloatingLeft="1884" FloatingTop="557" FloatingWidth="374" FloatingHeight="1037" LastActivationTimeStamp="07/19/2024 21:49:59" />
+    </LayoutAnchorablePane>
+  </RootPanel>
+  <TopSide />
+  <RightSide />
+  <LeftSide />
+  <BottomSide />
+  <FloatingWindows />
+  <Hidden>
+    <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="TxtInput" IsSelected="True" ContentId="TxtInput" LastActivationTimeStamp="07/19/2024 21:49:53" PreviousContainerId="c89cb3ac-1648-44df-9983-4e9f8ba9b5a9" PreviousContainerIndex="0" />
+  </Hidden>
+</LayoutRoot>

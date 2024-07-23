@@ -17,18 +17,20 @@ namespace MageekDesktop.Framework
     public static class BusinessServiceCollectionExtensions
     {
 
-        public static ServiceCollection AddMageek(this ServiceCollection services)
+        public static ServiceCollection AddBusiness(this ServiceCollection services)
         {
             services.AddSingleton<IMageekService, MageekClientService>();
             services.AddSingleton<DeckManipulator>();
+            return services;
+        }
 
-            // Views //
-
+        public static ServiceCollection AddViews(this ServiceCollection services)
+        {
             // Windows
             services.AddSingleton<WelcomeWindow>();
             services.AddSingleton<MainWindow>();
             services.AddSingleton<PrintWindow>();
-            // Tools
+            // Panels
             services.AddSingleton<CardInspector>();
             services.AddSingleton<CardSearcher>();
             services.AddSingleton<PrecoList>();
@@ -39,14 +41,18 @@ namespace MageekDesktop.Framework
             // Documents
             services.AddTransient<IDocument, Document>();
             services.AddTransient<ManipulableDeck>();
+            return services;
+        }
 
-            // ViewModels //
-
+        public static ServiceCollection AddViewModels(this ServiceCollection services)
+        { 
+            // Top menu
+            services.AddSingleton<TopMenuViewModel>();
             // Windows
             services.AddSingleton<WelcomeWindowViewModel>();
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<PrintWindowViewModel>();
-            // Tools
+            // Panels
             services.AddSingleton<CardInspectorViewModel>();
             services.AddSingleton<CardSearcherViewModel>();
             services.AddSingleton<PrecoListViewModel>();
@@ -56,9 +62,6 @@ namespace MageekDesktop.Framework
             services.AddSingleton<TxtInputViewModel>();
             // Documents
             services.AddTransient<DocumentViewModel>();
-            // Top menu
-            services.AddSingleton<TopMenuViewModel>();
-
             return services;
         }
 

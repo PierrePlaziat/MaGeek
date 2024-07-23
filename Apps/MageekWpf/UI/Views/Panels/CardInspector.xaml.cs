@@ -16,9 +16,9 @@ namespace MageekDesktop.UI.Views.AppPanels
     {
         private IMageekService mageek;
         private CardInspectorViewModel vm;
-        private SessionService session;
+        private SessionBag session;
 
-        public CardInspector(CardInspectorViewModel vm, IMageekService mageek, SessionService session)
+        public CardInspector(CardInspectorViewModel vm, IMageekService mageek, SessionBag session)
         {
             this.mageek = mageek;
             this.vm = vm;
@@ -31,7 +31,7 @@ namespace MageekDesktop.UI.Views.AppPanels
         {
             bool found = false;
             var border = (resultStack.Parent as ScrollViewer).Parent as Border;
-            var data = await mageek.Tags_All(session.User);
+            var data = await mageek.Tags_All(session.UserName);
             string query = (sender as TextBox).Text;
             if (query.Length == 0)
             {

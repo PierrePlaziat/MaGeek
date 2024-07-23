@@ -21,9 +21,9 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
         IMageekService mageek;
         WindowsService win;
         DialogService dialog;
-        SessionService session;
+        SessionBag session;
 
-        public TxtInputViewModel(IMageekService mageek, WindowsService win, DialogService dialog, SessionService session)
+        public TxtInputViewModel(IMageekService mageek, WindowsService win, DialogService dialog, SessionBag session)
         {
             this.mageek = mageek;
             this.win = win;
@@ -101,21 +101,21 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
                 dialog.InformUser("Fatal error : " + result.Detail);
                 return false;
             }
-            else if (result.Status == "errors") return dialog.AskUser("Some errors, import anyway?\n" + result.Detail);
+            else if (result.Status == "errors") return dialog.AskUser("Some errors, import anyway?" + Environment.NewLine + result.Detail);
             else if (result.Status == "OK") return dialog.AskUser("Check OK, perform operation?" + result.Detail);
-            else return dialog.AskUser("??? import anyway ???\n" + result.Status+":\n"+ result.Detail);
+            else return dialog.AskUser("??? import anyway ???" + Environment.NewLine + result.Status+":"+ Environment.NewLine + result.Detail);
         }
 
         private async void DoAddToCollec(List<DeckCard> cards)
         {
-            foreach (var v in cards) await mageek.Collec_Move(session.User, v.CardUuid, v.Quantity);
+            foreach (var v in cards) await mageek.Collec_Move(session.UserName, v.CardUuid, v.Quantity);
         }
 
         private void DoOpenTheDeck(List<DeckCard> cards)
         {
             ManipulableDeck deck = ServiceHelper.GetService<ManipulableDeck>();
             DocumentArguments doc = new DocumentArguments(import: cards);
-            win.OpenDoc(doc);
+            win.OpenDocument(doc);
         }
 
     }
