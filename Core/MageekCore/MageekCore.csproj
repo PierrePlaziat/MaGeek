@@ -9,7 +9,15 @@
   <ItemGroup>
     <PackageReference Include="Grpc" Version="2.46.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="ScryfallAPI.Client" Version="3.1.0" />
   </ItemGroup>
@@ -19,8 +27,9 @@
     <ProjectReference Include="..\PlaziatTools\PlaziatTools.csproj" />
   </ItemGroup>
 
+   
   <ItemGroup>
-    <Protobuf Include="MageekCore\Service\MageekProtocol.proto" Link="Service\MageekProtocol.proto" ProtoRoot=".." />
+     <Protobuf Include="MageekCore\Service\MageekProtocol.proto" Link="Service\MageekProtocol.proto" ProtoRoot=".." />
   </ItemGroup>
 
 </Project>

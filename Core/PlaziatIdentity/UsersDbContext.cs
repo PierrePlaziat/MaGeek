@@ -11,7 +11,7 @@ public class UsersDbContext : IdentityDbContext<ApplicationUser>
     public UsersDbContext(DbContextOptions<UsersDbContext> options) : base(options) {}
 }
 
-public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<UsersDbContext>
+public class DesignTimeUserDbContextFactory : IDesignTimeDbContextFactory<UsersDbContext>
 {
     public UsersDbContext CreateDbContext(string[] args)
     {

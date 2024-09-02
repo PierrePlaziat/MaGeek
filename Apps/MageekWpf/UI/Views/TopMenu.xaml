@@ -76,7 +76,7 @@
             <MenuItem Header="Save"
                       Foreground="Black"
                       Command="{Binding LayoutBackupCommand}"
-                      CommandParameter="Default">
+                      CommandParameter="Cached">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/Icon_Backup.jpg" />
                 </MenuItem.Icon>
@@ -84,7 +84,7 @@
             <MenuItem Header="Load"
                       Foreground="Black"
                       Command="{Binding LayoutRestoreCommand}"
-                      CommandParameter="Default">
+                      CommandParameter="Cached">
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/Icon_Restore.jpg" />
                 </MenuItem.Icon>

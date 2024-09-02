@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.MtgFetched.Entities;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace MageekCore.Data.MtgFetched
 {
@@ -27,5 +28,18 @@ namespace MageekCore.Data.MtgFetched
         }
 
     }
+
+    //public class DesignTimeMtgFetchedDbContextFactory : IDesignTimeDbContextFactory<UsersDbContext>
+    //{
+    //    public UsersDbContext CreateDbContext(string[] args)
+    //    {
+    //        var configuration = new ConfigurationBuilder()
+    //            .SetBasePath(Directory.GetCurrentDirectory())
+    //            .Build();
+    //        var builder = new DbContextOptionsBuilder<UsersDbContext>();
+    //        builder.UseSqlite(string.Concat("Data Source = ", dbPath));
+    //        return new UsersDbContext(builder.Options);
+    //    }
+    //}
 
 }

@@ -167,18 +167,17 @@ namespace PlaziatWpf.Services
         private string GetLayoutPath(string layoutName)
         {
             string filePath = Paths.Folder_ApplicationData + "\\" + layoutName + ".avalonXml";
-            if (!File.Exists(filePath)) SetDefaultLayout(filePath); 
+            if (!File.Exists(filePath)) SetDefaultLayout(layoutName); 
             return filePath;
         }
 
-        private void SetDefaultLayout(string path)
+        private void SetDefaultLayout(string layoutName)
         {
-            //TODO SetDefaultLayout
-        }
-
-        public void OnConnected()
-        {
-            throw new NotImplementedException();
+            File.Copy(
+                Paths.Folder_DesktopInstall + "\\Default.avalonXml", 
+                Paths.Folder_ApplicationData + "\\"+ layoutName + ".avalonXml", 
+                true
+            );
         }
 
         #endregion

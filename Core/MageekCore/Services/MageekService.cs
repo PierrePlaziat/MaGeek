@@ -13,9 +13,6 @@ using MageekCore.Data.MtgFetched;
 namespace MageekCore.Services
 {
 
-    /// <summary>
-    /// IMageekService implementation for local operations (monolith archi / server side)
-    /// </summary>
     public class MageekService : IMageekService
     {
 
@@ -25,14 +22,15 @@ namespace MageekCore.Services
         private readonly MtgFetchedDbManager mtgFetched;
         private readonly CollectionDbManager collec;
         private readonly MtgJsonService mtgjson;
-        private readonly ScryManager scryfall;
+        private readonly ScryfallHelper scryfall;
 
         public MageekService()
         {
             mtg = new MtgDbManager();
             mtgFetched = new MtgFetchedDbManager();
-            scryfall = new ScryManager();
+            scryfall = new ScryfallHelper();
             mtgjson = new MtgJsonService(mtg, mtgFetched);
+            collec = new CollectionDbManager();
         }
 
         #endregion
@@ -697,7 +695,6 @@ namespace MageekCore.Services
 
         public async Task<List<Deck>> Decks_All(string user)
         {
-            Logger.Log("");
             List<Deck> decks = new();
             try
             {
@@ -784,6 +781,7 @@ namespace MageekCore.Services
             try
             {
                 using CollectionDbContext DB = await collec.GetContext(user);
+                Logger.Log("1");
                 Deck deck = new()
                 {
                     Title = title,
@@ -791,13 +789,16 @@ namespace MageekCore.Services
                     DeckColors = string.Empty,
                     Description = description
                 };
+                Logger.Log("2");
                 DB.Decks.Add(deck);
+                Logger.Log("3");
                 await DB.SaveChangesAsync();
+                Logger.Log("4");
                 return deck;
             }
             catch (Exception e)
             {
-                Logger.Log(e);
+                Logger.Log(e,true);
                 return null;
             }
         }

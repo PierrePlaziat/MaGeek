@@ -1,5 +1,7 @@
-﻿using MageekCore.Data.Mtg.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using MageekCore.Data.Mtg.Entities;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace MageekCore.Data.Mtg
 {
@@ -38,5 +40,18 @@ namespace MageekCore.Data.Mtg
         }
 
     }
+
+    //public class DesignTimeMtgDbContextFactory : IDesignTimeDbContextFactory<UsersDbContext>
+    //{
+    //    public UsersDbContext CreateDbContext(string[] args)
+    //    {
+    //        var configuration = new ConfigurationBuilder()
+    //            .SetBasePath(Directory.GetCurrentDirectory())
+    //            .Build();
+    //        var builder = new DbContextOptionsBuilder<UsersDbContext>();
+    //        builder.UseSqlite(string.Concat("Data Source = ", dbPath));
+    //        return new UsersDbContext(builder.Options);
+    //    }
+    //}
 
 }

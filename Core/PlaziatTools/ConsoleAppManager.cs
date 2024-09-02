@@ -4,6 +4,7 @@ using System.Text;
 
 public class ConsoleAppManager
 {
+
     private readonly string appName;
     private readonly Process process = new Process();
     private readonly object locker = new object();

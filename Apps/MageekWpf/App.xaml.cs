@@ -40,7 +40,8 @@ namespace MageekDesktop
             ServiceHelper.GetService<SessionBag>().UserName = userName;
             ServiceHelper.GetService<WindowsService>().CloseWindow(AppWindowEnum.Welcome.ToString());
             ServiceHelper.GetService<WindowsService>().OpenWindow(AppWindowEnum.Main.ToString());
-            ServiceHelper.GetService<WindowsService>().LoadLayout("Cached");
+            try { ServiceHelper.GetService<WindowsService>().LoadLayout("Cached"); }
+            catch { ServiceHelper.GetService<WindowsService>().LoadLayout("Default"); }
             WeakReferenceMessenger.Default.Send(new LaunchAppMessage(""));
         }
 

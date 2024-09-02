@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MageekCore.Data.Collection.Entities;
-using MageekCore.Data.MtgFetched.Entities;
 
 namespace MageekCore.Data.Collection
 {

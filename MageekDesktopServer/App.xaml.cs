@@ -6,10 +6,11 @@ namespace MageekDesktopServer
 
     public partial class App : System.Windows.Application
     {
+
+        static public ConsoleAppManager manager { get; set; }
         public static NotifyIcon icon;
         private static Queue<string> output = new Queue<string>();
-        static public ConsoleAppManager manager { get; set; }
-        static MageekDesktopServer.MainWindow logWin;
+        static MainWindow logWin;
 
         protected override void OnStartup(StartupEventArgs e)
         {

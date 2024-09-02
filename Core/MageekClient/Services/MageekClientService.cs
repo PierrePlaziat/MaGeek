@@ -15,7 +15,7 @@ namespace MageekClient.Services
 
         GrpcChannel channel;
         MageekProtocolService.MageekProtocolServiceClient mageekClient;
-        private readonly ScryManager scryfall = new ScryManager();
+        private readonly ScryfallHelper scryfall = new ScryfallHelper();
 
         bool connected = false;
         private string token;
@@ -133,7 +133,7 @@ namespace MageekClient.Services
                 {
                     return MageekConnectReturn.Failure;
                 }
-                Logger.Log("token : " + result.Token);
+                //Logger.Log("token : " + result.Token);
                 return MageekConnectReturn.Success;
             }
             catch (Exception e)
@@ -158,8 +158,8 @@ namespace MageekClient.Services
                 {
                     return MageekConnectReturn.Failure;
                 }
-                Logger.Log("token : " + result.Token);
-                this.token = result.Token;
+                //Logger.Log("token : " + result.Token);
+                token = result.Token;
                 return MageekConnectReturn.Success;
             }
             catch (Exception e)
@@ -283,13 +283,16 @@ namespace MageekClient.Services
                 ColorisOr = colorisOr
             });
             List<SearchedCards> parsed = new();
-            foreach (var item in reply.SearchedCardList)
+            if (!reply.SearchedCardList.IsNull)
             {
-                parsed.Add(new SearchedCards(
-                    item.CardUuid,
-                    item.Translation,
-                    item.Collected)
-                );
+                foreach (var item in reply.SearchedCardList.Items)
+                {
+                    parsed.Add(new SearchedCards(
+                        item.CardUuid,
+                        item.Translation,
+                        item.Collected)
+                    );
+                }
             }
             return parsed;
         }
@@ -301,9 +304,13 @@ namespace MageekClient.Services
                 CardName = cardName
             });
             List<string> parsed = new();
-            foreach (var item in reply.CardUuidList)
+
+            if (!reply.CardUuidList.IsNull)
             {
-                parsed.Add(item);
+                foreach (var item in reply.CardUuidList.Items)
+                {
+                    parsed.Add(item);
+                }
             }
             return parsed;
         }
@@ -326,7 +333,8 @@ namespace MageekClient.Services
                 CardUuid = cardUuid
             });
             List<string> parsed = new();
-            foreach (var item in reply.CardUuidList)
+            if (!reply.CardUuidList.IsNull)
+                foreach (var item in reply.CardUuidList.Items)
             {
                 parsed.Add(item);
             }
@@ -406,14 +414,17 @@ namespace MageekClient.Services
                 CardUuid = cardUuid
             });
             List<CardRulings> parsed = new();
-            foreach (var item in reply.Rulings)
+            if (!reply.Rulings.IsNull)
             {
-                parsed.Add(new CardRulings()
+                foreach (var item in reply.Rulings.Items)
                 {
-                    Date = item.Date,
-                    Text = item.Text,
-                    Uuid = item.Uuid,
-                });
+                    parsed.Add(new CardRulings()
+                    {
+                        Date = item.Date,
+                        Text = item.Text,
+                        Uuid = item.Uuid,
+                    });
+                }
             }
             return parsed;
         }
@@ -425,7 +436,8 @@ namespace MageekClient.Services
                 CardUuid = cardUuid
             });
             List<CardRelation> parsed = new();
-            foreach (var item in reply.Relations)
+            if (!reply.Relations.IsNull)
+                foreach (var item in reply.Relations.Items)
             {
                 parsed.Add(new CardRelation()
                 {
@@ -489,32 +501,35 @@ namespace MageekClient.Services
             Logger.Log("Calling...");
             var reply = await mageekClient.Sets_AllAsync(new Request_Empty());
             List<Sets> parsed = new();
-            foreach (var item in reply.SetList)
+            if (!reply.SetList.IsNull)
             {
-                parsed.Add(new Sets()
+                foreach (var item in reply.SetList.Items)
                 {
-                    BaseSetSize = item.BaseSetSize,
-                    Block = item.Block,
-                    Code = item.Code,
-                    IsFoilOnly = item.IsFoilOnly,
-                    IsForeignOnly = item.IsForeignOnly,
-                    IsNonFoilOnly = item.IsNonFoilOnly,
-                    IsOnlineOnly = item.IsOnlineOnly,
-                    IsPartialPreview = item.IsPartialPreview,
-                    KeyruneCode = item.KeyruneCode,
-                    Languages = item.Languages,
-                    McmId = item.McmId,
-                    McmIdExtras = item.McmIdExtras,
-                    McmName = item.McmName,
-                    MtgoCode = item.MtgoCode,
-                    Name = item.Name,
-                    ParentCode = item.ParentCode,
-                    ReleaseDate = item.ReleaseDate,
-                    TcgplayerGroupId = item.TcgplayerGroupId,
-                    TokenSetCode = item.TokenSetCode,
-                    TotalSetSize = item.TotalSetSize,
-                    Type = item.Type
-                });
+                    parsed.Add(new Sets()
+                    {
+                        BaseSetSize = item.BaseSetSize,
+                        Block = item.Block,
+                        Code = item.Code,
+                        IsFoilOnly = item.IsFoilOnly,
+                        IsForeignOnly = item.IsForeignOnly,
+                        IsNonFoilOnly = item.IsNonFoilOnly,
+                        IsOnlineOnly = item.IsOnlineOnly,
+                        IsPartialPreview = item.IsPartialPreview,
+                        KeyruneCode = item.KeyruneCode,
+                        Languages = item.Languages,
+                        McmId = item.McmId,
+                        McmIdExtras = item.McmIdExtras,
+                        McmName = item.McmName,
+                        MtgoCode = item.MtgoCode,
+                        Name = item.Name,
+                        ParentCode = item.ParentCode,
+                        ReleaseDate = item.ReleaseDate,
+                        TcgplayerGroupId = item.TcgplayerGroupId,
+                        TokenSetCode = item.TokenSetCode,
+                        TotalSetSize = item.TotalSetSize,
+                        Type = item.Type
+                    });
+                }
             }
             Logger.Log("Done, found " + parsed.Count + " sets");
             return parsed;
@@ -559,7 +574,11 @@ namespace MageekClient.Services
             {
                 SetCode = setCode
             });
-            List<string> parsed = [.. reply.CardUuidList];
+            List<string> parsed = new();
+            if (!reply.CardUuidList.IsNull)
+            {
+                parsed = [.. reply.CardUuidList.Items];
+            }
             return parsed;
         }
 
@@ -657,16 +676,19 @@ namespace MageekClient.Services
                 User = user,
             });
             List<Deck> parsed = new();
-            foreach (var item in reply.DeckList)
+            if (!reply.DeckList.IsNull)
             {
-                parsed.Add(new Deck()
+                foreach (var item in reply.DeckList.Items)
                 {
-                    CardCount = item.CardCount,
-                    DeckColors = item.DeckColors,
-                    DeckId = item.DeckId,
-                    Description = item.Description,
-                    Title = item.Title,
-                });
+                    parsed.Add(new Deck()
+                    {
+                        CardCount = item.CardCount,
+                        DeckColors = item.DeckColors,
+                        DeckId = item.DeckId,
+                        Description = item.Description,
+                        Title = item.Title,
+                    });
+                }
             }
             return parsed;
         }
@@ -695,35 +717,43 @@ namespace MageekClient.Services
                 DeckId = deckId
             });
             List<DeckCard> parsed = new();
-            foreach (var item in reply.DeckContent)
+            if (!reply.DeckContent.IsNull)
             {
-                parsed.Add(new DeckCard()
+                foreach (var item in reply.DeckContent.Items)
                 {
-                    DeckId = item.DeckId,
-                    CardUuid = item.CardUuid,
-                    Quantity = item.Quantity,
-                    RelationType = item.RelationType
-                });
+                    parsed.Add(new DeckCard()
+                    {
+                        DeckId = item.DeckId,
+                        CardUuid = item.CardUuid,
+                        Quantity = item.Quantity,
+                        RelationType = item.RelationType
+                    });
+                }
             }
             return parsed;
         }
 
-        public async Task Decks_Create(string user, string title, string description, IEnumerable<DeckCard> deckLines = null)
+        public async Task Decks_Create(string user, string title, string description, IEnumerable<DeckCard> deckLines)
         {
             var req = new Request_CreateDeck()
             {
                 Description = description,
                 Title = title,
+                Cards = new Wrapper_Reply_DeckCardList()
             };
             foreach (var item in deckLines)
             {
-                req.Cards.Add(new Reply_DeckCard()
-                {
-                    CardUuid = item.CardUuid,
-                    //DeckId = header.DeckId,
-                    Quantity = item.Quantity,
-                    RelationType = item.RelationType,
-                });
+                    req.Cards.Items.Add(new Reply_DeckCard()
+                    {
+                        CardUuid = item.CardUuid,
+                        //DeckId = header.DeckId,
+                        Quantity = item.Quantity,
+                        RelationType = item.RelationType,
+                    });
+            }
+            if (!req.Cards.Items.Any())
+            {
+                req.Cards.IsNull = true;
             }
             var reply = await mageekClient.Decks_CreateAsync(req);
         }
@@ -755,13 +785,16 @@ namespace MageekClient.Services
             };
             foreach (var item in lines)
             {
-                req.Lines.Add(new Reply_DeckCard()
+                if (!req.Lines.IsNull)
                 {
-                    CardUuid = item.CardUuid,
-                    DeckId = header.DeckId,
-                    Quantity = item.Quantity,
-                    RelationType = item.RelationType,
-                });
+                    req.Lines.Items.Add(new Reply_DeckCard()
+                    {
+                        CardUuid = item.CardUuid,
+                        DeckId = header.DeckId,
+                        Quantity = item.Quantity,
+                        RelationType = item.RelationType,
+                    });
+                }
             }
             var reply = await mageekClient.Decks_SaveAsync(req);
         }
@@ -778,27 +811,33 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Decks_PrecosAsync(new Request_Empty());
             List<Preco> parsed = new();
-            foreach (var item in reply.PrecoList)
+            if (!reply.PrecoList.IsNull)
             {
-                var preco = new Preco()
+                foreach (var item in reply.PrecoList.Items)
                 {
-                    Code = item.Code,
-                    Kind = item.Kind,
-                    ReleaseDate = item.ReleaseDate,
-                    Title = item.Title,
-                    Cards = new()
-                };
-                foreach (var v in item.Cards)
-                {
-                    preco.Cards.Add(new DeckCard()
+                    var preco = new Preco()
                     {
-                        CardUuid = v.CardUuid,
-                        DeckId = v.DeckId,
-                        Quantity = v.Quantity,
-                        RelationType = v.RelationType,
-                    });
+                        Code = item.Code,
+                        Kind = item.Kind,
+                        ReleaseDate = item.ReleaseDate,
+                        Title = item.Title,
+                        Cards = new()
+                    };
+                    if (!item.Cards.IsNull)
+                    {
+                        foreach (var v in item.Cards.Items)
+                        {
+                            preco.Cards.Add(new DeckCard()
+                            {
+                                CardUuid = v.CardUuid,
+                                DeckId = v.DeckId,
+                                Quantity = v.Quantity,
+                                RelationType = v.RelationType,
+                            });
+                        }
+                    }
+                    parsed.Add(preco);
                 }
-                parsed.Add(preco);
             }
             return parsed;
         }
@@ -810,7 +849,8 @@ namespace MageekClient.Services
                 User = user,
             });
             List<string> parsed = new();
-            foreach (var item in reply.TagList)
+            if (!reply.TagList.IsNull)
+                foreach (var item in reply.TagList.Items)
             {
                 parsed.Add(item.TagContent);
             }
@@ -855,14 +895,17 @@ namespace MageekClient.Services
                 CardName = cardName
             });
             List<Tag> parsed = new();
-            foreach (var item in reply.TagList)
+            if(!reply.TagList.IsNull)
             {
-                parsed.Add(new Tag()
+                foreach (var item in reply.TagList.Items)
                 {
-                    ArchetypeId = item.ArchetypeId,
-                    TagContent = item.TagContent,
-                    TagId = item.TagId,
-                });
+                    parsed.Add(new Tag()
+                    {
+                        ArchetypeId = item.ArchetypeId,
+                        TagContent = item.TagContent,
+                        TagId = item.TagId,
+                    });
+                }
             }
             return parsed;
         }
@@ -879,15 +922,18 @@ namespace MageekClient.Services
                 Status = reply.Status,
                 Cards = new(),
             };
-            foreach (var item in reply.Cards)
+            if (!reply.Cards.IsNull)
             {
-                parsed.Cards.Add(new DeckCard()
+                foreach (var item in reply.Cards.Items)
                 {
-                    CardUuid = item.CardUuid,
-                    DeckId = item.DeckId,
-                    Quantity = item.Quantity,
-                    RelationType = item.RelationType,
-                });
+                    parsed.Cards.Add(new DeckCard()
+                    {
+                        CardUuid = item.CardUuid,
+                        DeckId = item.DeckId,
+                        Quantity = item.Quantity,
+                        RelationType = item.RelationType,
+                    });
+                }
             }
             return parsed;
         }

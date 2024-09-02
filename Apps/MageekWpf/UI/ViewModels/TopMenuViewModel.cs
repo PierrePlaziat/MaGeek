@@ -27,9 +27,9 @@ namespace MageekDesktop.UI.ViewModels
         }
 
         [RelayCommand]
-        private void LayoutBackup(string obj)
+        private void LayoutBackup(string layoutName)
         {
-            win.SaveLayout(obj);
+            win.SaveLayout(layoutName);
         }
 
         [RelayCommand]

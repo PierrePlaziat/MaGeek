@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using PlaziatTools;
 
 namespace MageekCore.Data.Collection
 {
@@ -26,15 +27,30 @@ namespace MageekCore.Data.Collection
 
         private string GetDBPath(string user)
         {
-            return Path.Combine(PlaziatTools.Paths.Folder_UserSystem, user);
+            string folder = Path.Combine(PlaziatTools.Paths.Folder_UserSystem, user);
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+                CreateDb(folder);
+            }
+            Logger.Log(folder);
+            return Path.Combine(folder, "db.sqlite");
         }
 
-        public void CreateDb(string user)
+        public void CreateDb(string folder)
         {
-            SqliteConnection dbCo = new SqliteConnection("Data Source = " + GetDBPath(user));
-            dbCo.Open();
-            foreach (string instruction in description) new SqliteCommand(instruction, dbCo).ExecuteNonQuery();
-            dbCo.Close();
+            Logger.Log("Data Source = " + Path.Combine(folder, "db.sqlite"));
+            using (var dbCo = new SqliteConnection("Data Source = " + Path.Combine(folder, "db.sqlite")))
+            {
+                dbCo.Open();
+                foreach (string instruction in description)
+                {
+                    using (var command = new SqliteCommand(instruction, dbCo))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
         }
 
     }

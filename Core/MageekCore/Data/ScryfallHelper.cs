@@ -5,15 +5,9 @@ using System.Text.Json;
 namespace MageekCore.Data
 {
 
-    public class ScryManager
+    public class ScryfallHelper
     {
 
-        /// <summary>
-        /// This will disappear when using mtgsqlive data,
-        /// get card data from scryfall from a card uuid
-        /// </summary>
-        /// <param name="cardUuid"></param>
-        /// <returns>A scryfall card</returns>
         public async Task<Card?> GetScryfallCard(string scryfallId)
         {
             Logger.Log("");
@@ -88,7 +82,11 @@ namespace MageekCore.Data
                                         await s.CopyToAsync(fs);
                                     }
                                 }
-                                catch (Exception e) { Logger.Log(e); }
+                                catch (Exception e) 
+                                { 
+                                    Logger.Log(e);
+                                    Logger.Log(uri.ToString());
+                                }
                             }
                         }
                     }
