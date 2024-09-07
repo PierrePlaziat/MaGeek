@@ -23,11 +23,6 @@
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         }
 
-        public static string GetUserFolder(string user)
-        {
-            return Path.Combine(Folder_UserSystem, user);
-        }
-        
     }
 
 }

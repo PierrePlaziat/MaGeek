@@ -5,6 +5,7 @@ using MageekCore.Data;
 using System.Threading.Tasks;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
+using PlaziatTools;
 
 namespace MageekDesktop.UI.ViewModels.AppWindows
 {
@@ -27,7 +28,7 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
             this.mageek = mageek;
             this.winManager = winManager;
             this.dialogs = dialogs;
-            Paths.InitClient();
+            MageekCore.Data.Paths.InitClient();
             RetrieveRegisteredCredentials();
             Message = "Welcome";
         }
@@ -71,6 +72,7 @@ namespace MageekDesktop.UI.ViewModels.AppWindows
             if (success == MageekConnectReturn.Success)
             {
                 Message = "Launching";
+                Logger.Log("Launching for user: " + Input_user);
                 App.OnConnected(Input_user);
             }
         }

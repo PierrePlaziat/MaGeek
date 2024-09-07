@@ -535,7 +535,7 @@ namespace MageekServer.Services
                                 preco.Cards.Items.Add(new Reply_DeckCard()
                                 {
                                     CardUuid = v.CardUuid,
-                                    DeckId = v.DeckId,
+                                    DeckId = v.DeckId == null ? "PrecoDecks": v.DeckId,
                                     Quantity = v.Quantity,
                                     RelationType = v.RelationType,
                                 });

@@ -20,34 +20,30 @@ namespace MageekCore.Data.Collection
         {
         }
 
-        public async Task<CollectionDbContext?> GetContext(string user)
+        public async Task<CollectionDbContext?> GetContext(string userName)
         {
-            return new CollectionDbContext(GetDBPath(user));
+            if (string.IsNullOrEmpty(userName))
+                throw new Exception("userName was null or empty");
+            string userFolder = Path.Combine(PlaziatTools.Paths.Folder_UserSystem, userName);
+            string dbPath = Path.Combine(userFolder, "db.sqlite");
+            PlaziatTools.Paths.CheckFolder(userFolder);
+            if (!File.Exists(dbPath))
+                await CreateDb(dbPath);
+            PlaziatTools.Logger.Log("Data Source = " + dbPath);
+            return new CollectionDbContext(dbPath);
         }
 
-        private string GetDBPath(string user)
+        public async Task CreateDb(string dbPath)
         {
-            string folder = Path.Combine(PlaziatTools.Paths.Folder_UserSystem, user);
-            if (!Directory.Exists(folder))
+            PlaziatTools.Logger.Log("Data Source = " + dbPath);
+            using (var dbCo = new SqliteConnection("Data Source = " + dbPath))
             {
-                Directory.CreateDirectory(folder);
-                CreateDb(folder);
-            }
-            Logger.Log(folder);
-            return Path.Combine(folder, "db.sqlite");
-        }
-
-        public void CreateDb(string folder)
-        {
-            Logger.Log("Data Source = " + Path.Combine(folder, "db.sqlite"));
-            using (var dbCo = new SqliteConnection("Data Source = " + Path.Combine(folder, "db.sqlite")))
-            {
-                dbCo.Open();
+                await dbCo.OpenAsync();
                 foreach (string instruction in description)
                 {
                     using (var command = new SqliteCommand(instruction, dbCo))
                     {
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                     }
                 }
             }

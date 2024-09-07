@@ -586,6 +586,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Sets_CompletionAsync(new Request_SetCompletion()
             {
+                User = user,
                 Code = setCode,
                 Strict = strict
             });
@@ -598,6 +599,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Collec_SetFavCardVariantAsync(new Request_Fav()
             {
+                User = user,
                 CardName = cardName,
                 CardUuid = cardUuid
             });
@@ -607,6 +609,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Collec_MoveAsync(new Request_CollecMove()
             {
+                User = user,
                 CardUuid = cardUuid,
                 Quantity = quantity
             });
@@ -651,6 +654,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Collec_TotalDifferentOwnedAsync(new Request_combinedVariant()
             {
+                User = user,
                 Combined = combined
             });
             int parsed = -1;
@@ -697,6 +701,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Decks_GetAsync(new Request_DeckId()
             {
+                User = user,
                 DeckId = deckId
             });
             Deck parsed = new Deck()
@@ -714,6 +719,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Decks_ContentAsync(new Request_DeckId()
             {
+                User = user,
                 DeckId = deckId
             });
             List<DeckCard> parsed = new();
@@ -737,6 +743,7 @@ namespace MageekClient.Services
         {
             var req = new Request_CreateDeck()
             {
+                User = user,
                 Description = description,
                 Title = title,
                 Cards = new Wrapper_Reply_DeckCardList()
@@ -762,6 +769,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Decks_RenameAsync(new Request_RenameDeck()
             {
+                User = user,
                 DeckId = deckId,
                 Title = title
             });
@@ -771,6 +779,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Decks_DuplicateAsync(new Request_DeckId()
             {
+                User = user,
                 DeckId = deckId
             });
         }
@@ -779,6 +788,7 @@ namespace MageekClient.Services
         {
             var req = new Request_SaveDeck()
             {
+                User = user,
                 DeckId = header.DeckId,
                 Description = header.Description,
                 Title = header.Title,
@@ -803,6 +813,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Decks_DeleteAsync(new Request_DeckId()
             {
+                User = user,
                 DeckId = deckId
             });
         }
@@ -861,6 +872,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Tags_CardHasTagAsync(new Request_CardTag()
             {
+                User = user,
                 CardName = cardName,
                 Tag = tag
             });
@@ -873,6 +885,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Tags_UntagCardAsync(new Request_CardTag()
             {
+                User = user,
                 CardName = cardName,
                 Tag = tag
             });
@@ -882,6 +895,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.Tags_UntagCardAsync(new Request_CardTag()
             {
+                User = user,
                 CardName = cardName,
                 Tag = tag
             });
@@ -942,6 +956,7 @@ namespace MageekClient.Services
         {
             var reply = await mageekClient.CardLists_FromDeckAsync(new Request_DeckToTxt()
             {
+                User = user,
                 DeckId = deckId,
                 WithSetCode = withSetCode
             });

@@ -1,12 +1,20 @@
-﻿namespace PlaziatWpf.Services
+﻿using PlaziatTools;
+
+namespace PlaziatWpf.Services
 {
 
     public class SessionBag
     {
 		private string username;
 		public string UserName { 
-			get { return username; }
-			set { username = value; }
+			get 
+			{
+				return username;
+			}
+			set
+            {
+                username = value;
+            }
 		}
 
 	}
