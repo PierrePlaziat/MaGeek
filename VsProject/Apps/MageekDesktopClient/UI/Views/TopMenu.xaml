@@ -1,0 +1,179 @@
+﻿<mvvm:BaseUserControl x:Class="MageekDesktopClient.UI.Views.TopMenu"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                      mc:Ignorable="d"
+                      d:DesignHeight="20">
+
+    <Menu Background="Black"
+          Foreground="White">
+
+        <MenuItem Header="Tools">
+            <MenuItem Header="Card Searcher"
+                      Foreground="Black"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="CardSearcher">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconCard.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Card Inspector"
+                      Foreground="Black"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="CardInspector">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconCard.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="Set List"
+                      Foreground="Black"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="SetList">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconDeck.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Deck List"
+                      Foreground="Black"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="DeckList">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconDeck.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Preco List"
+                      Foreground="Black"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="PrecoList">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconDeck.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="Txt Input"
+                      Foreground="Black"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="TxtInput">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Backup.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="Collec Estimation"
+                      Foreground="Black"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="CollecEstimation">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Currency.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </MenuItem>
+
+        <MenuItem Header="Layout">
+            <MenuItem Header="Save"
+                      Foreground="Black"
+                      Command="{Binding LayoutBackupCommand}"
+                      CommandParameter="Cached">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Backup.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Load"
+                      Foreground="Black"
+                      Command="{Binding LayoutRestoreCommand}"
+                      CommandParameter="Cached">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Restore.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+        </MenuItem>
+
+        <MenuItem Header="Options">
+            <MenuItem Header="Language"
+                      Name="LangBox"
+                      Foreground="Black">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Lang.jpg" />
+                </MenuItem.Icon>
+                <MenuItem Header="French"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="French">
+                </MenuItem>
+                <MenuItem Header="German"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="German">
+                </MenuItem>
+                <MenuItem Header="Italian"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="Italian">
+                </MenuItem>
+                <MenuItem Header="Spanish"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="Spanish">
+                </MenuItem>
+                <MenuItem Header="Portuguese (Brazil)"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="Portuguese (Brazil)">
+                </MenuItem>
+                <MenuItem Header="Japanese"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="Japanese">
+                </MenuItem>
+                <MenuItem Header="Korean"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="Korean">
+                </MenuItem>
+                <MenuItem Header="Chinese Simplified"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="Chinese Simplified">
+                </MenuItem>
+                <MenuItem Header="Chinese Traditional"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="Chinese Traditional">
+                </MenuItem>
+                <MenuItem Header="Russian"
+                          Foreground="Black"
+                          Command="{Binding ChangeLanguageCommand}"
+                          CommandParameter="Russian">
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="Currency"
+                      Name="CurrencyBox"
+                      Foreground="Black">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/Icon_Currency.jpg" />
+                </MenuItem.Icon>
+                <MenuItem Header="Eur"
+                          Foreground="Black"
+                          Command="{Binding ChangeCurrencyCommand}"
+                          CommandParameter="Eur">
+                </MenuItem>
+                <MenuItem Header="Usd"
+                          Foreground="Black"
+                          Command="{Binding ChangeCurrencyCommand}"
+                          CommandParameter="Usd">
+                </MenuItem>
+            </MenuItem>
+
+        </MenuItem>
+
+        <MenuItem Header="About"
+                  Command="{Binding AboutCommand}" />
+
+    </Menu>
+
+</mvvm:BaseUserControl>

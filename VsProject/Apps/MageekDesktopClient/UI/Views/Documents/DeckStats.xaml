@@ -1,0 +1,318 @@
+﻿<mvvm:BaseUserControl  x:Class="MageekDesktopClient.UI.Views.AppPanels.DeckStats"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:controls="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
+                       xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                       mc:Ignorable="d"
+                       d:DesignHeight="450"
+                       d:DesignWidth="800">
+
+    <Grid Background="Black">
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+            <StackPanel>
+
+                <Button Command="{Binding SaveDeckCommand}">SAVE DECK</Button> 
+                
+                <Label>Manacurve</Label>
+
+                <Grid Width="500"
+                      HorizontalAlignment="Left">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0"
+                           Content="0" />
+                    <Label Grid.Column="1"
+                           Content="1" />
+                    <Label Grid.Column="2"
+                           Content="2" />
+                    <Label Grid.Column="3"
+                           Content="3" />
+                    <Label Grid.Column="4"
+                           Content="4" />
+                    <Label Grid.Column="5"
+                           Content="5" />
+                    <Label Grid.Column="6"
+                           Content="6" />
+                    <Label Grid.Column="7"
+                           Content="7" />
+                    <Label Grid.Column="8"
+                           Content="8" />
+                    <Label Grid.Column="9"
+                           Content="9" />
+
+                </Grid>
+
+                <Canvas Height="100"
+                        Width="200"
+                        HorizontalAlignment="Left"
+                        Margin="10">
+                    <Path Stroke="White"
+                          StrokeThickness="2">
+                        <Path.Data>
+                            <PathGeometry>
+                                <PathGeometry.Figures>
+                                    <PathFigureCollection>
+                                        <PathFigure StartPoint="{Binding Deck.CurveStart}">
+                                            <PathFigure.Segments>
+                                                <PathSegmentCollection>
+                                                    <PolyLineSegment Points="{Binding Deck.CurvePoints}" />
+                                                </PathSegmentCollection>
+                                            </PathFigure.Segments>
+                                        </PathFigure>
+                                    </PathFigureCollection>
+                                </PathGeometry.Figures>
+                            </PathGeometry>
+                        </Path.Data>
+                    </Path>
+                </Canvas>
+
+                <Label>Color devotions</Label>
+
+                <DockPanel>
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label FontFamily="{StaticResource MtgSymbols}"
+                           Content="B"
+                           FontSize="20"
+                           Foreground="#DDD"
+                           Margin="0"
+                           Padding="0" />
+                    <Label Content="{Binding Deck.DevotionB}"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           Padding="3" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label FontFamily="{StaticResource MtgSymbols}"
+                           Content="W"
+                           FontSize="20"
+                           Foreground="#DDD"
+                           Margin="0"
+                           Padding="0" />
+                    <Label Content="{Binding Deck.DevotionW}"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           Padding="3" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label FontFamily="{StaticResource MtgSymbols}"
+                           Content="U"
+                           FontSize="20"
+                           Foreground="#DDD"
+                           Margin="0"
+                           Padding="0" />
+                    <Label Content="{Binding Deck.DevotionU}"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           Padding="3" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label FontFamily="{StaticResource MtgSymbols}"
+                           Content="G"
+                           FontSize="20"
+                           Foreground="#DDD"
+                           Margin="0"
+                           Padding="0" />
+                    <Label Content="{Binding Deck.DevotionG}"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           Padding="3" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label FontFamily="{StaticResource MtgSymbols}"
+                           Content="R"
+                           FontSize="20"
+                           Foreground="#DDD"
+                           Margin="0"
+                           Padding="0" />
+                    <Label Content="{Binding Deck.DevotionR}"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           Padding="3" />
+
+                </DockPanel>
+
+                <Label>card types</Label>
+
+                <DockPanel>
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label Content="Creatures"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.count_Creature}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                    <Label Content="Instant"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.count_instant}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                    <Label Content="Sorcery"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.count_Sorcery}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                    <Label Content="Enchantment"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.count_Enchantment}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                </DockPanel>
+
+                <DockPanel>
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label Content="Artifact"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.count_Artifact}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                    <Label Content="BasicLand"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.count_BasicLand}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                    <Label Content="SpecialLand"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.count_specialLand}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                    <Label Content="Other"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.count_Other}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                </DockPanel>
+
+                <Label>hand</Label>
+
+                <DockPanel>
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Button Width="50"
+                            Height="50"
+                            Content="New" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <DockPanel Name="HandPanel"
+                               HorizontalAlignment="Left"></DockPanel>
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Button Width="50"
+                            Height="50"
+                            Content="Draw" /> 
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                </DockPanel>
+
+                <Label>Format check</Label>
+
+                <DockPanel>
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label Content="Legacy"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.StandardOk}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label Content="Commander"
+                           Foreground="#DDD" />
+                    <Label Content="{Binding Deck.CommanderOk}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+
+                </DockPanel>
+
+                <Label>Owned</Label>
+
+                <DockPanel>
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Label Content="{Binding Deck.OwnedRatio}"
+                           FontWeight="Bold"
+                           Foreground="White" />
+                    <Label Content="%"
+                           Foreground="#DDD" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                    <Button Content="List missing" />
+
+                    <Separator Width="20"
+                               Background="Transparent" />
+
+                </DockPanel>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+        <!--<Grid Background="Black"
+              Grid.RowSpan="5"
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+            <controls:BusyIndicator></controls:BusyIndicator>
+        </Grid>-->
+
+    </Grid>
+</mvvm:BaseUserControl>

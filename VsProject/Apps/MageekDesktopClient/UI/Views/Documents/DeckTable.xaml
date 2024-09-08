@@ -1,0 +1,178 @@
+﻿<mvvm:BaseUserControl x:Class="MageekDesktopClient.UI.Views.AppPanels.DeckTable"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:controls="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
+                      xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                      mc:Ignorable="d" 
+                      d:DesignHeight="450" d:DesignWidth="800"
+                      x:Name="myWindow" Background="Black">
+
+    <mvvm:BaseUserControl.Resources>
+
+        <Style TargetType="ItemsControl" x:Key="CustomItemsControlStyle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <ItemsPanelTemplate x:Key="CustomItemsControlItemsPanel">
+            <WrapPanel>
+            </WrapPanel>
+        </ItemsPanelTemplate>
+
+        <DataTemplate x:Key="CustomItemsControlItem">
+            <ContentControl Width="150"
+                            Height="150"
+                            Background="Green">
+                <!--<local:CardIllustration CardFront="{Binding Path=DataContext.Card, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentControl}}"/>-->
+                <ContentControl.ContextMenu>
+
+                    <ContextMenu>
+                        <MenuItem Header="Set Commandant"
+                                  Click="ToCommandant_Click"
+                                  CommandParameter="{Binding}"/>
+                        <MenuItem Header="To Side"
+                                  Click="ToSide_Click"
+                                  CommandParameter="{Binding}"/>
+                        <Separator />
+                        <MenuItem Header="Add one"
+                                  Click="AddOne_Click"
+                                  CommandParameter="{Binding}"/>
+                        <MenuItem Header="Remove one"
+                                  Click="RemoveOne_Click"
+                                  CommandParameter="{Binding}"/>
+                        <Separator />
+                        <MenuItem Header="Variant" 
+                                  ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
+                            <MenuItem.ItemContainerStyle>
+                                <Style TargetType="MenuItem">
+                                    <Setter Property="Header" 
+                                            Value="{Binding SetName}"/>
+                                    <Setter Property="Command" 
+                                            Value="{Binding Path=DataContext.ChangeIlluCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                    <Setter Property="CommandTarget" 
+                                            Value="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                    <Setter Property="CommandParameter" 
+                                            Value="{Binding}"/>
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
+                        </MenuItem>
+                    </ContextMenu>
+                </ContentControl.ContextMenu>
+            </ContentControl>
+        </DataTemplate>
+
+    </mvvm:BaseUserControl.Resources>
+    
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" MinWidth="10" >
+
+        <StackPanel>
+
+            <!--<DockPanel Margin="10" HorizontalAlignment="Right">
+                <Label>CardSize:</Label>
+                <Button Width="20"
+                        Command="{Binding ResizeCompleteCommand}"
+                        Content="Complete" />
+                <Button Width="20"
+                        Command="{Binding ResizePictureCommand}"
+                        Content="Picture" />
+                <Button Width="20"
+                        Command="{Binding ResizeHeaderCommand}"
+                        Content="Header" />
+                <Label></Label>
+            </DockPanel>-->
+
+            <Label FontWeight="Bold" 
+                   FontSize="20" 
+                   Visibility="{Binding Deck.HasCommandant, Converter={StaticResource BoolToVis}}"
+                   Content="Commandement"/>
+
+            <ItemsControl ItemsSource="{Binding Deck.entries_Commanders}"
+                            Style="{StaticResource CustomItemsControlStyle}"
+                            ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                            ItemTemplate ="{StaticResource CustomItemsControlItem}">
+            </ItemsControl>
+
+            <DockPanel Margin="0">
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc0}" 
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc1}"
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc2}"
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc3}"
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc4}"
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc5}"
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc6}"
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc7}"
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_CmcBig}"
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <Label></Label>
+
+            </DockPanel>
+
+            <Label FontWeight="Bold" FontSize="20"
+                    Visibility="{Binding Deck.HasLands, Converter={StaticResource BoolToVis}}">Lands</Label>
+
+            <DockPanel>
+
+                <ItemsControl ItemsSource="{Binding Deck.deck_Lands}"
+                                Style="{StaticResource CustomItemsControlStyle}"
+                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
+                </ItemsControl>
+
+                <Label></Label>
+
+            </DockPanel>
+
+        </StackPanel>
+
+    </ScrollViewer>
+
+</mvvm:BaseUserControl>

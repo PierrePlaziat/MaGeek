@@ -1,0 +1,204 @@
+﻿<mvvm:BaseUserControl x:Class="MageekDesktopClient.UI.Views.AppPanels.DeckContent"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:controls="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
+                      xmlns:mgctrl="clr-namespace:MageekDesktopClient.UI.Controls"
+                      xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                      mc:Ignorable="d">
+
+    <mvvm:BaseUserControl.Resources>
+
+        <DataTemplate x:Key="OpenedDeckEntryLineTemplate">
+            <Grid Height="20" 
+                  MouseWheel="ScrollViewer_MouseWheel">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Foreground="White"
+                       Padding="4,1,1,1"
+                       Grid.Column="3"
+                       Content="{Binding Card.Name}" />
+                <mgctrl:ManaCost Grid.Column="4"
+                                Cost="{Binding Card.ManaCost}"
+                                HorizontalAlignment="Right"
+                                Foreground="Black" />
+                <Button Grid.Column="0"
+                        Height="20"
+                        Foreground="Black"
+                        Content="-"
+                        Click="ButtonLess_Click" 
+                        CommandParameter="{Binding}"/>
+                <Label  Grid.Column="1"
+                        Height="20"
+                        Padding="2"
+                        Foreground="White"
+                        Content="{Binding Line.Quantity}"
+                        HorizontalAlignment="Center" />
+                <Button Grid.Column="2"
+                        Height="20"
+                        Foreground="Black"
+                        Content="+"
+                        Click="ButtonMore_Click"
+                        CommandParameter="{Binding}" />
+            </Grid>
+        </DataTemplate>
+
+        <ContextMenu x:Key="OpenedDeckEntryLineMenu">
+            <MenuItem Header="Set Commandant"
+                      Click="SetCommandant"
+                      CommandParameter="{Binding}" />
+            <MenuItem Header="To Side"
+                      Click="ToSide"
+                      CommandParameter="{Binding}" />
+        </ContextMenu>
+
+        <Style TargetType="ListView" 
+               x:Key="OpenedDeckEntryListStyle">
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="Background"
+                    Value="#000" />
+            <Setter Property="SelectionMode"
+                    Value="Single" />
+        </Style>
+
+        <Style TargetType="ListViewItem" 
+               x:Key="OpenedDeckEntryLineItemContainerStyle">
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="Background"
+                    Value="#222" />
+        </Style>
+
+    </mvvm:BaseUserControl.Resources>
+
+    <ScrollViewer Name="ScrollViewerName"
+                    MouseWheel="ScrollViewer_MouseWheel">
+
+        <StackPanel>
+
+            <Label Visibility="{Binding Deck.HasCommandant, Converter={StaticResource BoolToVis}}">Commander:</Label>
+            <ListView ItemsSource="{Binding Deck.entries_Commanders}"
+                      ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                      ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                      BorderThickness="0"
+                      Background="DarkOrange"
+                      MouseDoubleClick="SelectionChanged"
+                      Grid.Row="2" 
+                      Visibility="{Binding Deck.HasCommandant, Converter={StaticResource BoolToVis}}"
+                      SelectionMode="Single"
+                    PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown">
+
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Unset Commandant"
+                                    Click="ToDeck"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+
+            </ListView>
+
+            <Label Visibility="{Binding Deck.HasCreatures, Converter={StaticResource BoolToVis}}">Creatures :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Creatures}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
+            <Label Visibility="{Binding Deck.HasInstants, Converter={StaticResource BoolToVis}}">Instants :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Instants}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
+            <Label Visibility="{Binding Deck.HasSorceries, Converter={StaticResource BoolToVis}}">Sorceries :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Sorceries}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
+            <Label Visibility="{Binding Deck.HasEnchantments, Converter={StaticResource BoolToVis}}">Enchantments :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Enchantments}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
+            <Label Visibility="{Binding Deck.HasArtifacts, Converter={StaticResource BoolToVis}}">Artifacts :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Artifacts}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
+            <Label Visibility="{Binding Deck.HasOther, Converter={StaticResource BoolToVis}}">Others :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_Other}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
+
+            <Label Visibility="{Binding Deck.HasLands, Converter={StaticResource BoolToVis}}">Lands :</Label>
+            <ListView ItemsSource="{Binding Deck.deck_BasicLands}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
+            <ListView ItemsSource="{Binding Deck.deck_SpecialLands}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ContextMenu="{StaticResource OpenedDeckEntryLineMenu}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                        Grid.Row="3"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown"/>
+
+            <Label Visibility="{Binding Deck.HasSide, Converter={StaticResource BoolToVis}}">Side :</Label>
+            <ListView ItemsSource="{Binding Deck.entries_Side}"
+                        ItemTemplate="{StaticResource OpenedDeckEntryLineTemplate}"
+                        ItemContainerStyle="{StaticResource OpenedDeckEntryLineItemContainerStyle}"
+                        Style="{StaticResource OpenedDeckEntryListStyle}"
+                        MouseDoubleClick="SelectionChanged"
+                  PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown">
+
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="To Deck"
+                                    Click="ToDeck"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+
+            </ListView>
+
+        </StackPanel>
+
+    </ScrollViewer>
+
+</mvvm:BaseUserControl>

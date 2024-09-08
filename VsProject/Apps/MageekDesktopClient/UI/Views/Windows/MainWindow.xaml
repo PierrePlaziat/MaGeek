@@ -1,0 +1,40 @@
+﻿<mvvm:BaseWindow x:Class="MageekDesktopClient.UI.Views.AppWindows.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
+                 xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                 xmlns:menu="clr-namespace:MageekDesktopClient.UI.Views"
+                 mc:Ignorable="d"
+                 Title="MaGeek"
+                 Height="800"
+                 Width="1200"
+                 BorderThickness="0">
+
+    <Grid x:Name="BaseGrid">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <menu:TopMenu Grid.Row="0" x:Name="TopMenuControl"/>
+
+        <avalonDock:DockingManager Grid.Row="1" x:Name="DockingManager">
+
+            <avalonDock:DockingManager.Theme>
+                <avalonDock:Vs2013DarkTheme />
+            </avalonDock:DockingManager.Theme>
+
+            <avalonDock:LayoutRoot x:Name="RootLayout">
+
+                <avalonDock:LayoutPanel />
+
+            </avalonDock:LayoutRoot>
+
+        </avalonDock:DockingManager>
+
+    </Grid>
+
+</mvvm:BaseWindow>

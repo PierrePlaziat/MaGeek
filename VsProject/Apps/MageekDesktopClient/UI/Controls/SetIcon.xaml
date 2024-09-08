@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="MageekDesktopClient.UI.Controls.SetIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
+             mc:Ignorable="d" 
+             d:DesignHeight="25" d:DesignWidth="100" >
+
+    <Grid Margin="0">
+        <Border Name="BG"
+                Background="{Binding Rarity}"
+                Margin="0" Padding="0">
+
+            <Border.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius"
+                            Value="20" />
+                </Style>
+            </Border.Resources>
+
+        </Border>
+        <svg:SvgViewbox Name="svgViewBox"
+                        Margin="4" />
+    </Grid>
+
+</UserControl>
