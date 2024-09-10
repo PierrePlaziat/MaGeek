@@ -454,12 +454,14 @@ namespace MageekCore.Services
                 .FirstOrDefaultAsync();
         }
 
-        // TODO transform into getScryfallId
+        // plutot renvoyer le scryfall id, et se debrouiller côté client
         public async Task<Uri> Cards_GetIllustration(string cardUuid, CardImageFormat type, bool back = false)
         {
             using MtgDbContext DB = await mtg.GetContext();
             var v = await DB.cardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefaultAsync();
-            return new Uri(v.);
+            var c = await scryfall.GetScryfallCard(v.ScryfallId);
+
+            return c.ImageUris.FirstOrDefault(x=>x.Value!=null).Value;
         }
 
         public async Task<PriceLine> Cards_GetPrice(string cardUuid)
@@ -781,7 +783,6 @@ namespace MageekCore.Services
             try
             {
                 using CollectionDbContext DB = await collec.GetContext(user);
-                Logger.Log("1");
                 Deck deck = new()
                 {
                     Title = title,
@@ -789,11 +790,8 @@ namespace MageekCore.Services
                     DeckColors = string.Empty,
                     Description = description
                 };
-                Logger.Log("2");
                 DB.Decks.Add(deck);
-                Logger.Log("3");
                 await DB.SaveChangesAsync();
-                Logger.Log("4");
                 return deck;
             }
             catch (Exception e)

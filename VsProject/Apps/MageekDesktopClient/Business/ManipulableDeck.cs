@@ -12,6 +12,7 @@ using MageekCore.Services;
 using MageekDesktopClient.DeckTools;
 using MageekDesktopClient.Framework;
 using PlaziatWpf.Services;
+using PlaziatTools;
 
 namespace MageekDesktopClient.MageekTools.DeckTools
 {
@@ -19,70 +20,71 @@ namespace MageekDesktopClient.MageekTools.DeckTools
     public partial class ManipulableDeck : ObservableObject
     {
 
-        private IMageekService mageek;
-        private DeckManipulator deckManip;
-        private SessionBag session;
+        //TODO only do that on demand, change the design
+        //public string StandardOk { get { return manipulator.DeckValidity(Entries, "Standard").Result; } }
+        //public string CommanderOk { get { return manipulator.DeckValidity(Entries, "Commander").Result; } }
+        //public int OwnedRatio { get { return manipulator.GetRatio(Entries).Result; } }
 
-        public ManipulableDeck(IMageekService mageek, DeckManipulator deckManip)
+        #region Construction
+
+        private IMageekService mageek;
+        private SessionBag session;
+        private DeckManipulator manipulator;
+
+        public ManipulableDeck(IMageekService mageek, SessionBag session, DeckManipulator manipulator)
         {
             this.mageek = mageek;
-            this.deckManip = deckManip;
             this.session = session;
+            this.manipulator = manipulator;
         }
 
-        [ObservableProperty] Deck header;
+        #endregion
+
         [ObservableProperty] ObservableCollection<ManipulableDeckEntry> entries;
+        [ObservableProperty] Deck header;
+        [ObservableProperty] PathFigure curve;
 
         public async Task OpenDeck(Deck deck)
         {
+            Logger.Log("Oppening existing deck...");
+            Entries = new ObservableCollection<ManipulableDeckEntry>(await manipulator.GetEntriesFromDeck(deck.DeckId));
             Header = deck;
-            Entries = new ObservableCollection<ManipulableDeckEntry>(await deckManip.GetEntriesFromDeck(deck.DeckId));
+            DeckChanged();
+            Logger.Log("...done");
         }
-        
+
         public async Task OpenDeck(List<DeckCard> importLines)
         {
+            Logger.Log("Oppening importation...");
+            Entries = new ObservableCollection<ManipulableDeckEntry>(await manipulator.GetEntriesFromImport(importLines)); 
             Header = new Deck()
             {
                 Title = "Importation ",
                 Description = "Imported at : "+DateTime.Now,
             };
-            Entries = new ObservableCollection<ManipulableDeckEntry>(await deckManip.GetEntriesFromImport(importLines));
-            Header.DeckColors = deckManip.GetColors(Entries);
-            Header.CardCount = deckManip.CountQuantity(Entries);
+            DeckChanged();
+            Logger.Log("...done");
         }
 
         public async Task OpenDeck(Preco preco)
         {
-            Header = deckManip.GetHeaderFromPreco(preco);
-            Entries = new ObservableCollection<ManipulableDeckEntry>(await deckManip.GetEntriesFromPreco(preco));
-            Header.DeckColors = deckManip.GetColors(Entries);
-            Header.CardCount = deckManip.CountQuantity(Entries);
-        }
-
-        public async Task SaveDeck()
-        {
-            Header.DeckColors = DeckColors;
-            Header.CardCount = count_All;
-            await mageek.Decks_Save(session.UserName, Header, deckManip.GetSavableCardList(Entries));
-            WeakReferenceMessenger.Default.Send(new UpdateDeckListMessage(Header.DeckId));
+            Logger.Log("Oppening preco...");
+            Entries = new ObservableCollection<ManipulableDeckEntry>(await manipulator.GetEntriesFromPreco(preco));
+            Header = manipulator.GetHeaderFromPreco(preco);
+            DeckChanged();
+            Logger.Log("...done");
         }
 
         public async Task AddCard(string uuid)
         {
-            var newCard = await mageek.Cards_GetData(uuid);
-
             List<string> newVariants = await mageek.Cards_UuidsForGivenCardUuid(uuid);
-
             ManipulableDeckEntry previousEntry = Entries
-                .Where(x => newVariants.Contains(x.Line.CardUuid))
+                .Where(x => newVariants.Contains(x.Line.CardUuid)) // Checks if the any of the variants of the card is in the deck
                 .FirstOrDefault();
-            if (previousEntry != null)
-            {
-                MoreOf(previousEntry);
-            }
+            if (previousEntry != null) MoreOf(previousEntry);
             else
             {
-                var v = new ManipulableDeckEntry()
+                var entry = new ManipulableDeckEntry()
                 {
                     Card = await mageek.Cards_GetData(uuid),
                     Line = new DeckCard()
@@ -92,37 +94,49 @@ namespace MageekDesktopClient.MageekTools.DeckTools
                         RelationType = 0,
                     }
                 };
-                Entries.Add(v);
-                Header.CardCount++;
+                Entries.Add(entry);
+                DeckChanged();
             }
         }
 
         public void LessOf(ManipulableDeckEntry entry)
         {
-            entry.Line.Quantity--;
             if (entry.Line.Quantity < 0)
             {
-                entry.Line.Quantity = 0;
+                Entries.Remove(entry);
+                return;
             }
-            else
-            {
-                Header.CardCount--;
-            }
+            entry.Line.Quantity--;
+            DeckChanged();
         }
 
         public void MoreOf(ManipulableDeckEntry entry)
         {
             entry.Line.Quantity++;
-            Header.CardCount++;
+            DeckChanged();
+        }
+
+        private void DeckChanged()
+        {
+            Header.DeckColors = manipulator.GetColors(Entries);
+            Header.CardCount = manipulator.CountQuantity(Entries);
+            Curve = manipulator.GetManaCurve(this);
+        }
+
+        public async Task SaveDeck()
+        {
+            DeckChanged(); //TODO Safety measure, probably not needed, check perf before decide
+            Logger.Log("Saving...");
+            await mageek.Decks_Save(session.UserName, Header, manipulator.GetSavableCardList(Entries));
+            Logger.Log("...done");
+            WeakReferenceMessenger.Default.Send(new UpdateDeckListMessage(Header.DeckId));
         }
 
         #region Accessors
 
-        public string DeckColors { get { return deckManip.GetColors(Entries); } }
-
-        public IEnumerable<ManipulableDeckEntry> entries_Deck { get { return Entries.Where(x=> x.Line.RelationType == 0); } }
-        public IEnumerable<ManipulableDeckEntry> entries_Commanders { get { return Entries.Where(x=> x.Line.RelationType == 1); } }
-        public IEnumerable<ManipulableDeckEntry> entries_Side { get { return Entries.Where(x=> x.Line.RelationType == 2); } }
+        public IEnumerable<ManipulableDeckEntry> entries_Deck { get { return Entries.Where(x => x.Line.RelationType == 0); } }
+        public IEnumerable<ManipulableDeckEntry> entries_Commanders { get { return Entries.Where(x => x.Line.RelationType == 1); } }
+        public IEnumerable<ManipulableDeckEntry> entries_Side { get { return Entries.Where(x => x.Line.RelationType == 2); } }
 
         public IEnumerable<ManipulableDeckEntry> deck_Creatures { get { return entries_Deck.Where(x => x.Card.Type.Contains("Creature")); } }
         public IEnumerable<ManipulableDeckEntry> deck_Instants { get { return entries_Deck.Where(x => x.Card.Type.Contains("Instant")); } }
@@ -131,10 +145,11 @@ namespace MageekDesktopClient.MageekTools.DeckTools
         public IEnumerable<ManipulableDeckEntry> deck_Artifacts { get { return entries_Deck.Where(x => x.Card.Type.Contains("Artifact")); } }
         public IEnumerable<ManipulableDeckEntry> deck_Lands { get { return entries_Deck.Where(x => x.Card.Type.Contains("Land")); } }
         public IEnumerable<ManipulableDeckEntry> deck_BasicLands { get { return deck_Lands.Where(x => x.Card.Type.Contains("Basic")); } }
-        public IEnumerable<ManipulableDeckEntry> deck_SpecialLands { get { return deck_Lands.Where(x => ! x.Card.Type.Contains("Basic")); } }
-        public IEnumerable<ManipulableDeckEntry> deck_Other 
+        public IEnumerable<ManipulableDeckEntry> deck_SpecialLands { get { return deck_Lands.Where(x => !x.Card.Type.Contains("Basic")); } }
+        public IEnumerable<ManipulableDeckEntry> deck_Other
         {
-            get {
+            get
+            {
                 return entries_Deck.Where(x =>
                     !x.Card.Type.Contains("Creature") &&
                     !x.Card.Type.Contains("Instant") &&
@@ -168,35 +183,29 @@ namespace MageekDesktopClient.MageekTools.DeckTools
         public bool HasCommandant { get { return entries_Commanders.Any(); } }
         public bool HasSide { get { return entries_Side.Any(); } }
         public bool HasLands { get { return deck_Lands.Any(); } }
-        public bool HasCreatures{ get { return deck_Creatures.Any(); } }
-        public bool HasInstants{ get { return deck_Instants.Any(); } }
-        public bool HasSorceries{ get { return deck_Sorceries.Any(); } }
-        public bool HasEnchantments{ get { return deck_Enchantments.Any(); } }
-        public bool HasArtifacts{ get { return deck_Artifacts.Any(); } }
-        public bool HasOther{ get { return deck_Other.Any(); } }
+        public bool HasCreatures { get { return deck_Creatures.Any(); } }
+        public bool HasInstants { get { return deck_Instants.Any(); } }
+        public bool HasSorceries { get { return deck_Sorceries.Any(); } }
+        public bool HasEnchantments { get { return deck_Enchantments.Any(); } }
+        public bool HasArtifacts { get { return deck_Artifacts.Any(); } }
+        public bool HasOther { get { return deck_Other.Any(); } }
 
-        public int count_All{ get { return deckManip.CountQuantity(Entries); } }
-        public int count_Creature { get { return deckManip.CountQuantity(deck_Creatures); } }
-        public int count_instant { get { return deckManip.CountQuantity(deck_Instants); } }
-        public int count_Sorcery { get { return deckManip.CountQuantity(deck_Sorceries); } }
-        public int count_Enchantment { get { return deckManip.CountQuantity(deck_Enchantments); } }
-        public int count_Artifact { get { return deckManip.CountQuantity(deck_Artifacts); } }
-        public int count_Land { get { return deckManip.CountQuantity(deck_Lands); } }
-        public int count_BasicLand { get { return deckManip.CountQuantity(deck_BasicLands); } }
-        public int count_specialLand { get { return deckManip.CountQuantity(deck_SpecialLands); } }
-        public int count_Other { get { return deckManip.CountQuantity(deck_Other); } }
+        public int count_All { get { return manipulator.CountQuantity(Entries); } }
+        public int count_Creature { get { return manipulator.CountQuantity(deck_Creatures); } }
+        public int count_instant { get { return manipulator.CountQuantity(deck_Instants); } }
+        public int count_Sorcery { get { return manipulator.CountQuantity(deck_Sorceries); } }
+        public int count_Enchantment { get { return manipulator.CountQuantity(deck_Enchantments); } }
+        public int count_Artifact { get { return manipulator.CountQuantity(deck_Artifacts); } }
+        public int count_Land { get { return manipulator.CountQuantity(deck_Lands); } }
+        public int count_BasicLand { get { return manipulator.CountQuantity(deck_BasicLands); } }
+        public int count_specialLand { get { return manipulator.CountQuantity(deck_SpecialLands); } }
+        public int count_Other { get { return manipulator.CountQuantity(deck_Other); } }
 
-        public int DevotionB { get { return deckManip.CountDevotion(entries_Deck, 'B'); } }
-        public int DevotionW { get { return deckManip.CountDevotion(entries_Deck, 'W'); } }
-        public int DevotionU { get { return deckManip.CountDevotion(entries_Deck, 'U'); } }
-        public int DevotionR { get { return deckManip.CountDevotion(entries_Deck, 'R'); } }
-        public int DevotionG { get { return deckManip.CountDevotion(entries_Deck, 'G'); } }
-
-        public string StandardOk { get { return deckManip.DeckValidity(Entries, "Standard").Result; } }
-        public string CommanderOk { get { return deckManip.DeckValidity(Entries, "Commander").Result; } }
-        public int OwnedRatio { get { return deckManip.GetRatio(Entries).Result; } }
-
-        public PointCollection CurvePoints { get { return deckManip.GetManaCurve(this); } }
+        public int DevotionB { get { return manipulator.CountDevotion(entries_Deck, 'B'); } }
+        public int DevotionW { get { return manipulator.CountDevotion(entries_Deck, 'W'); } }
+        public int DevotionU { get { return manipulator.CountDevotion(entries_Deck, 'U'); } }
+        public int DevotionR { get { return manipulator.CountDevotion(entries_Deck, 'R'); } }
+        public int DevotionG { get { return manipulator.CountDevotion(entries_Deck, 'G'); } }
 
         #endregion
 

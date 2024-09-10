@@ -22,20 +22,17 @@ namespace MageekCore.Data.Collection
 
         public async Task<CollectionDbContext?> GetContext(string userName)
         {
-            if (string.IsNullOrEmpty(userName))
-                throw new Exception("userName was null or empty");
+            if (string.IsNullOrEmpty(userName)) throw new Exception("userName was null or empty");
             string userFolder = Path.Combine(PlaziatTools.Paths.Folder_UserSystem, userName);
             string dbPath = Path.Combine(userFolder, "db.sqlite");
             PlaziatTools.Paths.CheckFolder(userFolder);
             if (!File.Exists(dbPath))
                 await CreateDb(dbPath);
-            PlaziatTools.Logger.Log("Data Source = " + dbPath);
             return new CollectionDbContext(dbPath);
         }
 
         public async Task CreateDb(string dbPath)
         {
-            PlaziatTools.Logger.Log("Data Source = " + dbPath);
             using (var dbCo = new SqliteConnection("Data Source = " + dbPath))
             {
                 await dbCo.OpenAsync();

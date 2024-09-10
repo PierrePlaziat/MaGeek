@@ -13,23 +13,20 @@
     <Grid Drop="DropCard" AllowDrop="True">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="250"/>
             <RowDefinition Height="4"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <panels:DeckStats x:Name="DeckStatsPanel" Background="Black"></panels:DeckStats>
         <panels:DeckContent x:Name="DeckContentPanel" Background="Black" Grid.Row="2"></panels:DeckContent>
         <panels:DeckTable x:Name="DeckTablePanel" Background="Black" Grid.Column="2" Grid.RowSpan="3"></panels:DeckTable>
 
-        <GridSplitter Grid.Column="1" Grid.RowSpan="3" Background="#444" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></GridSplitter>
-        <GridSplitter Grid.Row="1" Background="#444" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></GridSplitter>
-        
     </Grid>
     
 </mvvm:BaseUserControl>

@@ -369,14 +369,12 @@ namespace MageekServer.Services
             };
         }
 
-
         [Authorize]
         public override async Task<Reply_Empty> Collec_SetFavCardVariant(Request_Fav request, ServerCallContext context)
         {
             await mageek.Collec_SetFavCardVariant(request.User, request.CardName, request.CardUuid);
             return new Reply_Empty();
         }
-
 
         [Authorize]
         public override async Task<Reply_Quantity> Collec_TotalDifferentExisting(Request_combinedVariant request, ServerCallContext context)
@@ -388,7 +386,6 @@ namespace MageekServer.Services
             };
         }
 
-
         [Authorize]
         public override async Task<Reply_Quantity> Collec_TotalDifferentOwned(Request_combinedVariant request, ServerCallContext context)
         {
@@ -399,7 +396,6 @@ namespace MageekServer.Services
             };
         }
 
-
         [Authorize]
         public override async Task<Reply_Quantity> Collec_TotalOwned(Request_User request, ServerCallContext context)
         {
@@ -409,7 +405,6 @@ namespace MageekServer.Services
                 Quantity = item,
             };
         }
-
 
         [Authorize]
         public override async Task<Reply_DeckList> Decks_All(Request_User request, ServerCallContext context)
@@ -434,7 +429,6 @@ namespace MageekServer.Services
             return reply;
         }
 
-
         [Authorize]
         public override async Task<Reply_DeckContent> Decks_Content(Request_DeckId request, ServerCallContext context)
         {
@@ -455,7 +449,6 @@ namespace MageekServer.Services
             }
             return reply;
         }
-
 
         [Authorize]
         public override async Task<Reply_Empty> Decks_Create(Request_CreateDeck request, ServerCallContext context)
@@ -478,7 +471,6 @@ namespace MageekServer.Services
             return new Reply_Empty();
         }
 
-
         [Authorize]
         public override async Task<Reply_Empty> Decks_Delete(Request_DeckId request, ServerCallContext context)
         {
@@ -486,14 +478,12 @@ namespace MageekServer.Services
             return new Reply_Empty();
         }
 
-
         [Authorize]
         public override async Task<Reply_Empty> Decks_Duplicate(Request_DeckId request, ServerCallContext context)
         {
             await mageek.Decks_Duplicate(request.User, request.DeckId);
             return new Reply_Empty();
         }
-
 
         [Authorize]
         public override async Task<Reply_Deck> Decks_Get(Request_DeckId request, ServerCallContext context)
@@ -508,7 +498,6 @@ namespace MageekServer.Services
                 Title = item.Title
             };
         }
-
 
         [Authorize]
         public override async Task<Reply_ListPreco> Decks_Precos(Request_Empty request, ServerCallContext context)
@@ -553,14 +542,12 @@ namespace MageekServer.Services
             return reply;
         }
 
-
         [Authorize]
         public override async Task<Reply_Empty> Decks_Rename(Request_RenameDeck request, ServerCallContext context)
         {
             await mageek.Decks_Rename(request.User, request.DeckId, request.Title);
             return new Reply_Empty();
         }
-
 
         [Authorize]
         public override async Task<Reply_Empty> Decks_Save(Request_SaveDeck request, ServerCallContext context)
@@ -588,7 +575,6 @@ namespace MageekServer.Services
             await mageek.Decks_Save(request.User, deck, cards);
             return new Reply_Empty();
         }
-
 
         [Authorize]
         public override async Task<Reply_ListSet> Sets_All(Request_Empty request, ServerCallContext context)
@@ -629,7 +615,6 @@ namespace MageekServer.Services
             return sets;
         }
 
-
         [Authorize]
         public override async Task<Reply_Percentage> Sets_Completion(Request_SetCompletion request, ServerCallContext context)
         {
@@ -639,7 +624,6 @@ namespace MageekServer.Services
                 Percentage = item
             };
         }
-
 
         [Authorize]
         public override async Task<Reply_ListCardUuid> Sets_Content(Request_SetCode request, ServerCallContext context)
@@ -654,7 +638,6 @@ namespace MageekServer.Services
             }
             return reply;
         }
-
 
         [Authorize]
         public override async Task<Reply_Set> Sets_Get(Request_SetCode request, ServerCallContext context)
@@ -686,7 +669,6 @@ namespace MageekServer.Services
             };
         }
 
-
         [Authorize]
         public override async Task<Reply_TagList> Tags_All(Request_User request, ServerCallContext context)
         {
@@ -708,7 +690,6 @@ namespace MageekServer.Services
             return reply;
         }
 
-
         [Authorize]
         public override async Task<Reply_HasTag> Tags_CardHasTag(Request_CardTag request, ServerCallContext context)
         {
@@ -718,7 +699,6 @@ namespace MageekServer.Services
                 HasTag = item
             };
         }
-
 
         [Authorize]
         public override async Task<Reply_TagList> Tags_GetCardTags(Request_CardNameUser request, ServerCallContext context)
@@ -742,14 +722,12 @@ namespace MageekServer.Services
             return reply;
         }
 
-
         [Authorize]
         public override async Task<Reply_Empty> Tags_TagCard(Request_CardTag request, ServerCallContext context)
         {
             await mageek.Tags_TagCard(request.User, request.CardName, request.Tag);
             return new Reply_Empty();
         }
-
 
         [Authorize]
         public override async Task<Reply_Empty> Tags_UntagCard(Request_CardTag request, ServerCallContext context)

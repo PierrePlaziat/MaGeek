@@ -140,12 +140,12 @@ namespace MageekDesktopClient.DeckTools
             return manaCost.Length - manaCost.Replace(color.ToString(), "").Length;
         }
 
-        internal PointCollection GetManaCurve(ManipulableDeck manipulableDeck)
+        internal PathFigure GetManaCurve(ManipulableDeck deck)
         {
-            var manaCurve = GetManaCurve(manipulableDeck.entries_Deck);
+            var manaCurve = GetManaCurve(deck.Entries.Where(x => x.Line.RelationType == 0));
             var CurveStart = new Point(0, 0);
             PointCollection Points = new();
-            if (manipulableDeck.Header != null)
+            if (deck.Header != null)
             {
                 int manaMax = manaCurve.ToList().Max();
                 float factor;
@@ -153,10 +153,16 @@ namespace MageekDesktopClient.DeckTools
                 else factor = 100 / manaMax;
                 CurveStart = new Point(0, 100 - factor * manaCurve[0]);
                 Points.Add(CurveStart);
-                for (int i = 1; i < manaCurve.Length; i++) Points.Add(new Point(50 * i, 100 - factor * manaCurve[i]));
+                for (int i = 1; i < manaCurve.Length; i++) Points.Add(new Point(30 * i, 100 - factor * manaCurve[i]));
 
             }
-            return Points;
+            PathFigure result = new PathFigure();
+            result.StartPoint = CurveStart;
+            result.Segments = new PathSegmentCollection();
+            PolyLineSegment polyLineSegment = new PolyLineSegment();
+            polyLineSegment.Points = Points;
+            result.Segments.Add(polyLineSegment);
+            return result;
         }
         private int[] GetManaCurve(IEnumerable<ManipulableDeckEntry> entries)
         {

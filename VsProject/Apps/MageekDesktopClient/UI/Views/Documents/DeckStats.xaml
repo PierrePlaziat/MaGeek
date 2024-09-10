@@ -13,13 +13,13 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">
 
-            <StackPanel>
+            <StackPanel HorizontalAlignment="Center">
 
-                <Button Command="{Binding SaveDeckCommand}">SAVE DECK</Button> 
-                
-                <Label>Manacurve</Label>
+                <Button Command="{Binding SaveDeckCommand}">SAVE DECK</Button>
 
-                <Grid Width="500"
+                <StackPanel Width="320">
+
+                    <Grid Width="330"
                       HorizontalAlignment="Left">
 
                     <Grid.ColumnDefinitions>
@@ -58,33 +58,29 @@
 
                 </Grid>
 
-                <Canvas Height="100"
-                        Width="200"
-                        HorizontalAlignment="Left"
-                        Margin="10">
-                    <Path Stroke="White"
-                          StrokeThickness="2">
-                        <Path.Data>
-                            <PathGeometry>
-                                <PathGeometry.Figures>
-                                    <PathFigureCollection>
-                                        <PathFigure StartPoint="{Binding Deck.CurveStart}">
-                                            <PathFigure.Segments>
-                                                <PathSegmentCollection>
-                                                    <PolyLineSegment Points="{Binding Deck.CurvePoints}" />
-                                                </PathSegmentCollection>
-                                            </PathFigure.Segments>
-                                        </PathFigure>
-                                    </PathFigureCollection>
-                                </PathGeometry.Figures>
-                            </PathGeometry>
-                        </Path.Data>
-                    </Path>
-                </Canvas>
+                    <Canvas Height="100"
+                            Width="200"
+                            HorizontalAlignment="Left"
+                            Margin="10">
+                        <Path Stroke="White"
+                              StrokeThickness="2">
+                            <Path.Data>
+                                <PathGeometry>
+                                    <PathGeometry.Figures>
+                                        <PathFigureCollection>
+                                            <PathFigure StartPoint="{Binding Deck.Curve.StartPoint}"
+                                                        Segments="{Binding Deck.Curve.Segments}">
+                                            </PathFigure>
+                                        </PathFigureCollection>
+                                    </PathGeometry.Figures>
+                                </PathGeometry>
+                            </Path.Data>
+                        </Path>
+                    </Canvas>
+                
+                </StackPanel>
 
-                <Label>Color devotions</Label>
-
-                <DockPanel>
+                <DockPanel Width="300">
 
                     <Separator Width="20"
                                Background="Transparent" />
@@ -158,8 +154,6 @@
 
                 </DockPanel>
 
-                <Label>card types</Label>
-
                 <DockPanel>
 
                     <Separator Width="20"
@@ -227,92 +221,16 @@
                                Background="Transparent" />
 
                 </DockPanel>
-
-                <Label>hand</Label>
-
-                <DockPanel>
-
-                    <Separator Width="20"
-                               Background="Transparent" />
-
-                    <Button Width="50"
-                            Height="50"
-                            Content="New" />
-
-                    <Separator Width="20"
-                               Background="Transparent" />
-
-                    <DockPanel Name="HandPanel"
-                               HorizontalAlignment="Left"></DockPanel>
-
-                    <Separator Width="20"
-                               Background="Transparent" />
-
-                    <Button Width="50"
-                            Height="50"
-                            Content="Draw" /> 
-
-                    <Separator Width="20"
-                               Background="Transparent" />
-
-                </DockPanel>
-
-                <Label>Format check</Label>
-
-                <DockPanel>
-
-                    <Separator Width="20"
-                               Background="Transparent" />
-
-                    <Label Content="Legacy"
-                           Foreground="#DDD" />
-                    <Label Content="{Binding Deck.StandardOk}"
-                           FontWeight="Bold"
-                           Foreground="White" />
-
-                    <Separator Width="20"
-                               Background="Transparent" />
-
-                    <Label Content="Commander"
-                           Foreground="#DDD" />
-                    <Label Content="{Binding Deck.CommanderOk}"
-                           FontWeight="Bold"
-                           Foreground="White" />
-
-                </DockPanel>
-
-                <Label>Owned</Label>
-
-                <DockPanel>
-
-                    <Separator Width="20"
-                               Background="Transparent" />
-
-                    <Label Content="{Binding Deck.OwnedRatio}"
-                           FontWeight="Bold"
-                           Foreground="White" />
-                    <Label Content="%"
-                           Foreground="#DDD" />
-
-                    <Separator Width="20"
-                               Background="Transparent" />
-
-                    <Button Content="List missing" />
-
-                    <Separator Width="20"
-                               Background="Transparent" />
-
-                </DockPanel>
-
+                
             </StackPanel>
 
         </ScrollViewer>
 
-        <!--<Grid Background="Black"
+        <Grid Background="Black"
               Grid.RowSpan="5"
               Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
             <controls:BusyIndicator></controls:BusyIndicator>
-        </Grid>-->
+        </Grid>
 
     </Grid>
 </mvvm:BaseUserControl>

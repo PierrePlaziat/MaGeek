@@ -6,7 +6,6 @@ using MageekCore.Data.Mtg.Entities;
 using MageekProtocol;
 using PlaziatTools;
 using MageekCore.Data.MtgFetched.Entities;
-using System.Diagnostics;
 
 namespace MageekClient.Services
 {
@@ -181,89 +180,6 @@ namespace MageekClient.Services
         }
 
         #endregion
-
-        private Cards? MakeCard(Reply_CardData reply)
-        {
-            return new Cards()
-            {
-                Artist = reply.Artist,
-                AsciiName = reply.AsciiName,
-                AttractionLights = reply.AttractionLights,
-                Availability = reply.Availability,
-                BoosterTypes = reply.BoosterTypes,
-                BorderColor = reply.BorderColor,
-                CardParts = reply.CardParts,
-                ColorIdentity = reply.ColorIdentity,
-                ColorIndicator = reply.ColorIndicator,
-                Colors = reply.Colors,
-                Defense = reply.Defense,
-                DuelDeck = reply.DuelDeck,
-                EdhrecRank = reply.EdhrecRank,
-                EdhrecSaltiness = reply.EdhrecSaltiness,
-                FaceConvertedManaCost = reply.FaceConvertedManaCost,
-                FaceFlavorName = reply.FaceFlavorName,
-                FaceManaValue = reply.FaceManaValue,
-                FaceName = reply.FaceName,
-                Finishes = reply.Finishes,
-                FlavorName = reply.FlavorName,
-                FlavorText = reply.FlavorText,
-                FrameEffects = reply.FrameEffects,
-                FrameVersion = reply.FrameVersion,
-                Hand = reply.Hand,
-                HasAlternativeDeckLimit = reply.HasAlternativeDeckLimit,
-                HasContentWarning = reply.HasContentWarning,
-                HasFoil = reply.HasFoil,
-                HasNonFoil = reply.HasNonFoil,
-                IsAlternative = reply.IsAlternative,
-                IsFullArt = reply.IsFullArt,
-                IsFunny = reply.IsFunny,
-                IsOnlineOnly = reply.IsOnlineOnly,
-                IsOversized = reply.IsOversized,
-                IsPromo = reply.IsPromo,
-                IsRebalanced = reply.IsRebalanced,
-                IsReprint = reply.IsReprint,
-                IsReserved = reply.IsReserved,
-                IsStarter = reply.IsStarter,
-                IsStorySpotlight = reply.IsStorySpotlight,
-                IsTextless = reply.IsTextless,
-                IsTimeshifted = reply.IsTimeshifted,
-                Keywords = reply.Keywords,
-                Language = reply.Language,
-                Layout = reply.Layout,
-                LeadershipSkills = reply.LeadershipSkills,
-                Life = reply.Life,
-                Loyalty = reply.Loyalty,
-                ManaCost = reply.ManaCost,
-                ManaValue = reply.ManaValue,
-                Name = reply.Name,
-                Number = reply.Number,
-                OriginalPrintings = reply.OriginalPrintings,
-                OriginalReleaseDate = reply.OriginalReleaseDate,
-                OriginalText = reply.OriginalText,
-                OriginalType = reply.OriginalType,
-                OtherFaceIds = reply.OtherFaceIds,
-                Power = reply.Power,
-                Printings = reply.Printings,
-                PromoTypes = reply.PromoTypes,
-                Rarity = reply.Rarity,
-                RebalancedPrintings = reply.RebalancedPrintings,
-                RelatedCards = reply.RelatedCards,
-                SecurityStamp = reply.SecurityStamp,
-                SetCode = reply.SetCode,
-                Side = reply.Side,
-                Signature = reply.Signature,
-                Subsets = reply.Subsets,
-                Subtypes = reply.Subtypes,
-                Supertypes = reply.Supertypes,
-                Text = reply.Text,
-                Toughness = reply.Toughness,
-                Type = reply.Type,
-                Types = reply.Types_,
-                Uuid = reply.Uuid,
-                Variations = reply.Variations,
-                Watermark = reply.Watermark
-            };
-        }
 
         #region Implementation
 
@@ -964,6 +880,93 @@ namespace MageekClient.Services
             string parsed = string.Empty;
             parsed = reply.Txt;
             return parsed;
+        }
+
+        #endregion
+
+        #region Methods
+
+        private Cards? MakeCard(Reply_CardData reply)
+        {
+            return new Cards()
+            {
+                Artist = reply.Artist,
+                AsciiName = reply.AsciiName,
+                AttractionLights = reply.AttractionLights,
+                Availability = reply.Availability,
+                BoosterTypes = reply.BoosterTypes,
+                BorderColor = reply.BorderColor,
+                CardParts = reply.CardParts,
+                ColorIdentity = reply.ColorIdentity,
+                ColorIndicator = reply.ColorIndicator,
+                Colors = reply.Colors,
+                Defense = reply.Defense,
+                DuelDeck = reply.DuelDeck,
+                EdhrecRank = reply.EdhrecRank,
+                EdhrecSaltiness = reply.EdhrecSaltiness,
+                FaceConvertedManaCost = reply.FaceConvertedManaCost,
+                FaceFlavorName = reply.FaceFlavorName,
+                FaceManaValue = reply.FaceManaValue,
+                FaceName = reply.FaceName,
+                Finishes = reply.Finishes,
+                FlavorName = reply.FlavorName,
+                FlavorText = reply.FlavorText,
+                FrameEffects = reply.FrameEffects,
+                FrameVersion = reply.FrameVersion,
+                Hand = reply.Hand,
+                HasAlternativeDeckLimit = reply.HasAlternativeDeckLimit,
+                HasContentWarning = reply.HasContentWarning,
+                HasFoil = reply.HasFoil,
+                HasNonFoil = reply.HasNonFoil,
+                IsAlternative = reply.IsAlternative,
+                IsFullArt = reply.IsFullArt,
+                IsFunny = reply.IsFunny,
+                IsOnlineOnly = reply.IsOnlineOnly,
+                IsOversized = reply.IsOversized,
+                IsPromo = reply.IsPromo,
+                IsRebalanced = reply.IsRebalanced,
+                IsReprint = reply.IsReprint,
+                IsReserved = reply.IsReserved,
+                IsStarter = reply.IsStarter,
+                IsStorySpotlight = reply.IsStorySpotlight,
+                IsTextless = reply.IsTextless,
+                IsTimeshifted = reply.IsTimeshifted,
+                Keywords = reply.Keywords,
+                Language = reply.Language,
+                Layout = reply.Layout,
+                LeadershipSkills = reply.LeadershipSkills,
+                Life = reply.Life,
+                Loyalty = reply.Loyalty,
+                ManaCost = reply.ManaCost,
+                ManaValue = reply.ManaValue,
+                Name = reply.Name,
+                Number = reply.Number,
+                OriginalPrintings = reply.OriginalPrintings,
+                OriginalReleaseDate = reply.OriginalReleaseDate,
+                OriginalText = reply.OriginalText,
+                OriginalType = reply.OriginalType,
+                OtherFaceIds = reply.OtherFaceIds,
+                Power = reply.Power,
+                Printings = reply.Printings,
+                PromoTypes = reply.PromoTypes,
+                Rarity = reply.Rarity,
+                RebalancedPrintings = reply.RebalancedPrintings,
+                RelatedCards = reply.RelatedCards,
+                SecurityStamp = reply.SecurityStamp,
+                SetCode = reply.SetCode,
+                Side = reply.Side,
+                Signature = reply.Signature,
+                Subsets = reply.Subsets,
+                Subtypes = reply.Subtypes,
+                Supertypes = reply.Supertypes,
+                Text = reply.Text,
+                Toughness = reply.Toughness,
+                Type = reply.Type,
+                Types = reply.Types_,
+                Uuid = reply.Uuid,
+                Variations = reply.Variations,
+                Watermark = reply.Watermark
+            };
         }
 
         #endregion
