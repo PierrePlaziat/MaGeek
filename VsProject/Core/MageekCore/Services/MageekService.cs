@@ -454,14 +454,16 @@ namespace MageekCore.Services
                 .FirstOrDefaultAsync();
         }
 
-        // plutot renvoyer le scryfall id, et se debrouiller côté client
         public async Task<Uri> Cards_GetIllustration(string cardUuid, CardImageFormat type, bool back = false)
         {
-            using MtgDbContext DB = await mtg.GetContext();
-            var v = await DB.cardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefaultAsync();
-            var c = await scryfall.GetScryfallCard(v.ScryfallId);
+            throw new Exception("Not implemented server side");
+        }
 
-            return c.ImageUris.FirstOrDefault(x=>x.Value!=null).Value;
+        public async Task<string> Cards_GetScryfallId(string cardUuid)
+        {
+            using MtgDbContext DB = await mtg.GetContext();
+            var identifiers = await DB.cardIdentifiers.Where(x => x.Uuid == cardUuid).FirstOrDefaultAsync();
+            return identifiers.ScryfallId;
         }
 
         public async Task<PriceLine> Cards_GetPrice(string cardUuid)
@@ -848,7 +850,6 @@ namespace MageekCore.Services
 
         public async Task Decks_Save(string user, Deck header, List<DeckCard> lines)
         {
-            //TODO count and colors
             try
             {
                 using CollectionDbContext DB = await collec.GetContext(user);

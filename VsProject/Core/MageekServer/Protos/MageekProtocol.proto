@@ -20,6 +20,7 @@ service MageekProtocolService {
     rpc Cards_GetRulings (Request_CardUuid) returns (Reply_CardRulings);
     rpc Cards_GetRelations (Request_CardUuid) returns (Reply_CardRelations);
     rpc Cards_GetIllustration (Request_CardIllu) returns (Reply_Uri);
+    rpc Cards_GetScryfallId (Request_CardUuid) returns (Reply_CardName);
     rpc Cards_GetPrice (Request_CardUuid) returns (Reply_PriceData);
     rpc Sets_All (Request_Empty) returns (Reply_ListSet);
     rpc Sets_Get (Request_SetCode) returns (Reply_Set);

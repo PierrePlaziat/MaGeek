@@ -185,6 +185,16 @@ namespace MageekServer.Services
         }
 
         [Authorize]
+        public override async Task<Reply_CardName> Cards_GetScryfallId(Request_CardUuid request, ServerCallContext context)
+        {
+            var item = await mageek.Cards_GetScryfallId(request.CardUuid);
+            return new Reply_CardName()
+            {
+                CardName = item,
+            };
+        }
+
+        [Authorize]
         public override async Task<Reply_CardLegalities> Cards_GetLegalities(Request_CardUuid request, ServerCallContext context)
         {
             var item = await mageek.Cards_GetLegalities(request.CardUuid);

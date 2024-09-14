@@ -31,9 +31,22 @@ namespace MageekCore.Data
             try
             {
                 // Get scryfall Card data
-                if (scryfallId == null) return;
+                if (string.IsNullOrEmpty(scryfallId))
+                {
+                    Logger.Log("Empty id", LogLevels.Error);
+                    return;
+                }
                 Thread.Sleep(150);
-                string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + scryfallId);
+                string json_data;
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", "MaGeek/1.0");
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    string url = "https://api.scryfall.com/cards/" + scryfallId;
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    json_data = await response.Content.ReadAsStringAsync();
+                }
                 Card scryData = JsonSerializer.Deserialize<Card>(json_data);
                 // Retrieve Image link
                 Uri uri;
@@ -51,6 +64,7 @@ namespace MageekCore.Data
                 return;
             }
         }
+
 
         public async Task<ResultList<Set>> GetSetsJson()
         {

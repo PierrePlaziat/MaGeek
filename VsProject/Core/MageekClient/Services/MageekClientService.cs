@@ -376,15 +376,7 @@ namespace MageekClient.Services
                 );
                 if (!File.Exists(localFileName))
                 {
-
-                    // Get scryfall ID
-                    var reply = await mageekClient.Cards_GetIllustrationAsync(new Request_CardIllu()
-                    {
-                        CardUuid = cardUuid,
-                        Back = back,
-                        Format = (int)format
-                    });
-                    string scryfallId = reply.Uri.ToString();
+                    string scryfallId = await Cards_GetScryfallId(cardUuid);
                     await scryfall.CacheIllustration(scryfallId, format, localFileName, back);
                 }
                 return new("file://" + Path.GetFullPath(localFileName), UriKind.Absolute);
@@ -395,7 +387,16 @@ namespace MageekClient.Services
                 return null;
             }
         }
-        
+
+        public async Task<string> Cards_GetScryfallId(string cardUuid)
+        {
+            var reply = await mageekClient.Cards_GetScryfallIdAsync(new Request_CardUuid()
+            {
+                CardUuid = cardUuid
+            });
+            return reply.CardName;
+        }
+
         public async Task<PriceLine> Cards_GetPrice(string cardUuid)
         {
             var reply = await mageekClient.Cards_GetPriceAsync(new Request_CardUuid()

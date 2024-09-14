@@ -127,7 +127,14 @@ namespace MageekCore.Services
         /// </summary>
         /// <param name="cardUuid"></param>
         /// <returns>a local url to a jpg</returns>
-        Task<Uri> Cards_GetIllustration( string cardUuid, CardImageFormat type, bool back = false);
+        Task<Uri> Cards_GetIllustration(string cardUuid, CardImageFormat type, bool back = false);
+
+        /// <summary>
+        /// Get the illustration of a card, save it locally if not already done
+        /// </summary>
+        /// <param name="cardUuid"></param>
+        /// <returns>a local url to a jpg</returns>
+        Task<string> Cards_GetScryfallId(string cardUuid);
 
         /// <summary>
         /// Estimate the price of a card

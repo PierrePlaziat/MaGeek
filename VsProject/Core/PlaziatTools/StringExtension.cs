@@ -56,27 +56,6 @@ namespace PlaziatTools
             return result.ToArray();
         }
 
-        public static bool IsValidUsername(this string str)
-        {
-            if (string.IsNullOrEmpty(str)) return false;
-            //TODO
-            return true;
-        }
-        
-        public static bool IsValidPassword(this string str)
-        {
-            if (string.IsNullOrEmpty(str)) return false;
-            //TODO
-            return true;
-        }
-        
-        public static bool IsValidMailAddr(this string str)
-        {
-            //if (string.IsNullOrEmpty(str)) return false;
-            //TODO
-            return true;
-        }
-
     }
 
 }

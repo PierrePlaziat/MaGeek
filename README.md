@@ -26,38 +26,5 @@ If you like, don't hesitate to donate!
 Here is my paypal:
 ![MaGeek](/Graph/qrcode.png "PaypalQrc")
 
-## Todo
-
-### Client Server
-
--	finish GRPC protos 
--	Implement client
--	Implement server
-
-### WPF app
-
-#### Bugs
-
--	Collec estimation destroyed
--	cant add or remove card from collec
--	import wont work
-- 	cardnames with "à" arent correctly found
-- 	Advanced Search repair
--	Cardinspector rulings sometime doubled
--	double sided variant appear twice in variant list in inspector
--	Usd not implemented but ui acts like it is
-	
-#### UX needs
-
--	More than drag n drop 
--	load layout shouldnt reopen docs, or should do it well
--	Recent cards/searches 
--	Token support
-
-#### One day	
-	
--	Auto deck / Deck helper
--	Virtual hand
-
 
 
