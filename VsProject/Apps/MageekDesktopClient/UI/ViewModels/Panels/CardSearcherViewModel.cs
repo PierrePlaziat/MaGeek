@@ -10,6 +10,7 @@ using PlaziatTools;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
+using System;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -28,36 +29,90 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             this.mageek = mageek;
             this.config = config;
             WeakReferenceMessenger.Default.RegisterAll(this);
-            Logger.Log("!");
+            ResetFilters();
+            Logger.Log("Done");
         }
 
-        [ObservableProperty] private bool colorIsOr;
+        [ObservableProperty] private List<SearchedCards> cardList = new();
         [ObservableProperty] private List<string> historic = new();
-        [ObservableProperty] private List<SearchedCards> cardList;
-        [ObservableProperty] private List<Tag> availableTags;
-        [ObservableProperty] private bool isLoading = false;
-        [ObservableProperty] private bool advancedMode = false;
-        [ObservableProperty] private string filterName = "";
-        [ObservableProperty] private string filterType = "";
-        [ObservableProperty] string filterKeyword = "";
-        [ObservableProperty] private string filterText = "";
-        [ObservableProperty] private MtgColorFilter filterColor = MtgColorFilter._;
-        [ObservableProperty] private Tag filterTag = null;
-        [ObservableProperty] private bool onlyGot = false;
         [ObservableProperty] private int currentPage = 0;
         [ObservableProperty] private int nbResulsts = 200;
+        [ObservableProperty] private bool advancedMode;
+        [ObservableProperty] private bool filterOnlyGot;
+        [ObservableProperty] private string filterName;
+        [ObservableProperty] private string filterType;
+        [ObservableProperty] private string filterKeyword;
+        [ObservableProperty] private string filterText;
+        [ObservableProperty] private MtgColorFilter filterColor;
+        [ObservableProperty] private bool filterColorTrueOrFalseAnd;
+        [ObservableProperty] private Tag filterTag;
+        [ObservableProperty] private List<Tag> filterTagsAvailable;
+        [ObservableProperty] private bool isLoading = false;
 
-        public void Receive(LaunchAppMessage message)
+        public void Receive(LaunchAppMessage message) 
         {
-            //FilterName = "Edgar";
-            //DoSearch().ConfigureAwait(false);
+            FilterName = "Edgar Markov";
+            Search().ConfigureAwait(false);
         }
 
-        [RelayCommand] private async Task Search()
+        [RelayCommand] public async Task Search()
         {
-            await DoSearch();
+            IsLoading = true;
+            FillHistoric();
+            if (!AdvancedMode) await SearchNormal();
+            if (AdvancedMode) await SearchAdvanced();
+            Logger.Log("Done");
+            IsLoading = false;
         }
-        
+
+        private void FillHistoric()
+        {
+            try
+            { 
+                if (!string.IsNullOrEmpty(FilterName) && !Historic.Contains(FilterName))
+                {
+                    Historic.Add(FilterName);
+                    if (Historic.Count > 30) Historic.RemoveAt(0);
+                    OnPropertyChanged(nameof(Historic));
+                }
+            }
+            catch (Exception e) { Logger.Log(e); }
+        }
+
+        private async Task SearchNormal()
+        {
+            try
+            { 
+                if (string.IsNullOrEmpty(FilterName)) return;
+                CardList = await mageek.Cards_Search(
+                    FilterName,
+                    "French",
+                    CurrentPage,
+                    NbResulsts
+                );
+            }
+            catch (Exception e) { Logger.Log(e); }
+        }
+        private async Task SearchAdvanced()
+        {
+            try
+            { 
+                CardList = await mageek.Cards_Search(
+                    FilterName,
+                    config.Settings[Setting.Translations.ToString()],
+                    CurrentPage,
+                    NbResulsts,
+                    FilterType, FilterKeyword, FilterText,
+                    FilterColor.ToString(),
+                    "",
+                    // FilterTag.TagContent;
+                    FilterOnlyGot,
+                    FilterColorTrueOrFalseAnd
+                );
+            }
+            catch (Exception e) { Logger.Log(e); }
+        }
+
         [RelayCommand] private void AdvancedSearch()
         {
             AdvancedMode = !AdvancedMode;
@@ -72,42 +127,8 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             FilterText = "";
             FilterColor = MtgColorFilter._;
             FilterTag = null;
-            OnlyGot = false;
-        }
-
-        public async Task DoSearch()
-        {
-            IsLoading = true;
-            FillHistoric();
-            if (!AdvancedMode)
-            {
-                CardList = await mageek.Cards_Search(
-                    FilterName, config.Settings[Setting.Translations.ToString()],
-                    CurrentPage, NbResulsts
-                );
-            }
-            if (AdvancedMode)
-            {
-                CardList = await mageek.Cards_Search(
-                    FilterName, config.Settings[Setting.Translations.ToString()],
-                    CurrentPage, NbResulsts,
-                    FilterType, FilterKeyword, FilterText,
-                    FilterColor.ToString(),
-                    "", // FilterTag.TagContent;
-                    OnlyGot, ColorIsOr
-                );
-            }
-            IsLoading = false;
-        }
-
-        private void FillHistoric()
-        {
-            if (!string.IsNullOrEmpty(FilterName) && !Historic.Contains(FilterName))
-            {
-                Historic.Add(FilterName);
-                if (Historic.Count > 30) Historic.RemoveAt(0);
-                OnPropertyChanged(nameof(Historic));
-            }
+            FilterOnlyGot = false;
+            FilterColorTrueOrFalseAnd = false;
         }
 
     }

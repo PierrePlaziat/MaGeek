@@ -64,11 +64,11 @@ message Request_CardSearch {
     string lang = 2;
     int32 page = 3;
     int32 pageSize = 4;
-    string cardType = 5;
-    string keyword = 6;
-    string text = 7;
-    string color = 8;
-    string tag = 9;
+    google.protobuf.StringValue  cardType = 5;
+    google.protobuf.StringValue  keyword = 6;
+    google.protobuf.StringValue  text = 7;
+    google.protobuf.StringValue  color = 8;
+    google.protobuf.StringValue  tag = 9;
     bool onlyGot = 10;
     bool colorisOr = 11;
 }

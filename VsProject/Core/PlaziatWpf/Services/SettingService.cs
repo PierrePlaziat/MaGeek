@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
 using PlaziatTools;
+using PlaziatTools.Data;
 
 namespace PlaziatWpf.Services
 {
@@ -8,7 +9,7 @@ namespace PlaziatWpf.Services
     public class SettingService
     {
 
-        private string path;
+        private string path = Paths.File_Settings;
         
         public Dictionary<string, string> Settings { get; private set; } = new Dictionary<string, string>();
 

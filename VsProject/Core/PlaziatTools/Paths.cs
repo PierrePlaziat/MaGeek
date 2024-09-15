@@ -9,6 +9,7 @@
         public static string Folder_UserSystem { get; } = Path.Combine(Folder_ApplicationData,"UserData");
         public static string Folder_Business { get; } = Path.Combine(Folder_ApplicationData, "Business");
         public static string File_UserDb { get; } = Path.Combine(Folder_UserSystem, "Identity.sqlite");
+        public static string File_Settings { get; set; } = Path.Combine(Folder_ApplicationData, "AppConfig.json"); //TODO per user
 
         public static void Init()
         {

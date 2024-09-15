@@ -118,7 +118,7 @@
                 <Label Content="Tags"
                        HorizontalAlignment="Center"
                        Width="50" />
-                <ComboBox ItemsSource="{Binding AvailableTags}"
+                <ComboBox ItemsSource="{Binding FilterTagsAvailable}"
                           SelectedItem="{Binding FilterTag, Mode=TwoWay}"
                           DisplayMemberPath="Tag"
                           Width="150" />
@@ -128,7 +128,7 @@
                 <CheckBox Margin="6"
                           Foreground="#777"
                           Content="Got only"
-                          IsChecked="{Binding OnlyGot}"
+                          IsChecked="{Binding FilterOnlyGot}"
                           Grid.Row="0"
                           HorizontalAlignment="Left"
                           Width="200" />
@@ -210,14 +210,6 @@
                                 Value="#555" />
                     </Style>
                 </DataGrid.Resources>
-
-                <!--<DataGrid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="To deck"
-                                  Command="{Binding AddToDeckCommand}" 
-                                  CommandParameter="{Binding}"/>
-                    </ContextMenu>
-                </DataGrid.ContextMenu>-->
 
             </DataGrid>
 

@@ -7,6 +7,7 @@ using MageekCore.Data;
 using System.Windows.Media;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
+using System.Windows.Controls.Primitives;
 
 namespace MageekDesktopClient.UI.Views.AppPanels
 {
@@ -30,7 +31,7 @@ namespace MageekDesktopClient.UI.Views.AppPanels
                 e.Handled = true;
                 var binding = ((TextBox)sender).GetBindingExpression(TextBox.TextProperty);
                 binding.UpdateSource();
-                vm.DoSearch().ConfigureAwait(false);
+                vm.Search().ConfigureAwait(false);
             }
         }
 
@@ -83,7 +84,7 @@ namespace MageekDesktopClient.UI.Views.AppPanels
                         return null;
 
                     if (data != DependencyProperty.UnsetValue)
-                        return ((SearchedCards)data).Card.Uuid;
+                        return ((SearchedCards)((DataGridRowsPresenter)element).DataContext).Card.Uuid;
                 }
             }
             return null;
