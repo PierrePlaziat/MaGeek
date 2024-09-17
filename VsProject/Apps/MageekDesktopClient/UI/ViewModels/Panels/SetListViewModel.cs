@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
+using MageekDesktopClient.UI.Views.AppPanels;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -31,6 +32,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         [ObservableProperty] List<string> blocks = new();
         [ObservableProperty] string filterBlock;
         [ObservableProperty] List<Cards> variants = new();
+        [ObservableProperty] bool isLoading = new();
 
         public void Receive(LaunchAppMessage message)
         {
@@ -84,12 +86,15 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
 
         public async void SelectSet(Sets s)
         {
+            IsLoading = true;
             var v = await mageek.Sets_Content(s.Code);
-            Variants = new List<Cards>();
+            var VVariants = new List<Cards>();
             foreach (var card in v)
             {
-                Variants.Add(await mageek.Cards_GetData(card));
+                VVariants.Add(await mageek.Cards_GetData(card));
             }
+            Variants = VVariants;
+            IsLoading = false;
         }
 
         public void SelectCard(Cards c)

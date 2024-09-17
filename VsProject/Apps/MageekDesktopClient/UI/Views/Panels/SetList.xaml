@@ -213,6 +213,14 @@
 
         </DataGrid>
 
+        <!-- BusyLoader -->
+        <Grid Background="Black"
+              Grid.Column="1"
+              Grid.RowSpan="2"
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+            <controls:BusyIndicator></controls:BusyIndicator>
+        </Grid>
+
     </Grid>
 
 </mvvm:BaseUserControl>
