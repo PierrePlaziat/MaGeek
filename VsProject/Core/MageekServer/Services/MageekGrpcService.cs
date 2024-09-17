@@ -346,6 +346,7 @@ namespace MageekServer.Services
         {
             var item = await mageek.Cards_UuidsForGivenCardUuid(request.CardUuid);
             var reply = new Reply_ListCardUuid();
+            reply.CardUuidList = new();
             if (item.IsNullOrEmpty()) reply.CardUuidList.IsNull = true;
             {
                 foreach (var v in item) reply.CardUuidList.Items.Add(v);

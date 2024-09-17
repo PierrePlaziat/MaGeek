@@ -154,7 +154,6 @@
                       IsReadOnly="True"
                       RowHeaderWidth="0"
                       RowHeight="20"
-                      MouseDoubleClick="CardGrid_MouseDoubleClick"
                       AutoGenerateColumns="False"
                       
                       PreviewMouseLeftButtonDown="CardGrid_PreviewMouseLeftButtonDown">
@@ -216,7 +215,6 @@
         </Grid>
 
         <!-- BusyLoader -->
-
         <Grid Background="Black"
               Grid.RowSpan="5"
               Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">

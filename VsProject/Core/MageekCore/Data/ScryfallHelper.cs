@@ -14,7 +14,7 @@ namespace MageekCore.Data
             try
             {
                 Thread.Sleep(150);
-                string json_data = await HttpUtils.Get("https://api.scryfall.com/cards/" + scryfallId);
+                string json_data = await AskScryfall("https://api.scryfall.com/cards/" + scryfallId);
                 Card scryfallCard = JsonSerializer.Deserialize<Card>(json_data);
                 return scryfallCard;
             }
@@ -37,16 +37,7 @@ namespace MageekCore.Data
                     return;
                 }
                 Thread.Sleep(150);
-                string json_data;
-                using (HttpClient client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Add("User-Agent", "MaGeek/1.0");
-                    client.DefaultRequestHeaders.Add("Accept", "application/json");
-                    string url = "https://api.scryfall.com/cards/" + scryfallId;
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
-                    json_data = await response.Content.ReadAsStringAsync();
-                }
+                string json_data = await AskScryfall("https://api.scryfall.com/cards/" + scryfallId);
                 Card scryData = JsonSerializer.Deserialize<Card>(json_data);
                 // Retrieve Image link
                 Uri uri;
@@ -65,10 +56,22 @@ namespace MageekCore.Data
             }
         }
 
+        private async Task<string> AskScryfall(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("User-Agent", "MaGeek/1.0");
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
 
         public async Task<ResultList<Set>> GetSetsJson()
         {
-            string json_data = await HttpUtils.Get("https://api.scryfall.com/sets/");
+            string json_data = await AskScryfall("https://api.scryfall.com/sets/");
+
             var sets = JsonSerializer.Deserialize<ResultList<Set>>(json_data);
             return sets;
         }

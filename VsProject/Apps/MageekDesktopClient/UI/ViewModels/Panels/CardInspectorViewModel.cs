@@ -150,15 +150,6 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             IsFav = true;
         }
 
-        [RelayCommand]
-        private async Task AddToCurrentDeck(string uuid)
-        {
-            // TODO think a system to select deck
-            throw new NotImplementedException();
-            //await mageek.AddCardToDeck(uuid, state.SelectedDeck, 1);
-            //events.RaiseUpdateDeck();
-        }
-
         [RelayCommand] 
         private async Task AddCardToCollection(string uuid)
         {

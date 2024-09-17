@@ -8,6 +8,8 @@ using System;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using PlaziatTools;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace MageekDesktopClient.UI.Controls
 {
@@ -180,6 +182,13 @@ namespace MageekDesktopClient.UI.Controls
         private void Grid_MouseLeave(object sender, MouseEventArgs e)
         {
             ShowHud = false;
+        }
+
+        private void Grid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var DragSource = (Grid)sender;
+            if (DragSource == null) return;
+            DragDrop.DoDragDrop(DragSource, SelectedCard.Uuid, DragDropEffects.Move);
         }
 
     }

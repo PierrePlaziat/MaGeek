@@ -19,7 +19,8 @@
 
     <Grid Background="Black"
           MouseEnter="Grid_MouseEnter"
-          MouseLeave="Grid_MouseLeave">
+          MouseLeave="Grid_MouseLeave"
+          PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown">
 
         <!-- BackGround -->
         <Image Source="/Resources/Images/cardback.jpg" />

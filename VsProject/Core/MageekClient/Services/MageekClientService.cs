@@ -711,19 +711,18 @@ namespace MageekClient.Services
                 Description = header.Description,
                 Title = header.Title,
             };
+            req.Lines = new();
             foreach (var item in lines)
             {
-                if (!req.Lines.IsNull)
+                req.Lines.Items.Add(new Reply_DeckCard()
                 {
-                    req.Lines.Items.Add(new Reply_DeckCard()
-                    {
-                        CardUuid = item.CardUuid,
-                        DeckId = header.DeckId,
-                        Quantity = item.Quantity,
-                        RelationType = item.RelationType,
-                    });
-                }
+                    CardUuid = item.CardUuid,
+                    DeckId = header.DeckId,
+                    Quantity = item.Quantity,
+                    RelationType = item.RelationType,
+                });
             }
+            req.Lines.IsNull = req.Lines.Items.Count == 0;
             var reply = await mageekClient.Decks_SaveAsync(req);
         }
 

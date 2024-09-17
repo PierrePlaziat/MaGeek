@@ -35,12 +35,6 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             }
         }
 
-        private void CardGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            var v = CardGrid.SelectedItem as SearchedCards;
-            WeakReferenceMessenger.Default.Send(new CardSelectedMessage(v.Card.Uuid));
-        }
-
         private void FillColorFilterCombo()
         {
             ColorComboBox.ItemsSource = Enum.GetValues(typeof(MtgColorFilter));
@@ -50,15 +44,6 @@ namespace MageekDesktopClient.UI.Views.AppPanels
         {
             vm.FilterName = ((MenuItem)e.OriginalSource).Header.ToString();
         }
-
-        //private async void AddToDeck(object sender, RoutedEventArgs e)
-        //{
-        //    foreach (Cards c in CardGrid.SelectedItems)
-        //    {
-        //        await MageekService.MageekService.AddCardToDeck(c.Uuid, App.State.SelectedDeck, 1);
-        //    }
-        //    App.Events.RaiseUpdateDeck();
-        //}
 
         private void CardGrid_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -84,7 +69,7 @@ namespace MageekDesktopClient.UI.Views.AppPanels
                         return null;
 
                     if (data != DependencyProperty.UnsetValue)
-                        return ((SearchedCards)((DataGridRowsPresenter)element).DataContext).Card.Uuid;
+                        return ((SearchedCards)data).CardUuid;
                 }
             }
             return null;
