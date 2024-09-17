@@ -196,7 +196,6 @@
             </ListView>
 
             <!-- Legalities -->
-
             <ListView Grid.Row="2" 
                           MaxHeight="100"
                           Background="#000">
@@ -661,6 +660,28 @@
 
             </Grid>
 
+            <Grid Background="Black"
+                  Grid.Row="0"
+                  Grid.RowSpan="2"
+                  Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <ctrl:BusyIndicator HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+
+            <Grid Background="Black"
+                  Grid.Row="2"
+                  Grid.RowSpan="4"
+                  Visibility="{Binding VariantsLoading, Converter={StaticResource BoolToVis}}">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <ctrl:BusyIndicator HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+
         </Grid>
 
         <StackPanel Background="#222"
@@ -670,20 +691,6 @@
             <Label HorizontalAlignment="Center"
                    VerticalAlignment="Center">No card selected</Label>
         </StackPanel>
-
-        <Grid Background="Black"
-              Grid.Row="0"
-              Grid.RowSpan="6"
-              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
-            <StackPanel HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                <!--<Label Content="{Binding LoadMsg}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" />-->
-                <ctrl:BusyIndicator HorizontalAlignment="Center"
-                                        VerticalAlignment="Center" />
-            </StackPanel>
-        </Grid>
 
     </Grid>
 

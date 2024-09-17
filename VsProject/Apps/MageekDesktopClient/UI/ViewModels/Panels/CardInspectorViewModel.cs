@@ -45,6 +45,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         [ObservableProperty] private float meanPrice;
         [ObservableProperty] private bool isFav = false;
         [ObservableProperty] private bool pinned = false;
+        [ObservableProperty] private bool variantsLoading = false;
         [ObservableProperty] private bool isLoading = false;
 
         public void Receive(CardSelectedMessage message)
@@ -90,9 +91,9 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
 
         private async Task GetCardVariants()
         {
+            VariantsLoading = true;
             SelectedVariant = null;
-            Variants = null;
-            Variants = new List<CardVariant>();
+            var VVariants = new List<CardVariant>();
 
             foreach (string variant in await mageek.Cards_UuidsForGivenCardName(SelectedArchetype))
             {
@@ -105,10 +106,12 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
                         await mageek.Collec_OwnedVariant(session.UserName, card.Uuid),
                         await mageek.Cards_GetPrice(card.Uuid)
                     );
-                    Variants.Add(v);
+                    VVariants.Add(v);
                     if (card.Uuid == SelectedUuid) SelectedVariant = v;
                 }
             }
+            Variants = VVariants;
+            VariantsLoading = false;
         }
         private async Task GetLegalities()
         {
