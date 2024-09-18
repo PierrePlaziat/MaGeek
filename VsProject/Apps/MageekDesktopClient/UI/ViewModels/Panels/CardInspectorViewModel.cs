@@ -57,35 +57,33 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         public async Task Reload(string uuid)
         {
             if (uuid == null) return;
-            Logger.Log("Reload");
-            IsLoading = true;
-            await Task.Delay(100);
-            string archetype = await mageek.Cards_NameForGivenCardUuid(uuid);
-            if (archetype == null)
-            {
-                IsLoading = false;
-                return;
-            }
-            SelectedArchetype = archetype;
             SelectedUuid = uuid;
-            await Task.WhenAll(
-                new List<Task>
-                {
-                    GetCardVariants(),
-                    GetLegalities(),
-                    GetRulings(),  
-                    GetRelatedCards(), 
-                    GetTags(), 
-                }
-            );
-            await Task.WhenAll(
-                new List<Task>
-                {
-                    GetTotalGot(),
-                    GetMeanPrice(),
-                    GetVariantCount()
-                }
-            );
+            if (Variants == null || !Variants.Where(x => x.Card.Uuid == uuid).Any())
+            {
+                Logger.Log("Reload");
+                IsLoading = true;
+                string archetype = await mageek.Cards_NameForGivenCardUuid(uuid);
+                if (archetype == null) throw new Exception("Archetype not found");
+                SelectedArchetype = archetype;
+                await Task.WhenAll(
+                    new List<Task>
+                    {
+                        GetCardVariants(),
+                        GetLegalities(),
+                        GetRulings(),  
+                        GetRelatedCards(), 
+                        GetTags(), 
+                    }
+                );
+                await Task.WhenAll(
+                    new List<Task>
+                    {
+                        DetermineTotalGot(),
+                        DetermineMeanPrice(),
+                        DetermineVariantCount()
+                    }
+                );
+            }
             IsLoading = false;
         }
 
@@ -129,17 +127,17 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         {
             Tags = await mageek.Tags_GetCardTags(session.UserName, SelectedArchetype);
         }
-        private async Task GetTotalGot() 
+        private async Task DetermineTotalGot() 
         {
             TotalGot = await mageek.Collec_OwnedCombined(session.UserName, SelectedArchetype);
         }
-        private async Task GetMeanPrice()
+        private async Task DetermineMeanPrice()
         {
             await Task.Run(() => {
                 MeanPrice = Variants.Count == 0 ? 0 : Variants.Where(x => x.Price.LastPriceEur.HasValue).Sum(x => x.Price.LastPriceEur.Value) / Variants.Count;
             });
         }
-        private async Task GetVariantCount()
+        private async Task DetermineVariantCount()
         {
             await Task.Run(() => {
                 VariantCount = Variants.Count;
