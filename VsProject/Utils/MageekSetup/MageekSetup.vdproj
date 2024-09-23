@@ -15,19 +15,13 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_5660FDB74D8A484FADA74008E206F50E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8071D97B4C764C4CAE7E196BF793BFB5"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_910F013D188048C6BB3F8AE89A04E3F5"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C36A6B1000914A47A890A290D257A866"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -128,30 +122,10 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_910F013D188048C6BB3F8AE89A04E3F5"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5660FDB74D8A484FADA74008E206F50E"
             {
-            "SourcePath" = "8:..\\Apps\\MageekWpf\\Resources\\Default.avalonXml"
-            "TargetName" = "8:Default.avalonXml"
-            "Tag" = "8:"
-            "Folder" = "8:_064D465CDC8C48F8952CE37C675AC0A4"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C36A6B1000914A47A890A290D257A866"
-            {
-            "SourcePath" = "8:..\\MageekDesktopServer\\Resources\\icon.ico"
-            "TargetName" = "8:icon.ico"
+            "SourcePath" = "8:..\\..\\Apps\\MageekDesktopClient\\Resources\\Images\\Icone.ico"
+            "TargetName" = "8:Icone.ico"
             "Tag" = "8:"
             "Folder" = "8:_064D465CDC8C48F8952CE37C675AC0A4"
             "Condition" = "8:"
@@ -242,7 +216,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:MageekSetup"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:_C36A6B1000914A47A890A290D257A866"
+        "ARPPRODUCTICON" = "8:_5660FDB74D8A484FADA74008E206F50E"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -345,62 +319,6 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_00ED5A7D3D4D49738D301477B563C68C"
-            {
-            "Name" = "8:MageekDesktop"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:"
-            "Folder" = "8:_1E091BC42D4C4596AA7FCE6878FD8EF4"
-            "WorkingFolder" = "8:_064D465CDC8C48F8952CE37C675AC0A4"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_75A72FCE0E45456489E803C58F5826F7"
-            {
-            "Name" = "8:MageekDesktop"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:"
-            "Folder" = "8:_3BEE6B2F691B4130BC05967674F0CDF2"
-            "WorkingFolder" = "8:_064D465CDC8C48F8952CE37C675AC0A4"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_A99C866F8EFC4A1BAF8EC53D12CE7B48"
-            {
-            "Name" = "8:MageekDesktopServer"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:"
-            "Folder" = "8:_3BEE6B2F691B4130BC05967674F0CDF2"
-            "WorkingFolder" = "8:_064D465CDC8C48F8952CE37C675AC0A4"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_FAF1FB6ECB36464898A6425E8B525DE4"
-            {
-            "Name" = "8:MageekDesktopServer"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:"
-            "Folder" = "8:_1E091BC42D4C4596AA7FCE6878FD8EF4"
-            "WorkingFolder" = "8:_064D465CDC8C48F8952CE37C675AC0A4"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
         }
         "UserInterface"
         {

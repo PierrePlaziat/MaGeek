@@ -30,7 +30,7 @@
 
         <DockPanel Grid.ColumnSpan="1">
 
-            <ComboBox Width="150"
+            <!--<ComboBox Width="150"
                       SelectionChanged="ComboBox_SelectionChanged"
                       ItemsSource="{Binding Types}"
                       SelectedItem="{Binding FilterType, Mode=TwoWay}" />
@@ -38,7 +38,7 @@
             <ComboBox Width="150"
                       SelectionChanged="ComboBox_SelectionChanged"
                       ItemsSource="{Binding Blocks}"
-                      SelectedItem="{Binding FilterBlock, Mode=TwoWay}" />
+                      SelectedItem="{Binding FilterBlock, Mode=TwoWay}" />-->
 
         </DockPanel>
 

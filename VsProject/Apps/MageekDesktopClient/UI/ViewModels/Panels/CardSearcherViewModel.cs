@@ -51,8 +51,8 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
 
         public void Receive(LaunchAppMessage message) 
         {
-            FilterName = "Edgar Markov";
-            Search().ConfigureAwait(false);
+            //FilterName = "Edgar Markov";
+            //Search().ConfigureAwait(false);
         }
 
         [RelayCommand] public async Task Search()
