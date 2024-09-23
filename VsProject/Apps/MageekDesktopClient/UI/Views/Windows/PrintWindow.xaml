@@ -29,12 +29,12 @@
                 <Label Content="{Binding Pages.Count}"></Label>
                 <Button Command="{Binding NextPageCommand}">Next</Button>
             </DockPanel>
-            <CheckBox Foreground="White"
+            <!--<CheckBox Foreground="White"
                           Command="{Binding CheckBoxIncludeBasicLandsCommand}"
                           Content="Include basic lands" />
             <CheckBox Foreground="White"
                       Command="{Binding CheckBoxOnlyMissingCommand}"
-                      Content="Only missing" />
+                      Content="Only missing" />-->
             <Button Command="{Binding LaunchPrintCommand}"
                     Content="Launch print" />
         </StackPanel>

@@ -96,12 +96,12 @@
                                           Click="MenuItem_DuplicateDeckClick"
                                           CommandParameter="{Binding DeckId}"/>
                                 <Separator />
-                                <MenuItem Header="Get List"
+                                <!--<MenuItem Header="Get List"
                                           Click="MenuItem_ListDeckClick"
-                                          CommandParameter="{Binding DeckId}" />
-                                <MenuItem Header="Estimate price"
+                                          CommandParameter="{Binding DeckId}" />-->
+                                <!--<MenuItem Header="Estimate price"
                                           Click="MenuItem_EstimateDeckClick"
-                                          CommandParameter="{Binding DeckId}" />
+                                          CommandParameter="{Binding DeckId}" />-->
                                 <MenuItem Header="Print"
                                           Click="MenuItem_PrintDeck"
                                           CommandParameter="{Binding DeckId}" />

@@ -52,7 +52,7 @@
                     <Image Source="/Resources/Images/IconDeck.jpg" />
                 </MenuItem.Icon>
             </MenuItem>
-            <Separator />
+            <!--<Separator />
             <MenuItem Header="Txt Input"
                       Foreground="Black"
                       Command="{Binding OpenToolCommand}"
@@ -69,7 +69,7 @@
                 <MenuItem.Icon>
                     <Image Source="/Resources/Images/Icon_Currency.jpg" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </MenuItem>-->
         </MenuItem>
 
         <MenuItem Header="Layout">
@@ -93,7 +93,7 @@
         </MenuItem>
 
         <MenuItem Header="Options">
-            <MenuItem Header="Language"
+            <MenuItem Header="Foreign Language Search"
                       Name="LangBox"
                       Foreground="Black">
                 <MenuItem.Icon>
@@ -151,7 +151,7 @@
                 </MenuItem>
             </MenuItem>
 
-            <MenuItem Header="Currency"
+            <!--<MenuItem Header="Currency"
                       Name="CurrencyBox"
                       Foreground="Black">
                 <MenuItem.Icon>
@@ -167,7 +167,7 @@
                           Command="{Binding ChangeCurrencyCommand}"
                           CommandParameter="Usd">
                 </MenuItem>
-            </MenuItem>
+            </MenuItem>-->
 
         </MenuItem>
 
