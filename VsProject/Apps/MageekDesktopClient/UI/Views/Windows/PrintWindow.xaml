@@ -4,23 +4,21 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
+                 xmlns:controls="clr-namespace:MageekDesktopClient.UI.Controls"
                  mc:Ignorable="d"
                  Title="ProxyPrint"
-                 Width="820"
-                 Height="900"
+                 Width="1020"
+                 Height="1000"
                  Background="Black">
 
-    <Grid Width="820">
+    <Grid Height="1000">
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"></RowDefinition>
             <RowDefinition Height="1000"></RowDefinition>
         </Grid.RowDefinitions>
-
-        <Grid Grid.Row="1"
-              Name="ShowedPage"
-              Background="White">
-
-        </Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"></ColumnDefinition>
+            <ColumnDefinition Width="820"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Row="0"
                     Background="Black">
@@ -31,19 +29,21 @@
                 <Label Content="{Binding Pages.Count}"></Label>
                 <Button Command="{Binding NextPageCommand}">Next</Button>
             </DockPanel>
-            <DockPanel>
-                <CheckBox Foreground="White"
+            <CheckBox Foreground="White"
                           Command="{Binding CheckBoxIncludeBasicLandsCommand}"
                           Content="Include basic lands" />
-                <CheckBox Foreground="White"
-                          Command="{Binding CheckBoxOnlyMissingCommand}"
-                          Unchecked="CheckBox_OnlyMissing"
-                          Checked="CheckBox_OnlyMissing"
-                          Content="Only missing" />
-                <Button Command="{Binding LaunchPrintCommand}"
-                        Content="Launch print" />
-            </DockPanel>
+            <CheckBox Foreground="White"
+                      Command="{Binding CheckBoxOnlyMissingCommand}"
+                      Content="Only missing" />
+            <Button Command="{Binding LaunchPrintCommand}"
+                    Content="Launch print" />
         </StackPanel>
+
+        <Grid Grid.Column="1"
+              Name="ShowedPage"
+              Background="White">
+            <ContentControl Content="{Binding ShowedPage}" />
+        </Grid>
 
     </Grid>
 

@@ -9,7 +9,6 @@ using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using PlaziatTools;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace MageekDesktopClient.UI.Controls
 {
@@ -184,12 +183,35 @@ namespace MageekDesktopClient.UI.Controls
             ShowHud = false;
         }
 
-        private void Grid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        #region DragAndDrop support
+
+        Grid lv;
+        private Point _startPoint;
+        private void UIElement_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var DragSource = (Grid)sender;
-            if (DragSource == null) return;
-            DragDrop.DoDragDrop(DragSource, SelectedCard.Uuid, DragDropEffects.Move);
+            _startPoint = e.GetPosition(null);
+            lv = (Grid)sender;
+            if (lv == null) return;
         }
+        private void UIElement_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    Point currentPosition = e.GetPosition(null);
+                    Vector diff = _startPoint - currentPosition;
+                    if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                        Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                    {
+                        DragDrop.DoDragDrop(lv, SelectedCard.Uuid, DragDropEffects.Move);
+                    }
+                }
+            }
+            catch { }
+        }
+
+        #endregion
 
     }
 

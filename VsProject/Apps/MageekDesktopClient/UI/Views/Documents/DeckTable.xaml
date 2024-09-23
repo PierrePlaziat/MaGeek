@@ -13,8 +13,8 @@
     <mvvm:BaseUserControl.Resources>
 
         <DataTemplate x:Key="CustomItemsControlItem">
-            <ContentControl Width="150"
-                            Height="150"
+            <ContentControl Width="120"
+                            Height="165"
                             Background="Green">
 
                 <mgui:CardIllustration CardUuid="{Binding DataContext.Line.CardUuid, RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}}" />
@@ -75,7 +75,7 @@
 
     </mvvm:BaseUserControl.Resources>
     
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" MinWidth="10" >
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MinWidth="10" >
 
         <StackPanel>
 
@@ -85,77 +85,11 @@
                             ItemTemplate ="{StaticResource CustomItemsControlItem}">
             </ItemsControl>
 
-            <DockPanel Margin="0">
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc0}" 
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc1}"
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc2}"
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc3}"
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc4}"
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc5}"
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc6}"
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_Cmc7}"
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_CmcBig}"
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <Label></Label>
-
-            </DockPanel>
-
-            <DockPanel>
-
-                <ItemsControl ItemsSource="{Binding Deck.deck_Lands}"
-                                Style="{StaticResource CustomItemsControlStyle}"
-                                ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
-                                ItemTemplate ="{StaticResource CustomItemsControlItem}">
-                </ItemsControl>
-
-                <Label></Label>
-
-            </DockPanel>
+            <ItemsControl ItemsSource="{Binding Deck.entries_Deck}" 
+                            Style="{StaticResource CustomItemsControlStyle}"
+                            ItemsPanel="{StaticResource CustomItemsControlItemsPanel}"
+                            ItemTemplate ="{StaticResource CustomItemsControlItem}">
+            </ItemsControl>
 
         </StackPanel>
 

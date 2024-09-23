@@ -125,7 +125,9 @@ message Request_CreateDeck {
     string user = 1;
     string title = 2;
     string description = 3;
-    Wrapper_Reply_DeckCardList cards = 4;
+    int32 cardCount = 4;
+    string deckColors = 5;
+    Wrapper_Reply_DeckCardList cards = 6;
 }
 message Request_RenameDeck {
     string user = 1;
@@ -137,7 +139,9 @@ message Request_SaveDeck {
     string deckId = 2;
     string title = 3;
     string description = 4;
-    Wrapper_Reply_DeckCardList lines = 5;
+    int32 cardCount = 5;
+    string deckColors = 6;
+    Wrapper_Reply_DeckCardList lines = 7;
 }
 message Request_CardTag {
     string user = 1;

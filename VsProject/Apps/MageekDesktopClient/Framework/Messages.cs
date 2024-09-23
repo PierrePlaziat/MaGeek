@@ -24,4 +24,9 @@ namespace MageekDesktopClient.Framework
         public AddCardToDeckMessage(Tuple<string, string> data) : base(data) { }
     }
 
+    public class PrintDeckMessage : ValueChangedMessage<string>
+    {
+        public PrintDeckMessage(string data) : base(data) { }
+    }
+
 }

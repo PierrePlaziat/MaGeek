@@ -259,7 +259,7 @@ namespace MageekCore.Services
         /// <param name="description"></param>
         /// <param name="deckLines"></param>
         /// <returns>A list of messages, empty if everything went well</returns>
-        Task Decks_Create(string user, string title, string description, IEnumerable<DeckCard> deckLines);
+        Task Decks_Create(string user, string title, string description, int cardCount, string colors, IEnumerable<DeckCard> deckLines);
 
         /// <summary>
         /// Rename a deck

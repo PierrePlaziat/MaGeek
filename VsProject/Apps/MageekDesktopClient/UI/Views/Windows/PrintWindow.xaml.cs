@@ -12,17 +12,15 @@ namespace MageekDesktopClient.UI.Views.AppWindows
         {
             DataContext = vm;
             InitializeComponent();
+            this.Closing += PrintWindow_Closing;
         }
 
-        private void CheckBox_IncludeBasicLands(object sender, System.Windows.RoutedEventArgs e)
+        private void PrintWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
+            e.Cancel = true;
+            Hide();
         }
 
-        private void CheckBox_OnlyMissing(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
     }
 
 }

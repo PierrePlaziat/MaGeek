@@ -9,6 +9,7 @@ using MageekCore.Data.Collection.Entities;
 using PlaziatTools;
 using MageekCore.Data.MtgFetched.Entities;
 using MageekCore.Data.MtgFetched;
+using System.Reflection.PortableExecutable;
 
 namespace MageekCore.Services
 {
@@ -708,7 +709,7 @@ namespace MageekCore.Services
             catch (Exception e) { Logger.Log(e); }
             return decks;
         }
-
+            
         public async Task<Deck> Decks_Get(string user, string deckId)
         {
             Logger.Log(deckId);
@@ -739,46 +740,13 @@ namespace MageekCore.Services
             }
         }
 
-        public async Task Decks_Create(string user, string title, string description, IEnumerable<DeckCard> deckLines = null)
+        public async Task Decks_Create(string user, string title, string description, int cardCount, string colors, IEnumerable<DeckCard> deckLines = null)
         {
-            if (deckLines == null) await CreateDeck_Empty(user, title, description);
-            Logger.Log("");
-            List<string> messages = new();
-            Deck deck = await CreateDeck_Empty(user, title, description);
-            try
-            {
-                using MtgFetchedDbContext DB = await mtgFetched.GetContext();
-                using CollectionDbContext DB2 = await collec.GetContext(user);
-                foreach (DeckCard deckLine in deckLines)
-                {
-                    if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.CardUuid).Any())
-                    {
-                        DB2.DeckCard.Add(
-                            new DeckCard()
-                            {
-                                DeckId = deck.DeckId,
-                                CardUuid = deckLine.CardUuid,
-                                Quantity = deckLine.Quantity,
-                                RelationType = deckLine.RelationType
-                            }
-                        );
-                        deck.CardCount += deckLine.Quantity;
-                    }
-                    else
-                    {
-                        messages.Add("[CardNotFoud]" + deckLine.CardUuid);
-                    }
-                }
-                await DB.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                messages.Add("[error]" + e.Message);
-                Logger.Log(e);
-            }
+            Deck deck = await CreateDeck_Header(user, title, description, cardCount, colors);
+            await UpdateDeckLines(user, deck.DeckId, deckLines);
         }
 
-        private async Task<Deck> CreateDeck_Empty(string user, string title, string description)
+        private async Task<Deck> CreateDeck_Header(string user, string title, string description, int cardCount, string colors)
         {
             Logger.Log("");
             if (string.IsNullOrEmpty(title)) return null;
@@ -788,8 +756,8 @@ namespace MageekCore.Services
                 Deck deck = new()
                 {
                     Title = title,
-                    CardCount = 0,
-                    DeckColors = string.Empty,
+                    CardCount = cardCount,
+                    DeckColors = colors,
                     Description = description
                 };
                 DB.Decks.Add(deck);
@@ -801,6 +769,70 @@ namespace MageekCore.Services
                 Logger.Log(e,true);
                 return null;
             }
+        }
+
+        private async Task UpdateDeckLines(string user, string deckId, IEnumerable<DeckCard> deckLines)
+        {
+            Logger.Log("deckLines " + deckLines.Count());
+            try
+            {
+                using MtgFetchedDbContext DB = await mtgFetched.GetContext();
+                using CollectionDbContext DB2 = await collec.GetContext(user);
+
+                // Start a transaction
+                using var transaction = await DB.Database.BeginTransactionAsync();
+                using var transaction2 = await DB2.Database.BeginTransactionAsync();
+
+                try
+                {
+                    // Delete previous records
+                    DB2.DeckCard.RemoveRange(DB2.DeckCard.Where(x => x.DeckId == deckId));
+
+                    foreach (DeckCard deckLine in deckLines)
+                    {
+                        if (DB.CardArchetypes.Where(x => x.CardUuid == deckLine.CardUuid).Any())
+                        {
+                            DB2.DeckCard.Add(
+                                new DeckCard()
+                                {
+                                    DeckId = deckId,
+                                    CardUuid = deckLine.CardUuid,
+                                    Quantity = deckLine.Quantity,
+                                    RelationType = deckLine.RelationType
+                                }
+                            );
+                        }
+                        else
+                        {
+                            Logger.Log("[CardNotFoud]" + deckLine.CardUuid);
+                        }
+                    }
+
+                    
+
+                    await DB.SaveChangesAsync();
+                    await DB2.SaveChangesAsync();
+
+                    // Commit both transactions
+                    await transaction.CommitAsync();
+                    await transaction2.CommitAsync();
+                }
+                catch (Exception e)
+                {
+                    // Rollback both transactions in case of error
+                    await transaction.RollbackAsync();
+                    await transaction2.RollbackAsync();
+
+                    Logger.Log("[error]" + e.Message);
+                    Logger.Log(e);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log("[error]" + e.Message);
+                Logger.Log(e);
+            }
+            Logger.Log("DONE");
         }
 
         public async Task Decks_Rename(string user, string deckId, string title)
@@ -823,10 +855,12 @@ namespace MageekCore.Services
             var deckToCopy = await Decks_Get(user, deckId);
             Logger.Log("");
             if (deckToCopy == null) return;
-            var newDeck = await CreateDeck_Empty(
+            var newDeck = await CreateDeck_Header(
                 user,
                 deckToCopy.Title + " - Copy",
-                deckToCopy.Description/*, deckToCopy.DeckColors, deckToCopy.CardCount*/);
+                deckToCopy.Description,/*, deckToCopy.DeckColors, deckToCopy.CardCount*/
+                deckToCopy.CardCount,
+                deckToCopy.DeckColors);
             if (newDeck == null) return;
 
             using CollectionDbContext DB = await collec.GetContext(user);
@@ -854,17 +888,23 @@ namespace MageekCore.Services
             {
                 using CollectionDbContext DB = await collec.GetContext(user);
                 Deck d = DB.Decks.Where(x => x.DeckId == header.DeckId).FirstOrDefault();
-                if (d != null) await UpdateDeckHeader(user, d.DeckId, d.Title, header.Description, header.DeckColors, header.CardCount, lines);
-                else await Decks_Create(user, header.Title, header.Description, /*header.DeckColors, header.CardCount,*/ lines);
+                if (d != null)
+                {
+                    await Deck_Update(user, d.DeckId, d.Title, header.Description, header.DeckColors, header.CardCount, lines);
+                }
+                else
+                {
+                    await Decks_Create(user, header.Title, header.Description, header.CardCount, header.DeckColors, lines);
+                }
             }
             catch (Exception e) { Logger.Log(e); }
         }
 
-        public async Task UpdateDeckHeader(string user, string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content)
+        public async Task Deck_Update(string user, string deckId, string title, string description, string colors, int count, IEnumerable<DeckCard> content)
         {
             Logger.Log("");
             await Decks_Delete(user, deckId);
-            await Decks_Create(user, title, description, /*colors, count,*/ content);
+            await Decks_Create(user, title, description, count, colors, content);
         }
 
         public async Task Decks_Delete(string user, string deckId)

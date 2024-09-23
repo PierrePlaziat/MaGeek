@@ -79,13 +79,10 @@
                     <Grid Background="#000" Drop="Grid_Drop" AllowDrop="True">
 
                         <Grid.ColumnDefinitions>
-                            <!--<ColumnDefinition Width="100"></ColumnDefinition>-->
                             <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="65"></ColumnDefinition>
-                            <ColumnDefinition Width="65"></ColumnDefinition>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-
-
 
                         <Grid.ContextMenu>
                             <ContextMenu>
@@ -100,11 +97,14 @@
                                           CommandParameter="{Binding DeckId}"/>
                                 <Separator />
                                 <MenuItem Header="Get List"
-                                          Click="MenuItem_ListDeckClick" 
-                                          CommandParameter="{Binding DeckId}"/>
+                                          Click="MenuItem_ListDeckClick"
+                                          CommandParameter="{Binding DeckId}" />
                                 <MenuItem Header="Estimate price"
-                                          Click="MenuItem_EstimateDeckClick" 
-                                          CommandParameter="{Binding DeckId}"/>
+                                          Click="MenuItem_EstimateDeckClick"
+                                          CommandParameter="{Binding DeckId}" />
+                                <MenuItem Header="Print"
+                                          Click="MenuItem_PrintDeck"
+                                          CommandParameter="{Binding DeckId}" />
                                 <Separator />
                                 <MenuItem Header="Delete"
                                           Click="MenuItem_DeleteDeckClick" 
@@ -112,25 +112,19 @@
                             </ContextMenu>
                         </Grid.ContextMenu>
 
-                        <!--<Label Margin="0" Padding="2" 
-                               FontSize="20" 
-                               FontFamily="{StaticResource MtgSymbols}"
-                               Content="{Binding DeckColors}"
-                               Foreground="#EEE"/>-->
-
                         <Label Grid.Column="0" Foreground="White" 
                                HorizontalAlignment="Stretch" 
                                Content="{Binding Title}"/>
 
-                        <DockPanel Grid.Column="1">
+                            <Label Content="{Binding CardCount}"
+                                   Foreground="#666" Grid.Column="1"/>
 
-                            <Label Content="{Binding CardCount}" 
-                                   Foreground="#666"/>
-
-                            <Label Content="Cards" 
-                                   Foreground="#666"/>
-
-                        </DockPanel>
+                            <Label Margin="0" Padding="2"
+                                   FontSize="20"
+                                   Grid.Column="2"
+                                   FontFamily="{StaticResource MtgSymbols}"
+                               Content="{Binding DeckColors}"
+                               Foreground="#EEE"/>
 
                     </Grid>
 

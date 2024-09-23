@@ -25,18 +25,21 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto" 
+                                  MinWidth="225"></ColumnDefinition>
                 <ColumnDefinition Width="20"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"
+                                  MinWidth="225"></ColumnDefinition>
                 <ColumnDefinition Width="20"></ColumnDefinition>
-                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="auto"
+                                  MinWidth="225"></ColumnDefinition>
                 <ColumnDefinition Width="20"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <Grid Background="#fff"
                   Grid.Row="1"
                   Grid.Column="1">
-                <Image Source="{Binding Card0}"></Image>
+                <Image Source="{Binding Card0}" Height="326" MinWidth="225"></Image>
             </Grid>
 
             <Grid Name="Emplacement1"

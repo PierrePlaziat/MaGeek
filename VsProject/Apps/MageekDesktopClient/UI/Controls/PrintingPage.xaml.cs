@@ -6,9 +6,7 @@ using PlaziatWpf.Mvvm;
 
 namespace MageekDesktopClient.UI.Controls
 {
-    /// <summary>
-    /// Logique d'interaction pour PrintingPage.xaml
-    /// </summary>
+
     public partial class PrintingPage : BaseUserControl
     {
 

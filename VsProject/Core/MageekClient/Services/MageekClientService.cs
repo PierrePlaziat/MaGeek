@@ -657,14 +657,16 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task Decks_Create(string user, string title, string description, IEnumerable<DeckCard> deckLines)
+        public async Task Decks_Create(string user, string title, string description, int cardCount, string colors, IEnumerable<DeckCard> deckLines)
         {
             var req = new Request_CreateDeck()
             {
                 User = user,
                 Description = description,
                 Title = title,
-                Cards = new Wrapper_Reply_DeckCardList()
+                Cards = new Wrapper_Reply_DeckCardList(),
+                CardCount = cardCount,
+                DeckColors = colors
             };
             foreach (var item in deckLines)
             {
@@ -710,6 +712,8 @@ namespace MageekClient.Services
                 DeckId = header.DeckId,
                 Description = header.Description,
                 Title = header.Title,
+                CardCount = header.CardCount,
+                DeckColors = header.DeckColors,
             };
             req.Lines = new();
             foreach (var item in lines)

@@ -4,6 +4,8 @@ using PlaziatWpf.Mvvm;
 using PlaziatWpf.Docking;
 using System;
 using MageekDesktopClient.Framework;
+using System.Windows;
+using System.Windows.Media;
 
 namespace MageekDesktopClient.UI.Views
 {

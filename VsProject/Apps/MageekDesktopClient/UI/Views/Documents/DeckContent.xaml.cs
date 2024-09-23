@@ -1,8 +1,10 @@
 ﻿using MageekDesktopClient.MageekTools.DeckTools;
 using MageekDesktopClient.UI.ViewModels;
 using PlaziatWpf.Mvvm;
+using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace MageekDesktopClient.UI.Views.AppPanels
@@ -65,14 +67,27 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             //TODO
         }
 
-        private void Grid_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private Point _startPoint;
+        private object data;
+        private ListView lv;
+        private void UIElement_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var DragSource = (ListView)sender;
-            if (DragSource == null) return;
-
-            object data = GetDataFromListBox(DragSource, e.GetPosition(DragSource));
-            if (data != null)
-                DragDrop.DoDragDrop(DragSource, data, DragDropEffects.Move);
+            _startPoint = e.GetPosition(null);
+            lv = (ListView)sender;
+            data = GetDataFromListBox(lv, e.GetPosition(lv));
+        }
+        private void UIElement_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point currentPosition = e.GetPosition(null);
+                Vector diff = _startPoint - currentPosition;
+                if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    DragDrop.DoDragDrop(lv, data, DragDropEffects.Move);
+                }
+            }
         }
 
         private static object GetDataFromListBox(ListView source, Point point)

@@ -479,7 +479,7 @@ namespace MageekServer.Services
                     });
                 }
             }
-            await mageek.Decks_Create(request.User, request.Title, request.Description, lines);
+            await mageek.Decks_Create(request.User, request.Title, request.Description, request.CardCount, request.DeckColors, lines);
             return new Reply_Empty();
         }
 
@@ -569,6 +569,8 @@ namespace MageekServer.Services
                 Title = request.Title,
                 DeckId = request.DeckId,
                 Description = request.Description,
+                CardCount = request.CardCount,
+                DeckColors = request.DeckColors,
             };
             List<DeckCard> cards = new List<DeckCard>();
             if(!request.Lines.IsNull)

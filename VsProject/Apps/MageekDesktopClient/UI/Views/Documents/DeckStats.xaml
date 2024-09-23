@@ -17,10 +17,10 @@
 
                 <Button Command="{Binding SaveDeckCommand}">SAVE DECK</Button>
 
-                <StackPanel Width="320">
+                <Grid Width="320">
 
                     <Grid Width="330"
-                      HorizontalAlignment="Left">
+                          HorizontalAlignment="Left">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
@@ -35,26 +35,36 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Column="0"
-                           Content="0" />
-                    <Label Grid.Column="1"
-                           Content="1" />
-                    <Label Grid.Column="2"
-                           Content="2" />
-                    <Label Grid.Column="3"
-                           Content="3" />
-                    <Label Grid.Column="4"
-                           Content="4" />
-                    <Label Grid.Column="5"
-                           Content="5" />
-                    <Label Grid.Column="6"
-                           Content="6" />
-                    <Label Grid.Column="7"
-                           Content="7" />
-                    <Label Grid.Column="8"
-                           Content="8" />
-                    <Label Grid.Column="9"
-                           Content="9" />
+                        <Label Grid.Column="0"
+                               Foreground="#333"
+                               Content="0" />
+                        <Label Grid.Column="1"
+                               Foreground="#333"
+                               Content="1" />
+                        <Label Grid.Column="2"
+                               Foreground="#333"
+                               Content="2" />
+                        <Label Grid.Column="3"
+                               Foreground="#333"
+                               Content="3" />
+                        <Label Grid.Column="4"
+                               Foreground="#333"
+                               Content="4" />
+                        <Label Grid.Column="5"
+                               Foreground="#333"
+                               Content="5" />
+                        <Label Grid.Column="6"
+                               Foreground="#333"
+                               Content="6" />
+                        <Label Grid.Column="7"
+                               Foreground="#333"
+                               Content="7" />
+                        <Label Grid.Column="8"
+                               Foreground="#333"
+                               Content="8" />
+                        <Label Grid.Column="9"
+                               Foreground="#333"
+                               Content="9" />
 
                 </Grid>
 
@@ -78,7 +88,7 @@
                         </Path>
                     </Canvas>
                 
-                </StackPanel>
+                </Grid>
 
                 <DockPanel Width="300">
 
@@ -220,6 +230,13 @@
                     <Separator Width="20"
                                Background="Transparent" />
 
+                </DockPanel>
+
+                <DockPanel HorizontalAlignment="Center">
+                    <Label>Total count</Label>
+                    <Label Content="{Binding Deck.Header.CardCount}"
+                           FontWeight="Bold"
+                           Foreground="White"></Label>
                 </DockPanel>
                 
             </StackPanel>

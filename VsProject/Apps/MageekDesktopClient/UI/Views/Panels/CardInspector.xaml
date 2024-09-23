@@ -36,7 +36,7 @@
                                MaxHeight="100"></RowDefinition>
                 <RowDefinition Height="auto"
                                MaxHeight="100"></RowDefinition>
-                <RowDefinition Height="*"
+                <RowDefinition Height="auto"
                                MaxHeight="100"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
@@ -82,7 +82,8 @@
                       Margin="0"
                       Padding="0"
                       SelectedItem="{Binding SelectedVariant}"
-                      PreviewMouseLeftButtonDown="VariantListBox_PreviewMouseLeftButtonDown">
+                      PreviewMouseLeftButtonDown="UIElement_PreviewMouseLeftButtonDown"
+                      PreviewMouseMove="UIElement_PreviewMouseMove">
 
                 <ListView.ContextMenu>
                     <ContextMenu>
@@ -564,7 +565,7 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <!-- Tags -->
+            <!-- Tags --><!--
             <StackPanel Grid.Row="5">
 
                 <Grid>
@@ -634,7 +635,7 @@
 
                 </Grid>
 
-            </StackPanel>
+            </StackPanel>-->
 
             <!-- Links -->
             <Grid Grid.Row="7">

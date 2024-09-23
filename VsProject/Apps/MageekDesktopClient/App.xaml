@@ -6,68 +6,13 @@
 
     <Application.Resources>
         
-        <FontFamily x:Key="MtgSymbols">pack://application:,,,/Resources/Fonts/Magic_Symbols_2008.ttf#Magic Symbols 2008</FontFamily>
-
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
-
-        <!--<ResourceDictionary x:Key="PlaziatWpfTheme">
+        <ResourceDictionary x:Key="WpfDarkTinyTheme">
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/PlaziatWpf;PlaziatWpf\styles\stylecombobox.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/PlaziatWpf;PlaziatWpf\styles\styleScrollbar.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/PlaziatWpf;PlaziatWpf\styles\stylebase.xaml" />
+                <ResourceDictionary Source="Resources\Styles\BasicStyle.xaml" />
+                <!--<ResourceDictionary Source="Resources\Styles\ScrollBarStyle.xaml" />-->
+                <!--<ResourceDictionary Source="Resources\Styles\ComboBoxStyle.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>-->
-
-        <Style TargetType="{x:Type Label}">
-            <Setter Property="Foreground" Value="#999"/>
-        </Style>
-
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="Background" Value="Black"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Height" Value="19"/>
-            <Setter Property="BorderBrush" Value="#111"/>
-        </Style>
-
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="BorderBrush" Value="#777"/>
-            <Setter Property="Background" Value="#555"/>
-            <Setter Property="Foreground" Value="#fff"/>
-            <Setter Property="Padding" Value="5,0,5,0"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Height" Value="19"/>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-
-        <Style TargetType="{x:Type ListView}">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="#222"/>
-            <Setter Property="Foreground" Value="#999"/>
-        </Style>
-
-        <Style TargetType="{x:Type ProgressBar}">
-            <Setter Property="Minimum" Value="0"/>
-            <Setter Property="Maximum" Value="100"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="Background" Value="#555"/>
-            <Setter Property="Foreground" Value="#AAA"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-
-        <Style TargetType="{x:Type DataGrid}">
-            <Setter Property="BorderThickness"
-                    Value="0" />
-            <Setter Property="Background"
-                    Value="#222" />
-            <Setter Property="GridLinesVisibility"
-                    Value="None" />
-            <Setter Property="RowBackground"
-                    Value="#333" />
-            <Setter Property="AlternatingRowBackground"
-                    Value="#444" />
-            <Setter Property="Foreground"
-                    Value="#999" />
-        </Style>
+        </ResourceDictionary>
 
     </Application.Resources>
 

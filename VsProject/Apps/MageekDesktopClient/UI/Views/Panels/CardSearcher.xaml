@@ -33,10 +33,10 @@
                     ToolTip="Clear filter"
                     Command="{Binding ResetFiltersCommand}" />
             
-            <Button Grid.Column="1"
+            <!--<Button Grid.Column="1"
                     Content="V"
                     ToolTip="Advanced search"
-                    Command="{Binding AdvancedSearchCommand}" />
+                    Command="{Binding AdvancedSearchCommand}" />-->
             
             <TextBox Grid.Column="2"
                      Text="{Binding FilterName}"
@@ -155,8 +155,8 @@
                       RowHeaderWidth="0"
                       RowHeight="20"
                       AutoGenerateColumns="False"
-                      
-                      PreviewMouseLeftButtonDown="CardGrid_PreviewMouseLeftButtonDown">
+                      PreviewMouseLeftButtonDown="UIElement_PreviewMouseLeftButtonDown"
+                      PreviewMouseMove="UIElement_PreviewMouseMove">
 
                 <DataGrid.RowStyle>
                     <Style TargetType="{x:Type DataGridRow}" >

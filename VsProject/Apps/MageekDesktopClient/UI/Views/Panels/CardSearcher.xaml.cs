@@ -8,6 +8,7 @@ using System.Windows.Media;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace MageekDesktopClient.UI.Views.AppPanels
 {
@@ -45,14 +46,32 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             vm.FilterName = ((MenuItem)e.OriginalSource).Header.ToString();
         }
 
-        private void CardGrid_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private Point _startPoint;
+        private object data;
+        private DataGrid lv;
+        private void UIElement_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var DragSource = (DataGrid)sender;
-            if (DragSource == null) return;
+            _startPoint = e.GetPosition(null);
+            lv = (DataGrid)sender;
+            data = GetDataFromListBox(lv, e.GetPosition(lv));
+        }
+        private void UIElement_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    Point currentPosition = e.GetPosition(null);
+                    Vector diff = _startPoint - currentPosition;
+                    if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                        Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                    {
+                        DragDrop.DoDragDrop(lv, data, DragDropEffects.Move);
+                    }
+                }
 
-            object data = GetDataFromListBox(DragSource, e.GetPosition(DragSource));
-            if (data != null)
-                DragDrop.DoDragDrop(DragSource, data, DragDropEffects.Move);
+            }
+            catch { }
         }
 
         private static object GetDataFromListBox(DataGrid source, Point point)

@@ -10,7 +10,7 @@ namespace MageekCore.Data.Collection.Entities
         public string DeckId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string DeckColors { get; set; } = "";
-        public int CardCount { get; set; } = 0;
+        public string DeckColors { get; set; }
+        public int CardCount { get; set; }
     }
 }

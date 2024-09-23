@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
+using PlaziatWpf.Services;
 
 namespace MageekDesktopClient.UI.Views.AppPanels
 {
@@ -100,6 +101,13 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             BindingExpression binding = BindingOperations.GetBindingExpression(TB, prop);
             if (binding != null) { binding.UpdateSource(); }
             vm.Reload().ConfigureAwait(false);
+        }
+
+        private void MenuItem_PrintDeck(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            string deckId = (string)item.CommandParameter;
+            vm.PrintDeck(deckId).ConfigureAwait(false);
         }
     }
 

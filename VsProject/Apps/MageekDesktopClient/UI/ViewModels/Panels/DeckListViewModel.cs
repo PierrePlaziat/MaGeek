@@ -11,6 +11,7 @@ using PlaziatTools;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
+using System;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -77,7 +78,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         public async Task AddDeck()
         {
             string title = dialog.GetInpurFromUser("What title?", "New title");
-            await mageek.Decks_Create(session.UserName, title, "", new List<DeckCard>());
+            await mageek.Decks_Create(session.UserName, title, "",0,"", new List<DeckCard>());
             await Reload();
         }
 
@@ -130,6 +131,14 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
                              .OrderBy(x => x.Title);
         }
 
+        internal async Task PrintDeck(string deckId)
+        {
+            wins.OpenWindow("Print");
+            await Task.Delay(200);
+            WeakReferenceMessenger.Default.Send(
+                new PrintDeckMessage(deckId)
+            );
+        }
     }
 
 }

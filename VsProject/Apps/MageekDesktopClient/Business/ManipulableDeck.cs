@@ -101,7 +101,7 @@ namespace MageekDesktopClient.MageekTools.DeckTools
 
         public void LessOf(ManipulableDeckEntry entry)
         {
-            if (entry.Line.Quantity < 0)
+            if (entry.Line.Quantity <= 0)
             {
                 Entries.Remove(entry);
                 return;
@@ -125,7 +125,7 @@ namespace MageekDesktopClient.MageekTools.DeckTools
 
         public async Task SaveDeck()
         {
-            DeckChanged(); //TODO Safety measure, probably not needed, check perf before decide
+            //DeckChanged(); //TODO Safety measure, probably not needed, check perf before decide
             Logger.Log("Saving...");
             await mageek.Decks_Save(session.UserName, Header, manipulator.GetSavableCardList(Entries));
             Logger.Log("...done");
@@ -134,7 +134,7 @@ namespace MageekDesktopClient.MageekTools.DeckTools
 
         #region Accessors
 
-        public IEnumerable<ManipulableDeckEntry> entries_Deck { get { return Entries.Where(x => x.Line.RelationType == 0); } }
+        public IEnumerable<ManipulableDeckEntry> entries_Deck { get { return Entries.Where(x => x.Line.RelationType == 0).OrderBy(x=>x.Card.FaceConvertedManaCost); } }
         public IEnumerable<ManipulableDeckEntry> entries_Commanders { get { return Entries.Where(x => x.Line.RelationType == 1); } }
         public IEnumerable<ManipulableDeckEntry> entries_Side { get { return Entries.Where(x => x.Line.RelationType == 2); } }
 

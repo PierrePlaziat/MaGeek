@@ -20,7 +20,8 @@
     <Grid Background="Black"
           MouseEnter="Grid_MouseEnter"
           MouseLeave="Grid_MouseLeave"
-          PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown">
+          PreviewMouseLeftButtonDown="UIElement_PreviewMouseLeftButtonDown"
+          PreviewMouseMove="UIElement_PreviewMouseMove">
 
         <!-- BackGround -->
         <Image Source="/Resources/Images/cardback.jpg" />
