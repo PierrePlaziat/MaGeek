@@ -50,7 +50,7 @@
                         <ContextMenu.ItemContainerStyle>
                             <Style TargetType="MenuItem">
                                 <Setter Property="Header"
-                                        Value="{Binding Header}" />
+                                        Value="{Binding}" />
                                 <Setter Property="Command"
                                         Value="{Binding Path=DataContext.HistoClicCommand, 
                                         RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />

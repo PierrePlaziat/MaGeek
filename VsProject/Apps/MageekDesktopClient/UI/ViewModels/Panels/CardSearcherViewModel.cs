@@ -67,16 +67,18 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
 
         private void FillHistoric()
         {
+            List<string> newHisto = Historic;
+            Historic = null;
             try
             { 
-                if (!string.IsNullOrEmpty(FilterName) && !Historic.Contains(FilterName))
+                if (!string.IsNullOrEmpty(FilterName) && !newHisto.Contains(FilterName))
                 {
-                    Historic.Add(FilterName);
-                    if (Historic.Count > 30) Historic.RemoveAt(0);
-                    OnPropertyChanged(nameof(Historic));
+                    newHisto.Add(FilterName);
+                    if (newHisto.Count > 30) newHisto.RemoveAt(0);
                 }
             }
             catch (Exception e) { Logger.Log(e); }
+            Historic = newHisto;
         }
 
         private async Task SearchNormal()

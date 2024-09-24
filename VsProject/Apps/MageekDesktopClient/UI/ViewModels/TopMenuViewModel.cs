@@ -35,7 +35,7 @@ namespace MageekDesktopClient.UI.ViewModels
         [RelayCommand]
         private void LayoutRestore(string obj)
         {
-            win.LoadLayout(obj);
+            App.LoadLayout().ConfigureAwait(false);
         }
 
         [RelayCommand]

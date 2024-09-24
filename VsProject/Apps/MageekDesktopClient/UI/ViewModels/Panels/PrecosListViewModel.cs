@@ -8,13 +8,15 @@ using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
+using System.Linq;
 
 namespace MageekDesktopClient.UI.ViewModels.AppWindows
 {
 
     public partial class PrecoListViewModel : 
         ObservableViewModel,
-        IRecipient<LaunchAppMessage>
+        IRecipient<LaunchAppMessage>,
+        IRecipient<OpenPrecoMessage>
     {
 
         private IMageekService mageek;
@@ -31,6 +33,15 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
         {
             InitPrecos().ConfigureAwait(false);
         }
+        
+        public void Receive(OpenPrecoMessage message)
+        {
+            SelectDeck(
+                PrecoList.Where( 
+                    x=> message.Value == string.Concat("[", x.Code, "] ", x.Title)
+                ).FirstOrDefault()
+            ).ConfigureAwait(false);
+        }
 
         private async Task InitPrecos()
         {
@@ -42,6 +53,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
         [RelayCommand]
         public async Task SelectDeck(Preco preco)
         {
+            if (preco == null) return;
             DocumentArguments doc = new DocumentArguments(preco: preco);
             win.OpenDocument(doc);
         }
