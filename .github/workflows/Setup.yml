@@ -1,4 +1,4 @@
-name: Publish Release on Main Commit
+name: Build and Publish
 
 on:
   push:
@@ -10,22 +10,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Restore NuGet packages
-      run: nuget restore VsProject/MaGeek.sln
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1
+      - name: Clear NuGet Cache
+        run: dotnet nuget locals all --clear
 
-    - name: Build Solution with Installer
-      run: |
-        msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release /p:SkipMageekMobile=true
+      - name: Restore Packages
+        run: |
+          dotnet restore VsProject/MaGeek.sln --runtime win-x64
 
-    - name: Publish Artifacts
-      run: |
-        echo "Solution built successfully. Extracting setup files..."
+      - name: Check .NET SDKs and Runtimes
+        run: |
+          dotnet --list-sdks
+          dotnet --list-runtimes
+
+      - name: Build Solution with Installer
+        run: |
+          msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release
+
 
   release:
     needs: build
