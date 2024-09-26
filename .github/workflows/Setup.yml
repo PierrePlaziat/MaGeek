@@ -21,7 +21,7 @@ jobs:
     # Build the solution, including the Installer project
     - name: Build Solution with Installer
       run: |
-        msbuild MySolution.sln /t:Rebuild /p:Configuration=Release
+        msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release
 
     # Publish the build artifacts (optional)
     - name: Publish Artifacts
