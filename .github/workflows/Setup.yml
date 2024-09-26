@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Solution with Installer
         run: |
-          msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release /p:ExcludeProjects="MageekMobileClient"
+          msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release
 
 
   release:
