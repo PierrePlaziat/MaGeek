@@ -16,13 +16,13 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.sln') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+      # - name: Cache NuGet packages
+        # uses: actions/cache@v3
+        # with:
+          # path: ~/.nuget/packages
+          # key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.sln') }}
+          # restore-keys: |
+            # ${{ runner.os }}-nuget-
 
       # - name: Clear NuGet Cache
         # run: dotnet nuget locals all --clear
@@ -40,6 +40,17 @@ jobs:
         run: |
           msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release
 
+      - name: List Files in Project Root
+        run: dir VsProject/MaGeek
+
+      - name: List Files in Bin Directory
+        run: dir VsProject/MaGeek/bin
+
+      - name: List Files in Obj Directory
+        run: dir VsProject/MaGeek/obj
+
+      - name: List Files in Potential Installer Output Directory
+        run: dir VsProject/Utils/MageekSetup/Release
   release:
     needs: build
     runs-on: windows-latest
@@ -71,7 +82,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./VsProject/Utils/MageekSetup/Release/setup/MageekSetup.msi  
+          asset_path: ./MageekSetup.msi  
           asset_name: setup.msi
           asset_content_type: application/octet-stream
 
