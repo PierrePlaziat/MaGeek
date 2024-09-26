@@ -28,5 +28,10 @@ namespace MageekDesktopClient.Framework
     {
         public PrintDeckMessage(string data) : base(data) { }
     }
+    
+    public class OpenPrecoMessage : ValueChangedMessage<string>
+    {
+        public OpenPrecoMessage(string data) : base(data) { }
+    }
 
 }

@@ -88,18 +88,25 @@ namespace PlaziatWpf.Services
             catch (Exception e) { Logger.Log(e); }
         }
 
-        public void OpenDocument(AbstractDocumentArguments document)
+        public void OpenDocument(AbstractDocumentArguments document, bool forceFirstTime = false)
         {
             if (!document.validated) return;
             try
             {
-                // not first time
-                LayoutDocument anch = dockingManager.Layout
-                    .Descendents().OfType<LayoutDocument>()
-                    .FirstOrDefault(d => d.ContentId == document.documentId);
+                // first time if null
+                LayoutDocument anch = dockingManager.Layout 
+                        .Descendents().OfType<LayoutDocument>()
+                        .FirstOrDefault(d => d.ContentId == document.documentId);
+                // for layout full load
+                if (forceFirstTime && anch != null)
+                {
+                    anch.Close();
+                    anch = null;
+                } 
+                //  first time
                 if (anch == null)
                 {
-                    //  first time
+                   
                     IDocument view = ServiceHelper.GetService<IDocument>(); 
                     anch = new LayoutDocument()
                     {
@@ -123,6 +130,7 @@ namespace PlaziatWpf.Services
                     }
                     view.OpenDocument(document); 
                 }
+                anch.IsActive = true;
             }
             catch (Exception e) { Logger.Log(e); }
         }
@@ -144,8 +152,9 @@ namespace PlaziatWpf.Services
             catch (Exception e) { Logger.Log(e); }
         }
 
-        public void LoadLayout(string arg)
+        public List<string> LoadLayout(string arg)
         {
+            List<string> doclist = new List<string>();
             Logger.Log(arg);
             try
             {
@@ -159,9 +168,17 @@ namespace PlaziatWpf.Services
                     {
                         element.Content = panel.panel;
                     }
+                    else
+                    {
+                    }
+                }
+                foreach (var element in dockingManager.Layout.Descendents().OfType<LayoutDocument>())
+                {
+                    doclist.Add(element.ContentId);
                 }
             }
             catch (Exception e) { Logger.Log(e); }
+            return doclist;
         }
 
         private string GetLayoutPath(string layoutName)
