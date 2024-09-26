@@ -74,7 +74,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: D:\a\MaGeek\MaGeek\VsProject\Utils\MageekSetup\Release\MageekSetup.msi  
+          asset_path: D:\a\MaGeek\MaGeek\VsProject\Utils\MageekSetup\bin\Release\MageekSetup.msi  
           asset_name: setup.msi
           asset_content_type: application/octet-stream
 
@@ -82,6 +82,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: D:\a\MaGeek\MaGeek\VsProject\Utils\MageekSetup\Release\setup.exe 
+          asset_path: D:\a\MaGeek\MaGeek\VsProject\Utils\MageekSetup\bin\Release\setup.exe 
           asset_name: setup.exe
           asset_content_type: application/octet-stream
