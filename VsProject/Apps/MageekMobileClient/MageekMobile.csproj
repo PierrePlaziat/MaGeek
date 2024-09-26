@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
-	<PropertyGroup>
+
+  <Target Name="SkipBuild" BeforeTargets="Build" Condition="'$(SkipBuild)' == 'true'">
+    <Message Importance="high" Text="Skipping build for MageekMobileClient." />
+    <SkipBuild>true</SkipBuild>
+  </Target>
+
+  <PropertyGroup>
 		<SkipBuild Condition="'$(SkipMageekMobile)' == 'true'">true</SkipBuild>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers> <!-- Needed for github actions -->
     <!-- Frameworks -->
@@ -29,9 +34,10 @@
 
   </PropertyGroup>
 
-    <PropertyGroup>
-      <SkipBuild Condition="'$(SkipMageekMobile)' == 'true'">true</SkipBuild>
-    </PropertyGroup>
+  <Target Name="SkipBuild" BeforeTargets="Build" Condition="'$(SkipBuild)' == 'true'">
+    <Message Importance="high" Text="Skipping build for MageekMobileClient." />
+    <SkipBuild>true</SkipBuild>
+  </Target>
 
   <!-- Mageek Client -->
 

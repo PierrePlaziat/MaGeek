@@ -16,6 +16,14 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.sln') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
@@ -30,7 +38,7 @@ jobs:
 
       - name: Build Solution with Installer
         run: |
-          msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release
+          msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release /p:ExcludeProjects="MageekMobileClient"
 
 
   release:
@@ -38,33 +46,33 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v1.0.${{ github.run_number }}
-        release_name: "Release v1.0.${{ github.run_number }}"
-        body: "Automated release of the .NET app setup files."
-        draft: false
-        prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          release_name: "Release v1.0.${{ github.run_number }}"
+          body: "Automated release of the .NET app setup files."
+          draft: false
+          prerelease: false
 
-    - name: Upload Setup Files
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./VsProject/Utils/MageekSetup/Release/setup/MageekSetup.msi  
-        asset_name: setup.msi
-        asset_content_type: application/octet-stream
+      - name: Upload Setup Files
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./VsProject/Utils/MageekSetup/Release/setup/MageekSetup.msi  
+          asset_name: setup.msi
+          asset_content_type: application/octet-stream
 
-    - name: Upload EXE File (if present)
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./VsProject/Utils/MageekSetup/Release/setup.exe 
-        asset_name: setup.exe
-        asset_content_type: application/octet-stream
+      - name: Upload EXE File (if present)
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./VsProject/Utils/MageekSetup/Release/setup.exe 
+          asset_name: setup.exe
+          asset_content_type: application/octet-stream
