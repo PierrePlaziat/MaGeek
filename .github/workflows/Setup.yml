@@ -66,8 +66,17 @@ jobs:
         run: |
           sleep 2 # Wait for a few seconds
           
-      - name: List Files in Project Root
-        run: dir /
+
+      - name: List Files in Workspace
+        run: dir D:\a\MaGeek\*
+
+      - name: List Files in Potential Output Directories
+        run: |
+          dir VsProject
+          dir VsProject/MaGeek
+          dir VsProject/MaGeek/bin
+          dir VsProject/MaGeek/obj
+          dir VsProject/Utils/MageekSetup/Release
         
       - name: Upload Setup Files
         uses: actions/upload-release-asset@v1
