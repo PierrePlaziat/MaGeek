@@ -68,7 +68,7 @@ jobs:
           
 
       - name: List Files in Workspace
-        run: dir D:\a\MaGeek\MaGeek\VsProject\Utils\
+        run: dir D:\a\MaGeek\MaGeek\VsProject\Utils\MageekSetup
 
       - name: Upload Setup Files
         uses: actions/upload-release-asset@v1
