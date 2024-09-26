@@ -31,17 +31,16 @@ jobs:
         run: |
           dotnet restore VsProject/MaGeek.sln --runtime win-x64
 
-      - name: Inspect .NET Environment
-        run: |
-          dotnet --list-sdks
-          dotnet --list-runtimes
+      # - name: Inspect .NET Environment
+        # run: |
+          # dotnet --list-sdks
+          # dotnet --list-runtimes
 
       - name: Build Solution
         run: |
           msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release
 
-      - name: List Files in Project Root
-        run: dir /
+
 
   release:
     needs: build
@@ -65,8 +64,11 @@ jobs:
 
       - name: Wait for Build Artifacts
         run: |
-          sleep 10 # Wait for a few seconds
-
+          sleep 2 # Wait for a few seconds
+          
+      - name: List Files in Project Root
+        run: dir /
+        
       - name: Upload Setup Files
         uses: actions/upload-release-asset@v1
         with:
