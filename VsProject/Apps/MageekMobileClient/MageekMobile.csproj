@@ -1,12 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Target Name="SkipBuild" BeforeTargets="Build" Condition="'$(SkipBuild)' == 'true'">
-    <Message Importance="high" Text="Skipping build for MageekMobileClient." />
-    <SkipBuild>true</SkipBuild>
-  </Target>
-
   <PropertyGroup>
-		<SkipBuild Condition="'$(SkipMageekMobile)' == 'true'">true</SkipBuild>
+    
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers> <!-- Needed for github actions -->
     <!-- Frameworks -->
 		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
@@ -33,11 +28,6 @@
 		<ApplicationVersion>1</ApplicationVersion>
 
   </PropertyGroup>
-
-  <Target Name="SkipBuild" BeforeTargets="Build" Condition="'$(SkipBuild)' == 'true'">
-    <Message Importance="high" Text="Skipping build for MageekMobileClient." />
-    <SkipBuild>true</SkipBuild>
-  </Target>
 
   <!-- Mageek Client -->
 

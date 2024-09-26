@@ -24,8 +24,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Clear NuGet Cache
-        run: dotnet nuget locals all --clear
+      # - name: Clear NuGet Cache
+        # run: dotnet nuget locals all --clear
 
       - name: Restore Packages
         run: |
