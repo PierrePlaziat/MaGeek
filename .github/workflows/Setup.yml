@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout 1
         uses: actions/checkout@v2
 
       - name: Setup MSBuild
@@ -31,36 +31,25 @@ jobs:
         run: |
           dotnet restore VsProject/MaGeek.sln --runtime win-x64
 
-      - name: Check .NET SDKs and Runtimes
+      - name: Inspect .NET Environment
         run: |
           dotnet --list-sdks
           dotnet --list-runtimes
 
-      - name: Build Solution with Installer
+      - name: Build Solution
         run: |
           msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release
 
       - name: List Files in Project Root
-        run: dir VsProject/MaGeek
+        run: dir /
 
-      - name: List Files in Bin Directory
-        run: dir VsProject/MaGeek/bin
-
-      - name: List Files in Obj Directory
-        run: dir VsProject/MaGeek/obj
-
-      - name: List Files in Potential Installer Output Directory
-        run: dir VsProject/Utils/MageekSetup/Release
   release:
     needs: build
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout 2
         uses: actions/checkout@v3
-
-      - name: List Files in Output Directory
-        run: dir VsProject/Utils/MageekSetup/Release/setup
 
       - name: Create Release
         id: create_release
