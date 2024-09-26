@@ -73,16 +73,14 @@ jobs:
       - name: List Files in Potential Output Directories
         run: |
           dir VsProject
-          dir VsProject/MaGeek
-          dir VsProject/MaGeek/bin
-          dir VsProject/MaGeek/obj
-          dir VsProject/Utils/MageekSetup/Release
+          dir D:\a\MaGeek\MaGeek
+          dir D:\a\MaGeek\MaGeek\MageekSetup\Release
         
       - name: Upload Setup Files
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./MageekSetup.msi  
+          asset_path: D:\a\MaGeek\MaGeek\MageekSetup\Release\MageekSetup.msi  
           asset_name: setup.msi
           asset_content_type: application/octet-stream
 
@@ -90,6 +88,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./VsProject/Utils/MageekSetup/Release/setup.exe 
+          asset_path: D:\a\MaGeek\MaGeek\MageekSetup\Release\setup.exe 
           asset_name: setup.exe
           asset_content_type: application/octet-stream
