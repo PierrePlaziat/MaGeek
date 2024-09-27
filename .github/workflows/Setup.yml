@@ -66,19 +66,16 @@ jobs:
         run: |
           sleep 2 # Wait for a few seconds
           
-      - name: Search for MSI Files
-        run: |
-          Get-ChildItem -Path D:\a\MaGeek\MaGeek\ -Recurse -Filter *.msi -ErrorAction SilentlyContinue
 
-      - name: Search for EXE Files
+      - name: List Files in Workspace
         run: |
-          Get-ChildItem -Path D:\a\MaGeek\MaGeek\ -Recurse -Filter *.exe -ErrorAction SilentlyContinue
+          pwsh -command "Get-ChildItem -Path D:\a\MaGeek\MaGeek\ -Recurse"
 
       - name: Upload Setup Files
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./VsProject/Utils/MageekSetup/Release/MageekSetup.msi  
+          asset_path: D:\a\MaGeek\MaGeek\VsProject\Utils\MageekSetup\bin\Release\MageekSetup.msi  
           asset_name: setup.msi
           asset_content_type: application/octet-stream
 
@@ -86,6 +83,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./VsProject/Utils/MageekSetup/Release/setup.exe 
+          asset_path: D:\a\MaGeek\MaGeek\VsProject\Utils\MageekSetup\bin\Release\setup.exe 
           asset_name: setup.exe
           asset_content_type: application/octet-stream
