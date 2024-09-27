@@ -16,9 +16,9 @@ jobs:
     
       - name: Check Token
         run: |
-          curl -H "Authorization: token ${{ secrets.MY_PAT }}" https://api.github.com/user/repos
+          curl -H "Authorization: token ${{ secrets.DEPLOYTOKEN }}" https://api.github.com/user/repos
         env:
-          MY_PAT: ${{ secrets.MY_PAT }}  # Ensure to use the correct secret name
+          DEPLOYTOKEN: ${{ secrets.DEPLOYTOKEN }}  # Ensure to use the correct secret name
 
       - name: Checkout
         uses: actions/checkout@v2
