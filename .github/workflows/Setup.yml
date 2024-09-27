@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Solution
         run: |
-          msbuild "D:\a\MaGeek\MaGeek\VsProject\MageekSetup.vdproj" /t:Rebuild /p:Configuration=Release
+          msbuild "D:\a\MaGeek\MaGeek\VsProject\Utils\MageekSetup\MageekSetup.vdproj" /t:Rebuild /p:Configuration=Release
 
   release:
     needs: build
