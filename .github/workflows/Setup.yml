@@ -46,11 +46,6 @@ jobs:
           robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
-  release:
-    needs: build
-    runs-on: windows-latest
-
-    steps:
       - name: Checkout 2
         uses: actions/checkout@v3
 
