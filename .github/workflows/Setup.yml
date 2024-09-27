@@ -16,7 +16,6 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
@@ -24,13 +23,25 @@ jobs:
         run: |
           dotnet restore VsProject/MaGeek.sln --runtime win-x64
 
-      - name: Clean Solution
-        run: |
-          msbuild VsProject/MaGeek.sln /t:Clean
-
       - name: Build Solution
         run: |
-          msbuild "D:\a\MaGeek\MaGeek\VsProject\Utils\MageekSetup\MageekSetup.vdproj" /t:Rebuild /p:Configuration=Release
+          msbuild "D:\a\MaGeek\MaGeek\VsProject\MaGeek.sln" /t:Rebuild /p:Configuration=Release
+
+      - name: Create Merged Output Directory
+        run: |
+          mkdir D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs
+
+      - name: Copy Core Project Output
+        run: |
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+
+      - name: Copy Desktop Client Output
+        run: |
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+
+      - name: Copy Desktop Server Output
+        run: |
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
 
   release:
     needs: build
@@ -55,19 +66,11 @@ jobs:
       - name: Wait for Build Artifacts
         run: |
           sleep 2 # Wait for a few seconds
-          
-      - name: Upload Setup Files
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: D:\a\MaGeek\MaGeek\bin\Debug\MageekSetup.msi  
-          asset_name: setup.msi
-          asset_content_type: application/octet-stream
 
-      - name: Upload EXE File (if present)
+      - name: Upload Merged Output Files
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: D:\a\MaGeek\MaGeek\bin\Debug\setup.exe 
-          asset_name: setup.exe
-          asset_content_type: application/octet-stream
+          asset_path: D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs
+          asset_name: MergedOutputs.zip
+          asset_content_type: application/zip
