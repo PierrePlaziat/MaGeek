@@ -14,12 +14,6 @@ jobs:
 
     steps:
     
-      - name: Check Token
-        run: |
-          curl -H "Authorization: token ${{ secrets.DEPLOYTOKEN }}" https://api.github.com/user/repos
-        env:
-          DEPLOYTOKEN: ${{ secrets.DEPLOYTOKEN }}  # Ensure to use the correct secret name
-
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -60,6 +54,12 @@ jobs:
         run: |
           Compress-Archive -Path D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs\* -DestinationPath D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs.zip
 
+      # - name: Check Token
+        # run: |
+          # curl -H "Authorization: token ${{ secrets.DEPLOYTOKEN }}" https://api.github.com/user/repos
+        # env:
+          # DEPLOYTOKEN: ${{ secrets.DEPLOYTOKEN }}  # Ensure to use the correct secret name
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -79,3 +79,5 @@ jobs:
           asset_path: D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs.zip
           asset_name: MaGeek.zip
           asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOYTOKEN }}  # Use the default GITHUB_TOKEN
