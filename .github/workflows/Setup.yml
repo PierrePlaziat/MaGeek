@@ -22,17 +22,24 @@ jobs:
           dotnet nuget locals all --clear
           dotnet restore VsProject/MaGeek.sln --runtime win-x64
           msbuild "D:\a\MaGeek\MaGeek\VsProject\MaGeek.sln" /t:Rebuild /p:Configuration=Release
-
       - name: Gather
         run: |
-          mkdir D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
-          if ($LASTEXITCODE -le 8) {  } else { exit $LASTEXITCODE }
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
-          if ($LASTEXITCODE -le 8) {  } else { exit $LASTEXITCODE }
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
-          if ($LASTEXITCODE -le 8) {  } else { exit $LASTEXITCODE }
-          Compress-Archive -Path D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs\* -DestinationPath D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs.zip
+          $mergedOutputDir = "D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs"
+          $sourceDirs = @(
+              "D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release",
+              "D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release",
+              "D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release"
+          )
+          mkdir $mergedOutputDir -Force
+          foreach ($sourceDir in $sourceDirs) {
+              robocopy $sourceDir $mergedOutputDir /E
+              # Check for errors
+              if ($LASTEXITCODE -gt 7) {
+                  Write-Error "Robocopy failed for $sourceDir with exit code $LASTEXITCODE"
+                  exit $LASTEXITCODE
+              }
+          }
+          Compress-Archive -Path "$mergedOutputDir\*" -DestinationPath "$mergedOutputDir.zip"
 
       - name: Create Release
         id: create_release
