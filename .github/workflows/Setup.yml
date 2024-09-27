@@ -6,8 +6,7 @@ on:
       - main
       
 permissions:
-  contents: write  # Required to create and upload release assets
-  deployments: write  # Optional: for creating deployments
+  contents: write
   
 jobs:
   build:
