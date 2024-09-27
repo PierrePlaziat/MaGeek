@@ -17,29 +17,39 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
+      - name: Clear NuGet Cache
+        run: dotnet nuget locals all --clear
+
+      - name: Restore
+        run: |
+          dotnet restore VsProject/MaGeek.sln --runtime win-x64
+
       - name: Build
         run: |
-          dotnet nuget locals all --clear
-          dotnet restore VsProject/MaGeek.sln --runtime win-x64
           msbuild "D:\a\MaGeek\MaGeek\VsProject\MaGeek.sln" /t:Rebuild /p:Configuration=Release
-      - name: Gather
+
+      - name: Output
         run: |
-          $mergedOutputDir = "D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs"
-          $sourceDirs = @(
-              "D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release",
-              "D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release",
-              "D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release"
-          )
-          mkdir $mergedOutputDir -Force
-          foreach ($sourceDir in $sourceDirs) {
-              robocopy $sourceDir $mergedOutputDir /E
-              # Check for errors
-              if ($LASTEXITCODE -gt 7) {
-                  Write-Error "Robocopy failed for $sourceDir with exit code $LASTEXITCODE"
-                  exit $LASTEXITCODE
-              }
-          }
-          Compress-Archive -Path "$mergedOutputDir\*" -DestinationPath "$mergedOutputDir.zip"
+          mkdir D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs
+
+      - name: MageekServer
+        run: |
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
+
+      - name: MageekDesktopClient
+        run: |
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
+
+      - name: MageekDesktopServer
+        run: |
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
+
+      - name: Zip
+        run: |
+          Compress-Archive -Path D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs\* -DestinationPath D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs.zip
 
       - name: Create Release
         id: create_release
