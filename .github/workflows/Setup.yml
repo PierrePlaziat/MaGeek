@@ -16,30 +16,18 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      # - name: Cache NuGet packages
-        # uses: actions/cache@v3
-        # with:
-          # path: ~/.nuget/packages
-          # key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.sln') }}
-          # restore-keys: |
-            # ${{ runner.os }}-nuget-
 
-      # - name: Clear NuGet Cache
-        # run: dotnet nuget locals all --clear
+      - name: Clear NuGet Cache
+        run: dotnet nuget locals all --clear
 
       - name: Restore Packages
         run: |
           dotnet restore VsProject/MaGeek.sln --runtime win-x64
 
-      # - name: Inspect .NET Environment
-        # run: |
-          # dotnet --list-sdks
-          # dotnet --list-runtimes
-
       - name: Build Solution
         run: |
           msbuild VsProject/MaGeek.sln /t:Rebuild /p:Configuration=Release /p:OutDir=D:\a\MaGeek\MaGeek\bin\
-
+          msbuild VsProject/Utils/MageekSetup/MageekSetup.vdproj /t:Rebuild /p:Configuration=Release /p:OutDir=D:\a\MaGeek\MaGeek\bin\
 
 
   release:
