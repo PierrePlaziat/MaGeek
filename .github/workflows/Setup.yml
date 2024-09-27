@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout 1
+      - name: Checkout
         uses: actions/checkout@v2
 
       - name: Setup MSBuild
@@ -19,35 +19,32 @@ jobs:
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
-      - name: Restore Packages
+      - name: Restore
         run: |
           dotnet restore VsProject/MaGeek.sln --runtime win-x64
 
-      - name: Build Solution
+      - name: Build
         run: |
           msbuild "D:\a\MaGeek\MaGeek\VsProject\MaGeek.sln" /t:Rebuild /p:Configuration=Release
 
-      - name: Create Merged Output Directory
+      - name: Create Output Directory
         run: |
           mkdir D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs
 
-      - name: Copy Server Output
+      - name: Copy MageekServer Output
         run: |
           robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
-      - name: Copy Desktop Client Output
+      - name: Copy MageekDesktopClient Output
         run: |
           robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
-      - name: Copy Desktop Server Output
+      - name: Copy MageekDesktopServer Output
         run: |
           robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
-
-      - name: Checkout 2
-        uses: actions/checkout@v3
 
       - name: Create Release
         id: create_release
@@ -61,11 +58,7 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Wait for Build Artifacts
-        run: |
-          sleep 2 # Wait for a few seconds
-
-      - name: Upload Merged Output Files
+      - name: Upload Release
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
