@@ -10,55 +10,35 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Clear NuGet Cache
-        run: dotnet nuget locals all --clear
-
-      - name: Restore
-        run: |
-          dotnet restore VsProject/MaGeek.sln --runtime win-x64
-
       - name: Build
         run: |
+          dotnet nuget locals all --clear
+          dotnet restore VsProject/MaGeek.sln --runtime win-x64
           msbuild "D:\a\MaGeek\MaGeek\VsProject\MaGeek.sln" /t:Rebuild /p:Configuration=Release
 
-      - name: Output
+      - name: Gather
         run: |
           mkdir D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs
-
-      - name: MageekServer
-        run: |
           robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
-          if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
-
-      - name: MageekDesktopClient
-        run: |
+          if ($LASTEXITCODE -le 8) {  } else { exit $LASTEXITCODE }
           robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
-          if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
-
-      - name: MageekDesktopServer
-        run: |
+          if ($LASTEXITCODE -le 8) {  } else { exit $LASTEXITCODE }
           robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
-          if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
-
-      - name: Zip
-        run: |
+          if ($LASTEXITCODE -le 8) {  } else { exit $LASTEXITCODE }
           Compress-Archive -Path D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs\* -DestinationPath D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs.zip
-
-      - name: Show content
-        run: |
-          dir D:\a\MaGeek\MaGeek\VsProject\bin\Release
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DEPLOYTOKEN }}
         with:
           tag_name: v1.0.${{ github.run_number }}
           release_name: "Release v1.0.${{ github.run_number }}"
