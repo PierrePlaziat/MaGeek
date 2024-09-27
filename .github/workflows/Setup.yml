@@ -38,12 +38,12 @@ jobs:
 
       - name: Copy Desktop Client Output
         run: |
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E /XX
           if ($LASTEXITCODE -le 1) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: Copy Desktop Server Output
         run: |
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E /XX
           if ($LASTEXITCODE -le 1) { exit 0 } else { exit $LASTEXITCODE }
 
   release:
