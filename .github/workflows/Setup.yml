@@ -27,21 +27,21 @@ jobs:
         run: |
           msbuild "D:\a\MaGeek\MaGeek\VsProject\MaGeek.sln" /t:Rebuild /p:Configuration=Release
 
-      - name: Create Output Directory
+      - name: Output
         run: |
           mkdir D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs
 
-      - name: Copy MageekServer Output
+      - name: MageekServer
         run: |
           robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
-      - name: Copy MageekDesktopClient Output
+      - name: MageekDesktopClient
         run: |
           robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
-      - name: Copy MageekDesktopServer Output
+      - name: MageekDesktopServer
         run: |
           robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
@@ -54,7 +54,7 @@ jobs:
         with:
           tag_name: v1.0.${{ github.run_number }}
           release_name: "Release v1.0.${{ github.run_number }}"
-          body: "Automated release of the .NET app setup files."
+          body: "Automated release of MaGeek"
           draft: false
           prerelease: false
 
@@ -62,6 +62,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs
-          asset_name: MergedOutputs.zip
+          asset_path: D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs.zip
+          asset_name: MaGeek.zip
           asset_content_type: application/zip
