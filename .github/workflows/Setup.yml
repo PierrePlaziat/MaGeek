@@ -46,6 +46,14 @@ jobs:
           robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
+      - name: Zip
+        run: |
+          Compress-Archive -Path D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs\* -DestinationPath D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs.zip
+
+      - name: Show content
+        run: |
+          dir D:\a\MaGeek\MaGeek\VsProject\bin\Release
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
