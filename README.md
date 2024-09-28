@@ -40,10 +40,3 @@ and eventually make a template out of it.
 -	Printing
 -	Estimations
 
-## Support
-
-Paypal account
-![MaGeek](/Graph/qrcode.png "PaypalQrc")
-
-
-
