@@ -9,7 +9,6 @@ using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
 using System.Linq;
-using System;
 
 namespace MageekDesktopClient.UI.ViewModels.AppWindows
 {
