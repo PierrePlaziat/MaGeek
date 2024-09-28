@@ -18,6 +18,7 @@ Stack:
 - Identity Framework
 - Entity Framework 
 - sqlite
+- grpc
 - Docker
   
 I heavily take advantage of .net
