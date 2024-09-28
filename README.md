@@ -6,25 +6,20 @@
 
 ## Description
 
-Client Serveur
-- Desktop Client
-- Desktop Server
-- Deployable Server
-You can run it how you want, alone or shared with friends, local or on cloud!
-(Currently no user validation, first connexion attempt with a user and path will create the account)
+Serveur and desktop application:
+You can run the server on local or on docker.
   
-Powered by
-- MtgJson
-- Scryfall
-Thanks to them all mtg data is available!
+Powered by MtgJson and Scryfall, Thanks to them all mtg data is available!
   
-Stack
+Stack:
+
 - Wpf
 - AvalonDock
 - Identity Framework
 - Entity Framework 
 - sqlite
 - Docker
+  
 I heavily take advantage of .net
 trying to be the most seemless possible
 reducing at maximum friction beetween technologies.
@@ -39,4 +34,5 @@ and eventually make a template out of it.
 -	Deck building
 -	Printing
 -	Estimations
+-	User system (Currently no validation, first connexion attempt with a user and path will create the account)
 
