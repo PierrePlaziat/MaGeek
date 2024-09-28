@@ -20,13 +20,12 @@ namespace MageekDesktopClient.UI.Views.AppWindows
 
         private void OpenDeck(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            DataGrid d = (DataGrid)sender;
-            vm.SelectDeck((Preco)d.SelectedItem).ConfigureAwait(false);
+            vm.SelectDeck((Preco)TheGrid.SelectedItem).ConfigureAwait(false);
         }
 
         private void AddContentToCollec(object sender, System.Windows.RoutedEventArgs e)
         {
-            //TODO
+            vm.AddContentToCollec((Preco)TheGrid.SelectedItem).ConfigureAwait(false);
         }
 
     }

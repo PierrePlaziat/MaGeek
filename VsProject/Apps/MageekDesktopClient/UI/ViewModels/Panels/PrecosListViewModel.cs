@@ -9,6 +9,7 @@ using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
 using System.Linq;
+using System;
 
 namespace MageekDesktopClient.UI.ViewModels.AppWindows
 {
@@ -21,11 +22,15 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
 
         private IMageekService mageek;
         private WindowsService win;
+        private SessionBag bag;
+        private DialogService dialog;
 
-        public PrecoListViewModel(IMageekService mageek, WindowsService win)
+        public PrecoListViewModel(IMageekService mageek, WindowsService win, SessionBag bag, DialogService dialog)
         {
             this.mageek = mageek;
             this.win = win;
+            this.bag = bag;
+            this.dialog = dialog;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
@@ -58,6 +63,15 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
             win.OpenDocument(doc);
         }
 
+        public async Task AddContentToCollec(Preco preco)
+        {
+            dialog.InformUser("Importation started (["+preco.Code+"] "+preco.Title+")");
+            foreach (var card in preco.Cards)
+            {
+                await mageek.Collec_Move(bag.UserName, card.CardUuid, card.Quantity);
+            }
+            dialog.InformUser("Importation done ([" + preco.Code + "] " + preco.Title + ")");
+        }
     }
 
 }

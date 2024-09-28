@@ -16,7 +16,8 @@
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <DataGrid ItemsSource="{Binding PrecoList}"
+        <DataGrid  x:Name="TheGrid"
+            ItemsSource="{Binding PrecoList}"
                       CanUserAddRows="False"
                       CanUserResizeRows="False"
                       CanUserResizeColumns="True"
