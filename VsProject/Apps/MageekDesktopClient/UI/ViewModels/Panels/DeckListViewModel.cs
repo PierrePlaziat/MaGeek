@@ -12,6 +12,7 @@ using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
 using System;
+using MageekDesktopClient.DeckTools;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -26,19 +27,23 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         private SettingService config;
         private DialogService dialog;
         private SessionBag session;
+        private DeckManipulator manipulator;
 
         public DeckListViewModel(
             IMageekService mageek,
             WindowsService wins,
             SettingService config,
             DialogService dialog,
-            SessionBag session
-        ){
+            SessionBag session,
+            DeckManipulator manipulator
+        )
+        {
             this.wins = wins;
             this.mageek = mageek;
             this.config = config;
             this.dialog = dialog;
             this.session = session;
+            this.manipulator = manipulator;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
@@ -106,22 +111,49 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         }
 
         [RelayCommand]
-        public async Task EstimateDeckPrice(string deckId)
-        {
-            //var totalPrice = await mageek.EstimateDeckPrice(deckId, config.Settings[Setting.Currency]);
-            //MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + Environment.NewLine +
-            //                "Missing : " + totalPrice.Item2);
-        }
-
-        [RelayCommand]
         public async Task GetAsTxtList(string deckId)
         {
             string txt = await mageek.CardLists_FromDeck(session.UserName, deckId);
             if (!string.IsNullOrEmpty(txt))
             {
                 Clipboard.SetText(txt);
-                dialog.Notif("Deck:", "Copied to clipboard.");
+                dialog.InformUser("Copied to clipboard.");
             }
+        }
+        
+        [RelayCommand]
+        public async Task ListMissing(string deckId)
+        {
+            string txt = await manipulator.ListMissing(deckId);
+            if (!string.IsNullOrEmpty(txt))
+            {
+                Clipboard.SetText(txt);
+                dialog.InformUser("Copied to clipboard.");
+            }
+        }
+
+        [RelayCommand]
+        public async Task EstimateDeckPrice(string deckId)
+        {
+            Tuple<float,float> totalPrice = await manipulator.EstimateDeckPrice(deckId);
+            MessageBox.Show("Estimation : " + totalPrice.Item1 + " €" + Environment.NewLine +
+                            "Missing : " + totalPrice.Item2);
+        }
+
+        [RelayCommand]
+        public async Task PrintDeck(string deckId)
+        {
+            wins.OpenWindow("Print");
+            await Task.Delay(200);
+            WeakReferenceMessenger.Default.Send(
+                new PrintDeckMessage(deckId)
+            );
+        }
+
+        public async Task CheckDeckValidities(string deckId, string format)
+        {
+            string txt = await manipulator.CheckValidities(deckId, format);
+            dialog.InformUser(txt);
         }
 
         private IEnumerable<Deck> FilterDeck(IEnumerable<Deck> enumerable)
@@ -131,14 +163,6 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
                              .OrderBy(x => x.Title);
         }
 
-        internal async Task PrintDeck(string deckId)
-        {
-            wins.OpenWindow("Print");
-            await Task.Delay(200);
-            WeakReferenceMessenger.Default.Send(
-                new PrintDeckMessage(deckId)
-            );
-        }
     }
 
 }
