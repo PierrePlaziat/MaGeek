@@ -13,13 +13,9 @@ Powered by MtgJson and Scryfall, Thanks to them all mtg data is available!
   
 Stack:
 
-- Wpf
-- AvalonDock
-- Identity Framework
-- Entity Framework 
-- sqlite
-- grpc
-- Docker
+- Wpf / community toolkit mvvm / AvalonDock
+- Identity Framework / Entity Framework / sqlite
+- GRpc / Docker
   
 I heavily take advantage of .net
 trying to be the most seemless possible
