@@ -30,6 +30,10 @@ jobs:
           dotnet publish VsProject\Core\MageekServer\MageekDesktopClient.csproj -p:PublishProfile=VsProject\Apps\MageekDesktopClient\Properties\PublishProfiles\FolderProfile.pubxml
           if ($LASTEXITCODE -le 1) { exit 0 } else { exit $LASTEXITCODE }
 
+      - name: Inspect
+        run: |
+          Get-ChildItem -Path D:\a\MaGeek\MaGeek -Recurse
+
       - name: Output 1
         run: |
           mkdir D:\a\MaGeek\MaGeek\Publication
