@@ -30,10 +30,16 @@ jobs:
           dotnet publish VsProject\Core\MageekServer\MageekDesktopClient.csproj -p:PublishProfile=VsProject\Apps\MageekDesktopClient\Properties\PublishProfiles\FolderProfile.pubxml
           if ($LASTEXITCODE -le 1) { exit 0 } else { exit $LASTEXITCODE }
 
-      - name: Output
+      - name: Output 1
         run: |
           mkdir D:\a\MaGeek\MaGeek\Publication
+
+      - name: Output 2
+        run: |
           mkdir D:\a\MaGeek\MaGeek\Publication\Server
+
+      - name: Output 3
+        run: |
           mkdir D:\a\MaGeek\MaGeek\Publication\Client
 
       - name: MageekServer
