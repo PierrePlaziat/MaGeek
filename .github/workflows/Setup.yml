@@ -32,6 +32,15 @@ jobs:
         run: |
           mkdir D:\a\MaGeek\MaGeek\Publication\Client
 
+      - name: Create Certificate Directory
+        run: |
+          mkdir D:\a\MaGeek\MaGeek\Certificates
+      
+      - name: Store gRPC Certificates
+        run: |
+          echo "${{ secrets.GRPC_CERTIFICATE }}" | Out-File -Encoding utf8 D:\a\MaGeek\MaGeek\Certificates\grpc_cert.pem
+          echo "${{ secrets.GRPC_PRIVATE_KEY }}" | Out-File -Encoding utf8 D:\a\MaGeek\MaGeek\Certificates\grpc_key.pem
+
       - name: Publish Server
         run: |
           dotnet publish VsProject\Core\MageekServer\MageekServer.csproj -p:PublishProfile=VsProject\Core\MageekServer\Properties\PublishProfiles\FolderProfile.pubxml -o D:\a\MaGeek\MaGeek\Publication\Server
