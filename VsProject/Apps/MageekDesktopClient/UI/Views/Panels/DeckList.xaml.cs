@@ -8,7 +8,6 @@ using System.Windows.Data;
 using System.Windows;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
-using PlaziatWpf.Services;
 
 namespace MageekDesktopClient.UI.Views.AppPanels
 {
@@ -59,6 +58,13 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             vm.GetAsTxtList((string)item.CommandParameter).ConfigureAwait(false);
         }
 
+        private void MenuItem_ListMissingClick(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.ListMissing((string)item.CommandParameter).ConfigureAwait(false);
+        }
+
+
         private void MenuItem_EstimateDeckClick(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
@@ -69,6 +75,13 @@ namespace MageekDesktopClient.UI.Views.AppPanels
         {
             MenuItem item = (MenuItem)sender;
             vm.DeleteDeck((string)item.CommandParameter).ConfigureAwait(false);
+        }
+
+        private void MenuItem_PrintDeck(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            string deckId = (string)item.CommandParameter;
+            vm.PrintDeck(deckId).ConfigureAwait(false);
         }
 
         private void Grid_Drop(object sender, DragEventArgs e)
@@ -102,13 +115,43 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             if (binding != null) { binding.UpdateSource(); }
             vm.Reload().ConfigureAwait(false);
         }
-
-        private void MenuItem_PrintDeck(object sender, RoutedEventArgs e)
+        
+        private void MenuItem_CheckDuelValidities(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
-            string deckId = (string)item.CommandParameter;
-            vm.PrintDeck(deckId).ConfigureAwait(false);
+            vm.CheckDeckValidities((string)item.CommandParameter,"Duel").ConfigureAwait(false);
         }
+        
+        private void MenuItem_CheckCommanderValidities(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.CheckDeckValidities((string)item.CommandParameter, "Commander").ConfigureAwait(false);
+        }
+        
+        private void MenuItem_CheckLegacyValidities(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.CheckDeckValidities((string)item.CommandParameter, "Legacy").ConfigureAwait(false);
+        }
+        
+        private void MenuItem_CheckModernValidities(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.CheckDeckValidities((string)item.CommandParameter, "Modern").ConfigureAwait(false);
+        }
+        
+        private void MenuItem_CheckStandardValidities(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.CheckDeckValidities((string)item.CommandParameter, "Standard").ConfigureAwait(false);
+        }
+        
+        private void MenuItem_CheckPauperValidities(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            vm.CheckDeckValidities((string)item.CommandParameter, "Pauper").ConfigureAwait(false);
+        }
+        
     }
 
 }

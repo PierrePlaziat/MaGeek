@@ -22,17 +22,10 @@ namespace MageekDesktopClient.DeckTools
         private IMageekService mageek;
         private SessionBag session;
 
-        public DeckManipulator(IMageekService mageek, SessionBag session)
+        public DeckManipulator(IMageekService mageek, SessionBag session, DialogService dialog)
         {
             this.mageek = mageek;
             this.session = session;
-        }
-
-        public List<DeckCard> GetSavableCardList(IEnumerable<ManipulableDeckEntry> entries)
-        {
-            List<DeckCard> lines = new List<DeckCard>();
-            foreach (var v in entries) lines.Add(v.Line);
-            return lines;
         }
 
         public Deck GetHeaderFromPreco(Preco preco)
@@ -42,6 +35,13 @@ namespace MageekDesktopClient.DeckTools
             deck.Description = string.Concat(preco.ReleaseDate, " - ", preco.Kind);
             deck.DeckId = string.Concat("[", preco.Code, "] ", preco.Title);
             return deck;
+        }
+
+        public List<DeckCard> GetSavableCardList(IEnumerable<ManipulableDeckEntry> entries)
+        {
+            List<DeckCard> lines = new List<DeckCard>();
+            foreach (var v in entries) lines.Add(v.Line);
+            return lines;
         }
 
         public async Task<List<ManipulableDeckEntry>> GetEntriesFromDeck(string deckId)
@@ -99,6 +99,16 @@ namespace MageekDesktopClient.DeckTools
             return list;
         }
 
+        public int CountQuantity(IEnumerable<ManipulableDeckEntry> entries)
+        {
+            int count = 0;
+            foreach (ManipulableDeckEntry entry in entries)
+            {
+                count += entry.Line.Quantity;
+            }
+            return count;
+        }
+
         public string GetColors(ObservableCollection<ManipulableDeckEntry> entries)
         {
             bool hasB = CountDevotion(entries, 'B') > 0;
@@ -113,16 +123,6 @@ namespace MageekDesktopClient.DeckTools
                 hasR ? "R" : "",
                 hasG ? "G" : ""
             );
-        }
-
-        public int CountQuantity(IEnumerable<ManipulableDeckEntry> entries)
-        {
-            int count = 0;
-            foreach (ManipulableDeckEntry entry in entries)
-            {
-                count += entry.Line.Quantity;
-            }
-            return count;
         }
 
         public int CountDevotion(IEnumerable<ManipulableDeckEntry> entries, char color)
@@ -140,7 +140,7 @@ namespace MageekDesktopClient.DeckTools
             return manaCost.Length - manaCost.Replace(color.ToString(), "").Length;
         }
 
-        internal PathFigure GetManaCurve(ManipulableDeck deck)
+        public PathFigure GetManaCurve(ManipulableDeck deck)
         {
             var manaCurve = GetManaCurve(deck.Entries.Where(x => x.Line.RelationType == 0));
             var CurveStart = new Point(0, 0);
@@ -183,6 +183,12 @@ namespace MageekDesktopClient.DeckTools
             return manaCurve;
         }
 
+        public async Task<string> ListMissing(string deckId)
+        {
+            var entries = await GetEntriesFromDeck(deckId);
+            return await GetMissing(entries);
+        }
+
         public async Task<string> GetMissing(IEnumerable<ManipulableDeckEntry> entries)
         {
             string missList = "";
@@ -202,30 +208,28 @@ namespace MageekDesktopClient.DeckTools
             return missList;
         }
 
-        public async Task<int> GetRatio(IEnumerable<ManipulableDeckEntry> entries)
+        //////////////////////////////////////////////////
+
+        internal async Task<Tuple<float, float>> EstimateDeckPrice(string deckId)
         {
-            int total = 0;
-            int miss = 0;
-            foreach (var entry in entries)
+            var entries = await GetEntriesFromDeck(deckId);
+            float total = 0;
+            float missing = 0;
+            foreach (var v in entries)
             {
-                Cards card = entry.Card;
-                if (!card.Type.Contains("Basic Land"))
-                {
-                    total += entry.Line.Quantity;
-                    int got = await mageek.Collec_OwnedCombined(
-                        session.UserName, 
-                        await mageek.Cards_NameForGivenCardUuid(entry.Line.CardUuid)
-                    );
-                    int need = entry.Line.Quantity;
-                    int diff = need - got;
-                    if (diff > 0) miss += diff;
-                }
+                var thisone = await mageek.Cards_GetPrice(v.Card.Uuid);
+                float value = thisone.LastPriceEur.HasValue ? thisone.LastPriceEur.Value: 0;
+                total += value;
+                if (!(await mageek.Collec_OwnedVariant(session.UserName,v.Line.CardUuid)>0)) missing += value;
             }
-            if (total == 0) return 100;
-            return 100 - miss * 100 / total;
+            return new Tuple<float, float>(total, missing);
         }
 
-        //////////////////////////////////////////////////
+        internal async Task<string> CheckValidities(string deckId, string format)
+        {
+            var entries = await GetEntriesFromDeck(deckId);
+            return await DeckValidity(entries, format);
+        }
 
         public async Task<string> DeckValidity(IEnumerable<ManipulableDeckEntry> entries, string format)
         {
@@ -328,9 +332,12 @@ namespace MageekDesktopClient.DeckTools
         {
             return format switch
             {
+                "Duel" => 100,
                 "Commander" => 100,
-                "Paupercommander" => 100,
-                "Explorer" => 250,
+                "Legacy" => 60,
+                "Modern" => 60,
+                "Standard" => 250,
+                "Pauper" => 250,
                 _ => -1,
             };
         }
