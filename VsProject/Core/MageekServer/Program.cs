@@ -32,7 +32,7 @@ builder.WebHost.ConfigureKestrel(options => {
 });
 // Identity framework
 // over ef sqlite with jwt auth
-using var dbConn = new SqliteConnection("Data Source = " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PlaziatIdentity\\Users.db");
+using var dbConn = new SqliteConnection("Data Source = " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MageekServer\\Users.db");
 await dbConn.OpenAsync();
 builder.Services.AddDbContext<UsersDbContext>(options =>  options.UseSqlite(dbConn));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
