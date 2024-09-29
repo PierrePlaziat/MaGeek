@@ -32,14 +32,10 @@ jobs:
         run: |
           mkdir D:\a\MaGeek\MaGeek\Publication\Client
 
-      - name: Create Certificate Directory
-        run: |
-          mkdir D:\a\MaGeek\MaGeek\Certificates
-      
       - name: Store gRPC Certificates
         run: |
-          echo "${{ secrets.GRPC_CERTIFICATE }}" | Out-File -Encoding utf8 D:\a\MaGeek\MaGeek\Certificates\grpc_cert.pem
-          echo "${{ secrets.GRPC_PRIVATE_KEY }}" | Out-File -Encoding utf8 D:\a\MaGeek\MaGeek\Certificates\grpc_key.pem
+          echo "${{ secrets.GRPC_CERTIFICATE }}" | Out-File -Encoding utf8 D:\a\MaGeek\MaGeek\Publication\Server\grpc_cert.pem
+          echo "${{ secrets.GRPC_PRIVATE_KEY }}" | Out-File -Encoding utf8 D:\a\MaGeek\MaGeek\Publication\Server\grpc_key.pem
 
       - name: Publish Server
         run: |
