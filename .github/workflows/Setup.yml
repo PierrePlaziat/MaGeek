@@ -20,6 +20,18 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
+      - name: Output 1
+        run: |
+          mkdir D:\a\MaGeek\MaGeek\Publication
+
+      - name: Output 2
+        run: |
+          mkdir D:\a\MaGeek\MaGeek\Publication\Server
+
+      - name: Output 3
+        run: |
+          mkdir D:\a\MaGeek\MaGeek\Publication\Client
+
       - name: Publish Server
         run: |
           dotnet publish VsProject\Core\MageekServer\MageekServer.csproj -p:PublishProfile=VsProject\Core\MageekServer\Properties\PublishProfiles\FolderProfile.pubxml
@@ -33,18 +45,6 @@ jobs:
       - name: Inspect
         run: |
           Get-ChildItem -Path D:\a\MaGeek\MaGeek -Recurse
-
-      - name: Output 1
-        run: |
-          mkdir D:\a\MaGeek\MaGeek\Publication
-
-      - name: Output 2
-        run: |
-          mkdir D:\a\MaGeek\MaGeek\Publication\Server
-
-      - name: Output 3
-        run: |
-          mkdir D:\a\MaGeek\MaGeek\Publication\Client
 
       - name: MageekServer
         run: |
