@@ -22,8 +22,8 @@ jobs:
 
       - name: Publish
         run: |
-          dotnet publish .\VsProject\Core\MageekServer\MageekServer.csproj -p:PublishProfile=.\VsProject\Core\MageekServer\Properties\PublishProfiles\FolderProfile.pubxml
-          dotnet publish .\VsProject\Core\MageekServer\MageekDesktopClient.csproj -p:PublishProfile=.\VsProject\Apps\MageekDesktopClient\Properties\PublishProfiles\FolderProfile.pubxml
+          dotnet publish D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\MageekServer.csproj -p:PublishProfile=D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\Properties\PublishProfiles\FolderProfile.pubxml
+          dotnet publish D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\MageekDesktopClient.csproj -p:PublishProfile=D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\Properties\PublishProfiles\FolderProfile.pubxml
 
       - name: Output
         run: |
