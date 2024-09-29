@@ -20,28 +20,35 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Publish
+      - name: Publish Server
         run: |
           dotnet publish VsProject\Core\MageekServer\MageekServer.csproj -p:PublishProfile=VsProject\Core\MageekServer\Properties\PublishProfiles\FolderProfile.pubxml
+          if ($LASTEXITCODE -le 1) { exit 0 } else { exit $LASTEXITCODE }
+
+      - name: Publish Client
+        run: |
           dotnet publish VsProject\Core\MageekServer\MageekDesktopClient.csproj -p:PublishProfile=VsProject\Apps\MageekDesktopClient\Properties\PublishProfiles\FolderProfile.pubxml
+          if ($LASTEXITCODE -le 1) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: Output
         run: |
-          mkdir D:\a\MaGeek\MaGeek\VsProject\bin\Release\Published
+          mkdir D:\a\MaGeek\MaGeek\Publication
+          mkdir D:\a\MaGeek\MaGeek\Publication\Server
+          mkdir D:\a\MaGeek\MaGeek\Publication\Client
 
       - name: MageekServer
         run: |
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release\net8.0\publishLocal D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release\net8.0\publishLocal D:\a\MaGeek\MaGeek\Publication\Server /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: MageekDesktopClient
         run: |
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release\net8.0-windows7.0\publish\win-x86 D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release\net8.0-windows7.0\publish\win-x86 D:\a\MaGeek\MaGeek\Publication\Client /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: Zip
         run: |
-          Compress-Archive -Path D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs\* -DestinationPath D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs.zip
+          Compress-Archive -Path D:\a\MaGeek\MaGeek\Publication\* -DestinationPath D:\a\MaGeek\MaGeek\Publication.zip
 
       # - name: Check Token
         # run: |
