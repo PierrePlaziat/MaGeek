@@ -12,7 +12,6 @@ using System.Collections.ObjectModel;
 using MageekCore.Services;
 using MageekDesktopClient.MageekTools.DeckTools;
 using PlaziatWpf.Services;
-using static System.Windows.Forms.DataFormats;
 
 namespace MageekDesktopClient.DeckTools
 {
@@ -214,7 +213,16 @@ namespace MageekDesktopClient.DeckTools
         internal async Task<Tuple<float, float>> EstimateDeckPrice(string deckId)
         {
             var entries = await GetEntriesFromDeck(deckId);
-            throw new NotImplementedException();
+            float total = 0;
+            float missing = 0;
+            foreach (var v in entries)
+            {
+                var thisone = await mageek.Cards_GetPrice(v.Card.Uuid);
+                float value = thisone.LastPriceEur.HasValue ? thisone.LastPriceEur.Value: 0;
+                total += value;
+                if (!(await mageek.Collec_OwnedVariant(session.UserName,v.Line.CardUuid)>0)) missing += value;
+            }
+            return new Tuple<float, float>(total, missing);
         }
 
         internal async Task<string> CheckValidities(string deckId, string format)
