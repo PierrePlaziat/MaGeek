@@ -20,17 +20,28 @@ var builder = WebApplication.CreateBuilder(args);
 
 PlaziatTools.Paths.Init();
 
+
 X509Certificate2 certificate;
-// Grpc 
-using (var publicKey = new X509Certificate2("./grpc_cert.pem"))
+
+// Step 1: Load public key (PEM to X509Certificate2)
+var publicKeyPem = File.ReadAllText("./grpc_cert.pem");
+var publicKeyBytes = Convert.FromBase64String(publicKeyPem
+    .Replace("-----BEGIN CERTIFICATE-----", string.Empty)
+    .Replace("-----END CERTIFICATE-----", string.Empty)
+    .Trim());
+
+using (var publicKey = new X509Certificate2(publicKeyBytes))
 using (var rsa = RSA.Create())
 {
+    // Step 2: Load private key (PEM to RSA)
     var keyData = File.ReadAllText("./grpc_key.pem");
     rsa.ImportFromPem(keyData.ToCharArray());
 
+    // Step 3: Combine public key certificate and private key
     certificate = publicKey.CopyWithPrivateKey(rsa);
 }
-// ssl http2 sole endpoint
+
+// Step 4: Use the combined certificate in gRPC server
 builder.Services.AddGrpc(options =>
 {
     options.EnableDetailedErrors = true;
@@ -41,6 +52,7 @@ builder.WebHost.ConfigureKestrel(options => {
         listenOptions.UseHttps(certificate);
     });
 });
+
 // Identity framework
 // over ef sqlite with jwt auth
 using var dbConn = new SqliteConnection("Data Source = " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MageekServer\\Users.db");
