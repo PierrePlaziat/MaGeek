@@ -39,7 +39,7 @@ jobs:
 
       - name: Publish Client
         run: |
-          dotnet publish VsProject\Core\MageekServer\MageekDesktopClient.csproj -p:PublishProfile=VsProject\Apps\MageekDesktopClient\Properties\PublishProfiles\FolderProfile.pubxml -o D:\a\MaGeek\MaGeek\Publication\Client
+          dotnet publish VsProject\Apps\MageekDesktopClient\MageekDesktopClient.csproj -p:PublishProfile=VsProject\Apps\MageekDesktopClient\Properties\PublishProfiles\FolderProfile.pubxml -o D:\a\MaGeek\MaGeek\Publication\Client
           if ($LASTEXITCODE -le 1) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: Inspect
