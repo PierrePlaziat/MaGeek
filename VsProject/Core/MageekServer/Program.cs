@@ -20,10 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 PlaziatTools.Paths.Init();
 
-
-var grpcSettings = new GrpcSettings(); // Retrieve the paths AT RUNTIME
 // Load public key
-var publicKeyPem = File.ReadAllText(grpcSettings.CertPath);
+var publicKeyPem = File.ReadAllText(PlaziatTools.Paths.CertPath);
 var publicKeyBytes = Convert.FromBase64String(publicKeyPem
     .Replace("-----BEGIN CERTIFICATE-----", string.Empty)
     .Replace("-----END CERTIFICATE-----", string.Empty)
@@ -34,7 +32,7 @@ using (var publicKey = new X509Certificate2(publicKeyBytes))
 using (var rsa = RSA.Create())
 {
     // Step 2: Load private key (PEM to RSA)
-    var keyData = File.ReadAllText(grpcSettings.KeyPath);
+    var keyData = File.ReadAllText(PlaziatTools.Paths.KeyPath);
     rsa.ImportFromPem(keyData.ToCharArray());
 
     // Step 3: Combine public key certificate and private key
