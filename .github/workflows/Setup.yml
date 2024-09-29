@@ -20,16 +20,10 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Clear NuGet Cache
-        run: dotnet nuget locals all --clear
-
-      - name: Restore
+      - name: Publish
         run: |
-          dotnet restore VsProject/MaGeek.sln --runtime win-x64
-
-      - name: Build
-        run: |
-          msbuild "D:\a\MaGeek\MaGeek\VsProject\MaGeek.sln" /t:Rebuild /p:Configuration=Release
+          dotnet publish MageekServer -p:PublishProfile=FolderProfile
+          dotnet publish MageekDesktopClient -p:PublishProfile=FolderProfile
 
       - name: Output
         run: |
