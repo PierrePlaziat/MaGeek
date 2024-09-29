@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs.zip
+          asset_path: D:\a\MaGeek\MaGeek\Publication.zip
           asset_name: MaGeek.zip
           asset_content_type: application/zip
         env:
