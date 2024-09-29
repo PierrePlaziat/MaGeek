@@ -37,17 +37,17 @@ jobs:
 
       - name: MageekServer
         run: |
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Core\MageekServer\bin\Release\net8.0 D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: MageekDesktopClient
         run: |
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release\net_.0-windows D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: MageekDesktopServer
         run: |
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release\net_.0-windows7.0 D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: Zip
