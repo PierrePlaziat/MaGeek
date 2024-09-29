@@ -26,9 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\Images\cardback.jpg">
+    <Resource Include="Resources\Images\cardback.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Resource>
     <Resource Include="Resources\Images\Icon_Backup.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
