@@ -11,7 +11,6 @@ using MageekCore.Data;
 using MageekServer.Services;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
-using System.Runtime;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,13 +26,9 @@ X509Certificate2 certificate;
 // Create an instance of GrpcSettings
 var grpcSettings = new GrpcSettings();
 
-// Use reflection to get property values
-var certPathProperty = typeof(GrpcSettings).GetProperty("CertPath");
-var keyPathProperty = typeof(GrpcSettings).GetProperty("KeyPath");
-
 // Retrieve the paths using reflection
-var certPath = (string)certPathProperty.GetValue(grpcSettings);
-var keyPath = (string)keyPathProperty.GetValue(grpcSettings);
+var certPath = grpcSettings.CertPath;
+var keyPath = grpcSettings.KeyPath;
 
 
 // Step 1: Load public key (PEM to X509Certificate2)
