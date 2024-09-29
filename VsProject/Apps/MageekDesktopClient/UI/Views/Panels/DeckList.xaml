@@ -111,9 +111,9 @@
 
                                 <Separator />
 
-                                <!--<MenuItem Header="Estimate"
+                                <MenuItem Header="Estimate"
                                           Click="MenuItem_EstimateDeckClick"
-                                          CommandParameter="{Binding DeckId}" />-->
+                                          CommandParameter="{Binding DeckId}" />
                                 <MenuItem Header="Print"
                                           Click="MenuItem_PrintDeck"
                                           CommandParameter="{Binding DeckId}" />

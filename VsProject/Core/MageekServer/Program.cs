@@ -9,6 +9,8 @@ using MageekCore.Services;
 using Microsoft.Data.Sqlite;
 using MageekCore.Data;
 using MageekServer.Services;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 PlaziatTools.Paths.Init();
 
+X509Certificate2 certificate;
 // Grpc 
+using (var publicKey = new X509Certificate2("./grpc_cert.pem"))
+using (var rsa = RSA.Create())
+{
+    var keyData = File.ReadAllText("./grpc_key.pem");
+    rsa.ImportFromPem(keyData.ToCharArray());
+
+    certificate = publicKey.CopyWithPrivateKey(rsa);
+}
 // ssl http2 sole endpoint
 builder.Services.AddGrpc(options =>
 {
@@ -27,7 +38,7 @@ builder.Services.AddGrpc(options =>
 builder.WebHost.ConfigureKestrel(options => {
     options.ListenLocalhost(5000, listenOptions => {
         listenOptions.Protocols = HttpProtocols.Http2;
-        listenOptions.UseHttps("C:/certificates/mageek.pfx", "pwd666");
+        listenOptions.UseHttps(certificate);
     });
 });
 // Identity framework
