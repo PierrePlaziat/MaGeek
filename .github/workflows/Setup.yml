@@ -42,12 +42,12 @@ jobs:
 
       - name: MageekDesktopClient
         run: |
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release\net8.0 D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopClient\bin\Release\net8.0-windows7.0 D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: MageekDesktopServer
         run: |
-          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release\net8.0 D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
+          robocopy D:\a\MaGeek\MaGeek\VsProject\Apps\MageekDesktopServer\bin\Release\net8.0-windows D:\a\MaGeek\MaGeek\VsProject\bin\Release\MergedOutputs /E
           if ($LASTEXITCODE -le 8) { exit 0 } else { exit $LASTEXITCODE }
 
       - name: Zip
