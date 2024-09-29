@@ -11,7 +11,7 @@ You can run the server on local or on docker.
   
 Powered by MtgJson and Scryfall, Thanks to them all mtg data is available!
   
-Stack:
+## Stack
 
 - Wpf / community toolkit mvvm / AvalonDock
 - Identity Framework / Entity Framework / sqlite
@@ -26,10 +26,32 @@ and eventually make a template out of it.
 
 ## Functionalities
 
+### Disponible
+
 -	Exaustive MTG informations
 -	Collection gestion
 -	Deck building
 -	Printing
 -	Estimations
 -	User system (Currently no validation, first connexion attempt with a user and path will create the account)
+
+### Todo
+
+- Estimate total collection
+- Advanced print card selection
+
+### good chances to be done
+
+- Advanced search
+- Tags
+- Data importation
+- Token support 
+- Usd support
+
+### less good chances to be done
+
+- Compared collections
+- Card hand
+- Deck Creator
+- Custom cards
 
