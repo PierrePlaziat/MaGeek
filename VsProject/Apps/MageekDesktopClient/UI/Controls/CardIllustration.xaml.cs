@@ -24,7 +24,7 @@ namespace MageekDesktopClient.UI.Controls
             mageek = ServiceHelper.GetService<IMageekService>();
             DataContext = this;
             InitializeComponent();
-            ImageDefault = new BitmapImage(new Uri("D:\\PROJECTS\\VS\\MaGeek\\VsProject\\Apps\\MageekDesktopClient\\Resources\\Images\\cardback.jpg", UriKind.Absolute)); //TODO softer please
+            ImageDefault = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/cardback.jpg", UriKind.Absolute)); //TODO softer please
             SelectCard(null).ConfigureAwait(false);
         }
 
