@@ -13,8 +13,8 @@ namespace PlaziatTools
         public static string File_UserDb { get; } = Path.Combine(Folder_UserSystem, "Identity.sqlite");
         public static string File_Settings { get; set; } = Path.Combine(Folder_ApplicationData, "AppConfig.json"); //TODO per user
 
-        public static string CertPath { get { return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"grpc_cert.pem"); } }
-        public static string KeyPath { get { return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "grpc_key.pem"); } }
+        public static string CertPath { get { return "grpc_cert.pem"; } }
+        public static string KeyPath { get { return "grpc_key.pem"; } }
 
         public static void Init()
         {
