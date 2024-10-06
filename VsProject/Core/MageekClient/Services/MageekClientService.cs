@@ -33,23 +33,20 @@ namespace MageekClient.Services
             if (connected) return MageekConnectReturn.Success;
             try
             {
-                Logger.Log("Established channel...");
+                Logger.Log("Channel...");
                 try
                 {
-                    channel = await Client_Connect_Method1(serverAddress);
+                    var handler = new HttpClientHandler();
+                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                    channel = GrpcChannel.ForAddress(
+                        serverAddress,
+                        new GrpcChannelOptions() { HttpHandler = handler }
+                    );
                     mageekClient = new(channel);
                 }
                 catch
                 {
-                    try
-                    {
-                        channel = await Client_Connect_Method2(serverAddress);
-                        mageekClient = new(channel);
-                    }
-                    catch
-                    {
-                        return MageekConnectReturn.Failure;
-                    }
+                    return MageekConnectReturn.Failure;
                 }
                 Logger.Log("Handshake...");
                 var call = await mageekClient.Users_HandshakeAsync(new Request_Empty());
@@ -60,61 +57,6 @@ namespace MageekClient.Services
             {
                 Logger.Log(e, inner: true);
                 return MageekConnectReturn.Failure;
-            }
-        }
-        private async Task<GrpcChannel> Client_Connect_Method1(string serverAddress)
-        {
-            GrpcChannel channel = null;
-            try
-            {
-                Logger.Log("Trying...");
-                await Task.Run(() =>
-                {
-                    var handler = new HttpClientHandler();
-                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                    channel = GrpcChannel.ForAddress(
-                        serverAddress,
-                        new GrpcChannelOptions()
-                        {
-                            HttpHandler = handler,
-                        }
-                    );
-                });
-                Logger.Log("Success");
-                return channel;
-            }
-            catch(Exception e)
-            {
-                Logger.Log(e);
-                return null;
-            }
-        }
-        private async Task<GrpcChannel> Client_Connect_Method2(string serverAddress)
-        {
-            try
-            {
-                GrpcChannel channel = null;
-                Logger.Log("Trying...");
-                await Task.Run(() =>
-                {
-                    channel = GrpcChannel.ForAddress(
-                        serverAddress,
-                        new GrpcChannelOptions()
-                        {
-                            HttpClient = new HttpClient()
-                            {
-                                DefaultRequestVersion = new Version(2, 0)
-                            }
-                        }
-                    );
-                });
-                Logger.Log("Success");
-                return channel;
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return null;
             }
         }
 

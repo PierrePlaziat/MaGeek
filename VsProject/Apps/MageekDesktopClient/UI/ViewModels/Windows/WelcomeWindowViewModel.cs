@@ -75,6 +75,11 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
                 Logger.Log("Launching for user: " + Input_user);
                 App.OnConnected(Input_user);
             }
+            else
+            {
+                Message = "Failed";
+                IsLoading = false;
+            }
         }
         
         [RelayCommand]

@@ -9,29 +9,26 @@ using MageekCore.Services;
 using Microsoft.Data.Sqlite;
 using MageekCore.Data;
 using MageekServer.Services;
+using PlaziatTools;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//////////
-// INIT //
-//////////
-
+Logger.Log("InitFolders");
 PlaziatTools.Paths.Init();
 
-// Grpc 
-// ssl http2 sole endpoint
-builder.Services.AddGrpc(options =>
-{
-    options.EnableDetailedErrors = true;
-});
+Logger.Log("Add Grpc");
+builder.Services.AddGrpc(options => { options.EnableDetailedErrors = true; });
+
+Logger.Log("Creating new certificate");
+var (certificatePath, password) = CertificateGenerator.GenerateSelfSignedCertificate("Certificate.pfx");
 builder.WebHost.ConfigureKestrel(options => {
     options.ListenLocalhost(5000, listenOptions => {
         listenOptions.Protocols = HttpProtocols.Http2;
-        listenOptions.UseHttps("C:/certificates/mageek.pfx", "pwd666");
+        listenOptions.UseHttps(certificatePath, password);
     });
 });
-// Identity framework
-// over ef sqlite with jwt auth
+
+Logger.Log("Add Identity Framework");
 using var dbConn = new SqliteConnection("Data Source = " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MageekServer\\Users.db");
 await dbConn.OpenAsync();
 builder.Services.AddDbContext<UsersDbContext>(options =>  options.UseSqlite(dbConn));
@@ -54,14 +51,13 @@ builder.Services.AddAuthorization(options => {
         options.AddPolicy("AdminPolicy", policy => policy.RequireClaim("AdminClaim", "Admin"));
     });
 builder.Services.AddScoped<IUserService, UserService>();
-// Business service
+
+Logger.Log("Add Mageek");
 builder.Services.AddSingleton<IMageekService, MageekService>();
 
-////////////
-// Launch //
-////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Build
+Logger.Log("[BUILD]");
 var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -74,10 +70,10 @@ using (var scope = app.Services.CreateScope())
     //dbContext.Database.Migrate();
 }
 await dbConn.CloseAsync();
-// Business
+Logger.Log("Init MaGeek");
 var mageek = app.Services.GetService<IMageekService>();
 var initReturn = await mageek.Server_Initialize();
 if (initReturn == MageekInitReturn.Outdated) _ = mageek.Server_Update().Result;
-// Go
+Logger.Log("[RUN]");
 app.MapGrpcService<MageekGrpcService>();
 app.Run();

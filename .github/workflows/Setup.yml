@@ -32,15 +32,6 @@ jobs:
         run: |
           mkdir D:\a\MaGeek\MaGeek\Publication\Client
 
-      - name: Create Certificate Directory
-        run: |
-          mkdir D:\a\MaGeek\MaGeek\Certificates
-      
-      - name: Store gRPC Certificates
-        run: |
-          echo "${{ secrets.GRPC_CERTIFICATE }}" | Out-File -Encoding utf8 D:\a\MaGeek\MaGeek\Certificates\grpc_cert.pem
-          echo "${{ secrets.GRPC_PRIVATE_KEY }}" | Out-File -Encoding utf8 D:\a\MaGeek\MaGeek\Certificates\grpc_key.pem
-
       - name: Publish Server
         run: |
           dotnet publish VsProject\Core\MageekServer\MageekServer.csproj -p:PublishProfile=VsProject\Core\MageekServer\Properties\PublishProfiles\FolderProfile.pubxml -o D:\a\MaGeek\MaGeek\Publication\Server
@@ -58,12 +49,6 @@ jobs:
       - name: Zip
         run: |
           Compress-Archive -Path D:\a\MaGeek\MaGeek\Publication\* -DestinationPath D:\a\MaGeek\MaGeek\Publication.zip
-
-      # - name: Check Token
-        # run: |
-          # curl -H "Authorization: token ${{ secrets.DEPLOYTOKEN }}" https://api.github.com/user/repos
-        # env:
-          # DEPLOYTOKEN: ${{ secrets.DEPLOYTOKEN }}  # Ensure to use the correct secret name
 
       - name: Create Release
         id: create_release
@@ -85,4 +70,4 @@ jobs:
           asset_name: MaGeek.zip
           asset_content_type: application/zip
         env:
-          GITHUB_TOKEN: ${{ secrets.DEPLOYTOKEN }}  # Use the default GITHUB_TOKEN
+          GITHUB_TOKEN: ${{ secrets.DEPLOYTOKEN }}

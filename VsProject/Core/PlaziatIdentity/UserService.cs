@@ -41,12 +41,10 @@ namespace PlaziatIdentity
         public async Task<string?> AuthenticateUser(string username, string password)
         {
             var result = await _signInManager.PasswordSignInAsync(username, password, false, false);
-
             if (!result.Succeeded)
             {
                 return null;
             }
-
             var user = await _userManager.FindByNameAsync(username);
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
