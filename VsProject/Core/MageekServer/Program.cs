@@ -11,7 +11,10 @@ using MageekCore.Data;
 using MageekServer.Services;
 using PlaziatTools;
 
+Logger.Log("[CREATE]");
 var builder = WebApplication.CreateBuilder(args);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Logger.Log("InitFolders");
 PlaziatTools.Paths.Init();
@@ -61,7 +64,8 @@ Logger.Log("[BUILD]");
 var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
-// Db migration
+
+Logger.Log("Init DB");
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -70,10 +74,15 @@ using (var scope = app.Services.CreateScope())
     //dbContext.Database.Migrate();
 }
 await dbConn.CloseAsync();
+
 Logger.Log("Init MaGeek");
 var mageek = app.Services.GetService<IMageekService>();
 var initReturn = await mageek.Server_Initialize();
 if (initReturn == MageekInitReturn.Outdated) _ = mageek.Server_Update().Result;
+
 Logger.Log("[RUN]");
 app.MapGrpcService<MageekGrpcService>();
 app.Run();
+Logger.Log("[[[ RUNNING ]]]");
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
