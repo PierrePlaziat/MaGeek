@@ -9,8 +9,6 @@ using MageekCore.Services;
 using Microsoft.Data.Sqlite;
 using MageekCore.Data;
 using MageekServer.Services;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,26 +18,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 PlaziatTools.Paths.Init();
 
-// Load public key
-var publicKeyPem = File.ReadAllText(PlaziatTools.Paths.CertPath);
-var publicKeyBytes = Convert.FromBase64String(publicKeyPem
-    .Replace("-----BEGIN CERTIFICATE-----", string.Empty)
-    .Replace("-----END CERTIFICATE-----", string.Empty)
-    .Trim());
-// Load private key
-X509Certificate2 certificate;
-using (var publicKey = new X509Certificate2(publicKeyBytes))
-using (var rsa = RSA.Create())
-{
-    // Step 2: Load private key (PEM to RSA)
-    var keyData = File.ReadAllText(PlaziatTools.Paths.KeyPath);
-    rsa.ImportFromPem(keyData.ToCharArray());
-
-    // Step 3: Combine public key certificate and private key
-    certificate = publicKey.CopyWithPrivateKey(rsa);
-}
-
-// Step 4: Use the combined certificate in gRPC server
+// Grpc 
+// ssl http2 sole endpoint
 builder.Services.AddGrpc(options =>
 {
     options.EnableDetailedErrors = true;
@@ -47,10 +27,9 @@ builder.Services.AddGrpc(options =>
 builder.WebHost.ConfigureKestrel(options => {
     options.ListenLocalhost(5000, listenOptions => {
         listenOptions.Protocols = HttpProtocols.Http2;
-        listenOptions.UseHttps(certificate);
+        listenOptions.UseHttps("C:/certificates/mageek.pfx", "pwd666");
     });
 });
-
 // Identity framework
 // over ef sqlite with jwt auth
 using var dbConn = new SqliteConnection("Data Source = " + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MageekServer\\Users.db");

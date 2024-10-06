@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace PlaziatTools
+﻿namespace PlaziatTools
 {
 
     public static class Paths
@@ -12,9 +10,6 @@ namespace PlaziatTools
         public static string Folder_Business { get; } = Path.Combine(Folder_ApplicationData, "Business");
         public static string File_UserDb { get; } = Path.Combine(Folder_UserSystem, "Identity.sqlite");
         public static string File_Settings { get; set; } = Path.Combine(Folder_ApplicationData, "AppConfig.json"); //TODO per user
-
-        public static string CertPath { get { return "grpc_cert.pem"; } }
-        public static string KeyPath { get { return "grpc_key.pem"; } }
 
         public static void Init()
         {
