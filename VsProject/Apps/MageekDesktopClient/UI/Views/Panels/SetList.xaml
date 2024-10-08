@@ -125,13 +125,13 @@
                         </DockPanel>
                         <DockPanel Grid.Column="2"
                                    Grid.Row="1">
-                            <!--<Label Margin="0"
+                            <Label Margin="0"
                                    Padding="0"
                                    Foreground="White"
                                    FontWeight="Bold"
                                    HorizontalAlignment="Right"
-                                   Content="{Binding UserGot}" />-->
-                            <!--<Label Margin="0"
+                                   Content="{Binding UserGot}" />
+                            <Label Margin="0"
                                    Padding="0"
                                    Content="("></Label>
                             <Label Margin="0"
@@ -139,7 +139,7 @@
                                    Content="{Binding UserGotExtended}" />
                             <Label Margin="0"
                                    Padding="0"
-                                   Content=")"></Label>-->
+                                   Content=")"></Label>
 
                         </DockPanel>
 
@@ -169,14 +169,19 @@
                   PreviewMouseMove="UIElement_PreviewMouseMove">
 
             <DataGrid.Columns>
-                <!--<DataGridTextColumn Header="| Got   "
+                
+                <DataGridTextColumn Header="| Got   "
                                     Binding="{Binding VariantCollected}" />
+                
                 <DataGridTextColumn Header="| Got(other set)   "
                                     Binding="{Binding Collected}" />
+                
                 <DataGridTextColumn Header="| Foreign Name   "
-                                    Binding="{Binding CardForeignName}" />-->
+                                    Binding="{Binding CardForeignName}" />
+                
                 <DataGridTextColumn Header="| Name   "
                                     Binding="{Binding Name}" />
+                
                 <DataGridTemplateColumn Header="| ManaCost   ">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -185,16 +190,22 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                
                 <DataGridTextColumn Header="| Type   "
                                     Binding="{Binding Type}" />
+                
                 <DataGridTextColumn Header="| Power   "
                                     Binding="{Binding Power}" />
+                
                 <DataGridTextColumn Header="| Toughness   "
                                     Binding="{Binding Toughness}" />
+                
                 <DataGridTextColumn Header="| Cmc   "
                                     Binding="{Binding ManaValue}" />
+                
                 <DataGridTextColumn Header="| Keywords   "
                                     Binding="{Binding Keywords}" />
+                
             </DataGrid.Columns>
 
             <DataGrid.Resources>

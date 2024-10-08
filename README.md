@@ -37,6 +37,7 @@ and eventually make a template out of it.
 
 ### Todo
 
+- Bug: Print panel show a wrong numbner
 - Estimate total collection
 - Advanced print card selection
 

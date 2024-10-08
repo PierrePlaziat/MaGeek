@@ -310,7 +310,7 @@ namespace MageekServer.Services
         [Authorize]
         public override async Task<Reply_SearchedCardList> Cards_Search(Request_CardSearch request, ServerCallContext context)
         {
-            var data = await mageek.Cards_Search(request.CardName, request.Lang, request.Page, request.PageSize, request.CardType, request.Keyword, request.Text, request.Color, request.Tag, request.OnlyGot, request.ColorisOr);
+            var data = await mageek.Cards_Search(request.User, request.CardName, request.Lang, request.Page, request.PageSize, request.CardType, request.Keyword, request.Text, request.Color, request.Tag, request.OnlyGot, request.ColorisOr);
             var reply = new Reply_SearchedCardList();
             reply.SearchedCardList = new Wrapper_Reply_SearchedCardList();
             if (data.IsNullOrEmpty()) reply.SearchedCardList.IsNull = true;

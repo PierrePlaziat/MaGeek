@@ -60,17 +60,18 @@ message Reply_Token {
 }
 
 message Request_CardSearch {
-    string cardName = 1;
-    string lang = 2;
-    int32 page = 3;
-    int32 pageSize = 4;
-    google.protobuf.StringValue  cardType = 5;
-    google.protobuf.StringValue  keyword = 6;
-    google.protobuf.StringValue  text = 7;
-    google.protobuf.StringValue  color = 8;
-    google.protobuf.StringValue  tag = 9;
-    bool onlyGot = 10;
-    bool colorisOr = 11;
+    string user = 1;
+    string cardName = 2;
+    string lang = 3;
+    int32 page = 4;
+    int32 pageSize = 5;
+    google.protobuf.StringValue  cardType = 6;
+    google.protobuf.StringValue  keyword = 7;
+    google.protobuf.StringValue  text = 8;
+    google.protobuf.StringValue  color = 9;
+    google.protobuf.StringValue  tag = 10;
+    bool onlyGot = 11;
+    bool colorisOr = 12;
 }
 message Request_CardName {
     string cardName = 1;

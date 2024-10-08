@@ -3,8 +3,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using MageekCore.Data;
 
 namespace MageekDesktopClient.UI.Controls

@@ -70,6 +70,7 @@ namespace MageekCore.Services
         /// <param name="colorisOr">Advanced parameter, Precises how the color filter is interpreted</param>
         /// <returns>List of cards with some additional data</returns>
         Task<List<SearchedCards>> Cards_Search(
+            string user,
             string cardName, string lang, int page, int pageSize,
             string? cardType = null, string? keyword = null, string? text = null, string? color = null, string? tag = null,
             bool onlyGot = false, bool colorisOr = false

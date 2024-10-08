@@ -175,12 +175,16 @@
                 </DataGrid.RowStyle>
 
                 <DataGrid.Columns>
+
                     <DataGridTextColumn Header="| Got   "
                                         Binding="{Binding Collected}" />
+                    
                     <DataGridTextColumn Header="| Foreign Name   "
                                         Binding="{Binding Translation}" />
+                    
                     <DataGridTextColumn Header="| Name   "
                                         Binding="{Binding Card.Name}" />
+                    
                     <DataGridTemplateColumn Header="| ManaCost   " >
                         <DataGridTemplateColumn.CellTemplate >
                             <DataTemplate >
@@ -190,16 +194,22 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    
                     <DataGridTextColumn Header="| Type   "
                                         Binding="{Binding Card.Type}" />
+                    
                     <DataGridTextColumn Header="| Power   "
                                         Binding="{Binding Card.Power}" />
+                    
                     <DataGridTextColumn Header="| Toughness   "
                                         Binding="{Binding Card.Toughness}" />
+                    
                     <DataGridTextColumn Header="| Cmc   "
                                         Binding="{Binding Card.ManaValue}" />
+
                     <DataGridTextColumn Header="| Keywords   "
                                         Binding="{Binding Card.Keywords}" />
+
                 </DataGrid.Columns>
 
                 <DataGrid.Resources>

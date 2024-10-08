@@ -2,12 +2,9 @@
 using System;
 using MageekDesktopClient.UI.ViewModels.AppPanels;
 using System.Windows.Controls;
-using CommunityToolkit.Mvvm.Messaging;
 using MageekCore.Data;
 using System.Windows.Media;
 using PlaziatWpf.Mvvm;
-using MageekDesktopClient.Framework;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace MageekDesktopClient.UI.Views.AppPanels

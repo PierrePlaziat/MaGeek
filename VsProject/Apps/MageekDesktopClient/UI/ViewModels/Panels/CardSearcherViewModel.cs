@@ -21,13 +21,16 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
 
         private SettingService config;
         private IMageekService mageek;
+        private SessionBag bag;
 
         public CardSearcherViewModel(
             SettingService config,
-            IMageekService mageek
+            IMageekService mageek,
+            SessionBag bag
         ){
             this.mageek = mageek;
             this.config = config;
+            this.bag = bag;
             WeakReferenceMessenger.Default.RegisterAll(this);
             ResetFilters();
             Logger.Log("Done");
@@ -87,6 +90,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             { 
                 if (string.IsNullOrEmpty(FilterName)) return;
                 CardList = await mageek.Cards_Search(
+                    bag.UserName,
                     FilterName,
                     "French",
                     CurrentPage,
@@ -100,6 +104,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             try
             { 
                 CardList = await mageek.Cards_Search(
+                    bag.UserName,
                     FilterName,
                     config.Settings[Setting.Translations.ToString()],
                     CurrentPage,

@@ -9,7 +9,6 @@ using MageekCore.Data.Collection.Entities;
 using PlaziatTools;
 using MageekCore.Data.MtgFetched.Entities;
 using MageekCore.Data.MtgFetched;
-using System.Reflection.PortableExecutable;
 
 namespace MageekCore.Services
 {
@@ -107,7 +106,7 @@ namespace MageekCore.Services
 
         #region Cards
 
-        public async Task<List<SearchedCards>> Cards_Search(string filterName, string lang, int page, int pageSize, string? filterType = null, string? filterKeyword = null, string? filterText = null, string? filterColor = null, string? filterTag = null, bool onlyGot = false, bool colorisOr = false)
+        public async Task<List<SearchedCards>> Cards_Search(string user, string filterName, string lang, int page, int pageSize, string? filterType = null, string? filterKeyword = null, string? filterText = null, string? filterColor = null, string? filterTag = null, bool onlyGot = false, bool colorisOr = false)
         {
             List<SearchedCards> retour = new();
             if (filterType == null
@@ -119,12 +118,13 @@ namespace MageekCore.Services
              && colorisOr == false
             )
             {
-                retour = await NormalSearch(filterName, lang, page, pageSize);
+                retour = await NormalSearch(user, filterName, lang, page, pageSize);
             }
             else
             {
                 retour = await AdvancedSearch
                 (
+                    user,
                     filterName, lang, page, pageSize,
                     filterType, filterKeyword, filterText, filterColor, filterTag,
                     onlyGot,
@@ -134,7 +134,7 @@ namespace MageekCore.Services
             return retour;
         }
 
-        private async Task<List<SearchedCards>> NormalSearch(string filterName, string lang, int page, int pageSize)
+        private async Task<List<SearchedCards>> NormalSearch(string userName, string filterName, string lang, int page, int pageSize)
         {
             Logger.Log("searching...");
             List<SearchedCards> retour = new();
@@ -167,8 +167,8 @@ namespace MageekCore.Services
                         var v = await Cards_GetTranslation(card.Uuid, lang);
                         if (v != null) translation = v.Name;
                         else translation = card.Name;
-                        //int collected = await Collec_OwnedCombined(user,card.Uuid); //TODO, another way
-                        retour.Add(new SearchedCards(card.Uuid, translation, /*collected*/0));
+                        int collected = await Collec_OwnedCombined(userName, card.Name);
+                        retour.Add(new SearchedCards(card.Uuid, translation, collected));
                     }
                 }
             }
@@ -176,10 +176,10 @@ namespace MageekCore.Services
             return retour;
         }
 
-        private async Task<List<SearchedCards>> AdvancedSearch(string filterName, string lang, int page, int pageSize, string? filterType, string? filterKeyword, string? filterText, string? filterColor, string? filterTag, bool onlyGot, bool colorisOr)
+        private async Task<List<SearchedCards>> AdvancedSearch(string user, string filterName, string lang, int page, int pageSize, string? filterType, string? filterKeyword, string? filterText, string? filterColor, string? filterTag, bool onlyGot, bool colorisOr)
         {
             Logger.Log("");
-            List<SearchedCards> retour = await NormalSearch(lang, filterName, page, pageSize);
+            List<SearchedCards> retour = await NormalSearch(user, lang, filterName, page, pageSize);
             try
             {
 
@@ -333,7 +333,7 @@ namespace MageekCore.Services
 
         public async Task<Cards> Cards_GetData(string cardUuid)
         {
-            Logger.Log(cardUuid);
+            //Logger.Log(cardUuid);
             using MtgDbContext DB = await mtg.GetContext();
             return await DB.cards
                 .Where(x => x.Uuid == cardUuid)
@@ -342,7 +342,6 @@ namespace MageekCore.Services
 
         public async Task<CardForeignData> Cards_GetTranslation(string cardUuid, string lang)
         {
-            Logger.Log("");
             try
             {
                 using MtgDbContext DB = await mtg.GetContext();

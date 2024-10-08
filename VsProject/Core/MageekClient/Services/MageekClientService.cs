@@ -125,10 +125,11 @@ namespace MageekClient.Services
 
         #region Implementation
 
-        public async Task<List<SearchedCards>> Cards_Search(string cardName, string lang, int page, int pageSize, string? cardType = null, string? keyword = null, string? text = null, string? color = null, string? tag = null, bool onlyGot = false, bool colorisOr = false)
+        public async Task<List<SearchedCards>> Cards_Search(string user, string cardName, string lang, int page, int pageSize, string? cardType = null, string? keyword = null, string? text = null, string? color = null, string? tag = null, bool onlyGot = false, bool colorisOr = false)
         {
             var reply = await mageekClient.Cards_SearchAsync(new Request_CardSearch()
             {
+                User = user,
                 CardName = cardName,
                 Lang = lang,
                 Page = page,
