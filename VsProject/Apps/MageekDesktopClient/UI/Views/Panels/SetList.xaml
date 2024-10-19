@@ -170,41 +170,41 @@
 
             <DataGrid.Columns>
                 
-                <DataGridTextColumn Header="| Got   "
-                                    Binding="{Binding VariantCollected}" />
+                <!--<DataGridTextColumn Header="| Got   "
+                                    Binding="{Binding VariantCollected}" />-->
                 
                 <DataGridTextColumn Header="| Got(other set)   "
                                     Binding="{Binding Collected}" />
                 
                 <DataGridTextColumn Header="| Foreign Name   "
-                                    Binding="{Binding CardForeignName}" />
+                                    Binding="{Binding Translation}" />
                 
                 <DataGridTextColumn Header="| Name   "
-                                    Binding="{Binding Name}" />
+                                    Binding="{Binding Card.Name}" />
                 
                 <DataGridTemplateColumn Header="| ManaCost   ">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <mgctrl:ManaCost Cost="{Binding ManaCost}"
+                            <mgctrl:ManaCost Cost="{Binding Card.ManaCost}"
                                             HorizontalAlignment="Right" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 
                 <DataGridTextColumn Header="| Type   "
-                                    Binding="{Binding Type}" />
+                                    Binding="{Binding Card.Type}" />
                 
                 <DataGridTextColumn Header="| Power   "
-                                    Binding="{Binding Power}" />
+                                    Binding="{Binding Card.Power}" />
                 
                 <DataGridTextColumn Header="| Toughness   "
-                                    Binding="{Binding Toughness}" />
+                                    Binding="{Binding Card.Toughness}" />
                 
                 <DataGridTextColumn Header="| Cmc   "
-                                    Binding="{Binding ManaValue}" />
+                                    Binding="{Binding Card.ManaValue}" />
                 
                 <DataGridTextColumn Header="| Keywords   "
-                                    Binding="{Binding Keywords}" />
+                                    Binding="{Binding Card.Keywords}" />
                 
             </DataGrid.Columns>
 

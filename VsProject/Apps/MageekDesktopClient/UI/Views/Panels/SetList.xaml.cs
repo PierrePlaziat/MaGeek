@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using MageekCore.Data;
 using MageekCore.Data.Mtg.Entities;
 using MageekDesktopClient.UI.ViewModels.AppPanels;
 using PlaziatWpf.Mvvm;
@@ -78,7 +79,7 @@ namespace MageekDesktopClient.UI.Views.AppPanels
                         return null;
 
                     if (data != DependencyProperty.UnsetValue)
-                        return ((Cards)data).Uuid;
+                        return ((SearchedCards)data).Card.Uuid;
                 }
             }
             return null;

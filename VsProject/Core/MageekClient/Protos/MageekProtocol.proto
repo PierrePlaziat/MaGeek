@@ -24,7 +24,7 @@ service MageekProtocolService {
     rpc Cards_GetPrice (Request_CardUuid) returns (Reply_PriceData);
     rpc Sets_All (Request_Empty) returns (Reply_ListSet);
     rpc Sets_Get (Request_SetCode) returns (Reply_Set);
-    rpc Sets_Content (Request_SetCode) returns (Reply_ListCardUuid);
+    rpc Sets_Content (Request_SetContent) returns (Reply_SearchedCardList);
     rpc Sets_Completion (Request_SetCompletion) returns (Reply_Percentage);
     rpc Collec_SetFavCardVariant (Request_Fav) returns (Reply_Empty);
     rpc Collec_Move (Request_CollecMove) returns (Reply_Empty);
@@ -98,6 +98,11 @@ message Request_CardTranslation {
 }
 message Request_SetCode {
     string setCode = 1;
+}
+message Request_SetContent {
+    string user = 1;
+    string setCode = 2;
+    string lang = 3;
 }
 message Request_SetCompletion {
     string user = 1;

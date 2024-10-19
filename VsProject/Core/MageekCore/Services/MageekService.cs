@@ -160,7 +160,6 @@ namespace MageekCore.Services
                     // Remove duplicata
                     found = found.GroupBy(x => x.Name).Select(g => g.First()).ToList();
                     // Add infos
-                    Logger.Log("find collec data...");
                     foreach (var card in found.Skip(page * pageSize).Take(pageSize))
                     {
                         string translation;
@@ -500,8 +499,9 @@ namespace MageekCore.Services
             return await DB.sets.Where(x => x.Code == setCode).FirstOrDefaultAsync();
         }
 
-        public async Task<List<string>> Sets_Content(string setCode)
+        public async Task<List<SearchedCards>> Sets_Content(string userName, string setCode, string lang)
         {
+            List<SearchedCards> retour = new();
             List<Cards> cards = new();
             if (!string.IsNullOrEmpty(setCode))
             {
@@ -512,13 +512,23 @@ namespace MageekCore.Services
                         cards = await DB.cards.Where(x => x.SetCode == setCode)
                             .ToListAsync();
                     }
+                    // Add infos
+                    foreach (var card in cards)
+                    {
+                        string translation;
+                        var v = await Cards_GetTranslation(card.Uuid, lang);
+                        if (v != null) translation = v.Name;
+                        else translation = card.Name;
+                        int collected = await Collec_OwnedCombined(userName, card.Name);
+                        retour.Add(new SearchedCards(card.Uuid, translation, collected));
+                    }
                 }
                 catch (Exception e)
                 {
                     Logger.Log(e);
                 }
             }
-            return cards.Select(x => x.Uuid).ToList();
+            return retour;
         }
 
         public async Task<int> Sets_Completion(string user, string setCode, bool strict)
@@ -526,12 +536,12 @@ namespace MageekCore.Services
             int nb = 0;
             try
             {
-                var cardUuids = await Sets_Content(setCode);
+                var cardUuids = await Sets_Content(user, setCode,"");
                 using CollectionDbContext DB = await collec.GetContext(user);
                 foreach (var card in cardUuids)
                 {
-                    if (strict) nb += await Collec_OwnedVariant(user,card);
-                    else nb += await Collec_OwnedCombined(user, card);
+                    if (strict) nb += await Collec_OwnedVariant(user,card.CardUuid);
+                    else nb += await Collec_OwnedCombined(user, card.CardUuid);
                 }
             }
             catch (Exception e)

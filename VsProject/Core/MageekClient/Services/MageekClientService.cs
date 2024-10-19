@@ -429,16 +429,25 @@ namespace MageekClient.Services
             return parsed;
         }
 
-        public async Task<List<string>> Sets_Content(string setCode)
+        public async Task<List<SearchedCards>> Sets_Content(string user, string setCode, string lang)
         {
-            var reply = await mageekClient.Sets_ContentAsync(new Request_SetCode()
+            var reply = await mageekClient.Sets_ContentAsync(new Request_SetContent()
             {
-                SetCode = setCode
+                User = user,
+                SetCode = setCode,
+                Lang = lang
             });
-            List<string> parsed = new();
-            if (!reply.CardUuidList.IsNull)
+            List<SearchedCards> parsed = new();
+            if (!reply.SearchedCardList.IsNull)
             {
-                parsed = [.. reply.CardUuidList.Items];
+                foreach (var item in reply.SearchedCardList.Items)
+                {
+                    parsed.Add(new SearchedCards(
+                        item.CardUuid,
+                        item.Translation,
+                        item.Collected)
+                    );
+                }
             }
             return parsed;
         }

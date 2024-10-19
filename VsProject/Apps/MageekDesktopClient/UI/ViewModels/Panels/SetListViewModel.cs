@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
-using MageekDesktopClient.UI.Views.AppPanels;
+using PlaziatWpf.Services;
+using MageekCore.Data;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -18,10 +19,17 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
     {
 
         private IMageekService mageek;
+        private SessionBag bag;
+        private SettingService config;
 
-        public SetListViewModel(IMageekService mageek)
-        {
+        public SetListViewModel(
+            IMageekService mageek,
+            SessionBag bag, 
+            SettingService config
+        ){
             this.mageek = mageek;
+            this.bag = bag;
+            this.config = config;
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
@@ -31,7 +39,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         [ObservableProperty] string filterType;
         [ObservableProperty] List<string> blocks = new();
         [ObservableProperty] string filterBlock;
-        [ObservableProperty] List<Cards> variants = new();
+        [ObservableProperty] List<SearchedCards> variants = new();
         [ObservableProperty] bool isLoading = new();
 
         public void Receive(LaunchAppMessage message)
@@ -87,11 +95,13 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         public async void SelectSet(Sets s)
         {
             IsLoading = true;
-            var v = await mageek.Sets_Content(s.Code);
-            var VVariants = new List<Cards>();
+            var v = await mageek.Sets_Content(bag.UserName, s.Code, "French");//TODO config.Settings[Setting.Translations.ToString()]);
+            var VVariants = new List<SearchedCards>();
             foreach (var card in v)
             {
-                VVariants.Add(await mageek.Cards_GetData(card));
+                card.Card = await mageek.Cards_GetData(card.CardUuid);
+                VVariants.Add(card);
+
             }
             Variants = VVariants;
             IsLoading = false;

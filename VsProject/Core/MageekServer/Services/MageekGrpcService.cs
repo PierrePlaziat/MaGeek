@@ -640,15 +640,21 @@ namespace MageekServer.Services
         }
 
         [Authorize]
-        public override async Task<Reply_ListCardUuid> Sets_Content(Request_SetCode request, ServerCallContext context)
+        public override async Task<Reply_SearchedCardList> Sets_Content(Request_SetContent request, ServerCallContext context)
         {
-            var data = await mageek.Sets_Content(request.SetCode);
-            var reply = new Reply_ListCardUuid();
-            reply.CardUuidList = new();
-            if (data.IsNullOrEmpty()) reply.CardUuidList.IsNull = true;
+            var data = await mageek.Sets_Content(request.User, request.SetCode, request.Lang);
+            var reply = new Reply_SearchedCardList();
+            reply.SearchedCardList = new Wrapper_Reply_SearchedCardList();
+            if (data.IsNullOrEmpty()) reply.SearchedCardList.IsNull = true;
             else
             {
-                foreach (var item in data) reply.CardUuidList.Items.Add(item);
+                foreach (var item in data)
+                    reply.SearchedCardList.Items.Add(new Reply_SearchedCard()
+                    {
+                        CardUuid = item.CardUuid,
+                        Collected = item.Collected,
+                        Translation = item.Translation,
+                    });
             }
             return reply;
         }

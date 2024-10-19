@@ -16,6 +16,8 @@ namespace MageekCore.Services
     public class MtgJsonService
     {
 
+        const int updateFreqDays = 7;
+
         const string Url_MtgjsonHash = "https://mtgjson.com/api/v5/AllPrintings.sqlite.sha256";
         const string Url_UpdatePrints = "https://mtgjson.com/api/v5/AllPrintings.sqlite";
         const string Url_UpdatePrices = "https://mtgjson.com/api/v5/AllPrices.json";
@@ -42,7 +44,7 @@ namespace MageekCore.Services
             Logger.Log("Checking...");
             try
             {
-                bool? tooOld = FileUtils.IsFileOlder(Data.Paths.File_MtgDb_HashOld, new TimeSpan(2, 0, 0, 0));
+                bool? tooOld = FileUtils.IsFileOlder(Data.Paths.File_MtgDb_HashOld, new TimeSpan(updateFreqDays, 0, 0, 0));
                 if (tooOld.HasValue && !tooOld.Value)
                 {
                     Logger.Log("Already updated recently");

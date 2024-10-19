@@ -8,9 +8,6 @@ namespace MageekCore.Services
 
     /// <summary>
     /// Mageek functionalities contract
-    /// Implemented twice:
-    /// - MageekService, used for local operations (monolith archi / server side)
-    /// - MageekServer, used for distant operations (distributed archi / client side)
     /// </summary>
     public interface IMageekService
     {
@@ -162,7 +159,7 @@ namespace MageekCore.Services
         /// </summary>
         /// <param name="setCode"></param>
         /// <returns>Uuid list of cards in set</returns>
-        Task<List<string>> Sets_Content(string setCode);
+        Task<List<SearchedCards>> Sets_Content(string user, string setCode, string lang);
 
         /// <summary>
         /// How many cards collected in this set
