@@ -11,6 +11,7 @@ using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
 using PlaziatWpf.Services;
 using MageekCore.Data;
+using System.Collections.ObjectModel;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -39,7 +40,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         [ObservableProperty] string filterType;
         [ObservableProperty] List<string> blocks = new();
         [ObservableProperty] string filterBlock;
-        [ObservableProperty] List<SearchedCards> variants = new();
+        [ObservableProperty] ObservableCollection<SearchedCards> variants = new();
         [ObservableProperty] bool isLoading = new();
 
         public void Receive(LaunchAppMessage message)
@@ -96,7 +97,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         {
             IsLoading = true;
             var v = await mageek.Sets_Content(bag.UserName, s.Code, "French");//TODO config.Settings[Setting.Translations.ToString()]);
-            var VVariants = new List<SearchedCards>();
+            var VVariants = new ObservableCollection<SearchedCards>();
             foreach (var card in v)
             {
                 card.Card = await mageek.Cards_GetData(card.CardUuid);
@@ -107,9 +108,28 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             IsLoading = false;
         }
 
-        public void SelectCard(Cards c)
+        public void SelectCard(string uuid)
         {
-            WeakReferenceMessenger.Default.Send(new CardSelectedMessage(c.Uuid));
+            WeakReferenceMessenger.Default.Send(new CardSelectedMessage(uuid));
+        }
+
+        [RelayCommand]
+        public async Task AddCardToCollection(string uuid)
+        {
+            await mageek.Collec_Move(bag.UserName, uuid, 1);
+            var v = Variants.Where(x => x.CardUuid == uuid).First();
+            v.Collected++;
+            v.OnPropertyChanged("Collected");
+        }
+
+        [RelayCommand]
+        public async Task SubstractCardFromCollection(string uuid)
+        {
+            await mageek.Collec_Move(bag.UserName, uuid, -1);
+            var v = Variants.Where(x => x.CardUuid == uuid).First();
+            v.Collected--;
+            if (v.Collected < 1) v.Collected = 0;
+            v.OnPropertyChanged("Collected");
         }
 
     }

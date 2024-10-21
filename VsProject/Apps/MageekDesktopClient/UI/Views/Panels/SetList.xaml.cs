@@ -33,9 +33,6 @@ namespace MageekDesktopClient.UI.Views.AppPanels
 
         private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            //var v = (DataGrid)sender;
-            //if (v.SelectedItem == null) return;
-            //vm.SelectCard((v.SelectedItem as Cards));
         }
 
         private Point _startPoint;
@@ -85,6 +82,13 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             return null;
         }
 
+        private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var v = (DataGrid)sender;
+            if (v.SelectedItem == null) return;
+            var vv = v.SelectedItem as SearchedCards;
+            vm.SelectCard(vv.CardUuid);
+        }
     }
 
 }

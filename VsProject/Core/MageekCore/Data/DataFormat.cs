@@ -1,12 +1,21 @@
 ﻿using MageekCore.Data.Collection.Entities;
 using MageekCore.Data.Mtg.Entities;
 using MageekCore.Data.MtgFetched.Entities;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace MageekCore.Data
 {
 
-    public class CardVariant
+    public class CardVariant : INotifyPropertyChanged
     {
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
         public Cards Card { get; set; } //TODO demeler
         public Sets Set { get; set; }
@@ -23,8 +32,16 @@ namespace MageekCore.Data
 
     }
 
-    public class SearchedCards
+    public class SearchedCards : INotifyPropertyChanged
     {
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
         public SearchedCards(string cardUuid, string translation, int collected)
         {
             CardUuid = cardUuid;

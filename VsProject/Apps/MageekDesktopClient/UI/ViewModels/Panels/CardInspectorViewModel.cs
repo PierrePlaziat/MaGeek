@@ -13,6 +13,7 @@ using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
 using PlaziatWpf.Services;
+using Microsoft.AspNetCore.Http.Features.Authentication;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -155,14 +156,19 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         private async Task AddCardToCollection(string uuid)
         {
             await mageek.Collec_Move(session.UserName, uuid, 1);
-            await GetCardVariants();
+            var v = Variants.Where(x=>x.Card.Uuid == uuid).First();
+            v.Collected++;
+            v.OnPropertyChanged("Collected");
         }
 
         [RelayCommand]
         private async Task SubstractCardFromCollection(string uuid)
         {
             await mageek.Collec_Move(session.UserName, uuid, -1);
-            await GetCardVariants();
+            var v = Variants.Where(x => x.Card.Uuid == uuid).First();
+            v.Collected--;
+            if (v.Collected < 1) v.Collected = 0;
+            v.OnPropertyChanged("Collected");
         }
 
         [RelayCommand]

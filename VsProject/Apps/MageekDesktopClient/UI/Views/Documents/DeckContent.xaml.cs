@@ -78,16 +78,20 @@ namespace MageekDesktopClient.UI.Views.AppPanels
         }
         private void UIElement_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            try
             {
-                Point currentPosition = e.GetPosition(null);
-                Vector diff = _startPoint - currentPosition;
-                if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                    Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    DragDrop.DoDragDrop(lv, data, DragDropEffects.Move);
+                    Point currentPosition = e.GetPosition(null);
+                    Vector diff = _startPoint - currentPosition;
+                    if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                        Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                    {
+                        DragDrop.DoDragDrop(lv, data, DragDropEffects.Move);
+                    }
                 }
             }
+            catch {}
         }
 
         private static object GetDataFromListBox(ListView source, Point point)

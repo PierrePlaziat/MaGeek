@@ -76,5 +76,105 @@
         <Setter Property="Foreground"
                 Value="#999" />
     </Style>
-    
+
+    <!-- Dark Theme ScrollBar Style -->
+    <Style x:Key="DarkScrollBar"
+           TargetType="{x:Type ScrollBar}">
+        <Setter Property="Foreground"
+                Value="White" />
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid>
+                        <Track Name="PART_Track"
+                               IsDirectionReversed="False">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.LineUpCommand"
+                                              Style="{StaticResource ScrollBarButtonStyle}" />
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.LineDownCommand"
+                                              Style="{StaticResource ScrollBarButtonStyle}" />
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource DarkScrollThumbStyle}" />
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Style for Thumb (the draggable part of the ScrollBar) -->
+    <Style x:Key="DarkScrollThumbStyle"
+           TargetType="{x:Type Thumb}">
+        <Setter Property="Height"
+                Value="12" />
+        <Setter Property="Width"
+                Value="12" />
+        <Setter Property="Background"
+                Value="#FF303030" />
+        <Setter Property="BorderBrush"
+                Value="#FF505050" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="2" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver"
+                     Value="True">
+                <Setter Property="Background"
+                        Value="#FF505050" />
+            </Trigger>
+            <Trigger Property="IsDragging"
+                     Value="True">
+                <Setter Property="Background"
+                        Value="#FF808080" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Style for the buttons on the ScrollBar (up/down or left/right buttons) -->
+    <Style x:Key="ScrollBarButtonStyle"
+           TargetType="{x:Type RepeatButton}">
+        <Setter Property="Background"
+                Value="#FF303030" />
+        <Setter Property="BorderBrush"
+                Value="#FF505050" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsPressed"
+                     Value="True">
+                <Setter Property="Background"
+                        Value="#FF505050" />
+            </Trigger>
+            <Trigger Property="IsMouseOver"
+                     Value="True">
+                <Setter Property="Background"
+                        Value="#FF404040" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
 </ResourceDictionary>

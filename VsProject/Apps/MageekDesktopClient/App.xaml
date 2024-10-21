@@ -6,7 +6,7 @@
 
     <Application.Resources>
         
-        <ResourceDictionary x:Key="WpfDarkTinyTheme">
+        <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources\Styles\BasicStyle.xaml" />
                 <!--<ResourceDictionary Source="Resources\Styles\ScrollBarStyle.xaml" />-->

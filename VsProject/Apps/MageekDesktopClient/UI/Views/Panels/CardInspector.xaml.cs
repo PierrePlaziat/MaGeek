@@ -89,13 +89,6 @@ namespace MageekDesktopClient.UI.Views.AppPanels
         //    sugestions.Visibility = Visibility.Collapsed;
         //}
 
-        private void SelectionChanged(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            ListView sendedBy = (sender as ListView);
-            if (sendedBy.SelectedItem is DeckCard cardRel) vm.Reload(cardRel.CardUuid).ConfigureAwait(false);
-            sendedBy.UnselectAll();
-        }
-
         private void ScrollViewer_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
             ScrollViewer s = (ScrollViewer)sender;
@@ -163,6 +156,13 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             return null;
         }
 
+        private void VariantListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            ListView sendedBy = (sender as ListView);
+            var v = sendedBy.SelectedItem as CardVariant;
+            vm.Reload(v.Card.Uuid).ConfigureAwait(false);
+        }
     }
 
 }

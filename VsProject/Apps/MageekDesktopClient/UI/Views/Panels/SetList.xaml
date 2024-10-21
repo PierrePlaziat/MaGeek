@@ -163,19 +163,80 @@
                   RowHeaderWidth="0"
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding Variants}"
-                  MouseDoubleClick="DataGrid_MouseDoubleClick"
+                  SelectionChanged="CardGrid_SelectionChanged"
                   SelectionMode="Single"
                   PreviewMouseLeftButtonDown="UIElement_PreviewMouseLeftButtonDown"
                   PreviewMouseMove="UIElement_PreviewMouseMove">
 
             <DataGrid.Columns>
-                
-                <!--<DataGridTextColumn Header="| Got   "
-                                    Binding="{Binding VariantCollected}" />-->
-                
-                <DataGridTextColumn Header="| Got(other set)   "
-                                    Binding="{Binding Collected}" />
-                
+
+                <DataGridTemplateColumn Header="| Got   "
+                                        Width="75">
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+
+                            <DockPanel Grid.Column="0"
+                                       Height="25"
+                                       Width="72"
+                                       Margin="0">
+
+                                <Button Width="16"
+                                        Height="25"
+                                        Margin="0,0,0,0"
+                                        Padding="0"
+                                        Background="#000"
+                                        Foreground="#444"
+                                        Command="{Binding DataContext.SubstractCardFromCollectionCommand, 
+                                        RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        CommandParameter="{Binding Card.Uuid}"
+                                        Content="-"
+                                        FontWeight="ExtraBlack"
+                                        BorderThickness="0">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius"
+                                                    Value="7,0,0,8" />
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+
+                                <Label  Width="40"
+                                        HorizontalContentAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Foreground="White"
+                                        Padding="5"
+                                        Background="#111"
+                                        Margin="0,0,0,0"
+                                        Content="{Binding Collected}" />
+
+                                <Button Width="16"
+                                        Height="25"
+                                        Margin="0,0,0,0"
+                                        Padding="0"
+                                        Background="#000"
+                                        Foreground="#666"
+                                        HorizontalAlignment="Right"
+                                        Command="{Binding DataContext.AddCardToCollectionCommand, 
+                                        RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        CommandParameter="{Binding Card.Uuid}"
+                                        Content="+"
+                                        FontWeight="ExtraBlack"
+                                        BorderThickness="0">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius"
+                                                    Value="0,7,8,0" />
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+
+                            </DockPanel>
+
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
                 <DataGridTextColumn Header="| Foreign Name   "
                                     Binding="{Binding Translation}" />
                 
@@ -216,18 +277,11 @@
                 </Style>
             </DataGrid.Resources>
 
-            <!--<DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="To deck"
-                              Command="{Binding AddToDeckCommand}"/>
-                </ContextMenu>
-            </DataGrid.ContextMenu>-->
-
         </DataGrid>
 
         <!-- BusyLoader -->
         <Grid Background="Black"
-              Grid.Column="1"
+              Grid.ColumnSpan="2"
               Grid.RowSpan="2"
               Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
             <controls:BusyIndicator></controls:BusyIndicator>
