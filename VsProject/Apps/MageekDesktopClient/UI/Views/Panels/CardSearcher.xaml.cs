@@ -91,6 +91,12 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             return null;
         }
 
+        private void CardGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            lv = (DataGrid)sender;
+            var v = lv.SelectedItem as SearchedCards;
+            vm.SelectCard(v);
+        }
     }
 
 

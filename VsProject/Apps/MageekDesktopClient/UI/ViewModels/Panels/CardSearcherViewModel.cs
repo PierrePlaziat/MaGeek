@@ -11,6 +11,7 @@ using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
 using System;
+using MageekCore.Data.Mtg.Entities;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -138,6 +139,10 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             FilterColorTrueOrFalseAnd = false;
         }
 
+        internal void SelectCard(SearchedCards card)
+        {
+            WeakReferenceMessenger.Default.Send(new CardSelectedMessage(card.CardUuid));
+        }
     }
 
 }
