@@ -28,7 +28,7 @@ namespace MageekDesktopClient.UI.Views.AppPanels
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            vm.SelectSet(((ListView)sender).SelectedItem as Sets);
+            //vm.SelectSet(((ListView)sender).SelectedItem as Sets);
         }
 
         private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -88,6 +88,11 @@ namespace MageekDesktopClient.UI.Views.AppPanels
             if (v.SelectedItem == null) return;
             var vv = v.SelectedItem as SearchedCards;
             vm.SelectCard(vv.CardUuid);
+        }
+
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            vm.SelectSet(((ListView)sender).SelectedItem as Sets);
         }
     }
 

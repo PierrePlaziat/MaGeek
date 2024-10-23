@@ -94,10 +94,10 @@ namespace MageekDesktopClient.UI.Controls
         {
             return Rarity switch
             {
-                "common" => Brushes.AliceBlue,
-                "uncommon" => Brushes.DimGray,
-                "rare" => Brushes.Gold,
-                "mythic" => Brushes.DarkOrange,
+                "common" => Brushes.DarkSlateGray,
+                "uncommon" => Brushes.White,
+                "rare" => Brushes.Orange,
+                "mythic" => Brushes.OrangeRed,
                 "bonus" => Brushes.MediumPurple,
                 _ => Brushes.MediumOrchid,
             };

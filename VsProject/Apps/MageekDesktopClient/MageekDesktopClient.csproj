@@ -32,7 +32,7 @@
     <Resource Include="Resources\Images\Icon_Backup.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Images\Icon_Restore.jpg" >
+    <Resource Include="Resources\Images\Icon_Restore.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Images\Corner.png">
@@ -41,28 +41,28 @@
     <Resource Include="Resources\Images\document.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Images\IconCard.jpg" >
+    <Resource Include="Resources\Images\IconCard.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Images\IconDeck.jpg" >
+    <Resource Include="Resources\Images\IconDeck.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Images\Icon_Currency.jpg" >
+    <Resource Include="Resources\Images\Icon_Currency.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Images\Icon_db.jpg" >
+    <Resource Include="Resources\Images\Icon_db.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Images\Icon_Lang.jpg" >
+    <Resource Include="Resources\Images\Icon_Lang.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Images\Icon_Update.jpg" >
+    <Resource Include="Resources\Images\Icon_Update.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Images\property-blue.png" >
+    <Resource Include="Resources\Images\property-blue.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Fonts\Magic_Symbols_2008.ttf" >
+    <Resource Include="Resources\Fonts\Magic_Symbols_2008.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Images\TickOff.jpg">

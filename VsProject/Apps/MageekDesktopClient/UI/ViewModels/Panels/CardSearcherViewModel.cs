@@ -12,6 +12,7 @@ using PlaziatWpf.Mvvm;
 using MageekDesktopClient.Framework;
 using System;
 using MageekCore.Data.Mtg.Entities;
+using ScryfallApi.Client.Models;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -65,6 +66,11 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             FillHistoric();
             if (!AdvancedMode) await SearchNormal();
             if (AdvancedMode) await SearchAdvanced();
+            foreach (var v in CardList)
+            {
+                v.Card = await mageek.Cards_GetData(v.CardUuid);
+                v.OnPropertyChanged("Card");
+            }
             Logger.Log("Done");
             IsLoading = false;
         }

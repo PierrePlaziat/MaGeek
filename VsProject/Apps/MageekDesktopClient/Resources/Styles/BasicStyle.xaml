@@ -62,6 +62,93 @@
                 Value="0" />
     </Style>
 
+        <!-- Dark Themed ComboBox Style -->
+    <Style TargetType="{x:Type ComboBox}">
+        <Setter Property="Foreground"
+                Value="White" />
+        <Setter Property="Background"
+                Value="#333333" />
+        <Setter Property="BorderBrush"
+                Value="#555555" />
+        <Setter Property="Padding"
+                Value="5" />
+        <Setter Property="FontSize"
+                Value="14" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                Value="Auto" />
+
+        <!-- Modify the ControlTemplate of the ComboBox -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <!-- Border for the ComboBox -->
+                        <Border Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="3">
+                            <Grid>
+                                <ToggleButton Name="ToggleButton"
+                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                              Focusable="False"
+                                              Background="{TemplateBinding Background}"
+                                              BorderBrush="{TemplateBinding BorderBrush}" />
+                                <ContentPresenter Name="ContentSite"
+                                                  IsHitTestVisible="False"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                  Margin="5,2,23,2"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left" />
+                            </Grid>
+                        </Border>
+                        <!-- Popup for the dropdown list -->
+                        <Popup Name="Popup"
+                               Placement="Bottom"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Slide">
+                            <Grid Name="DropDown"
+                                  SnapsToDevicePixels="True"
+                                  MinWidth="{TemplateBinding ActualWidth}"
+                                  MaxHeight="1000"
+                                  Background="#333333">
+                                <Border CornerRadius="3"
+                                        Background="#333333">
+                                    <ScrollViewer Margin="4,6,4,6"
+                                                  SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True"
+                                                    KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasItems"
+                                 Value="False">
+                            <Setter TargetName="DropDown"
+                                    Property="MinHeight"
+                                    Value="95" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled"
+                                 Value="False">
+                            <Setter Property="Foreground"
+                                    Value="Gray" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type DataGrid}">
         <Setter Property="BorderThickness"
                 Value="0" />
@@ -70,111 +157,163 @@
         <Setter Property="GridLinesVisibility"
                 Value="None" />
         <Setter Property="RowBackground"
-                Value="#333" />
+                Value="#303540" />
         <Setter Property="AlternatingRowBackground"
-                Value="#444" />
+                Value="#333040" />
         <Setter Property="Foreground"
-                Value="#999" />
+                Value="#eee" />
+
+        <!-- Add a style for DataGridRow to change the selected row color -->
+        <Setter Property="CellStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridCell">
+                    <!-- Remove the default selection effect on cells -->
+                    <Setter Property="BorderBrush"
+                            Value="Transparent" />
+                    <Setter Property="Background"
+                            Value="Transparent" />
+
+                    <Style.Triggers>
+                        <!-- Change the background color of selected cells -->
+                        <Trigger Property="IsSelected"
+                                 Value="True">
+                            <Setter Property="Background"
+                                    Value="#405055" />
+                            <!-- Customize this color for selected row -->
+                            <Setter Property="Foreground"
+                                    Value="#fff" />
+                            <!-- Customize the foreground if needed -->
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="BorderBrush"
+                            Value="Transparent" />
+                    <Setter Property="Height"
+                            Value="20" />
+                    <Setter Property="Padding"
+                            Value="0" />
+                    <Setter Property="Margin"
+                            Value="0" />
+
+                    <Style.Triggers>
+                        <!-- Change selected row background and foreground -->
+                        <Trigger Property="IsSelected"
+                                 Value="True">
+                            <Setter Property="Background"
+                                    Value="#405055" />
+                            <Setter Property="Background"
+                                    Value="#405055" />
+                            <!-- Customize selected row background -->
+                            <Setter Property="Foreground"
+                                    Value="#fff" />
+                            <!-- Optional: customize selected row foreground -->
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
     </Style>
 
-    <!-- Dark Theme ScrollBar Style -->
-    <Style x:Key="DarkScrollBar"
-           TargetType="{x:Type ScrollBar}">
-        <Setter Property="Foreground"
-                Value="White" />
+    <!-- ScrollBar Style -->
+    <Style TargetType="ScrollBar">
         <Setter Property="Background"
                 Value="Transparent" />
+        <Setter Property="Width"
+                Value="auto" />
+        <Setter Property="Foreground"
+                Value="Gray" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
-                    <Grid>
-                        <Track Name="PART_Track"
-                               IsDirectionReversed="False">
+                    <Grid Background="Transparent">
+                        <Grid.Resources>
+                            
+                            <!-- RepeatButton Style -->
+                            <Style x:Key="RepeatButtonStyle"
+                                   TargetType="RepeatButton">
+                                <Setter Property="Background"
+                                        Value="Black" />
+                                <Setter Property="BorderBrush"
+                                        Value="DarkGray" />
+                                <Setter Property="BorderThickness"
+                                        Value="0" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Rectangle Fill="{TemplateBinding Background}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+
+                        <!-- Track (handles both vertical and horizontal) -->
+                        <Track x:Name="PART_Track">
                             <Track.DecreaseRepeatButton>
-                                <RepeatButton Command="ScrollBar.LineUpCommand"
-                                              Style="{StaticResource ScrollBarButtonStyle}" />
+                                <RepeatButton Style="{StaticResource RepeatButtonStyle}"
+                                              Command="ScrollBar.LineUpCommand" />
                             </Track.DecreaseRepeatButton>
-                            <Track.IncreaseRepeatButton>
-                                <RepeatButton Command="ScrollBar.LineDownCommand"
-                                              Style="{StaticResource ScrollBarButtonStyle}" />
-                            </Track.IncreaseRepeatButton>
                             <Track.Thumb>
-                                <Thumb Style="{StaticResource DarkScrollThumbStyle}" />
+                                <Thumb Background="#777"
+                                       Opacity=".2"
+                                       Height="auto"
+                                       Width="auto" />
                             </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource RepeatButtonStyle}"
+                                              Command="ScrollBar.LineDownCommand" />
+                            </Track.IncreaseRepeatButton>
                         </Track>
                     </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <!-- Vertical ScrollBar Trigger -->
+                        <Trigger Property="Orientation"
+                                 Value="Vertical">
+                            <Setter Property="Width"
+                                    Value="12" />
+                            <Setter TargetName="PART_Track"
+                                    Property="Orientation"
+                                    Value="Vertical" />
+                            <Setter TargetName="PART_Track"
+                                    Property="Thumb.Height"
+                                    Value="Auto" />
+                            <Setter TargetName="PART_Track"
+                                    Property="Thumb.Width"
+                                    Value="12" />
+                            <Setter TargetName="PART_Track"
+                                    Property="IsDirectionReversed"
+                                    Value="true" />
+                        </Trigger>
+
+                        <!-- Horizontal ScrollBar Trigger -->
+                        <Trigger Property="Orientation"
+                                 Value="Horizontal">
+                            <Setter Property="Height"
+                                    Value="12" />
+                            <Setter TargetName="PART_Track"
+                                    Property="Orientation"
+                                    Value="Horizontal" />
+                            <Setter TargetName="PART_Track"
+                                    Property="Thumb.Width"
+                                    Value="Auto" />
+                            <Setter TargetName="PART_Track"
+                                    Property="Thumb.Height"
+                                    Value="10" />
+                            <Setter TargetName="PART_Track"
+                                    Property="IsDirectionReversed"
+                                    Value="false" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
-    <!-- Style for Thumb (the draggable part of the ScrollBar) -->
-    <Style x:Key="DarkScrollThumbStyle"
-           TargetType="{x:Type Thumb}">
-        <Setter Property="Height"
-                Value="12" />
-        <Setter Property="Width"
-                Value="12" />
-        <Setter Property="Background"
-                Value="#FF303030" />
-        <Setter Property="BorderBrush"
-                Value="#FF505050" />
-        <Setter Property="BorderThickness"
-                Value="1" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Thumb">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="2" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver"
-                     Value="True">
-                <Setter Property="Background"
-                        Value="#FF505050" />
-            </Trigger>
-            <Trigger Property="IsDragging"
-                     Value="True">
-                <Setter Property="Background"
-                        Value="#FF808080" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
-    <!-- Style for the buttons on the ScrollBar (up/down or left/right buttons) -->
-    <Style x:Key="ScrollBarButtonStyle"
-           TargetType="{x:Type RepeatButton}">
-        <Setter Property="Background"
-                Value="#FF303030" />
-        <Setter Property="BorderBrush"
-                Value="#FF505050" />
-        <Setter Property="BorderThickness"
-                Value="1" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="RepeatButton">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsPressed"
-                     Value="True">
-                <Setter Property="Background"
-                        Value="#FF505050" />
-            </Trigger>
-            <Trigger Property="IsMouseOver"
-                     Value="True">
-                <Setter Property="Background"
-                        Value="#FF404040" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
+    
 </ResourceDictionary>

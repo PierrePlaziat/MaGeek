@@ -13,8 +13,8 @@
     <mvvm:BaseUserControl.Resources>
 
         <DataTemplate x:Key="CustomItemsControlItem">
-            <ContentControl Width="120"
-                            Height="165"
+            <ContentControl Width="{Binding ControlWidth, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                            Height="{Binding ControlHeight, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                             Background="Green">
 
                 <mgui:CardIllustration CardUuid="{Binding DataContext.Line.CardUuid, RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}}" />
@@ -23,36 +23,36 @@
                     <ContextMenu>
                         <MenuItem Header="Set Commandant"
                                   Click="ToCommandant_Click"
-                                  CommandParameter="{Binding}"/>
+                                  CommandParameter="{Binding}" />
                         <MenuItem Header="To Side"
                                   Click="ToSide_Click"
-                                  CommandParameter="{Binding}"/>
+                                  CommandParameter="{Binding}" />
                         <Separator />
                         <MenuItem Header="Add one"
                                   Click="AddOne_Click"
-                                  CommandParameter="{Binding}"/>
+                                  CommandParameter="{Binding}" />
                         <MenuItem Header="Remove one"
                                   Click="RemoveOne_Click"
-                                  CommandParameter="{Binding}"/>
+                                  CommandParameter="{Binding}" />
                         <Separator />
-                        <MenuItem Header="Variant" 
+                        <MenuItem Header="Variant"
                                   ItemsSource="{Binding Path=Card.Card.Variants, UpdateSourceTrigger=PropertyChanged}">
                             <MenuItem.ItemContainerStyle>
                                 <Style TargetType="MenuItem">
-                                    <Setter Property="Header" 
-                                            Value="{Binding SetName}"/>
-                                    <Setter Property="Command" 
+                                    <Setter Property="Header"
+                                            Value="{Binding SetName}" />
+                                    <Setter Property="Command"
                                             Value="{Binding Path=DataContext.ChangeIlluCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                    <Setter Property="CommandTarget" 
+                                    <Setter Property="CommandTarget"
                                             Value="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-                                    <Setter Property="CommandParameter" 
-                                            Value="{Binding}"/>
+                                    <Setter Property="CommandParameter"
+                                            Value="{Binding}" />
                                 </Style>
                             </MenuItem.ItemContainerStyle>
                         </MenuItem>
                     </ContextMenu>
                 </ContentControl.ContextMenu>
-                
+
             </ContentControl>
         </DataTemplate>
 
@@ -74,8 +74,10 @@
         </ItemsPanelTemplate>
 
     </mvvm:BaseUserControl.Resources>
-    
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MinWidth="10" >
+
+    <Grid>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MinWidth="10" >
 
         <StackPanel>
 
@@ -95,4 +97,18 @@
 
     </ScrollViewer>
 
+        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,15,0">
+
+            <Button Width="17"
+                    Padding="0"
+                    Content="+"
+                    Click="ZoomIn_Click"/>
+            <Button Width="17"
+                    Padding="0"
+                    Content="-"
+                    Click="ZommOut_Click" />
+        </StackPanel>
+        
+    </Grid>
+    
 </mvvm:BaseUserControl>

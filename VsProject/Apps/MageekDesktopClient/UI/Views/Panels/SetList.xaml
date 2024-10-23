@@ -5,6 +5,7 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mgctrl="clr-namespace:MageekDesktopClient.UI.Controls"
+                      xmlns:rar="clr-namespace:MageekDesktopClient.Business.Converters"
                       xmlns:controls="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
                       xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
                       xmlns:converter="clr-namespace:PlaziatWpf.Converters;assembly=PlaziatWpf"
@@ -15,6 +16,7 @@
 
     <mvvm:BaseUserControl.Resources>
         <converter:NullableDateToStringConverter x:Key="DateConverter" />
+        <rar:RarityToColorConverter x:Key="RarKey" />
     </mvvm:BaseUserControl.Resources>
 
     <Grid Margin="0">
@@ -30,7 +32,7 @@
 
         <DockPanel Grid.ColumnSpan="1">
 
-            <!--<ComboBox Width="150"
+            <ComboBox Width="150"
                       SelectionChanged="ComboBox_SelectionChanged"
                       ItemsSource="{Binding Types}"
                       SelectedItem="{Binding FilterType, Mode=TwoWay}" />
@@ -38,7 +40,7 @@
             <ComboBox Width="150"
                       SelectionChanged="ComboBox_SelectionChanged"
                       ItemsSource="{Binding Blocks}"
-                      SelectedItem="{Binding FilterBlock, Mode=TwoWay}" />-->
+                      SelectedItem="{Binding FilterBlock, Mode=TwoWay}" />
 
         </DockPanel>
 
@@ -50,9 +52,20 @@
                   Padding="-3,0,0,0"
                   BorderThickness="0"
                   SelectionMode="Single"
-                  SelectionChanged="ListView_SelectionChanged">
+                  SelectionChanged="ListView_SelectionChanged"
+                  MouseDoubleClick="ListView_MouseDoubleClick">
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Background"
+                            Value="#333" />
+                    <Setter Property="BorderBrush"
+                            Value="#333" />
+                </Style>
+            </ListView.ItemContainerStyle>
 
             <ListView.ItemTemplate>
+
                 <DataTemplate>
 
                     <Grid Height="40"
@@ -72,7 +85,7 @@
 
                         <ui:SetIcon SetCode="{Binding Code}"
                                     Rarity="common"
-                                    Grid.RowSpan="2"/>
+                                    Grid.RowSpan="2" Height="35" Width="35"/>
 
                         <Label Content="{Binding Name}"
                                Grid.Column="1"
@@ -170,21 +183,37 @@
 
             <DataGrid.Columns>
 
-                <DataGridTemplateColumn Header="| Got   "
-                                        Width="75">
+                <DataGridTemplateColumn Header="">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Ellipse Width="12"
+                                         Height="12"
+                                         Margin="2">
+                                    <Ellipse.Fill>
+                                        <Binding Path="Card.Rarity"
+                                                 Converter="{StaticResource RarKey}" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
+                <DataGridTemplateColumn Header="Got"
+                                        Width="75">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
 
                             <DockPanel Grid.Column="0"
-                                       Height="25"
+                                       Height="20"
                                        Width="72"
                                        Margin="0">
 
                                 <Button Width="16"
-                                        Height="25"
-                                        Margin="0,0,0,0"
-                                        Padding="0"
+                                        Height="20"
+                                        Margin="0,-2,0,0"
+                                        Padding="0,0,0,0"
                                         Background="#000"
                                         Foreground="#444"
                                         Command="{Binding DataContext.SubstractCardFromCollectionCommand, 
@@ -205,14 +234,15 @@
                                         HorizontalContentAlignment="Center"
                                         HorizontalAlignment="Center"
                                         Foreground="White"
-                                        Padding="5"
                                         Background="#111"
-                                        Margin="0,0,0,0"
+                                        Margin="0,-2,0,0"
+                                        Height="20"
+                                        Padding="0,1,0,0"
                                         Content="{Binding Collected}" />
 
                                 <Button Width="16"
-                                        Height="25"
-                                        Margin="0,0,0,0"
+                                        Height="20"
+                                        Margin="0,-2,0,0"
                                         Padding="0"
                                         Background="#000"
                                         Foreground="#666"
@@ -237,13 +267,13 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="| Foreign Name   "
+                <DataGridTextColumn Header="Foreign Name"
                                     Binding="{Binding Translation}" />
-                
-                <DataGridTextColumn Header="| Name   "
+
+                <DataGridTextColumn Header="Name"
                                     Binding="{Binding Card.Name}" />
                 
-                <DataGridTemplateColumn Header="| ManaCost   ">
+                <DataGridTemplateColumn Header="ManaCost">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <mgctrl:ManaCost Cost="{Binding Card.ManaCost}"
@@ -252,19 +282,19 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 
-                <DataGridTextColumn Header="| Type   "
+                <DataGridTextColumn Header="Type"
                                     Binding="{Binding Card.Type}" />
                 
-                <DataGridTextColumn Header="| Power   "
+                <DataGridTextColumn Header="Power"
                                     Binding="{Binding Card.Power}" />
                 
-                <DataGridTextColumn Header="| Toughness   "
+                <DataGridTextColumn Header="Toughness"
                                     Binding="{Binding Card.Toughness}" />
                 
-                <DataGridTextColumn Header="| Cmc   "
+                <DataGridTextColumn Header="Cmc"
                                     Binding="{Binding Card.ManaValue}" />
                 
-                <DataGridTextColumn Header="| Keywords   "
+                <DataGridTextColumn Header="Keywords"
                                     Binding="{Binding Card.Keywords}" />
                 
             </DataGrid.Columns>
@@ -273,7 +303,21 @@
                 <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"
                        TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Background"
-                            Value="#555" />
+                            Value="#373737" />
+                    <Setter Property="BorderBrush"
+                            Value="#000" />
+                    <Setter Property="BorderThickness"
+                            Value="2" />
+                    <Setter Property="Foreground"
+                            Value="#ccc" />
+                    <Setter Property="BorderThickness"
+                            Value="2" />
+                    <Setter Property="Margin"
+                            Value="0,2,0,2" />
+                    <Setter Property="Padding"
+                            Value="4,0,2,2" />
+                    <Setter Property="FontWeight"
+                            Value="DemiBold" />
                 </Style>
             </DataGrid.Resources>
 

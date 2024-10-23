@@ -5,15 +5,14 @@
              Startup="OnStartup">
 
     <Application.Resources>
-        
+
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources\Styles\BasicStyle.xaml" />
+
                 <!--<ResourceDictionary Source="Resources\Styles\ScrollBarStyle.xaml" />-->
                 <!--<ResourceDictionary Source="Resources\Styles\ComboBoxStyle.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-
     </Application.Resources>
-
 </Application>
