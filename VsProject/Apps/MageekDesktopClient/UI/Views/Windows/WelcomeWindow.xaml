@@ -74,7 +74,7 @@
                     <TextBox
                                Width="160"
                                Background="#222"
-                               Text="{Binding Input_address}"
+                               Text="{Binding InputAddress}"
                                Foreground="White">
 
                         <TextBox.Resources>
@@ -92,7 +92,7 @@
                     <TextBox 
                                Width="160"
                                Background="#222"
-                               Text="{Binding Input_user}"
+                               Text="{Binding InputUser}"
                                Foreground="White">
                         <TextBox.Resources>
                             <Style TargetType="Border">
@@ -106,18 +106,24 @@
                 
                 <StackPanel Orientation="Horizontal" Grid.Row="2" >
                     <Label Width="55">Pass:</Label>
-                    <TextBox 
-                               Width="160"
-                               Background="#222"
-                               Text="{Binding Input_pass}"
-                               Foreground="White">
-                        <TextBox.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius"
-                                        Value="5" />
-                            </Style>
-                        </TextBox.Resources>
-                    </TextBox>
+                    <PasswordBox x:Name="PasswordBox"
+                                 Width="160"
+                                 Height="20"
+                                 Background="#222"
+                                 Foreground="White"
+                                 PasswordChanged="PasswordBox_PasswordChanged"
+                                 KeyDown="PasswordBox_KeyDown">
+                        <PasswordBox.Template>
+                            <ControlTemplate TargetType="PasswordBox">
+                                <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="Transparent"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="5">
+                                    <ScrollViewer x:Name="PART_ContentHost" />
+                                </Border>
+                            </ControlTemplate>
+                        </PasswordBox.Template>
+                    </PasswordBox>
 
                 </StackPanel>
 

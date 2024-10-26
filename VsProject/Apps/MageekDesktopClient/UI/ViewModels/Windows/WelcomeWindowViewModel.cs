@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PlaziatWpf.Services;
 using MageekCore.Data;
 using System.Threading.Tasks;
 using MageekCore.Services;
 using PlaziatWpf.Mvvm;
 using PlaziatTools;
+using System;
+using System.IO;
 
 namespace MageekDesktopClient.UI.ViewModels.AppWindows
 {
@@ -13,39 +14,23 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
     public partial class WelcomeWindowViewModel : ObservableViewModel
     {
 
-        private readonly IMageekService mageek;
-        private readonly WindowsService winManager;
-        private readonly DialogService dialogs;
-
-        private string registeredServer;
-        private string registeredUser;
-
-        public WelcomeWindowViewModel(
-            IMageekService mageek,
-            WindowsService winManager,
-            DialogService dialogs
-        ){
-            this.mageek = mageek;
-            this.winManager = winManager;
-            this.dialogs = dialogs;
-            MageekCore.Data.Paths.InitClient();
-            RetrieveRegisteredCredentials();
-            Message = "Welcome";
-        }
-
-        [ObservableProperty] string input_address;
-        [ObservableProperty] string input_user;
-        [ObservableProperty] string input_pass;
+        readonly IMageekService mageek;
+        [ObservableProperty] string inputAddress;
+        [ObservableProperty] string inputUser;
+        [ObservableProperty] string inputPass;
         [ObservableProperty] string message;
         [ObservableProperty] bool isLoading;
 
-        private void RetrieveRegisteredCredentials()
-        {
+        public WelcomeWindowViewModel(
+            IMageekService mageek
+        ){
+            Message = "Init";
+            this.mageek = mageek;
             IsLoading = true;
-            Input_address = "https://127.0.0.1:5000/"; // Unraid:"http://192.168.1.10:55666/";
-            Input_user = "Pierre";
-            Input_pass = "Pierre0!";
+            MageekCore.Data.Paths.InitClient();
+            LoadCredentials();
             IsLoading = false;
+            Message = "Welcome";
         }
 
         [RelayCommand]
@@ -54,9 +39,9 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
             IsLoading = true;
             Message = "Connecting";
             var success = await mageek.Client_Connect(
-                Input_user, 
-                Input_pass, 
-                Input_address
+                InputUser, 
+                InputPass, 
+                InputAddress
             );
             if (success != MageekConnectReturn.Success)
             {
@@ -66,14 +51,15 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
             }
             Message = "Authenticating";
             success = await mageek.Client_Authentify(
-                Input_user,
-                Input_pass
+                InputUser,
+                InputPass
             );
             if (success == MageekConnectReturn.Success)
             {
+                SaveCredentials();
                 Message = "Launching";
-                Logger.Log("Launching for user: " + Input_user);
-                App.OnConnected(Input_user);
+                Logger.Log("Launching for user: " + InputUser);
+                App.OnConnected(InputUser);
             }
             else
             {
@@ -81,16 +67,16 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
                 IsLoading = false;
             }
         }
-        
+
         [RelayCommand]
         public async Task Register()
         {
             IsLoading = true;
             Message = "Connecting";
             var success = await mageek.Client_Connect(
-                Input_user,
-                Input_pass,
-                Input_address
+                InputUser,
+                InputPass,
+                InputAddress
             );
             if (success != MageekConnectReturn.Success)
             {
@@ -100,8 +86,8 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
             }
             Message = "Registering";
             var retour = await mageek.Client_Register(
-                Input_user, 
-                Input_pass
+                InputUser, 
+                InputPass
             );
             if (retour != MageekConnectReturn.Success)
             {
@@ -111,6 +97,44 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
             }
             Message = "Registered";
             await Connect();
+        }
+
+        private void SaveCredentials()
+        {
+            Message = "Registering credentials";
+            string data = $"{InputAddress},{InputUser},{InputPass}";
+            try
+            {
+                File.WriteAllText(MageekCore.Data.Paths.File_RegCred, data);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+            }
+        }
+
+        private void LoadCredentials()
+        {
+            Message = "Retrieving credentials";
+            try
+            {
+                string data = File.ReadAllText(MageekCore.Data.Paths.File_RegCred);
+                var parts = data.Split(',');
+                if (parts.Length == 3)
+                {
+                    InputAddress = parts[0];
+                    InputUser = parts[1];
+                    InputPass = parts[2];
+                }
+                else
+                {
+                    Logger.Log("Invalid data", LogLevels.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+            }
         }
 
     }

@@ -15,6 +15,7 @@
         public static string Folder_SetIcons { get; } = Path.Combine(PlaziatTools.Paths.Folder_Business, "SetIcons");
         public static string Folder_Illustrations { get; } = Path.Combine(PlaziatTools.Paths.Folder_Business, "Illustrations");
         public static string Folder_AvalonLayout { get; } = Path.Combine(PlaziatTools.Paths.Folder_Business, "Layout");
+        public static string File_RegCred { get; set; } = Path.Combine(PlaziatTools.Paths.Folder_Business, "RegCreds");
 
         public static void InitServer()
         {
