@@ -194,8 +194,6 @@
                 <Style TargetType="DataGridRow">
                     <Setter Property="BorderBrush"
                             Value="Transparent" />
-                    <Setter Property="Height"
-                            Value="20" />
                     <Setter Property="Padding"
                             Value="0" />
                     <Setter Property="Margin"

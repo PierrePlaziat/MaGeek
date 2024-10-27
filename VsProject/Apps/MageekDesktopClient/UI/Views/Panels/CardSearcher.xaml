@@ -162,7 +162,8 @@
                       AutoGenerateColumns="False"
                       SelectionChanged="CardGrid_SelectionChanged"
                       PreviewMouseLeftButtonDown="UIElement_PreviewMouseLeftButtonDown"
-                      PreviewMouseMove="UIElement_PreviewMouseMove">
+                      PreviewMouseMove="UIElement_PreviewMouseMove"
+                      RowHeight="20">
 
                 <DataGrid.Columns>
 

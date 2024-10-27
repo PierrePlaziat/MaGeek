@@ -37,22 +37,17 @@ and eventually make a template out of it.
 
 ### Todo
 
-- Bug: Print panel show a wrong numbner
 - Estimate total collection
 - Advanced print card selection
-
-### good chances to be done
-
 - Advanced search
 - Tags
 - Data importation
 - Token support 
 - Usd support
 
-### less good chances to be done
+### If i ever get to this
 
 - Compared collections
-- Card hand
 - Deck Creator
 - Custom cards
 

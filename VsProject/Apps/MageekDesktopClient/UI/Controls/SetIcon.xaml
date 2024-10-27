@@ -30,7 +30,7 @@
                                       Offset="0.2" />
                         <GradientStop Color="Transparent"
                                       Offset="0.5" />
-                        <GradientStop Color="Black"
+                        <GradientStop Color="#333"
                                       Offset="0.8" />
                         <GradientStop Color="Transparent"
                                       Offset="1.0" />
