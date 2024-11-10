@@ -188,7 +188,7 @@ namespace MageekCore.Services
                                         Language = traduction.Language,
                                         Traduction = traduction.Name,
                                         NormalizedTraduction = traduction.Language != "Korean" && traduction.Language != "Arabic"
-                                            ? traduction.Name.MakeSearchableFast()
+                                            ? traduction.Name.MakeSearchable()
                                             : traduction.Name
                                     }
                                 );
@@ -202,7 +202,7 @@ namespace MageekCore.Services
                                         Language = traduction.Language,
                                         Traduction = traduction.FaceName,
                                         NormalizedTraduction = traduction.Language != "Korean" && traduction.Language != "Arabic"
-                                            ? traduction.FaceName.MakeSearchableFast()
+                                            ? traduction.FaceName.MakeSearchable()
                                             : traduction.FaceName
                                     }
                                 );
