@@ -106,43 +106,47 @@ namespace MageekCore.Services
 
         #region Cards
 
-        public async Task<List<SearchedCards>> Cards_Search(string user, string filterName, string lang, int page, int pageSize, string? filterType = null, string? filterKeyword = null, string? filterText = null, string? filterColor = null, string? filterTag = null, bool onlyGot = false, bool colorisOr = false)
+        public async Task<List<SearchedCards>> Cards_Search(
+            string user, 
+            string filterName, string lang, 
+            int page, int pageSize,
+            string? filterType = null, string? filterKeyword = null, string? filterText = null, string? filterColor = null, string? filterTag = null,
+            bool onlyGot = false, bool colorisOr = false)
         {
-            List<SearchedCards> retour = new();
-            if (filterType == null
-             && filterKeyword == null
-             && filterText == null
-             && filterColor == null
-             && filterTag == null
-             && onlyGot == false
-             && colorisOr == false
-            )
-            {
-                retour = await NormalSearch(user, filterName, lang, page, pageSize);
-            }
+            List<SearchedCards> result = [];
+            if (string.IsNullOrEmpty(user)) return result;
+
+            if (   filterType == null
+                && filterKeyword == null
+                && filterText == null
+                && filterColor == null
+                && filterTag == null
+                && onlyGot == false
+                && colorisOr == false
+            ) result = await NormalSearch(user, filterName, lang, page, pageSize);
             else
             {
-                retour = await AdvancedSearch
+                result = await AdvancedSearch
                 (
                     user,
-                    filterName, lang, page, pageSize,
+                    filterName, lang, 
+                    page, pageSize,
                     filterType, filterKeyword, filterText, filterColor, filterTag,
-                    onlyGot,
-                    colorisOr
+                    onlyGot, colorisOr
                 );
             }
-            return retour;
+            return result;
         }
 
         private async Task<List<SearchedCards>> NormalSearch(string userName, string filterName, string lang, int page, int pageSize)
         {
             Logger.Log("searching...");
-            List<SearchedCards> retour = new();
+            List<SearchedCards> retour = [];
             try
             {
-                List<Cards> found = new();
+                List<Cards> found = [];
                 string lowerFilterName = filterName.ToLower();
-                string normalizedFilterName = filterName.RemoveDiacritics().Replace('-', ' ').ToLower();
+                string normalizedFilterName = filterName.MakeSearchable();
 
                 using (MtgFetchedDbContext DB = await mtgFetched.GetContext())
                 using (MtgDbContext DB2 = await mtg.GetContext())
@@ -489,66 +493,66 @@ namespace MageekCore.Services
 
         public async Task<List<Sets>> Sets_All()
         {
-            using MtgDbContext DB = await mtg.GetContext();
-            return DB.sets.OrderByDescending(x => x.ReleaseDate).ToList();
+            List<Sets> result = new List<Sets>();
+            using MtgDbContext? DB = await mtg.GetContext();
+            if (DB == null) { Logger.Log("DB not found", LogLevels.Error); return result; }
+
+            result = [.. DB.sets.OrderByDescending(x => x.ReleaseDate)];
+
+            Logger.Log("Found " + result.Count + " sets");
+            return result;
         }
 
         public async Task<Sets> Sets_Get(string setCode)
         {
-            using MtgDbContext DB = await mtg.GetContext();
-            return await DB.sets.Where(x => x.Code == setCode).FirstOrDefaultAsync();
+            Sets result = null;
+            using MtgDbContext? DB = await mtg.GetContext();
+            if (DB == null) { Logger.Log("DB not found", LogLevels.Error); return result; }
+
+            result = await DB.sets.Where(x => x.Code == setCode).FirstOrDefaultAsync();
+
+            if (result == null) Logger.Log("Set not found", LogLevels.Warning);
+            return result;
         }
 
-        public async Task<List<SearchedCards>> Sets_Content(string userName, string setCode, string lang)
+        public async Task<List<SearchedCards>> Sets_Content(string user, string setCode, string lang)
         {
-            List<SearchedCards> retour = new();
-            List<Cards> cards = new();
-            if (!string.IsNullOrEmpty(setCode))
+            List<SearchedCards> result = [];
+            if (string.IsNullOrEmpty(user)) return result;
+            if (string.IsNullOrEmpty(setCode)) return result;
+            if (string.IsNullOrEmpty(user)) return result;
+            List<Cards> cards = [];
+
+            using MtgDbContext? DB = await mtg.GetContext();
+            if (DB == null) { Logger.Log("DB not found", LogLevels.Error); return result; }
+
+            cards = await DB.cards.Where(x => x.SetCode == setCode).ToListAsync();
+            foreach (var card in cards)
             {
-                try
-                {
-                    using MtgDbContext DB = await mtg.GetContext();
-                    {
-                        cards = await DB.cards.Where(x => x.SetCode == setCode)
-                            .ToListAsync();
-                    }
-                    // Add infos
-                    foreach (var card in cards)
-                    {
-                        string translation;
-                        var v = await Cards_GetTranslation(card.Uuid, lang);
-                        if (v != null) translation = v.Name;
-                        else translation = card.Name;
-                        int collected = await Collec_OwnedCombined(userName, card.Name);
-                        retour.Add(new SearchedCards(card.Uuid, translation, collected));
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(e);
-                }
+                string translation;
+                var v = await Cards_GetTranslation(card.Uuid, lang);
+                if (v != null) translation = v.Name;
+                else translation = card.Name;
+                int collected = await Collec_OwnedCombined(user, card.Name);
+                result.Add(new SearchedCards(card.Uuid, translation, collected));
             }
-            return retour;
+            return result;
         }
 
         public async Task<int> Sets_Completion(string user, string setCode, bool strict)
         {
-            int nb = 0;
-            try
+            int result = -1;
+            if (string.IsNullOrEmpty(user)) return result;
+            if (string.IsNullOrEmpty(setCode)) return result;
+
+            var setContent = await Sets_Content(user, setCode, "");
+            foreach (var card in setContent)
             {
-                var cardUuids = await Sets_Content(user, setCode,"");
-                using CollectionDbContext DB = await collec.GetContext(user);
-                foreach (var card in cardUuids)
-                {
-                    if (strict) nb += await Collec_OwnedVariant(user,card.CardUuid);
-                    else nb += await Collec_OwnedCombined(user, card.CardUuid);
-                }
+                if (strict) result += await Collec_OwnedVariant(user,card.CardUuid);
+                else result += await Collec_OwnedCombined(user, card.CardUuid);
             }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-            }
-            return nb;
+
+            return result;
         }
 
         #endregion
@@ -586,12 +590,13 @@ namespace MageekCore.Services
         public async Task Collec_Move(string user, string cardUuid, int quantityModification)
         {
             Logger.Log("");
-            // Guard
-            if (string.IsNullOrEmpty(cardUuid)) return;// new Tuple<int, int>(0, 0);
-            // Get or create collected card
-            using CollectionDbContext DB = await collec.GetContext(user);
-            CollectedCard collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-            if (collectedCard == null)
+            if (string.IsNullOrEmpty(user)) return;
+            if (string.IsNullOrEmpty(cardUuid)) return;
+            if (quantityModification==0) return;
+            using CollectionDbContext? DB = await collec.GetContext(user);
+            if (DB==null) return;
+            CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+            if (collectedCard==null)
             {
                 collectedCard = new CollectedCard() { CardUuid = cardUuid, Collected = 0 };
                 DB.CollectedCard.Add(collectedCard);
@@ -601,29 +606,20 @@ namespace MageekCore.Services
             {
                 DB.Entry(collectedCard).State = EntityState.Modified;
             }
-            // Make the move
             int quantityBeforeMove = collectedCard.Collected;
             collectedCard.Collected += quantityModification;
             if (collectedCard.Collected < 0) collectedCard.Collected = 0;
             int quantityAfterMove = collectedCard.Collected;
             await DB.SaveChangesAsync();
-            //return new Tuple<int, int>(quantityBeforeMove, quantityAfterMove);
         }
 
         public async Task<int> Collec_OwnedVariant(string user, string cardUuid)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(cardUuid)) return 0;
-                using CollectionDbContext DB = await collec.GetContext(user);
-                CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
-                return collectedCard != null ? collectedCard.Collected : 0;
-            }
-            catch (Exception e)
-            {
-                Logger.Log(e);
-                return -1;
-            }
+            if (string.IsNullOrEmpty(cardUuid)) return 0;
+            using CollectionDbContext? DB = await collec.GetContext(user);
+            if (DB == null) return -1;
+            CollectedCard? collectedCard = await DB.CollectedCard.Where(x => x.CardUuid == cardUuid).FirstOrDefaultAsync();
+            return collectedCard != null ? collectedCard.Collected : 0;
         }
 
         public async Task<int> Collec_OwnedCombined(string user, string archetypeId)
@@ -749,10 +745,13 @@ namespace MageekCore.Services
             }
         }
 
-        public async Task Decks_Create(string user, string title, string description, int cardCount, string colors, IEnumerable<DeckCard> deckLines = null)
-        {
+        public async Task Decks_Create(
+            string user, string title, string description,
+            int cardCount, string colors,
+            IEnumerable<DeckCard> deckLines = null
+        ){
             Deck deck = await CreateDeck_Header(user, title, description, cardCount, colors);
-            await UpdateDeckLines(user, deck.DeckId, deckLines);
+            if (deckLines != null) await UpdateDeckLines(user, deck.DeckId, deckLines);
         }
 
         private async Task<Deck> CreateDeck_Header(string user, string title, string description, int cardCount, string colors)

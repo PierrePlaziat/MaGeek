@@ -52,7 +52,7 @@
                     <Image Source="/Resources/Images/IconDeck.jpg" />
                 </MenuItem.Icon>
             </MenuItem>
-            <!--<Separator />
+            <Separator />
             <MenuItem Header="Txt Input"
                       Foreground="Black"
                       Command="{Binding OpenToolCommand}"
@@ -62,7 +62,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem Header="Collec Estimation"
+            <!--<MenuItem Header="Collec Estimation"
                       Foreground="Black"
                       Command="{Binding OpenToolCommand}"
                       CommandParameter="CollecEstimation">

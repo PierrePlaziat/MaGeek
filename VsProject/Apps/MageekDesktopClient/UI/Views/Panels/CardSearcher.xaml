@@ -158,7 +158,6 @@
                       CanUserDeleteRows="False"
                       IsReadOnly="True"
                       RowHeaderWidth="0"
-                      RowHeight="20"
                       AutoGenerateColumns="False"
                       SelectionChanged="CardGrid_SelectionChanged"
                       PreviewMouseLeftButtonDown="UIElement_PreviewMouseLeftButtonDown"

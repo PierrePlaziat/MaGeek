@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Text;
-using System.Xml.Linq;
 
 namespace PlaziatTools
 {
@@ -13,21 +12,24 @@ namespace PlaziatTools
         /// </summary>
         /// <param name="str">Input string</param>
         /// <returns>The resulting string</returns>
-        public static string RemoveDiacritics(this string str)
+        public static string MakeSearchable(this string str)
         {
             ReadOnlySpan<char> normalizedString = str.Normalize(NormalizationForm.FormD);
             int i = 0;
-            Span<char> span = str.Length < 1000
-                ? stackalloc char[str.Length]
-                : new char[str.Length];
-
+            Span<char> span = str.Length < 1000 ? stackalloc char[str.Length] : new char[str.Length];
             foreach (char c in normalizedString)
             {
-                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                    span[i++] = c;
+                UnicodeCategory category = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (category == UnicodeCategory.LowercaseLetter || category == UnicodeCategory.UppercaseLetter)
+                {
+                    span[i++] = char.ToLower(c);
+                }
+                else if (category != UnicodeCategory.NonSpacingMark)
+                {
+                    span[i++] = ' ';
+                }
             }
-
-            return new string(span).Normalize(NormalizationForm.FormC);
+            return new string(span.Slice(0, i)).Normalize(NormalizationForm.FormC);
         }
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace PlaziatTools
         /// <param name="n">interval</param>
         /// <returns>An IEnumerable containing resulting strings</returns>
         /// <exception cref="ArgumentException">Wrong parameters</exception>
-        public static IEnumerable<string> Split(this string str, int n)
+        public static IEnumerable<string> RegularSplit(this string str, int n)
         {
             if (string.IsNullOrEmpty(str) || n < 1) { throw new ArgumentException(); }
             return Enumerable
