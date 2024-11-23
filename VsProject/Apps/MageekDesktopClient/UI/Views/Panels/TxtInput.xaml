@@ -73,15 +73,16 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Command="{Binding CollectCommand}"
+            <!--<Button Command="{Binding CollectCommand}"
                     Grid.Column="0"
-                    Content="Add as collected" />
+                    Content="Add as collected" />-->
             <Button Command="{Binding OpenCommand}"
-                    Grid.Column="1"
-                    Content="Open as deck" />
-            <Button Command="{Binding CollectAndOpenCommand}"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Content="Load cards" />
+            <!--<Button Command="{Binding CollectAndOpenCommand}"
                     Grid.Column="2"
-                    Content="Do both" />
+                    Content="Do both" />-->
         </Grid>
 
     </Grid>

@@ -73,6 +73,7 @@ namespace MageekServer.Services
                 Detail = data.Detail,
                 Status = data.Status,
             };
+            reply.Cards = new();
             if (data.Cards.IsNullOrEmpty()) reply.Cards.IsNull = true;
             else
             {
@@ -82,9 +83,9 @@ namespace MageekServer.Services
                     CardUuid = item.CardUuid,
                     DeckId = item.DeckId,
                     Quantity = item.Quantity,
-                    RelationType = item.RelationType
+                    RelationType = item.RelationType,
                 });
-                reply.Cards.IsNull = false;
+                
             }
             return reply;
         }

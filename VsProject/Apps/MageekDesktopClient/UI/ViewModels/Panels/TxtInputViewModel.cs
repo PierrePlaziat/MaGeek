@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
-using MageekCore.Data.Collection.Entities;
 using PlaziatWpf.Services;
-using MageekDesktopClient.MageekTools.DeckTools;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MageekCore.Data;
 using System;
@@ -31,17 +28,22 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
             this.session = session;
         }
 
-        [ObservableProperty] string document = string.Empty;
+        [ObservableProperty] string document;
         [ObservableProperty] string checkResult = string.Empty;
-        [ObservableProperty] string checkDetail= string.Empty;
 
         [RelayCommand]
         private async Task<CardList> Check()
         {
             string cardList = FlowDocumentStringToSimpleString(Document);
-            CardList result = await mageek.CardLists_Parse(Document);
-            CheckResult = result.Status;
-            CheckDetail = result.Detail;
+            CardList result = await mageek.CardLists_Parse(cardList);
+            if (!string.IsNullOrEmpty(result.Detail))
+            {
+                dialog.InformUser(result.Detail);
+                CheckResult = "errors";
+            }
+            else
+                CheckResult = "OK";
+
             return result;
         }
 
@@ -61,61 +63,14 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
         }
         
         [RelayCommand]
-        private async Task Collect()
-        {
-            CardList result = await Check();
-            bool ok = UserComfirmation(result);
-            if (ok)
-            {
-                DoAddToCollec(result.Cards);
-            }
-        }
-
-        [RelayCommand]
         private async Task Open()
         {
             CardList result = await Check();
-            bool ok = UserComfirmation(result);
-            if (ok)
+            if (CheckResult == "OK")
             {
-                DoOpenTheDeck(result.Cards);
+                DocumentArguments doc = new DocumentArguments(import: result.Cards);
+                win.OpenDocument(doc);
             }
-        }
-
-        [RelayCommand]
-        private async Task CollectAndOpen()
-        {
-            CardList result = await Check();
-            bool ok = UserComfirmation(result);
-            if (ok)
-            {
-                DoAddToCollec(result.Cards);
-                DoOpenTheDeck(result.Cards);
-            }
-        }
-
-        private bool UserComfirmation(CardList result)
-        {
-            if (result.Status == "KO")
-            {
-                dialog.InformUser("Fatal error : " + result.Detail);
-                return false;
-            }
-            else if (result.Status == "errors") return dialog.AskUser("Some errors, import anyway?" + Environment.NewLine + result.Detail);
-            else if (result.Status == "OK") return dialog.AskUser("Check OK, perform operation?" + result.Detail);
-            else return dialog.AskUser("??? import anyway ???" + Environment.NewLine + result.Status+":"+ Environment.NewLine + result.Detail);
-        }
-
-        private async void DoAddToCollec(List<DeckCard> cards)
-        {
-            foreach (var v in cards) await mageek.Collec_Move(session.UserName, v.CardUuid, v.Quantity);
-        }
-
-        private void DoOpenTheDeck(List<DeckCard> cards)
-        {
-            ManipulableDeck deck = ServiceHelper.GetService<ManipulableDeck>();
-            DocumentArguments doc = new DocumentArguments(import: cards);
-            win.OpenDocument(doc);
         }
 
     }

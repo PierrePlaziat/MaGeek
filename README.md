@@ -2,7 +2,7 @@
 
 # MaGeek
 
-.Net Magic The Gathering Library Manager and deck builder
+.Net Magic The Gathering library Manager and deck builder
 
 ## Description
 
@@ -28,12 +28,13 @@ and eventually make a template out of it.
 
 ### Disponible
 
--	Exaustive MTG informations
--	Collection gestion
--	Deck building
--	Printing
--	Estimations
--	User system (Currently no validation, first connexion attempt with a user and path will create the account)
+- Exaustive MTG informations
+- Collection gestion
+- Deck building
+- Printing
+- Estimations
+- User system (Currently no validation, first connexion attempt with a user and path will create the account)
+- txt import
 
 ### Todo
 
@@ -41,7 +42,6 @@ and eventually make a template out of it.
 - Advanced print card selection
 - Advanced search
 - Tags
-- Data importation
 - Token support 
 - Usd support
 

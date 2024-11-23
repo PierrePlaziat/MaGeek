@@ -314,7 +314,7 @@ namespace MageekCore.Services
             Logger.Log("");
             using MtgFetchedDbContext DB = await mtgFetched.GetContext();
             return await DB.CardArchetypes
-                .Where(x => x.ArchetypeId == archetypeId)
+                .Where(x => x.ArchetypeId.ToLower() == archetypeId.ToLower())
                 .Select(p => p.CardUuid)
                 .ToListAsync();
         }
@@ -1118,7 +1118,7 @@ namespace MageekCore.Services
                 var uuid = (await Cards_UuidsForGivenCardName(name)).FirstOrDefault();
                 if (uuid != null)
                 {
-                    return new Tuple<int, string>(quantity, name);
+                    return new Tuple<int, string>(quantity, uuid);
                 }
                 else
                 {
