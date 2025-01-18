@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\Core\MageekClient\MageekClient.csproj" />
     <ProjectReference Include="..\..\Core\MageekCore\MageekCore.csproj" />
     <ProjectReference Include="..\..\Core\PlaziatWpf\PlaziatWpf.csproj" />
+    <ProjectReference Include="..\..\MageekCardDetection\MageekCardDetection.csproj" />
     <SplashScreen Include="Resources\Images\splash.png" />
   </ItemGroup>
 

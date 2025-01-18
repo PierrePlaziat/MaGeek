@@ -1,0 +1,9 @@
+﻿<UserControl x:Class="MageekDesktopClient.UI.Controls.MjpegViewerControl"
+             xmlns:local="clr-namespace:MageekDesktopClient.UI.Controls"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="MjpegViewer">
+    <Grid>
+        <Image x:Name="ImageControlInstance" Stretch="Uniform"/>
+    </Grid>
+</UserControl>

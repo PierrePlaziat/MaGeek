@@ -38,6 +38,7 @@ namespace MageekDesktopClient.Framework
             services.AddSingleton<SetList>();
             services.AddSingleton<CollecEstimation>();
             services.AddSingleton<TxtInput>();
+            services.AddSingleton<Detector>();
             // Documents
             services.AddTransient<IDocument, Document>();
             services.AddTransient<ManipulableDeck>();
@@ -60,6 +61,7 @@ namespace MageekDesktopClient.Framework
             services.AddSingleton<SetListViewModel>();
             services.AddSingleton<CollecEstimationViewModel>();
             services.AddSingleton<TxtInputViewModel>();
+            services.AddSingleton<DetectorViewModel>();
             // Documents
             services.AddTransient<DocumentViewModel>();
             return services;

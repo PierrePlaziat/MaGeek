@@ -61,6 +61,14 @@
                     <Image Source="/Resources/Images/Icon_Backup.jpg" />
                 </MenuItem.Icon>
             </MenuItem>
+            <MenuItem Header="Card Detector"
+                      Foreground="Black"
+                      Command="{Binding OpenToolCommand}"
+                      CommandParameter="Detector">
+                <MenuItem.Icon>
+                    <Image Source="/Resources/Images/IconCard.jpg" />
+                </MenuItem.Icon>
+            </MenuItem>
             <Separator />
             <!--<MenuItem Header="Collec Estimation"
                       Foreground="Black"

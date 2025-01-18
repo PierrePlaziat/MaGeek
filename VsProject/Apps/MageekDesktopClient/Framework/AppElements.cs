@@ -26,6 +26,7 @@ namespace MageekDesktopClient.Framework
         DeckList,
         CollecEstimation,
         TxtInput,
+        Detector,
     }
 
     public static class AppElements
@@ -53,6 +54,7 @@ namespace MageekDesktopClient.Framework
                 new AppPanels(AppToolsEnum.DeckList.ToString(), ServiceHelper.GetService<DeckListViewModel>(), ServiceHelper.GetService<DeckList>()),
                 new AppPanels(AppToolsEnum.CollecEstimation.ToString(), ServiceHelper.GetService<CollecEstimationViewModel>(), ServiceHelper.GetService<CollecEstimation>()),
                 new AppPanels(AppToolsEnum.TxtInput.ToString(), ServiceHelper.GetService<TxtInputViewModel>(), ServiceHelper.GetService<TxtInput>()),
+                new AppPanels(AppToolsEnum.Detector.ToString(), ServiceHelper.GetService<DetectorViewModel>(), ServiceHelper.GetService<Detector>()),
             };
             return panels;
         }

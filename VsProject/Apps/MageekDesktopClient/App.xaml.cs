@@ -19,12 +19,11 @@ namespace MageekDesktopClient
 
         public App()
         {
-            // Initialize services
-            ServiceCollection services = new ServiceCollection();
-            services.AddPlaziatFramework();
-            services.AddBusiness();
-            services.AddViewModels();
-            services.AddViews();
+            ServiceCollection services = new ServiceCollection()
+                .AddPlaziatFramework()
+                .AddBusiness()
+                .AddViewModels()
+                .AddViews();
             ServiceHelper.Initialize(services.BuildServiceProvider());
         }
 
