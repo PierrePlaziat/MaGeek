@@ -15,10 +15,10 @@
 
             <DockPanel Margin="5">
                 <Label>Video feed url :</Label>
+                <Button Command="{Binding StartVideoCommand}" Width="100">Start</Button>
+                <Button Command="{Binding StopVideoCommand}" Width="100">Stop</Button>
                 <TextBox Text="{Binding StreamUrl}"
                            Grid.Row="0"/>
-                <Button Command="{Binding StartVideoCommand}">Start</Button>
-                <Button Command="{Binding StopVideoCommand}">Stop</Button>
             </DockPanel>
 
             <Grid Width="1280" Background="Black">
@@ -32,6 +32,7 @@
                 </Grid.RowDefinitions>
 
                 <mgui:MjpegViewerControl Width="640" Height="480" x:Name="VideoViewInstance" StreamUrl="{Binding StreamUrl}" Grid.RowSpan="2"/>
+                <Canvas x:Name="MyCanvas" Background="Transparent" Grid.RowSpan="2"/>
                 
                 <Image Source="{Binding EdgesImage}"
                                Grid.Row="0"

@@ -36,9 +36,6 @@ namespace MageekDesktopClient.UI.Controls
         public MjpegViewerControl()
         {
             InitializeComponent();
-            DefaultStyleKeyProperty.OverrideMetadata(
-                typeof(MjpegViewerControl),
-                new FrameworkPropertyMetadata(typeof(MjpegViewerControl)));
         }
 
         private static void OnStreamUrlChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -132,8 +129,9 @@ namespace MageekDesktopClient.UI.Controls
             return -1;
         }
 
-        public BitmapImage GetLastFrame()
+        public BitmapImage? GetLastFrame()
         {
+            if (lastFrame == null) return null;
             return lastFrame.Clone();
         }
 

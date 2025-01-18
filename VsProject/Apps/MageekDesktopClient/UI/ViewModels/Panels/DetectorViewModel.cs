@@ -15,6 +15,10 @@ using Emgu.CV.Util;
 using System.Drawing;
 using Emgu.CV.Structure;
 using PlaziatTools;
+using ImageMagick.Drawing;
+using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -24,6 +28,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         private SessionBag session;
 
         private MjpegViewerControl videoViewInstance;
+        private Canvas canvasInstance;
         bool looping = false;
 
         public DetectorViewModel(IMageekService mageek, SessionBag session)
@@ -38,9 +43,10 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         [ObservableProperty] BitmapImage foundCard;
 
 
-        internal void Init(MjpegViewerControl videoViewInstance)
+        internal void Init(MjpegViewerControl videoViewInstance, Canvas canvasInstance)
         {
             this.videoViewInstance = videoViewInstance;
+            this.canvasInstance = canvasInstance;
         }
 
         [RelayCommand]
@@ -60,38 +66,66 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         private async Task Loop()
         {
             await Task.Delay(1000);
+            int followingEmptyFrames = 0;
+            BitmapImage? frame;
+            Mat edges;
+            PointF[] rectangle;
+            Mat cardImage;
             looping = true;
             while (looping)
             {
                 await Task.Delay(333);
-                BitmapImage frame = videoViewInstance.GetLastFrame();
-                Mat edges;
-                VectorOfPoint contours;
-                PointF[] rectangle;
-                Mat cardImage;
-                try
+                frame = videoViewInstance.GetLastFrame();
+                if (frame == null)
                 {
-                    DetectorTool.ExtractCardImageFromVideoFrame(
-                        BitmapImageToMat(frame), 
-                        out edges, 
-                        out contours,
-                        out rectangle,
-                        out cardImage
-                    );
-                    EdgesImage = MatToBitmapImage(edges);
-                    FoundCard = MatToBitmapImage(cardImage);
-                    if (cardImage != null)
-                    {
-                        DetectorTool.ExtractCardNameFromCardImage(cardImage);
-                    }
+                    followingEmptyFrames++;
+                    if (followingEmptyFrames == 5) looping = false;
                 }
-                catch (Exception ex)
+                else
                 {
-                    Logger.Log(ex);
+                    followingEmptyFrames = 0;
+                    try
+                    {
+                        DetectorTool.ExtractCardImageFromVideoFrame(
+                            BitmapImageToMat(frame),
+                            out edges,
+                            out rectangle,
+                            out cardImage
+                        );
+                        EdgesImage = MatToBitmapImage(edges);
+                        canvasInstance.Children.Clear();
+                        if (rectangle!=null) DrawRectangle(rectangle);
+                        FoundCard = MatToBitmapImage(cardImage);
+                        if (cardImage != null)
+                        {
+                            DetectorTool.ExtractCardNameFromCardImage(cardImage);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(ex);
+                    }
                 }
             }
             EdgesImage = null;
             FoundCard = null;
+        }
+
+        private void DrawRectangle(PointF[] rectangle)
+        {
+            System.Windows.Point[] points = rectangle.Select(p => new System.Windows.Point(p.X, p.Y)).ToArray();// Create a Polygon
+            Polygon polygon = new Polygon()
+            {
+                Stroke = System.Windows.Media.Brushes.Red, 
+                Fill = System.Windows.Media.Brushes.Transparent,
+                StrokeThickness = 1,
+            };
+            for(int i=0;i<points.Count();i++)
+            {
+                points[i].Y += 10;
+            }
+            polygon.Points = new System.Windows.Media.PointCollection(points);
+            canvasInstance.Children.Add(polygon);
         }
 
         public static Mat BitmapImageToMat(BitmapImage bitmapImage)

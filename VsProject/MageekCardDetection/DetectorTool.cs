@@ -15,9 +15,9 @@ namespace MageekCardDetection
 
         static PointF[] finalRectangleCoordinates = {
             new Point(0, 0),
-            new Point(0, 890), 
+            new Point(635, 0),
             new Point(635, 890), 
-            new Point(635, 0)
+            new Point(0, 890), 
         };
 
         private static Mat Crop(Mat image, int top, int bot, int left, int right)
@@ -33,20 +33,19 @@ namespace MageekCardDetection
 
         #region Extract Card Image From Video Frame
 
-        public static void ExtractCardImageFromVideoFrame(Mat frame, out Mat edges, out VectorOfPoint contours, out PointF[] rectangle, out Mat cardImage)
+        public static void ExtractCardImageFromVideoFrame(Mat frame, out Mat edges, out PointF[] rectangle, out Mat cardImage)
         {
             // EDGES
-            frame = Crop(frame, 15,0,0,0); // Remove DroidCam overlay
+            frame = Crop(frame, 12,0,0,0); // Remove DroidCam overlay
             edges = ExtractEdges(frame);
             if (edges == null)
             {
                 rectangle = null;
                 cardImage = null;
-                contours = null;
                 return;
             }
             // CONTOURS
-            contours = ExtractContours(edges);
+            VectorOfPoint contours = ExtractContours(edges);
             if (contours == null)
             {
                 rectangle = null;
@@ -86,22 +85,27 @@ namespace MageekCardDetection
         {
             try
             {
+                VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+                CvInvoke.FindContours(edges, contours, null, RetrType.External, ChainApproxMethod.ChainApproxSimple);
+
+                double maxArea = 0;
                 VectorOfPoint largestContour = null;
-                using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+
+                for (int i = 0; i < contours.Size; i++)
                 {
-                    CvInvoke.FindContours(edges, contours, null, RetrType.External, ChainApproxMethod.ChainApproxSimple);
-                    double maxArea = 0;
-                    double area = 0;
-                    for (int i = 0; i < contours.Size; i++)
+                    double area = CvInvoke.ContourArea(contours[i]);
+                    if (area > maxArea)
                     {
-                        area = CvInvoke.ContourArea(contours[i]);
-                        if (area > maxArea)
-                        {
-                            maxArea = area;
-                            largestContour = contours[i];
-                        }
+                        maxArea = area;
+
+                        // Clone the largest contour to avoid referencing a disposed object
+                        largestContour = new VectorOfPoint(contours[i].ToArray());
                     }
                 }
+
+                // Dispose the contours object after extracting the largest contour
+                contours.Dispose();
+
                 return largestContour;
             }
             catch (Exception e)
@@ -115,13 +119,26 @@ namespace MageekCardDetection
         {
             try
             {
-                //double peri = CvInvoke.ArcLength(largestContour, true);
-                CvInvoke.ApproxPolyDP(largestContour, largestContour, 3, true);
-                // Transformer la perspective pour "rectifier" la carte
-                Point[] points = largestContour.ToArray();
+                // Ensure the input contour is valid
+                if (largestContour == null || largestContour.Size < 4)
+                    throw new ArgumentException("Invalid contour. It must have at least 4 points.");
+
+                // Approximate the contour to simplify it (to a polygon)
+                VectorOfPoint approxContour = new VectorOfPoint();
+                double peri = CvInvoke.ArcLength(largestContour, true);
+                CvInvoke.ApproxPolyDP(largestContour, approxContour, 0.02 * peri, true);
+
+                // Ensure the approximated contour has exactly 4 points
+                if (approxContour.Size != 4)
+                    throw new InvalidOperationException("The contour approximation did not result in 4 points.");
+
+                // Convert points to PointF array for processing
+                Point[] points = approxContour.ToArray();
                 PointF[] pointsF = points.Select(p => new PointF(p.X, p.Y)).ToArray();
-                // Trier les points pour déterminer le rectangle
+
+                // Sort the points in a consistent order (e.g., top-left, top-right, bottom-right, bottom-left)
                 PointF[] sortedPoints = SortPoints(pointsF);
+
                 return sortedPoints;
             }
             catch (Exception e)
@@ -133,14 +150,30 @@ namespace MageekCardDetection
 
         private static PointF[] SortPoints(PointF[] points)
         {
-            PointF[] sortedPoints = new PointF[4];
-            Array.Sort(points, (a, b) => (a.X + a.Y).CompareTo(b.X + b.Y));
-            sortedPoints[0] = points[0]; // Top-left
-            sortedPoints[3] = points[3]; // Bottom-right
-            Array.Sort(points, (a, b) => (a.X - a.Y).CompareTo(b.X - b.Y));
-            sortedPoints[1] = points[0]; // Top-right
-            sortedPoints[2] = points[3]; // Bottom-left
-            return sortedPoints;
+            if (points.Length != 4)
+                throw new ArgumentException("SortPoints requires exactly 4 points.");
+
+            // Calculate the center point
+            PointF center = new PointF(
+                points.Average(p => p.X),
+                points.Average(p => p.Y)
+            );
+
+            // Sort based on relative positions to the center
+            var sorted = points.OrderBy(p =>
+            {
+                double angle = Math.Atan2(p.Y - center.Y, p.X - center.X);
+                return (angle + 2 * Math.PI) % (2 * Math.PI); // Normalize to 0-2*PI
+            }).ToArray();
+
+            // Return in consistent order (top-left, top-right, bottom-right, bottom-left)
+            return new PointF[]
+            {
+        sorted[2], // Top-left
+        sorted[3],  // Top-right
+        sorted[0], // Bottom-right
+        sorted[1], // Bottom-left
+            };
         }
 
         private static Mat GetWarpedImage(Mat sourceImage, PointF[] sortedPoints)

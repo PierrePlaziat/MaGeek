@@ -11,7 +11,7 @@ namespace MageekDesktopClient.UI.Views.AppPanels
         {
             DataContext = vm;
             InitializeComponent();
-            vm.Init(VideoViewInstance);
+            vm.Init(VideoViewInstance, MyCanvas);
         }
 
     }
