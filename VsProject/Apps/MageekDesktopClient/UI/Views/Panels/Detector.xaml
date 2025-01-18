@@ -6,7 +6,6 @@
                       xmlns:ctrl="clr-namespace:PlaziatWpf.Controls;assembly=PlaziatWpf"
                       xmlns:mvvm="clr-namespace:PlaziatWpf.Mvvm;assembly=PlaziatWpf"
                       xmlns:mgui="clr-namespace:MageekDesktopClient.UI.Controls"
-                      xmlns:lvs="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
                       mc:Ignorable="d"
                       x:Name="DetectorName">
 
