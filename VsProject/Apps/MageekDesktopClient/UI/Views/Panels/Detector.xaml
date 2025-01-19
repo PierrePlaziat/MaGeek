@@ -32,7 +32,7 @@
                 </Grid.RowDefinitions>
 
                 <mgui:MjpegViewerControl Width="640" Height="480" x:Name="VideoViewInstance" StreamUrl="{Binding StreamUrl}" Grid.RowSpan="2"/>
-                <Canvas x:Name="MyCanvas" Background="Transparent" Grid.RowSpan="2"/>
+                <Canvas Width="640" Height="480" x:Name="MyCanvas" Background="Transparent" Grid.RowSpan="2"/>
                 
                 <Image Source="{Binding EdgesImage}"
                                Grid.Row="0"
@@ -44,9 +44,14 @@
                                Grid.Column="1"
                                Width="320" Height="240" />
             </Grid>
-
-            <Label Content="{Binding Result}"></Label>
-
+            <DockPanel Height="25">
+                <Image Source="{Binding CardNameImage}" Height="25"/>
+                <Label Content="{Binding ResultName}"></Label>
+            </DockPanel>
+            <DockPanel >
+                <Image Source="{Binding CardSetImage}" Height="40"/>
+                <Label Content="{Binding ResultSet}"></Label>
+            </DockPanel>
             <!--<ListView ItemsSource="{Binding foundCards}"></ListView>-->
 
         </StackPanel>

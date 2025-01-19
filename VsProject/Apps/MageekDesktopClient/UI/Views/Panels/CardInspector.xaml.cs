@@ -158,7 +158,6 @@ namespace MageekDesktopClient.UI.Views.AppPanels
 
         private void VariantListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
             ListView sendedBy = (sender as ListView);
             var v = sendedBy.SelectedItem as CardVariant;
             vm.Reload(v.Card.Uuid).ConfigureAwait(false);

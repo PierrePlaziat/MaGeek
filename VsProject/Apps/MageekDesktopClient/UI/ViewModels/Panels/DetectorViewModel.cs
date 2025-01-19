@@ -11,14 +11,16 @@ using Emgu.CV.CvEnum;
 using Emgu.CV;
 using System.IO;
 using System;
-using Emgu.CV.Util;
 using System.Drawing;
-using Emgu.CV.Structure;
 using PlaziatTools;
-using ImageMagick.Drawing;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using ScryfallApi.Client.Models;
+using System.Collections.Generic;
+using CommunityToolkit.Mvvm.Messaging;
+using MageekDesktopClient.Framework;
+using MageekCore.Data;
 
 namespace MageekDesktopClient.UI.ViewModels.AppPanels
 {
@@ -38,9 +40,12 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
         }
 
         [ObservableProperty] string streamUrl = "http://192.168.1.13:4747/video?res=480&fps=15";
-        [ObservableProperty] string result;
+        [ObservableProperty] string resultName;
+        [ObservableProperty] string resultSet;
         [ObservableProperty] BitmapImage edgesImage;
         [ObservableProperty] BitmapImage foundCard;
+        [ObservableProperty] BitmapImage cardNameImage;
+        [ObservableProperty] BitmapImage cardSetImage;
 
 
         internal void Init(MjpegViewerControl videoViewInstance, Canvas canvasInstance)
@@ -74,7 +79,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             looping = true;
             while (looping)
             {
-                await Task.Delay(333);
+                await Task.Delay(1000);
                 frame = videoViewInstance.GetLastFrame();
                 if (frame == null)
                 {
@@ -86,8 +91,10 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
                     followingEmptyFrames = 0;
                     try
                     {
+                        var matFrame = BitmapImageToMat(frame);
+                        matFrame = DetectorTool.Crop(matFrame, 12, 0, 0, 0); // Remove DroidCam overlay
                         DetectorTool.ExtractCardImageFromVideoFrame(
-                            BitmapImageToMat(frame),
+                            matFrame,
                             out edges,
                             out rectangle,
                             out cardImage
@@ -95,11 +102,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
                         EdgesImage = MatToBitmapImage(edges);
                         canvasInstance.Children.Clear();
                         if (rectangle!=null) DrawRectangle(rectangle);
-                        FoundCard = MatToBitmapImage(cardImage);
-                        if (cardImage != null)
-                        {
-                            DetectorTool.ExtractCardNameFromCardImage(cardImage);
-                        }
+                        if (cardImage != null) await ProcessImage(cardImage);
                     }
                     catch (Exception ex)
                     {
@@ -111,6 +114,21 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             FoundCard = null;
         }
 
+        private async Task ProcessImage(Mat cardImage)
+        {
+            Mat cardname;
+            Mat cardset;
+            FoundCard = MatToBitmapImage(cardImage);
+            cardname = DetectorTool.Crop(cardImage, 35, 800, 40, 150);
+            CardNameImage = MatToBitmapImage(cardname);
+            ResultName = DetectorTool.ExtractCardNameFromImage(cardname);
+            //cardset = DetectorTool.Crop(cardImage, 500, 342, 552, 35);
+            //CardSetImage = MatToBitmapImage(cardset);
+            //ResultSet = DetectorTool.ExtractSetFromImage(cardset);
+            List<SearchedCards> uuids = await mageek.Cards_Search(session.UserName,ResultName.Trim(), "French", 0, 1);
+            WeakReferenceMessenger.Default.Send(new CardSelectedMessage(uuids[0].CardUuid));
+        }
+
         private void DrawRectangle(PointF[] rectangle)
         {
             System.Windows.Point[] points = rectangle.Select(p => new System.Windows.Point(p.X, p.Y)).ToArray();// Create a Polygon
@@ -120,10 +138,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
                 Fill = System.Windows.Media.Brushes.Transparent,
                 StrokeThickness = 1,
             };
-            for(int i=0;i<points.Count();i++)
-            {
-                points[i].Y += 10;
-            }
+            for(int i=0;i<points.Count();i++) points[i].Y += 10; // Compense crop
             polygon.Points = new System.Windows.Media.PointCollection(points);
             canvasInstance.Children.Add(polygon);
         }

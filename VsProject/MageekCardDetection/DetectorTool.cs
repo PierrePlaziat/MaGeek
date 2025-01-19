@@ -20,7 +20,7 @@ namespace MageekCardDetection
             new Point(0, 890), 
         };
 
-        private static Mat Crop(Mat image, int top, int bot, int left, int right)
+        public static Mat Crop(Mat image, int top, int bot, int left, int right)
         {
             Rectangle cropRect = new Rectangle(
                 left, top,
@@ -36,7 +36,6 @@ namespace MageekCardDetection
         public static void ExtractCardImageFromVideoFrame(Mat frame, out Mat edges, out PointF[] rectangle, out Mat cardImage)
         {
             // EDGES
-            frame = Crop(frame, 12,0,0,0); // Remove DroidCam overlay
             edges = ExtractEdges(frame);
             if (edges == null)
             {
@@ -119,24 +118,16 @@ namespace MageekCardDetection
         {
             try
             {
-                // Ensure the input contour is valid
-                if (largestContour == null || largestContour.Size < 4)
-                    throw new ArgumentException("Invalid contour. It must have at least 4 points.");
+                if (largestContour == null || largestContour.Size < 4) throw new ArgumentException("Invalid contour. It must have at least 4 points.");
 
-                // Approximate the contour to simplify it (to a polygon)
                 VectorOfPoint approxContour = new VectorOfPoint();
                 double peri = CvInvoke.ArcLength(largestContour, true);
                 CvInvoke.ApproxPolyDP(largestContour, approxContour, 0.02 * peri, true);
 
-                // Ensure the approximated contour has exactly 4 points
-                if (approxContour.Size != 4)
-                    throw new InvalidOperationException("The contour approximation did not result in 4 points.");
+                if (approxContour.Size != 4) throw new InvalidOperationException("The contour approximation did not result in 4 points.");
 
-                // Convert points to PointF array for processing
                 Point[] points = approxContour.ToArray();
                 PointF[] pointsF = points.Select(p => new PointF(p.X, p.Y)).ToArray();
-
-                // Sort the points in a consistent order (e.g., top-left, top-right, bottom-right, bottom-left)
                 PointF[] sortedPoints = SortPoints(pointsF);
 
                 return sortedPoints;
@@ -150,29 +141,24 @@ namespace MageekCardDetection
 
         private static PointF[] SortPoints(PointF[] points)
         {
-            if (points.Length != 4)
-                throw new ArgumentException("SortPoints requires exactly 4 points.");
+            if (points.Length != 4) throw new ArgumentException("SortPoints requires exactly 4 points.");
 
-            // Calculate the center point
             PointF center = new PointF(
                 points.Average(p => p.X),
                 points.Average(p => p.Y)
             );
-
-            // Sort based on relative positions to the center
             var sorted = points.OrderBy(p =>
             {
                 double angle = Math.Atan2(p.Y - center.Y, p.X - center.X);
                 return (angle + 2 * Math.PI) % (2 * Math.PI); // Normalize to 0-2*PI
             }).ToArray();
 
-            // Return in consistent order (top-left, top-right, bottom-right, bottom-left)
             return new PointF[]
             {
-        sorted[2], // Top-left
-        sorted[3],  // Top-right
-        sorted[0], // Bottom-right
-        sorted[1], // Bottom-left
+                sorted[2], // Top-left
+                sorted[3], // Top-right
+                sorted[0], // Bottom-right
+                sorted[1], // Bottom-left
             };
         }
 
@@ -196,9 +182,8 @@ namespace MageekCardDetection
 
         #region Extract Card Ref From Card Image
 
-        public static string ExtractCardNameFromCardImage(Mat cardImage)
+        public static string ExtractCardNameFromImage(Mat cardImage)
         {
-            //TODO crop
             string extractedText;
             using (var engine = new TesseractEngine(@"C:\Git\MaGeek\VsProject\MageekCardDetection\", "eng", EngineMode.Default))
             {
@@ -214,22 +199,21 @@ namespace MageekCardDetection
             }
         }
         
-        public static string ExtractSetFromCardImage(string sourceImagePath, string svgFolderPath)
+        public static string ExtractSetFromImage(Mat image)
         {        
-            Mat sourceImage = CvInvoke.Imread(sourceImagePath, ImreadModes.Grayscale);
-            sourceImage = PreprocessImage(sourceImage);
+            image = PreprocessImage(image);
             string bestMatch = null;
             double highestScore = double.MinValue;
-            foreach (string svgFile in Directory.GetFiles(svgFolderPath, "*.jpg"))
+            foreach (string svgFile in Directory.GetFiles(MageekCore.Data.Paths.Folder_SetIcons, "*.jpg"))
             {
                 //Mat svgImage = RasterizeSvgToMat(svgFile);
                 Mat svgImage = CvInvoke.Imread(svgFile, ImreadModes.Grayscale); 
                 svgImage = PreprocessImage(svgImage);
-                double score = CompareImages(sourceImage, svgImage);
+                double score = CompareImages(image, svgImage);
                 if (score > highestScore)
                 {
                     highestScore = score;
-                    bestMatch = Path.GetFileNameWithoutExtension(svgFile);
+                    bestMatch = Path.GetFileNameWithoutExtension(svgFile).Split('_').First();
                 }
             }
             return bestMatch ?? "Unknown Set";
