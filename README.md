@@ -32,6 +32,7 @@ and eventually make a template out of it.
 - Collection gestion
 - Deck building
 - Printing
+- Card scanning (from mjpeg stream url - tested with droidcam)
 - Estimations
 - User system (Currently no validation, first connexion attempt with a user and path will create the account)
 - txt import
