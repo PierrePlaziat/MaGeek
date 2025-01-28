@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MageekDesktopClient", "Apps
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MageekCardDetection", "MageekCardDetection\MageekCardDetection.csproj", "{D926CEF3-C75F-428D-9B33-42703BEBB5E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MageekMobile", "Apps\MageekMobileClient\MageekMobile.csproj", "{EDEE0193-4E5C-4229-95B6-514298A9DC8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,12 @@ Global
 		{D926CEF3-C75F-428D-9B33-42703BEBB5E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D926CEF3-C75F-428D-9B33-42703BEBB5E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D926CEF3-C75F-428D-9B33-42703BEBB5E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDEE0193-4E5C-4229-95B6-514298A9DC8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDEE0193-4E5C-4229-95B6-514298A9DC8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDEE0193-4E5C-4229-95B6-514298A9DC8B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EDEE0193-4E5C-4229-95B6-514298A9DC8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDEE0193-4E5C-4229-95B6-514298A9DC8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDEE0193-4E5C-4229-95B6-514298A9DC8B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +84,7 @@ Global
 		{6AA61C67-3D95-46FE-9400-31333D77E121} = {78AE0017-D3D2-4844-B4E2-57FD0849BA3E}
 		{0B05982C-61F9-4F35-AE1D-05609C33F5F4} = {DC095FA7-2A4D-4457-BD9D-315CC5745A8A}
 		{D926CEF3-C75F-428D-9B33-42703BEBB5E9} = {4C9A9DD0-3808-4D1A-AA44-F8F7A42560F0}
+		{EDEE0193-4E5C-4229-95B6-514298A9DC8B} = {DC095FA7-2A4D-4457-BD9D-315CC5745A8A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {74E9DB63-7A83-4AD0-BE47-059F353216BD}

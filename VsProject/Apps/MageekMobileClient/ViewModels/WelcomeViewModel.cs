@@ -10,7 +10,7 @@ namespace MageekMobile.ViewModels
     public partial class WelcomeViewModel : ViewModel
     {
 
-        [ObservableProperty] string inputAddress = "http://192.168.1.10:55666/";
+        [ObservableProperty] string inputAddress = "http://169.254.80.80:5000/";
         [ObservableProperty] string inputUser= "";
         [ObservableProperty] string inputPassword = "";
         [ObservableProperty] string message = "";
@@ -37,7 +37,7 @@ namespace MageekMobile.ViewModels
         {
             Message = "Connecting";
             IsBusy = true;
-            var retour = await client.Client_Connect(InputAddress);
+            var retour = await client.Client_Connect(InputUser, InputPassword, InputAddress);
             if (retour==MageekCore.Data.MageekConnectReturn.Success)
             {
                 await navigation.NavigateAsync(nameof(CollecView));

@@ -7,6 +7,7 @@ using PlaziatWpf.Mvvm;
 using PlaziatTools;
 using System;
 using System.IO;
+using System.Net;
 
 namespace MageekDesktopClient.UI.ViewModels.AppWindows
 {
@@ -45,7 +46,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppWindows
             );
             if (success != MageekConnectReturn.Success)
             {
-                Message = "Couldnt connect";
+                Message = "Couldnt connect " + IPAddress.Loopback.ToString();
                 IsLoading = false;
                 return;
             }

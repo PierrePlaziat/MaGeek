@@ -182,7 +182,7 @@ namespace MageekCardDetection
 
         #region Extract Card Ref From Card Image
 
-        public static string ExtractCardNameFromImage(Mat cardImage)
+        public static string ExtractNameFromImage(Mat cardImage)
         {
             string extractedText;
             using (var engine = new TesseractEngine(@"C:\Git\MaGeek\VsProject\MageekCardDetection\", "eng", EngineMode.Default))

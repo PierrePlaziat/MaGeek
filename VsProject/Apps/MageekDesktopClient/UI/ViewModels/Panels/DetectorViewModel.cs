@@ -39,7 +39,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             this.session = session;
         }
 
-        [ObservableProperty] string streamUrl = "http://192.168.1.13:4747/video?res=480&fps=15";
+        [ObservableProperty] string streamUrl = "http://192.168.1.13:4747/video?res=720&fps=15";
         [ObservableProperty] string resultName;
         [ObservableProperty] string resultSet;
         [ObservableProperty] BitmapImage edgesImage;
@@ -121,11 +121,12 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
             FoundCard = MatToBitmapImage(cardImage);
             cardname = DetectorTool.Crop(cardImage, 35, 800, 40, 150);
             CardNameImage = MatToBitmapImage(cardname);
-            ResultName = DetectorTool.ExtractCardNameFromImage(cardname);
-            //cardset = DetectorTool.Crop(cardImage, 500, 342, 552, 35);
-            //CardSetImage = MatToBitmapImage(cardset);
-            //ResultSet = DetectorTool.ExtractSetFromImage(cardset);
-            List<SearchedCards> uuids = await mageek.Cards_Search(session.UserName,ResultName.Trim(), "French", 0, 1);
+            ResultName = DetectorTool.ExtractNameFromImage(cardname).MakeSearchable().Trim();
+            cardset = DetectorTool.Crop(cardImage, 820, 0, 0, 335);
+            CardSetImage = MatToBitmapImage(cardset);
+            ResultSet = DetectorTool.ExtractNameFromImage(cardset);
+
+            List<SearchedCards> uuids = await mageek.Cards_Search(session.UserName,ResultName, "French", 0, 1);
             WeakReferenceMessenger.Default.Send(new CardSelectedMessage(uuids[0].CardUuid));
         }
 

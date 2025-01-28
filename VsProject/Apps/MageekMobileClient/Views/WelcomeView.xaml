@@ -7,7 +7,7 @@
     <Grid>
     
         <Grid ColumnDefinitions="auto,*"
-              RowDefinitions="auto,auto,auto,auto,auto,*,auto"
+              RowDefinitions="auto,auto,auto,auto,auto,auto,*,auto"
               Background="LightGray">
 
             <Label Text="You may connect to your MaGeek server:"
@@ -34,30 +34,30 @@
                    Grid.Column="1"
                    Margin="10" />
             <Label Text="Password"
-                   Grid.Row="2"
+                   Grid.Row="3"
                    Grid.Column="0"
                    Margin="10"
                    VerticalOptions="Center"/>
             <Entry Text="{Binding InputPassword}"
-                   Grid.Row="2"
+                   Grid.Row="3"
                    Grid.Column="1"
                    Margin="10" />
 
             <Button Text="Connect"
                     Grid.ColumnSpan="2"
-                    Grid.Row="3"
+                    Grid.Row="4"
                     Margin="10"
                     Command="{Binding ConnectCommand}" />
 
             <Label Text="{Binding Message}"
-                   Grid.Row="4"
+                   Grid.Row="5"
                    Grid.ColumnSpan="2"
                    VerticalOptions="Center"
                    HorizontalOptions="Center" />
 
             <Button Text="Skip"
                     Grid.ColumnSpan="2"
-                    Grid.Row="6"
+                    Grid.Row="7"
                     Margin="10"
                     Command="{Binding SkipCommand}" />
 
