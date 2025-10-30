@@ -155,7 +155,7 @@ namespace MageekDesktopClient.UI.ViewModels.AppPanels
                 memoryStream.Position = 0;
                 byte[] buffer = memoryStream.ToArray();
                 Mat mat = new Mat();
-                CvInvoke.Imdecode(buffer, ImreadModes.Color, mat);
+                CvInvoke.Imdecode(buffer, ImreadModes.ColorRgb, mat);
                 return mat;
             }
         }
